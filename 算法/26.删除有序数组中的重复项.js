@@ -10,13 +10,16 @@
  * @return {number}
  */
 var removeDuplicates = function(nums) {
-    let cur = 1, l = nums.length;
+    let cur = 0, l = nums.length;
     for(let i = 1; i < l; i++) {
-        if(nums[i] === nums[i-1]) {
+        if(nums[cur] === nums[i]) {
             continue;
         }
-        nums[cur] = nums[i]
+        nums[++cur] = nums[i]
     }
+    // 题目要求返回长度，这个长度是cur+1，不是nums.length
+    return cur + 1
 };
+// console.log(removeDuplicates([1,1,2]))
 // @lc code=end
 
