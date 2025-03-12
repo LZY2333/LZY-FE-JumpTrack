@@ -16,6 +16,7 @@ var backspaceCompare = function (S, T) {
         j = T.length - 1,
         skipS = 0,
         skipT = 0;
+    // 只要S和T有一个还有就继续遍历,如果长短不同也能发现
     while (i >= 0 || j >= 0) {
         while (i >= 0) {
             // 处理连续## 或者连续间断#，例如 ab## c#d#
@@ -46,6 +47,7 @@ var backspaceCompare = function (S, T) {
 
 // console.log(backspaceCompare("ab##", "c#d#"))
 // console.log(backspaceCompare("ab#c", "ad#c"))
+// console.log(backspaceCompare("a", "aa#a"))
 
 
 
