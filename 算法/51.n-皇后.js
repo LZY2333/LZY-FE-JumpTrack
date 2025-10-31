@@ -13,34 +13,30 @@
 var solveNQueens = function (n) {
     const map = new Array(n).fill(-1);
     const result = [];
-
-    const resolveRow = (row) => {
-        if (row === n) {
+    const resolveRow = (curRow) => {
+        if (curRow === n) {
             printMap();
             return;
         }
-
         for (let column = 0; column < n; column++) {
-            if (!check(row, column)) continue;
-            map[row] = column;
-            resolveRow(row + 1);
+            if (!check(curRow, column)) continue;
+            map[curRow] = column;
+            resolveRow(curRow + 1);
         }
     };
-
     const check = (row, column) => {
         let left = (right = column);
         for (let i = row - 1; i >= 0; i--) {
             if (
+                map[i] === column ||
                 map[i] === --left ||
-                map[i] === ++right ||
-                map[i] === column
-            )
+                map[i] === ++right
+            ) {
                 return false;
+            }
         }
-
         return true;
     };
-
     const printMap = () => {
         const board = [];
         map.forEach((item) => {
@@ -50,7 +46,6 @@ var solveNQueens = function (n) {
         });
         result.push(board);
     };
-
     resolveRow(0);
     return result;
 };

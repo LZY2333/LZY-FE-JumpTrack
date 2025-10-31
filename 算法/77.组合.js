@@ -18,7 +18,6 @@ var combine = function (n, k) {
             result.push([...path]);
             return;
         }
-        // 剪枝,后续数量不够K的没必要遍历
         for (
             let i = start;
             i <= n - (k - path.length) + 1;
