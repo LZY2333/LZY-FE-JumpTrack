@@ -2,6 +2,14 @@
 
 ## 预备prompt -------------------------------
 
+## 生成业务功能
+
+很多组件做得过于通用,暴露过多props,或将部分逻辑交于外部处理再传入使用,应当更内聚
+
+### 区分好组件职责边界,逻辑边界
+
+### 是否有类似功能实现
+
 ## 注释
 给当前文件源码加上注释,需要注释的源码为: 自定义函数 自定义变量 JSX内每个自定义组件 解构的变量,注释内容为: 注释对象的作用/功能
 
@@ -37,3 +45,24 @@ useUpdateVideoDetail
 
 ## web/src/pages/pollo.ai/_components/MenuOptions/PureMenuOptionUI.tsx
 `<OptionButton {...target}` 为什么组件会设计成要解耦传入
+
+## 周报
+
+nextjs
+
+tailwind css
+
+1. 试用平台功能, 熟悉整理平台业务功能模块全景
+
+- 主页侧边栏各个模块的 定位与职责
+- 理清了 创作区 娱乐区 社区 的产品分层。
+
+1. 理清文生图链路, /app?target=text-to-image 与 /ai-image-generator 表单展示逻辑
+
+- 从左侧 Txt2Img 点击一路追到 表单render(TextToImageFormGenerate)。
+- 明确 app 页与 ai-image-generator 页共享同一套表单生成逻辑(FormGenerate)与 Context/Store 体系
+
+1. Video Detail 详情页 及 字段流转
+
+- 从后端 VideoDetailVo 到前端 Page/Detail/hooks/context 的完整字段流转。
+- 掌握了 videoDetail、selectedGeneration、menuOptionsData 的继承与覆盖关系。
