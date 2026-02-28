@@ -1,0 +1,194 @@
+# 导航栏 Home & Effects 出现的 URL 及引用链路分析
+
+> 分析对象：顶部导航栏中的 **Home** 和 **Effects** 两个菜单项
+> 代码库：`web/src/pages/pollo.ai/`
+
+---
+
+## 一、引用链路
+
+### 完整调用链
+
+```
+menu.tsx (useHeaderMenu hook)          ← 菜单数据定义层
+  ↓ 调用
+PCMenu/index.tsx                       ← 桌面端渲染（xl 及以上断点）
+MobileMenu/index.tsx                   ← 移动端渲染（xl 以下断点）
+  ↓ 被引用
+HeaderMenu/index.tsx                   ← 菜单容器（控制 showHeaderMenu 的 xl:hidden）
+  ↓ 被引用
+Header/index.tsx                       ← 导航栏主体
+  ↓ 被引用
+_layout/index.tsx (DefaultLayout)      ← 页面布局层（控制 Header 是否渲染）
+  ↓ 被引用
+各页面 *.page.tsx                       ← 通过 withLayouts HOC 配置 headerProps
+```
+
+---
+
+### Home 菜单项引用链路
+
+```
+menu.tsx:98
+  name: t`Home`, link: '/', isDarkColor: true
+    ↓
+PCMenu/index.tsx:28-39
+  item.link 分支 → 渲染 <Link href="/" />
+    ↓
+MobileMenu/index.tsx
+  渲染带图标的移动端菜单项（mobileMenuIcon: 'before:i-cus--pol-home'）
+    ↓
+HeaderMenu/index.tsx:40
+  className={cls`${showHeaderMenu ? '' : 'xl:hidden'}`}
+  // showHeaderMenu=false 时桌面端整体隐藏，移动端不受影响
+    ↓
+Header/index.tsx:228-234
+  <HeaderMenu showHeaderMenu={showHeaderMenu} ... />
+    ↓
+DefaultLayout (_layout/index.tsx:122-149)
+  {headerProps !== false && !mainOnly ? <Header {...headerProps} /> : null}
+```
+
+---
+
+### Effects 菜单项引用链路
+
+```
+menu.tsx:324-714
+  name: t`Effects`, groupTab: [
+    { label: 'Video Effects', groupHref: '/video-effects', list: [...12个子项] },
+    { label: 'Image Effects', groupHref: '/photo-effects', list: [...12个子项] },
+  ]
+    ↓
+PCMenu/index.tsx:61-81
+  item.groupTab 分支 → 渲染下拉菜单容器 <GroupList groupTab={...} />
+    ↓
+MobileMenu/index.tsx
+  渲染展开式移动端菜单（mobileMenuIcon: 'before:i-cus--pol-video-effect'）
+    ↓
+HeaderMenu/index.tsx:40（同 Home，受 showHeaderMenu 控制）
+    ↓
+Header/index.tsx → DefaultLayout（同上）
+```
+
+---
+
+## 二、桌面端可见性控制逻辑
+
+```
+showHeaderMenu 默认值: true（Header/index.tsx:44）
+
+HeaderMenu/index.tsx:40:
+  className={cls`${showHeaderMenu ? '' : 'xl:hidden'}`}
+  // false → 桌面端（xl+）隐藏 PCMenu 容器
+  // 注意：MobileMenu 的汉堡菜单图标不受此影响，移动端始终可访问
+
+PCMenu/index.tsx:26:
+  className="hidden items-center xl:flex xl:gap-6 2xl:gap-8"
+  // PCMenu 本身只在 xl 断点以上显示
+```
+
+---
+
+## 三、Home & Effects 在桌面端**出现**的 URL
+
+以下页面使用 DefaultLayout 且未设置 `showHeaderMenu: false`，桌面端导航栏显示 Home 和 Effects：
+
+| URL | 说明 |
+|-----|------|
+| `/` | 首页 |
+| `/pricing` | 定价页 |
+| `/about-us` | 关于页 |
+| `/whats-new` | 更新日志页 |
+| `/sign-in` | 登录页（headerProps 含 `transparentOnScrollTop0: true`，但 showHeaderMenu 默认 true） |
+| `/free-trial-policy` | 免费试用政策页 |
+| 其他静态内容页 | 未显式设置 `showHeaderMenu: false` 的页面 |
+
+---
+
+## 四、Home & Effects 在桌面端**不出现**的 URL
+
+### 4.1 设置了 `showHeaderMenu: false`（桌面端菜单隐藏，移动端保留汉堡菜单）
+
+| URL | 说明 |
+|-----|------|
+| `/explore` | 探索页 |
+| `/use-cases` | 应用场景页（部分场景条件性隐藏） |
+| `/text-to-video` | 文生视频工具 |
+| `/video-to-video` | 视频转视频工具 |
+| `/mimic-motion` | 动作模仿工具 |
+| `/ai-image-generator` | AI 图像生成工具 |
+| `/image-to-image-ai` | 图像转图像工具 |
+| `/ai-effects` | AI 特效工具 |
+| `/ai-animation-generator` | AI 动画生成工具 |
+| `/ai-avatar` | AI 头像工具 |
+| `/ai-product-avatar` | AI 产品头像工具 |
+| `/ai-singing-avatar` | AI 歌唱头像工具 |
+| `/ai-video-editor` | AI 视频编辑器 |
+| `/ai-video-agent` | AI 视频代理 |
+| `/assets` | 资产管理页 |
+| `/template/*` | 模板页 |
+| `/photo-effects/*` | 图片特效工具页 |
+
+### 4.2 设置了 `headerProps: false`（整个 Header 不渲染）
+
+| URL | 说明 |
+|-----|------|
+| `/avatar-studio` | 头像工作室 |
+| `/image-studio` | 图片工作室 |
+| `/video-studio` | 视频工作室 |
+| `/app-install` | 应用安装页 |
+| `/paid-successfully` | 支付成功页 |
+
+---
+
+## 五、Effects 下拉菜单包含的子 URL
+
+点击 Effects 菜单项展开后，包含以下子链接（仅为导航入口，页面本身仍存在）：
+
+### Video Effects
+| URL | 菜单名 |
+|-----|--------|
+| `/video-effects` | Video Effects（分组入口） |
+| `/video-effects/ai-kissing` | AI Kissing Video Generator |
+| `/video-effects/ai-hug` | AI Hug Generator |
+| `/video-effects/ai-twerk-video-generator` | AI Twerk Generator |
+| `/video-effects/earth-zoom-in` | Earth Zoom In |
+| `/video-effects/ai-bikini` | AI Bikini Generator |
+| `/video-effects/into-the-mouth` | Into The Mouth |
+| `/video-effects/ai-jiggle-video-effect` | AI Jiggle Video Effect |
+| `/video-effects/action-figure` | Action Figure |
+| `/video-effects/ai-muscle-generator` | AI Muscle Generator |
+| `/video-effects/ai-french-kiss-video-generator` | AI French Kiss Video Generator |
+| `/video-effects/ai-fake-date-video-generator` | AI Fake Date Video Generator |
+| `/video-effects/ai-360-rotation-video-generator` | AI 360° Rotation Video Generator |
+
+### Image Effects
+| URL | 菜单名 |
+|-----|--------|
+| `/photo-effects` | Image Effects（分组入口） |
+| `/photo-effects/ai-selfie-with-celebrities-generator` | AI Selfie with Celebrities Generator |
+| `/photo-effects/polaroid-duo-selfie` | Polaroid Duo Selfie |
+| `/photo-effects/pregnant-ai` | Pregnant AI |
+| `/photo-effects/ai-polaroid-maker` | AI Polaroid Maker |
+| `/photo-effects/ai-action-figure-generator` | AI Action Figure Generator |
+| `/photo-effects/ai-fat-filter` | AI Fat Filter |
+| `/photo-effects/ghibli-ai` | Ghibli AI Generator |
+| `/photo-effects/ai-beardless-filter` | AI Beardless Filter |
+| `/photo-effects/ai-simpsons-character-generator` | AI Simpsons Character Generator |
+| `/photo-effects/pixar-ai-generator` | Pixar AI Generator |
+| `/photo-effects/ai-caricature-maker` | AI Caricature Maker |
+| `/photo-effects/ai-baby-filter` | AI Baby filter |
+
+---
+
+## 六、关键文件速查
+
+| 文件 | 作用 |
+|------|------|
+| `_layout/Header/HeaderMenu/menu.tsx:96` | Home 和 Effects 菜单项定义 |
+| `_layout/Header/HeaderMenu/menu.tsx:960` | `hidden` 过滤逻辑 |
+| `_layout/Header/HeaderMenu/index.tsx:40` | `showHeaderMenu` → `xl:hidden` 控制 |
+| `_layout/Header/HeaderMenu/_block/PCMenu/index.tsx:26` | PCMenu 只在 `xl:flex` 显示 |
+| `_layout/Header/index.tsx:44` | `showHeaderMenu` 默认值 `true` |
+| `_layout/index.tsx:122` | `headerProps !== false` 控制 Header 渲染 |

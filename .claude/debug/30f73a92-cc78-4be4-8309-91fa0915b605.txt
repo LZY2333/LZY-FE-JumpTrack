@@ -1,0 +1,218 @@
+2026-02-27T02:31:01.042Z [DEBUG] detectFileEncoding failed for expected reason: ENOENT
+2026-02-27T02:31:01.042Z [DEBUG] MDM settings load completed in 3ms
+2026-02-27T02:31:01.067Z [DEBUG] [init] configureGlobalMTLS starting
+2026-02-27T02:31:01.067Z [DEBUG] [init] configureGlobalMTLS complete
+2026-02-27T02:31:01.067Z [DEBUG] [init] configureGlobalAgents starting
+2026-02-27T02:31:01.067Z [DEBUG] [init] configureGlobalAgents complete
+2026-02-27T02:31:01.070Z [DEBUG] Applying permission update: Adding 4 allow rule(s) to destination 'localSettings': ["Bash(ls:*)","Bash(git --version)","Bash(claude update)","Bash(claude --version)"]
+2026-02-27T02:31:01.084Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-02-27T02:31:01.086Z [DEBUG] [ToolSearch:optimistic] mode=standard, ENABLE_TOOL_SEARCH=undefined, result=false
+2026-02-27T02:31:01.087Z [DEBUG] [STARTUP] Running setup()...
+2026-02-27T02:31:01.092Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-27T02:31:01.103Z [DEBUG] Error log sink initialized
+2026-02-27T02:31:01.107Z [DEBUG] [STARTUP] setup() completed in 20ms
+2026-02-27T02:31:01.107Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-02-27T02:31:01.109Z [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-02-27T02:31:01.109Z [DEBUG] [Claude in Chrome] Extension fcoeoabgfenejglbffodgkkbkcdhcgfn found in chrome Default
+2026-02-27T02:31:01.113Z [DEBUG] Loaded 11 unique skills (11 unconditional, 0 conditional, managed: 0, user: 4, project: 7, additional: 0, legacy commands: 0)
+2026-02-27T02:31:01.114Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-02-27T02:31:01.114Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-02-27T02:31:01.114Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-27T02:31:01.114Z [DEBUG] Total plugin skills loaded: 0
+2026-02-27T02:31:01.114Z [DEBUG] Total plugin commands loaded: 0
+2026-02-27T02:31:01.114Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-02-27T02:31:01.114Z [DEBUG] getSkills returning: 11 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-27T02:31:01.116Z [DEBUG] Git remote URL: https://cnb.cool/awesomeaicode/pollo/ai-video-collection.git
+2026-02-27T02:31:01.116Z [DEBUG] Parsed repository: null from URL: https://cnb.cool/awesomeaicode/pollo/ai-video-collection.git
+2026-02-27T02:31:01.166Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/arm64-darwin/rg)
+2026-02-27T02:31:01.174Z [DEBUG] Total plugin agents loaded: 0
+2026-02-27T02:31:01.174Z [DEBUG] [STARTUP] Commands and agents loaded in 67ms
+2026-02-27T02:31:01.176Z [DEBUG] [STARTUP] Running showSetupScreens()...
+2026-02-27T02:31:01.202Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2026-02-27T02:31:01.202Z [DEBUG] [Perfetto] initializePerfettoTracing called, env value: undefined
+2026-02-27T02:31:01.202Z [DEBUG] [3P telemetry] isTelemetryEnabled=false (CLAUDE_CODE_ENABLE_TELEMETRY=undefined)
+2026-02-27T02:31:01.203Z [DEBUG] [STARTUP] showSetupScreens() completed in 27ms
+2026-02-27T02:31:01.203Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-02-27T02:31:01.203Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-02-27T02:31:01.203Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-02-27T02:31:01.204Z [DEBUG] Total LSP servers loaded: 0
+2026-02-27T02:31:01.204Z [ERROR] Failed to fetch org fast mode status, defaulting to disabled: Error: No auth available
+2026-02-27T02:31:01.204Z [DEBUG] [STARTUP] MCP configs loaded in 120ms
+2026-02-27T02:31:01.208Z [DEBUG] MCP server "Framelink Figma MCP": Starting connection with timeout of 30000ms
+2026-02-27T02:31:01.212Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-02-27T02:31:01.212Z [DEBUG] LSP manager initialized with 0 servers
+2026-02-27T02:31:01.213Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-02-27T02:31:01.213Z [DEBUG] Found 0 hook matchers in settings
+2026-02-27T02:31:01.213Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-02-27T02:31:01.213Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-02-27T02:31:01.213Z [DEBUG] LSP server manager initialized successfully
+2026-02-27T02:31:01.213Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-02-27T02:31:01.213Z [DEBUG] [Reconnection] computeInitialTeamContext: No teammate context set (not a teammate)
+2026-02-27T02:31:01.214Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.35293.1772159461214
+2026-02-27T02:31:01.214Z [DEBUG] Preserving file permissions: 100600
+2026-02-27T02:31:01.214Z [DEBUG] Temp file written successfully, size: 13130 bytes
+2026-02-27T02:31:01.214Z [DEBUG] Applied original permissions to temp file
+2026-02-27T02:31:01.214Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.35293.1772159461214 to /Users/a111111/.claude.json
+2026-02-27T02:31:01.214Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-27T02:31:01.265Z [DEBUG] [keybindings] KeybindingSetup initialized with 102 bindings, 0 warnings
+2026-02-27T02:31:01.292Z [DEBUG] [REPL:mount] REPL mounted, disabled=false
+2026-02-27T02:31:01.293Z [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-02-27T02:31:01.293Z [DEBUG] performStartupChecks called
+2026-02-27T02:31:01.293Z [DEBUG] Starting background plugin installations
+2026-02-27T02:31:01.293Z [DEBUG] performBackgroundPluginInstallations called
+2026-02-27T02:31:01.329Z [DEBUG] Loaded 3 CLAUDE.md/rules files:
+  [User] /Users/a111111/.claude/CLAUDE.md (217 chars)
+  [Project] /Users/a111111/code/ai-video-collection/CLAUDE.md (5847 chars)
+  [AutoMem] /Users/a111111/.claude/projects/-Users-a111111-code-ai-video-collection/memory/MEMORY.md (224 chars)
+2026-02-27T02:31:01.335Z [DEBUG] Watching for changes in setting files /Users/a111111/.claude/settings.json, /Users/a111111/code/ai-video-collection/.claude/settings.json, /Users/a111111/code/ai-video-collection/.claude/settings.local.json...
+2026-02-27T02:31:01.336Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-27T02:31:01.337Z [DEBUG] [claudeai-mcp] Checking gate (cached)...
+2026-02-27T02:31:01.337Z [DEBUG] [claudeai-mcp] Gate returned: true
+2026-02-27T02:31:01.337Z [DEBUG] [claudeai-mcp] No access token
+2026-02-27T02:31:01.343Z [DEBUG] [keybindings] Watching for changes to /Users/a111111/.claude/keybindings.json
+2026-02-27T02:31:01.347Z [DEBUG] Setting installation status: 0 marketplaces, 0 installable plugins, 0 uninstallable plugins
+2026-02-27T02:31:01.348Z [DEBUG] Watching for changes in skill/command directories: /Users/a111111/.claude/skills, /Users/a111111/code/ai-video-collection/.claude/skills...
+2026-02-27T02:31:01.351Z [DEBUG] Security messages are fresh (<1h old), skipping fetch
+2026-02-27T02:31:01.356Z [DEBUG] [claudeai-mcp] Checking gate (cached)...
+2026-02-27T02:31:01.356Z [DEBUG] [claudeai-mcp] Gate returned: true
+2026-02-27T02:31:01.356Z [DEBUG] [claudeai-mcp] No access token
+2026-02-27T02:31:01.358Z [DEBUG] MCP server "ide": Starting connection with timeout of 30000ms
+2026-02-27T02:31:01.370Z [DEBUG] MCP server "ide": Successfully connected to ws-ide server in 15ms
+2026-02-27T02:31:01.370Z [DEBUG] MCP server "ide": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"hasResourceSubscribe":false,"serverVersion":{"name":"Claude Code Cursor MCP","version":"2.1.59"}}
+2026-02-27T02:31:01.370Z [DEBUG] [MCP] Server "ide" connected with subscribe=false
+2026-02-27T02:31:01.377Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-02-27T02:31:04.739Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-27T02:31:04.740Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-27T02:31:04.740Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-27T02:31:04.740Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-27T02:31:04.740Z [DEBUG] Sending 11 skills via attachment (initial, 11 total sent)
+2026-02-27T02:31:04.742Z [WARN] [3P telemetry] Event dropped (no event logger initialized): user_prompt
+2026-02-27T02:31:04.742Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-27T02:31:04.742Z [DEBUG] Found 0 hook matchers in settings
+2026-02-27T02:31:04.742Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-27T02:31:04.742Z [DEBUG] FileHistory: Added snapshot for c4b7ab0c-1dbd-4646-aca3-b8984b2d5a2d, tracking 0 files
+2026-02-27T02:31:04.743Z [DEBUG] [useDeferredValue] Messages deferred by 3 (0→3)
+2026-02-27T02:31:04.763Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-27T02:31:04.765Z [DEBUG] MCP server "ide": Calling MCP tool: closeAllDiffTabs
+2026-02-27T02:31:04.767Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-27T02:31:04.769Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:04.769Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:04.769Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:04.774Z [DEBUG] MCP server "ide": Tool 'closeAllDiffTabs' completed successfully in 9ms
+2026-02-27T02:31:04.779Z [DEBUG] Total plugin output styles loaded: 0
+2026-02-27T02:31:04.779Z [DEBUG] git pull: cwd=/Users/a111111/.claude/plugins/marketplaces/claude-plugins-official ref=default
+2026-02-27T02:31:04.829Z [DEBUG] autocompact: tokens=819 threshold=167000 effectiveWindow=180000
+2026-02-27T02:31:04.829Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-27T02:31:04.837Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:04.837Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:04.837Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:05.871Z [DEBUG] Successfully refreshed marketplace: claude-plugins-official
+2026-02-27T02:31:05.871Z [DEBUG] Plugin autoupdate: checking installed plugins
+2026-02-27T02:31:06.253Z [ERROR] API error (attempt 1/11): 401 401 Invalid API key format
+2026-02-27T02:31:06.740Z [ERROR] API error (attempt 1/11): 401 401 Invalid API key format
+2026-02-27T02:31:06.740Z [DEBUG] [useDeferredValue] Messages deferred by 1 (3→4)
+2026-02-27T02:31:06.791Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:06.791Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:06.791Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:07.152Z [ERROR] API error (attempt 2/11): 401 401 Invalid API key format
+2026-02-27T02:31:07.343Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:07.343Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:07.343Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:08.261Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:08.261Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:08.261Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:08.263Z [ERROR] API error (attempt 2/11): 401 401 Invalid API key format
+2026-02-27T02:31:08.264Z [DEBUG] [useDeferredValue] Messages deferred by 1 (4→5)
+2026-02-27T02:31:08.562Z [ERROR] API error (attempt 3/11): 401 401 Invalid API key format
+2026-02-27T02:31:09.296Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:09.296Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:09.296Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:10.001Z [ERROR] API error (attempt 3/11): 401 401 Invalid API key format
+2026-02-27T02:31:10.002Z [DEBUG] [useDeferredValue] Messages deferred by 1 (5→6)
+2026-02-27T02:31:10.332Z [ERROR] MCP server "Framelink Figma MCP" Server stderr: npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm.
+npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-27T02:31:10.332Z [DEBUG] MCP server "Framelink Figma MCP": Successfully connected to stdio server in 9128ms
+2026-02-27T02:31:10.332Z [DEBUG] MCP server "Framelink Figma MCP": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"hasResourceSubscribe":false,"serverVersion":{"name":"Figma MCP Server","version":"0.6.4"}}
+2026-02-27T02:31:10.332Z [DEBUG] [MCP] Server "Framelink Figma MCP" connected with subscribe=false
+2026-02-27T02:31:10.844Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:10.844Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:10.844Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:11.300Z [ERROR] API error (attempt 4/11): 401 401 Invalid API key format
+2026-02-27T02:31:12.471Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:12.471Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:12.471Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:13.687Z [ERROR] API error (attempt 4/11): 401 401 Invalid API key format
+2026-02-27T02:31:13.689Z [DEBUG] [useDeferredValue] Messages deferred by 1 (6→7)
+2026-02-27T02:31:16.159Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:16.159Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:16.159Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:16.553Z [ERROR] API error (attempt 5/11): 401 401 Invalid API key format
+2026-02-27T02:31:18.401Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:18.401Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:18.401Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:19.094Z [ERROR] API error (attempt 5/11): 401 401 Invalid API key format
+2026-02-27T02:31:19.095Z [DEBUG] [useDeferredValue] Messages deferred by 1 (7→8)
+2026-02-27T02:31:25.967Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:25.967Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:25.967Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:27.454Z [ERROR] API error (attempt 6/11): 401 401 Invalid API key format
+2026-02-27T02:31:28.752Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-27T02:31:28.752Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-27T02:31:28.752Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-27T02:31:29.667Z [ERROR] API error (attempt 6/11): 401 401 Invalid API key format
+2026-02-27T02:31:29.668Z [DEBUG] [useDeferredValue] Messages deferred by 1 (8→9)
+2026-02-27T02:31:31.739Z [DEBUG] [onCancel] focusedInputDialog=undefined streamMode=requesting
+2026-02-27T02:31:31.741Z [ERROR] Error in API request: Request was aborted.
+2026-02-27T02:31:31.756Z [ERROR] Error: Error: Request was aborted.
+    at AbortSignal.w (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:888:35695)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:845:20)
+    at AbortSignal.dispatchEvent (node:internal/event_target:778:26)
+    at runAbort (node:internal/abort_controller:488:10)
+    at abortSignal (node:internal/abort_controller:459:3)
+    at AbortController.abort (node:internal/abort_controller:507:5)
+    at Y2 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:12274:64994)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:12266:8890
+    at Object.current (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:637:7548)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:331:2658
+2026-02-27T02:31:31.759Z [DEBUG] [useDeferredValue] Messages deferred by 1 (9→10)
+2026-02-27T02:31:31.764Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-27T02:31:31.914Z [DEBUG] MCP server "ide": WebSocket transport closed/disconnected, attempting automatic reconnection
+2026-02-27T02:31:31.915Z [DEBUG] MCP server "Framelink Figma MCP": Sending SIGINT to MCP server process
+2026-02-27T02:31:31.915Z [DEBUG] LSP server manager shut down successfully
+2026-02-27T02:31:31.916Z [DEBUG] MCP server "ide": Starting connection with timeout of 30000ms
+2026-02-27T02:31:31.916Z [DEBUG] Failed to check metrics opt-out status: Auth error: No API key available
+2026-02-27T02:31:31.916Z [ERROR] Error: Error: Auth error: No API key available
+    at $c7 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:35154)
+    at KbY (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:35432)
+    at Y (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:111:17821)
+    at Rf1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:36127)
+    at xS8.doExport (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:36943)
+    at xS8.export (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:36646)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:118:169640
+    at XZA.with (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:118:70401)
+    at Ml1.with (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:118:70977)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:118:169580
+2026-02-27T02:31:31.916Z [DEBUG] Metrics export disabled by organization setting
+2026-02-27T02:31:31.916Z [DEBUG] BigQuery metrics exporter flush complete
+2026-02-27T02:31:31.916Z [DEBUG] BigQuery metrics exporter flush complete
+2026-02-27T02:31:31.916Z [DEBUG] BigQuery metrics exporter shutdown complete
+2026-02-27T02:31:31.920Z [DEBUG] MCP server "ide": Successfully connected to ws-ide server in 5ms
+2026-02-27T02:31:31.920Z [DEBUG] MCP server "ide": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"hasResourceSubscribe":false,"serverVersion":{"name":"Claude Code Cursor MCP","version":"2.1.59"}}
+2026-02-27T02:31:31.920Z [DEBUG] [MCP] Server "ide" connected with subscribe=false
+2026-02-27T02:31:31.922Z [DEBUG] MCP server "ide": WebSocket reconnection successful after 7ms (attempt 1)
+2026-02-27T02:31:31.943Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.35293.1772159491943
+2026-02-27T02:31:31.943Z [DEBUG] Preserving file permissions: 100600
+2026-02-27T02:31:31.943Z [DEBUG] Temp file written successfully, size: 13131 bytes
+2026-02-27T02:31:31.943Z [DEBUG] Applied original permissions to temp file
+2026-02-27T02:31:31.943Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.35293.1772159491943 to /Users/a111111/.claude.json
+2026-02-27T02:31:31.944Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-27T02:31:31.944Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.35293.1772159491944
+2026-02-27T02:31:31.944Z [DEBUG] Preserving file permissions: 100600
+2026-02-27T02:31:31.945Z [DEBUG] Temp file written successfully, size: 13131 bytes
+2026-02-27T02:31:31.945Z [DEBUG] Applied original permissions to temp file
+2026-02-27T02:31:31.945Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.35293.1772159491944 to /Users/a111111/.claude.json
+2026-02-27T02:31:31.945Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-27T02:31:31.965Z [DEBUG] MCP server "Framelink Figma MCP": MCP server process exited cleanly
+2026-02-27T02:31:31.966Z [DEBUG] Getting matching hook commands for SessionEnd with query: prompt_input_exit
+2026-02-27T02:31:31.966Z [DEBUG] Found 0 hook matchers in settings
+2026-02-27T02:31:31.966Z [DEBUG] Matched 0 unique hooks for query "prompt_input_exit" (0 before deduplication)

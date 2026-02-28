@@ -9,7 +9,8 @@ description: Generate variable flow and field inheritance documentation for a fe
 Produce a three-layer flow summary using the exact section formats below with renamed headings:
 1) **起点到页面链路** (file path flow),
 2) **组件内传递链路** (code pass-through flow),
-3) **对象字段演进** (object field flow).
+3) **对象字段演进** (object field flow),
+4) **路径直达链接** (add clickable links at the end of each `##` section).
 
 Only **对象字段演进** may use a JavaScript code block. The other two sections must be plain text lists.
 
@@ -19,12 +20,14 @@ Use the same format as `___zee_videoDetail` path flow:
 - Use a numbered list.
 - Each item follows: **短标签**：`path` 说明。
 - Keep paths repo-relative and wrap them in backticks.
+- At the end of this section, add a `**路径直达：**` list with clickable links for all paths mentioned in this section.
 
 ## 组件内传递链路
 Use the same format as `___zee_videoDetail` internal flow:
 - Heading must be `## 组件内传递链路（<target-file>）` (replace `<target-file>` with the real file path).
 - Use a numbered list.
 - Each item uses **步骤标题**：描述，并用箭头描述变量传递路径。
+- At the end of this section, add a `**路径直达：**` list with clickable links for all paths mentioned in this section.
 
 ## 对象字段演进
 Use the same format as `___zee_videoDetail4` with the additions below:
@@ -42,6 +45,7 @@ Use the same format as `___zee_videoDetail4` with the additions below:
 - Keep inline comments **left-aligned** as much as possible (pad spaces before `//` within the same object).
 - Use placeholders: ``, `null`, `0`, `false`.
 - Only list fields actually accessed in the frontend.
+- After the JavaScript code block, add a `**路径直达：**` list with clickable links for all `出现位置` paths in this section.
 
 ### Required Layers (对象字段演进)
 - VO/type definition
@@ -57,3 +61,5 @@ Use the same format as `___zee_videoDetail4` with the additions below:
 ### Hard Rules
 - Do **not** output any extra code blocks outside “对象字段演进”.
 - Keep headings and list styles consistent with the reference files.
+- Every `##` section must end with `**路径直达：**` and clickable markdown links.
+- For links, use `file:///absolute/path` targets; if a line is known, append `#L<line>`.

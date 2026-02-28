@@ -1,0 +1,14 @@
+import { trackComponentName } from '@/coco-react/analytics'
+
+export function Right({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      data-widget-name={
+        trackComponentName.content_details.value.content_details.name
+      }
+      className={cls`flex flex-col justify-between gap-y-3 px-4 py-6 lg:h-[80vh] lg:w-[408px] lg:p-0`}
+    >
+      {children}
+    </div>
+  )
+}

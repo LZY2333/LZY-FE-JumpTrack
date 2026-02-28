@@ -1,0 +1,978 @@
+/* eslint-disable max-lines */
+import { trackComponentName } from '@/coco-react/analytics'
+import { MENU_LIST_CONST } from '@/pages/pollo.ai/app/_home/LeftMenuLayout/useMenuList'
+import { Trans, useLingui } from '@lingui/react/macro'
+
+import type { InFlowType } from '@/components/InFlowLink/types'
+
+export interface MenuItem {
+  name: string
+  link?: string
+  isNofollow?: boolean
+  hidden?: boolean
+  shouldIndex: boolean // 是否需要自动生成 sortIndex，一般有点击跳转才加，用于上报埋点数据
+  sortIndex?: number // 埋点-排序索引
+  dataButtonName: string // 埋点-按钮名称
+}
+export interface MenuListItem extends Omit<MenuItem, 'link'> {
+  link: string
+  inflow?: InFlowType
+}
+
+export interface IconList extends MenuListItem {
+  icon: string
+  desc: string
+  isBeta?: boolean
+}
+
+export interface HeaderMenu extends MenuItem {
+  list?: MenuListItem[]
+  className?: string
+  wrapperClassName?: string
+  templateList?: MenuListItem[]
+  videoAiList?: IconList[]
+  imageAiList?: IconList[]
+  photoEffectsList?: MenuListItem[]
+  groupTab?: {
+    label: React.ReactNode
+    groupHref: string
+    signInGroupHref?: string
+    icon: string
+    className?: string
+    wrapperClassName?: string
+    dataButtonName: string // 埋点-按钮名称
+    list: {
+      name: string
+      link: string
+      inflow?: InFlowType
+      shouldIndex: boolean // 是否需要自动生成 sortIndex，一般有点击跳转才加，用于上报埋点数据
+      sortIndex?: number // 埋点-排序索引
+      dataButtonName: string // 埋点-按钮名称
+    }[]
+  }[]
+  shouldIndex: boolean // 是否需要自动生成 sortIndex，一般有点击跳转才加，用于上报埋点数据
+  sortIndex?: number // 埋点-排序索引
+  dataButtonName: string // 埋点-按钮名称
+  mobileMenuIcon?: string //移动端菜单图标
+  isDarkColor?: boolean // 是否是暗色链接（移动端）
+}
+
+export interface UseHeaderMenuProps {
+  isMobile?: boolean
+}
+
+// 自动生成 sortIndex 的工具函数
+const generateSortIndex = (items: HeaderMenu[]): void => {
+  let currentIndex = 1
+  items.forEach((item) => {
+    if (item.shouldIndex) {
+      item.sortIndex = currentIndex++
+    }
+    if (item.videoAiList?.length || item.imageAiList?.length) {
+      let currentListItemIndex = 1
+      const currentList: IconList[] = item.videoAiList ?? item.imageAiList ?? []
+      currentList.forEach((currentListItem) => {
+        if (currentListItem.shouldIndex) {
+          currentListItem.sortIndex = currentListItemIndex++
+        }
+      })
+    } else if (item.groupTab?.length) {
+      item.groupTab.forEach((groupTabItem) => {
+        let currentListItemIndex = 1
+        groupTabItem.list.forEach((listItem) => {
+          if (listItem.shouldIndex) {
+            listItem.sortIndex = currentListItemIndex++
+          }
+        })
+      })
+    }
+  })
+}
+
+export function useHeaderMenu(props?: UseHeaderMenuProps) {
+  const { isMobile } = props || {}
+  const { t } = useLingui()
+
+  const menuList: HeaderMenu[] = [
+    {
+      name: t`Home`,
+      link: '/',
+      hidden: !isMobile,
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.home.name,
+      mobileMenuIcon: 'before:i-cus--pol-home',
+      isDarkColor: true,
+    },
+    {
+      name: 'Apps',
+      link: '/use-cases',
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.apps.name,
+      mobileMenuIcon: 'before:i-cus--pol-template',
+      isDarkColor: true,
+    },
+    {
+      name: t`Explore`,
+      link: '/explore',
+      hidden: !isMobile,
+      isNofollow: true,
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.explore.name,
+      mobileMenuIcon: 'before:i-cus--pol-community',
+      isDarkColor: true,
+    },
+    {
+      name: t`Video AI`,
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.video_ai
+          .name,
+      mobileMenuIcon: 'before:i-cus--pol-ai-video',
+      videoAiList: [
+        {
+          icon: 'before:i-cus--pol-img-to-video',
+          name: t`Image to Video AI`,
+          desc: t`Animate a still image into a realistic, dynamic video.`,
+          link: '/image-to-video',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'video_ai/image_to_video'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.IMAGE_TO_VIDEO,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-text-to-video',
+          name: t`Text to Video AI`,
+          desc: t`Turn simple text prompts into a stunning, captivating video.`,
+          link: '/text-to-video',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'video_ai/text_to_video'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.TEXT_TO_VIDEO,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-consistent-character-video',
+          name: t`Reference to Video`,
+          desc: t`Keep character, object, or scene consistent throughout a video.`,
+          link: '/reference-to-video',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'video_ai/consistent'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.CONSISTENT_CHARACTER_VIDEO,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-video-to-video',
+          name: t`Video to Video AI`,
+          desc: t`Recreate existing videos into any creative animation style.`,
+          link: '/video-to-video',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'video_ai/video_to_video'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.VIDEO_TO_VIDEO,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-ai-animation-generator',
+          name: t`AI Animation Generator`,
+          desc: t`Generate captivating anime and cartoon videos in various styles.`,
+          link: '/ai-animation-generator',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'video_ai/animation_generator'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.AI_ANIMATION,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-avatar',
+          name: t`Photo to Video Avatar`,
+          desc: t`Create lifelike video avatars from a single photo.`,
+          link: '/ai-avatar',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'video_ai/ai_avatar'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.AI_AVATAR,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-video-recreation',
+          name: t`AI Video Editor`,
+          desc: t`Edit videos instantly with simple text prompts.`,
+          link: '/ai-video-editor',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'video_ai/video_editor'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.AI_VIDEO_EDIT,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-create',
+          name: t`AI Video Agent`,
+          desc: t`Create and clone viral videos with zero editing.`,
+          link: '/ai-video-agent',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'video_ai/ai_video_agent'
+            ].name,
+          isBeta: true,
+        },
+      ],
+    },
+    {
+      name: t`Image AI`,
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.image_ai
+          .name,
+      mobileMenuIcon: 'before:i-cus--pol-image-to-image',
+      imageAiList: [
+        {
+          icon: 'before:i-cus--pol-text-to-image',
+          name: t`AI Image Generator`,
+          desc: t`Turn your ideas to appealing and believable AI images in any style.`,
+          link: '/ai-image-generator',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'image_ai/text_to_image'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.TEXT_TO_IMAGE,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-image-to-image',
+          name: t`Image to Image AI`,
+          desc: t`Transform your images into new styled and customized variations.`,
+          link: '/image-to-image-ai',
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'image_ai/image_to_image'
+            ].name,
+          inflow: isMobile
+            ? {
+                target: MENU_LIST_CONST.IMAGE_TO_IMAGE,
+              }
+            : undefined,
+        },
+        {
+          icon: 'before:i-cus--pol-chat-image',
+          name: t`Chat to Image`,
+          desc: t`Chat with our AI to generate and refine images in real time.`,
+          link: '/chat-to-image',
+          hidden: true,
+          shouldIndex: true,
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value[
+              'image_ai/chat_to_image'
+            ].name,
+        },
+      ].filter((i) => !('hidden' in i) || !i.hidden),
+    },
+    {
+      name: t`Pro Effects`,
+      link: '/app/pro-effects',
+      hidden: !isMobile,
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.pro_effects
+          .name,
+      mobileMenuIcon: 'before:i-cus--pol-pro-effect',
+    },
+    {
+      name: t`Effects`,
+      className: '',
+      hidden: !isMobile,
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.effects.name,
+      mobileMenuIcon: 'before:i-cus--pol-video-effect',
+      groupTab: [
+        {
+          label: <Trans>Video Effects</Trans>,
+          icon: 'before:i-cus--pol-video-effect',
+          className: 'grid grid-cols-2 gap-2',
+          groupHref: '/video-effects',
+          signInGroupHref: '/app/video-effects',
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value
+              .video_effects.name,
+          list: [
+            {
+              name: t`AI Kissing Video Generator`,
+              link: '/video-effects/ai-kissing',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-kissing',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_kissing'
+                ].name,
+            },
+            {
+              name: t`AI Hug Generator`,
+              link: '/video-effects/ai-hug',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-hug',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_hug'
+                ].name,
+            },
+            {
+              name: t`AI Twerk Generator`,
+              link: '/video-effects/ai-twerk-video-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-twerk-video-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_twerk'
+                ].name,
+            },
+            {
+              name: t`Earth Zoom In`,
+              link: '/video-effects/earth-zoom-in',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'earth-zoom-in',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/earth_zoom_in'
+                ].name,
+            },
+            {
+              name: t`AI Bikini Generator`,
+              link: '/video-effects/ai-bikini',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-bikini',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_bikini'
+                ].name,
+            },
+            {
+              name: t`Into The Mouth`,
+              link: '/video-effects/into-the-mouth',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'into-the-mouth',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_into_the_mouth'
+                ].name,
+            },
+            {
+              name: t`AI Jiggle Video Effect`,
+              link: '/video-effects/ai-jiggle-video-effect',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-jiggle-video-effect',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_jiggle'
+                ].name,
+            },
+            {
+              name: t`Action Figure`,
+              link: '/video-effects/action-figure',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'action-figure',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/action_figure'
+                ].name,
+            },
+            {
+              name: t`AI Muscle Generator`,
+              link: '/video-effects/ai-muscle-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-muscle-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_muscle'
+                ].name,
+            },
+            {
+              name: t`AI French Kiss Video Generator`,
+              link: '/video-effects/ai-french-kiss-video-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-french-kiss-video-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_french_kiss'
+                ].name,
+            },
+            {
+              name: t`AI Fake Date Video Generator`,
+              link: '/video-effects/ai-fake-date-video-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-fake-date-video-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_fake_date'
+                ].name,
+            },
+            {
+              name: t`AI 360° Rotation Video Generator`,
+              link: '/video-effects/ai-360-rotation-video-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.VIDEO_EFFECTS,
+                    code: 'ai-360-rotation-video-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_effects/ai_360_rotation'
+                ].name,
+            },
+          ],
+        },
+        {
+          label: <Trans>Image Effects</Trans>,
+          icon: 'before:i-cus--pol-img-effects',
+          className: 'grid grid-cols-2 gap-2',
+          groupHref: '/photo-effects',
+          signInGroupHref: '/app/photo-effects',
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value
+              .image_effects.name,
+          list: [
+            {
+              name: t`AI Selfie with Celebrities Generator`,
+              link: '/photo-effects/ai-selfie-with-celebrities-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ai-selfie-with-celebrities-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ai_selfie_with_celebrities'
+                ].name,
+            },
+            {
+              name: t`Polaroid Duo Selfie`,
+              link: '/photo-effects/polaroid-duo-selfie',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'polaroid-duo-selfie',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/polaroid_duo_selfie'
+                ].name,
+            },
+            {
+              name: t`Pregnant AI`,
+              link: '/photo-effects/pregnant-ai',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'pregnant-ai',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/pregnant_ai'
+                ].name,
+            },
+            {
+              name: t`AI Polaroid Maker`,
+              link: '/photo-effects/ai-polaroid-maker',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ai-polaroid-maker',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ai_polaroid_maker'
+                ].name,
+            },
+            {
+              name: t`AI Action Figure Generator`,
+              link: '/photo-effects/ai-action-figure-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ai-action-figure-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ai_action_figure'
+                ].name,
+            },
+            {
+              name: t`AI Fat Filter`,
+              link: '/photo-effects/ai-fat-filter',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ai-fat-filter',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ai_fat_filter'
+                ].name,
+            },
+            {
+              name: t`Ghibli AI Generator`,
+              link: '/photo-effects/ghibli-ai',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ghibli-ai',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ghibli_ai'
+                ].name,
+            },
+            {
+              name: t`AI Beardless Filter`,
+              link: '/photo-effects/ai-beardless-filter',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ai-beardless-filter',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ai_beardless_filter'
+                ].name,
+            },
+            {
+              name: t`AI Simpsons Character Generator`,
+              link: '/photo-effects/ai-simpsons-character-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ai-simpsons-character-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ai_simpsons_character'
+                ].name,
+            },
+            {
+              name: t`Pixar AI Generator`,
+              link: '/photo-effects/pixar-ai-generator',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'pixar-ai-generator',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/pixar_ai_generator'
+                ].name,
+            },
+            {
+              name: t`AI Caricature Maker`,
+              link: '/photo-effects/ai-caricature-maker',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ai-caricature-maker',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ai_caricature_maker'
+                ].name,
+            },
+            {
+              name: t`AI Baby filter`,
+              link: '/photo-effects/ai-baby-filter',
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ai-baby-filter',
+                  }
+                : undefined,
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_effects/ai_baby_filter'
+                ].name,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: t`AI Tools`,
+      className: 'grid-cols-[minmax(240px,1fr)_minmax(240px,1fr)]',
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.ai_tools
+          .name,
+      mobileMenuIcon: 'before:i-cus--pol-video-tools',
+      groupTab: [
+        {
+          label: <Trans>Video Tools</Trans>,
+          icon: 'before:i-cus--pol-video-files',
+          groupHref: '/tool',
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value
+              .video_tools.name,
+          list: [
+            {
+              name: t`AI Video Upscaler`,
+              link: '/video-upscaler',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_tools/ai_video_upscaler'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.TOOL,
+                    code: 'video-upscaler',
+                  }
+                : undefined,
+            },
+            {
+              name: t`AI Video Enhancer`,
+              link: '/video-enhancer',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_tools/ai_video_enhancer'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.TOOL,
+                    code: 'video-enhancer',
+                  }
+                : undefined,
+            },
+            {
+              name: t`Video to Anime`,
+              link: '/video-to-anime-ai',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_tools/video_to_anime'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.TOOL,
+                    code: 'video-to-anime-ai',
+                  }
+                : undefined,
+            },
+            {
+              name: t`AI Video Filters`,
+              link: '/ai-video-filters',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_tools/ai_video_filters'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.TOOL,
+                    code: 'ai-video-filters',
+                  }
+                : undefined,
+            },
+            {
+              name: t`AI Dance Generator`,
+              link: '/ai-dance-generator',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_tools/ai_dance_generator'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.TOOL,
+                    code: 'ai-dance-generator',
+                  }
+                : undefined,
+            },
+            {
+              name: t`Anime Video Enhancer`,
+              link: '/anime-video-enhancer',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'video_tools/anime_video_enhancer'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.TOOL,
+                    code: 'anime-video-enhancer',
+                  }
+                : undefined,
+            },
+          ],
+        },
+        {
+          label: <Trans>Image Tools</Trans>,
+          icon: 'before:i-cus--pol-my-images',
+          groupHref: '/image-tools',
+          dataButtonName:
+            trackComponentName.navigation.value.index_navigation.value
+              .image_tools.name,
+          list: [
+            {
+              name: t`Remove BG`,
+              link: '/background-remover',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_tools/remove_bg'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.IMAGE_TOOLS,
+                    code: 'background-remover',
+                  }
+                : undefined,
+            },
+            {
+              name: t`Object Remover`,
+              link: '/object-remover',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_tools/object_remover'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.IMAGE_TOOLS,
+                    code: 'object-remover',
+                  }
+                : undefined,
+            },
+            {
+              name: t`Image Enhancer`,
+              link: '/image-enhancer',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_tools/image_enhancer'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.IMAGE_TOOLS,
+                    code: 'image-enhancer',
+                  }
+                : undefined,
+            },
+            {
+              name: t`Ghibli AI Generator`,
+              link: '/photo-effects/ghibli-ai',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_tools/ghibli_ai_generator'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.PHOTO_EFFECTS,
+                    code: 'ghibli-ai',
+                  }
+                : undefined,
+            },
+            {
+              name: t`Anime Upscaler`,
+              link: '/anime-upscaler',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_tools/anime_upscaler'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.IMAGE_TOOLS,
+                    code: 'anime-upscaler',
+                  }
+                : undefined,
+            },
+            {
+              name: t`Image Generators`,
+              link: '/image-generators',
+              shouldIndex: true,
+              dataButtonName:
+                trackComponentName.navigation.value.index_navigation.value[
+                  'image_tools/image_generators'
+                ].name,
+              inflow: isMobile
+                ? {
+                    target: MENU_LIST_CONST.IMAGE_TOOLS,
+                    code: 'image-generators',
+                  }
+                : undefined,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: t`Assets`,
+      link: '/assets',
+      hidden: !isMobile,
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.my_creations
+          .name,
+      mobileMenuIcon: 'before:i-cus--pol-my-creation',
+    },
+    {
+      name: t`API`,
+      link: '/api-platform',
+      mobileMenuIcon: 'before:i-cus--pol-api',
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.api.name,
+      isDarkColor: true,
+    },
+
+    {
+      name: t`Pricing`,
+      link: '/pricing',
+      shouldIndex: true,
+      dataButtonName:
+        trackComponentName.navigation.value.index_navigation.value.pricing.name,
+      mobileMenuIcon: 'before:i-cus--pol-crown',
+      isDarkColor: true,
+    },
+  ]
+
+  const newMenuList = menuList.filter((item) => {
+    if (item.hidden) {
+      return false
+    }
+
+    if (item.list) {
+      item.list = item.list.filter((subItem) => !subItem.hidden)
+      return item.list.length > 0
+    }
+
+    return true
+  })
+
+  generateSortIndex(newMenuList)
+
+  return newMenuList
+}

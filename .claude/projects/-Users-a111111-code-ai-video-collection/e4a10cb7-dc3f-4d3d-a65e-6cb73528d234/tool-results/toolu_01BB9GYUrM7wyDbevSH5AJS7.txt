@@ -1,0 +1,2065 @@
+     1→/* eslint-disable max-lines */
+     2→import { readFileSync } from 'node:fs'
+     3→import { resolve } from 'node:path'
+     4→
+     5→import { logger } from '@loc/helpers/src/logger/server'
+     6→import {
+     7→  CategoryStatus,
+     8→  GenerationTemplateStatus,
+     9→  OpenType,
+    10→  PositionStatus,
+    11→  ToolStatus,
+    12→} from '@loc/prisma'
+    13→import { TRPCError } from '@trpc/server'
+    14→import { omit } from 'lodash-es'
+    15→
+    16→import type { EHostKey } from '@loc/hosts/src/constants'
+    17→import type { CreateVideoType } from '@loc/prisma'
+    18→import type {
+    19→  Category,
+    20→  GenerationTemplate,
+    21→  Position,
+    22→  Prisma,
+    23→} from '@prisma/client'
+    24→
+    25→import { createCache } from '../cache'
+    26→import { EServerErrorCode, EServerErrorMsg } from '../constant/errorCode'
+    27→import {
+    28→  generationTemplateToVo,
+    29→  getAspectRatio,
+    30→} from '../converter/generationTemplate'
+    31→import { ECategoryRelationResourceType } from '../enums/category.common'
+    32→import { TrendingQueryType } from '../enums/video'
+    33→import { EEntityType, EOperationType } from '../enums/video.common'
+    34→import { getAppPrisma, getHostKeyPrisma } from '../prisma/db'
+    35→import { IS_DEV } from '../utils/helper'
+    36→import { logOperation } from '../utils/operationLog'
+    37→import { getPositionLink } from '../utils/position-link'
+    38→import { isFromApp } from '../utils/user'
+    39→import { numberToVersion, versionToNumber } from '../utils/version'
+    40→import { queryFollowingMap } from './follow'
+    41→import { batchTranslateTemplates } from './generationTemplate'
+    42→import { queryHomeLinks } from './homeLink'
+    43→import {
+    44→  queryEffectsShareCountWithCache,
+    45→  queryEffectsUsedCountWithCache,
+    46→} from './statistics/countStatistic'
+    47→import { queryActivityInfoMapByTemplateIdList } from './template/activity'
+    48→import {
+    49→  fetchTemplatesByCategory,
+    50→  queryTemplateCategoryRelationsWithCache,
+    51→  queryTemplateCategoryRelationsWithCacheForApp,
+    52→  queryTemplatesWithCache,
+    53→  queryTemplatesWithCacheForApp,
+    54→} from './template/category'
+    55→import { TEMPLATE_RECOMMEND_PARENT_CATEGORY_CODE_3_POINT_0 } from './template/recommend/templateConstant'
+    56→import { syncCategoryListToRedis } from './template/sync/walSync'
+    57→import { getToolList, queryTools } from './tool'
+    58→import { batchTranslate } from './translate'
+    59→import { trendingListWithConfigBiz } from './video'
+    60→
+    61→import type { ETemplateSource } from '../enums/template.common'
+    62→import type { CreateCategory, UpdateCategory } from '../interface/category'
+    63→import type { TRPCContext } from '../router/trpc'
+    64→
+    65→const subCategoriesWithResourcesCache = createCache<
+    66→  Awaited<ReturnType<typeof getSubCategoriesWithResourcesInternal>>
+    67→>({
+    68→  lruSize: 100,
+    69→  memoryTtl: 12 * 1000, // 12 seconds
+    70→  redisTtl: 10 * 60 * 1000, // 10 minutes
+    71→  keyPrefix: 'sub-categories-with-resources:',
+    72→})
+    73→const recommendLogger = logger.recommend
+    74→
+    75→export async function adminCreateCategory(
+    76→  ctx: TRPCContext,
+    77→  input: CreateCategory,
+    78→) {
+    79→  if (input.categoryCode) {
+    80→    const category = await ctx.prisma.category.findUnique({
+    81→      where: { categoryCode: input.categoryCode },
+    82→    })
+    83→
+    84→    if (category) {
+    85→      throw new TRPCError({
+    86→        code: EServerErrorCode.BAD_REQUEST,
+    87→        message: EServerErrorMsg.CATEGORY_ALREADY_EXISTS,
+    88→      })
+    89→    }
+    90→  }
+    91→  if (input.uri && !input.uri.startsWith('/')) {
+    92→    throw new TRPCError({
+    93→      code: EServerErrorCode.BAD_REQUEST,
+    94→      message: 'uri must start with /',
+    95→    })
+    96→  }
+    97→
+    98→  const category = await ctx.prisma.category.create({
+    99→    data: {
+   100→      ...input,
+   101→      startDate: input.startDate ? input.startDate : new Date(),
+   102→      endDate: input.endDate
+   103→        ? input.endDate
+   104→        : new Date(new Date().setFullYear(new Date().getFullYear() + 90)),
+   105→      minVersion: input.minVersion ? versionToNumber(input.minVersion) : null,
+   106→      maxVersion: input.maxVersion ? versionToNumber(input.maxVersion) : null,
+   107→      source: input.source,
+   108→      videoModels: input.videoModels,
+   109→    },
+   110→  })
+   111→
+   112→  // 记录操作日志
+   113→  await logOperation({
+   114→    prisma: ctx.prisma,
+   115→    entityType: EEntityType.Category,
+   116→    operation: EOperationType.Create,
+   117→    entityId: category.categoryId,
+   118→    entityName: category.title,
+   119→    beforeChange: null,
+   120→    afterChange: category,
+   121→    input,
+   122→    ctx,
+   123→  })
+   124→
+   125→  return category
+   126→}
+   127→
+   128→export async function adminUpdateCategory(
+   129→  ctx: TRPCContext,
+   130→  input: UpdateCategory,
+   131→) {
+   132→  if (input.uri && !input.uri.startsWith('/')) {
+   133→    throw new TRPCError({
+   134→      code: EServerErrorCode.BAD_REQUEST,
+   135→      message: 'uri must start with /',
+   136→    })
+   137→  }
+   138→
+   139→  // 获取更新前的数据
+   140→  const oldCategory = await ctx.prisma.category.findUnique({
+   141→    where: { categoryId: input.categoryId },
+   142→  })
+   143→
+   144→  if (!oldCategory) {
+   145→    throw new TRPCError({
+   146→      code: EServerErrorCode.NOT_FOUND,
+   147→      message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+   148→    })
+   149→  }
+   150→
+   151→  const category = await ctx.prisma.category.update({
+   152→    where: { categoryId: input.categoryId },
+   153→    data: {
+   154→      ...omit(input, ['minVersion', 'maxVersion']),
+   155→      ...(input.minVersion
+   156→        ? { minVersion: versionToNumber(input.minVersion) }
+   157→        : {}),
+   158→      ...(input.maxVersion
+   159→        ? { maxVersion: versionToNumber(input.maxVersion) }
+   160→        : {}),
+   161→      ...(input.videoModels ? { videoModels: input.videoModels } : {}),
+   162→    },
+   163→  })
+   164→
+   165→  // category code 会变更, 此时也要同步关联数据到redis中
+   166→  // 后台可手动补偿,不强要求一致性,故走异步
+   167→  syncCategoryListToRedis({
+   168→    categoryCode: category.categoryCode,
+   169→    categoryId: category.categoryId,
+   170→  })
+   171→
+   172→  // 记录操作日志
+   173→  await logOperation({
+   174→    prisma: ctx.prisma,
+   175→    entityType: EEntityType.Category,
+   176→    operation: EOperationType.Update,
+   177→    entityId: category.categoryId,
+   178→    entityName: category.title,
+   179→    beforeChange: oldCategory,
+   180→    afterChange: category,
+   181→    input,
+   182→    ctx,
+   183→  })
+   184→
+   185→  return category
+   186→}
+   187→
+   188→export async function adminDeleteCategory(
+   189→  ctx: TRPCContext,
+   190→  categoryId: string,
+   191→) {
+   192→  // 获取删除前的数据
+   193→  const oldCategory = await ctx.prisma.category.findUnique({
+   194→    where: { categoryId },
+   195→  })
+   196→
+   197→  if (!oldCategory) {
+   198→    throw new TRPCError({
+   199→      code: EServerErrorCode.NOT_FOUND,
+   200→      message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+   201→    })
+   202→  }
+   203→
+   204→  const category = await ctx.prisma.category.update({
+   205→    where: { categoryId },
+   206→    data: {
+   207→      status: CategoryStatus.DELETED,
+   208→    },
+   209→  })
+   210→
+   211→  // 记录操作日志
+   212→  await logOperation({
+   213→    prisma: ctx.prisma,
+   214→    entityType: EEntityType.Category,
+   215→    operation: EOperationType.Update,
+   216→    entityId: category.categoryId,
+   217→    entityName: category.title,
+   218→    beforeChange: oldCategory,
+   219→    afterChange: category,
+   220→    input: { categoryId },
+   221→    ctx,
+   222→    customChangedFields: ['status'],
+   223→  })
+   224→
+   225→  return category
+   226→}
+   227→
+   228→export async function adminRemoveCategory(
+   229→  ctx: TRPCContext,
+   230→  categoryId: string,
+   231→  parentId: string,
+   232→) {
+   233→  const oldCategory = await ctx.prisma.category.findUnique({
+   234→    where: {
+   235→      categoryId,
+   236→    },
+   237→    select: {
+   238→      parentIds: true,
+   239→    },
+   240→  })
+   241→  const oldParentIds = oldCategory?.parentIds ?? []
+   242→  const newParentIds = oldParentIds.filter((id) => id !== parentId)
+   243→
+   244→  const category = await ctx.prisma.category.update({
+   245→    where: { categoryId },
+   246→    data: {
+   247→      parentIds: { set: newParentIds },
+   248→    },
+   249→  })
+   250→  return category
+   251→}
+   252→
+   253→export async function adminGetCategoryByCategoryId(
+   254→  ctx: TRPCContext,
+   255→  categoryId: string,
+   256→) {
+   257→  const category = await ctx.prisma.category.findUnique({
+   258→    where: { categoryId },
+   259→  })
+   260→  return category
+   261→}
+   262→
+   263→export async function adminGetCategoryByCategoryCode(
+   264→  ctx: TRPCContext,
+   265→  categoryCode: string,
+   266→) {
+   267→  const category = await ctx.prisma.category.findUnique({
+   268→    where: { categoryCode },
+   269→  })
+   270→  return category
+   271→}
+   272→
+   273→/**
+   274→ * 管理后台列表接口，获取所有的分类和分类下运营位
+   275→ */
+   276→export async function adminListCategories(
+   277→  ctx: TRPCContext,
+   278→  input: {
+   279→    page: number
+   280→    pageSize: number
+   281→    searchTitle?: string
+   282→    source?: ETemplateSource
+   283→    categoryCodeKeyword?: string
+   284→  },
+   285→) {
+   286→  const whereCondition: Prisma.CategoryWhereInput = {
+   287→    ...(input.searchTitle
+   288→      ? { title: { contains: input.searchTitle, mode: 'insensitive' } }
+   289→      : {}),
+   290→    ...(input.source ? { source: input.source } : {}),
+   291→  }
+   292→
+   293→  if (input.categoryCodeKeyword) {
+   294→    const category = await ctx.prisma.category.findUnique({
+   295→      where: { categoryCode: input.categoryCodeKeyword },
+   296→      select: {
+   297→        categoryId: true,
+   298→      },
+   299→    })
+   300→
+   301→    if (category) {
+   302→      whereCondition.OR = [
+   303→        { parentIds: { has: category.categoryId } },
+   304→        { categoryCode: input.categoryCodeKeyword },
+   305→      ]
+   306→    } else {
+   307→      whereCondition.categoryCode = input.categoryCodeKeyword
+   308→    }
+   309→  }
+   310→
+   311→  const [categories, count] = await Promise.all([
+   312→    await ctx.prisma.category.findMany({
+   313→      where: whereCondition,
+   314→      skip: (input.page - 1) * input.pageSize,
+   315→      take: input.pageSize,
+   316→      orderBy: {
+   317→        sort: 'desc',
+   318→      },
+   319→      include: {
+   320→        positions: {
+   321→          orderBy: {
+   322→            sort: 'desc',
+   323→          },
+   324→          include: {
+   325→            position: true,
+   326→            category: true,
+   327→          },
+   328→        },
+   329→        templates: {
+   330→          orderBy: {
+   331→            sort: 'desc',
+   332→          },
+   333→          include: {
+   334→            template: true,
+   335→          },
+   336→        },
+   337→      },
+   338→    }),
+   339→    ctx.prisma.category.count({
+   340→      where: whereCondition,
+   341→    }),
+   342→  ])
+   343→
+   344→  // 组装每个 category 的 children
+   345→  const categoryIds = categories.map((category) => category.categoryId)
+   346→  const allChildren = await ctx.prisma.category.findMany({
+   347→    where: {
+   348→      parentIds: {
+   349→        hasSome: categoryIds,
+   350→      },
+   351→    },
+   352→  })
+   353→
+   354→  // 构建 categoryId 到 children 的映射
+   355→  const childrenMap: Record<string, typeof allChildren> = {}
+   356→  for (const child of allChildren) {
+   357→    for (const parentId of child.parentIds ?? []) {
+   358→      if (categoryIds.includes(parentId)) {
+   359→        if (!childrenMap[parentId]) {
+   360→          childrenMap[parentId] = []
+   361→        }
+   362→        childrenMap[parentId].push(child)
+   363→      }
+   364→    }
+   365→  }
+   366→  return {
+   367→    list: categories.map((category) => ({
+   368→      ...category,
+   369→      children: childrenMap[category.categoryId] ?? [],
+   370→      minVersion:
+   371→        typeof category.minVersion === 'number'
+   372→          ? numberToVersion(category.minVersion)
+   373→          : null,
+   374→      maxVersion:
+   375→        typeof category.maxVersion === 'number'
+   376→          ? numberToVersion(category.maxVersion)
+   377→          : null,
+   378→      positions: category.positions.map((position) => ({
+   379→        ...position.position,
+   380→        ...position,
+   381→        configType: position.position.config?.type,
+   382→      })),
+   383→      templates: category.templates.map((template) => ({
+   384→        ...template.template,
+   385→        ...template,
+   386→      })),
+   387→    })),
+   388→    total: count,
+   389→  }
+   390→}
+   391→
+   392→export async function adminAddCategoryToCategory(
+   393→  ctx: TRPCContext,
+   394→  input: { categoryId: string; parentId: string },
+   395→) {
+   396→  const categories = await ctx.prisma.category.findMany({
+   397→    where: {
+   398→      categoryId: {
+   399→        in: [input.categoryId, input.parentId],
+   400→      },
+   401→    },
+   402→  })
+   403→
+   404→  if (categories.some((category) => !category)) {
+   405→    throw new TRPCError({
+   406→      code: EServerErrorCode.NOT_FOUND,
+   407→      message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+   408→    })
+   409→  }
+   410→
+   411→  // 获取更新前的数据
+   412→  const oldCategory = await ctx.prisma.category.findUnique({
+   413→    where: { categoryId: input.categoryId },
+   414→  })
+   415→
+   416→  if (!oldCategory) {
+   417→    throw new TRPCError({
+   418→      code: EServerErrorCode.NOT_FOUND,
+   419→      message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+   420→    })
+   421→  }
+   422→
+   423→  await ctx.prisma.category.updateMany({
+   424→    where: {
+   425→      categoryId: input.categoryId,
+   426→      NOT: {
+   427→        parentIds: {
+   428→          has: input.parentId,
+   429→        },
+   430→      },
+   431→    },
+   432→    data: {
+   433→      parentIds: {
+   434→        push: input.parentId,
+   435→      },
+   436→    },
+   437→  })
+   438→
+   439→  // 获取更新后的数据
+   440→  const updatedCategory = await ctx.prisma.category.findUnique({
+   441→    where: { categoryId: input.categoryId },
+   442→  })
+   443→
+   444→  // 记录操作日志
+   445→  if (updatedCategory) {
+   446→    await logOperation({
+   447→      prisma: ctx.prisma,
+   448→      entityType: EEntityType.Category,
+   449→      operation: EOperationType.Update,
+   450→      entityId: updatedCategory.categoryId,
+   451→      entityName: updatedCategory.title,
+   452→      beforeChange: oldCategory,
+   453→      afterChange: updatedCategory,
+   454→      input,
+   455→      ctx,
+   456→      customChangedFields: ['parentIds'],
+   457→    })
+   458→  }
+   459→
+   460→  return categories[0]
+   461→}
+   462→
+   463→/**
+   464→ * 创建运营位关联模版并将运营位添加到分类
+   465→ */
+   466→export async function adminAddTemplatesToCategory(
+   467→  ctx: TRPCContext,
+   468→  input: { categoryId: string; templateIds: string[]; force?: boolean },
+   469→) {
+   470→  const [category, templates] = await Promise.all([
+   471→    ctx.prisma.category.findUnique({
+   472→      where: { categoryId: input.categoryId },
+   473→    }),
+   474→    ctx.prisma.generationTemplate.findMany({
+   475→      where: { id: { in: input.templateIds } },
+   476→    }),
+   477→  ])
+   478→
+   479→  if (!category) {
+   480→    throw new TRPCError({
+   481→      code: EServerErrorCode.NOT_FOUND,
+   482→      message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+   483→    })
+   484→  }
+   485→
+   486→  if (templates.length === 0 || templates.length !== input.templateIds.length) {
+   487→    throw new TRPCError({
+   488→      code: EServerErrorCode.NOT_FOUND,
+   489→      message: EServerErrorMsg.GENERATION_TEMPLATE_NOT_FOUND,
+   490→    })
+   491→  }
+   492→
+   493→  // 取消category对Template的限制
+   494→  // if (
+   495→  //   templates.some((template) => template.videoType !== category.categoryType)
+   496→  // ) {
+   497→  //   throw new TRPCError({
+   498→  //     code: EServerErrorCode.BAD_REQUEST,
+   499→  //     message: EServerErrorMsg.GENERATION_TEMPLATE_TYPE_NOT_MATCH_CATEGORY_TYPE,
+   500→  //   })
+   501→  // }
+   502→
+   503→  // 去除
+   504→  // if (!input.force) {
+   505→  //   const categoryTemplates =
+   506→  //     await ctx.prisma.categoryGenerationTemplate.findMany({
+   507→  //       where: {
+   508→  //         templateId: {
+   509→  //           in: input.templateIds,
+   510→  //         },
+   511→  //       },
+   512→  //       include: {
+   513→  //         category: true,
+   514→  //       },
+   515→  //     })
+   516→
+   517→  //   if (categoryTemplates.length > 0) {
+   518→  //     throw new TRPCError({
+   519→  //       code: EServerErrorCode.BAD_REQUEST,
+   520→  //       message: `Template ${templates.map((template) => template.title).join(', ')} already in category ${categoryTemplates[0].category.title}`,
+   521→  //     })
+   522→  //   }
+   523→  // }
+   524→
+   525→  // 创建关联记录
+   526→  templates.forEach(async (template) => {
+   527→    await ctx.prisma.categoryRelationResource.upsert({
+   528→      where: {
+   529→        categoryId_resourceId_resourceType: {
+   530→          categoryId: input.categoryId,
+   531→          resourceId: template.id,
+   532→          resourceType: ECategoryRelationResourceType.TEMPLATE,
+   533→        },
+   534→      },
+   535→      update: {
+   536→        updatedAt: new Date(),
+   537→      },
+   538→      create: {
+   539→        categoryId: input.categoryId,
+   540→        resourceId: template.id,
+   541→        resourceType: ECategoryRelationResourceType.TEMPLATE,
+   542→        sort: 0, // 默认排序值
+   543→      },
+   544→    })
+   545→  })
+   546→  await checkCategoryTemplateCountWarning(input.categoryId)
+   547→
+   548→  return true
+   549→}
+   550→
+   551→export async function adminUpdateTemplateSort(
+   552→  ctx: TRPCContext,
+   553→  input: { categoryId: string; templateId: string; sort: number },
+   554→) {
+   555→  await validateCategoryAndTemplate(ctx, input)
+   556→
+   557→  const categoryResource = await ctx.prisma.categoryRelationResource.update({
+   558→    where: {
+   559→      categoryId_resourceId_resourceType: {
+   560→        categoryId: input.categoryId,
+   561→        resourceId: input.templateId,
+   562→        resourceType: ECategoryRelationResourceType.TEMPLATE,
+   563→      },
+   564→    },
+   565→    data: { sort: input.sort },
+   566→  })
+   567→  return categoryResource
+   568→}
+   569→
+   570→export async function adminRemoveTemplateFromCategory(
+   571→  ctx: TRPCContext,
+   572→  input: { categoryId: string; templateId: string },
+   573→) {
+   574→  await validateCategoryAndTemplate(ctx, input)
+   575→
+   576→  const categoryResource = await ctx.prisma.categoryRelationResource.delete({
+   577→    where: {
+   578→      categoryId_resourceId_resourceType: {
+   579→        categoryId: input.categoryId,
+   580→        resourceId: input.templateId,
+   581→        resourceType: ECategoryRelationResourceType.TEMPLATE,
+   582→      },
+   583→    },
+   584→  })
+   585→
+   586→  // 硬删除无法走sqs异步处理,直接同步数据
+   587→  try {
+   588→    const category = await ctx.prisma.category.findUnique({
+   589→      where: { categoryId: input.categoryId },
+   590→    })
+   591→    if (category) {
+   592→      syncCategoryListToRedis({
+   593→        categoryCode: category.categoryCode,
+   594→        categoryId: category.categoryId,
+   595→      })
+   596→    }
+   597→  } catch (error) {
+   598→    recommendLogger.error('adminRemoveTemplateFromCategory error', error)
+   599→  }
+   600→
+   601→  await checkCategoryTemplateCountWarning(input.categoryId)
+   602→
+   603→  return categoryResource
+   604→}
+   605→
+   606→/**
+   607→ * 验证 category 和 position 是否存在
+   608→ */
+   609→export async function validateCategoryAndTemplate(
+   610→  ctx: TRPCContext,
+   611→  input: { categoryId: string; templateId: string },
+   612→): Promise<[Category, GenerationTemplate]> {
+   613→  const [category, template] = await Promise.all([
+   614→    ctx.prisma.category.findUnique({
+   615→      where: { categoryId: input.categoryId },
+   616→    }),
+   617→    ctx.prisma.generationTemplate.findUnique({
+   618→      where: { id: input.templateId },
+   619→    }),
+   620→  ])
+   621→
+   622→  if (!category) {
+   623→    throw new TRPCError({
+   624→      code: EServerErrorCode.NOT_FOUND,
+   625→      message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+   626→    })
+   627→  }
+   628→
+   629→  if (!template) {
+   630→    throw new TRPCError({
+   631→      code: EServerErrorCode.NOT_FOUND,
+   632→      message: EServerErrorMsg.GENERATION_TEMPLATE_NOT_FOUND,
+   633→    })
+   634→  }
+   635→
+   636→  return [category, template]
+   637→}
+   638→
+   639→export async function adminAddPositionToCategory(
+   640→  ctx: TRPCContext,
+   641→  input: { categoryId: string; positionId: string },
+   642→) {
+   643→  await validateCategoryAndPosition(ctx, input)
+   644→
+   645→  // 创建关联记录
+   646→  const categoryPosition = await ctx.prisma.categoryPosition.create({
+   647→    data: {
+   648→      categoryId: input.categoryId,
+   649→      positionId: input.positionId,
+   650→      sort: 0, // 默认排序值
+   651→    },
+   652→  })
+   653→
+   654→  return categoryPosition
+   655→}
+   656→
+   657→export async function adminUpdatePositionSort(
+   658→  ctx: TRPCContext,
+   659→  input: { categoryId: string; positionId: string; sort: number },
+   660→) {
+   661→  await validateCategoryAndPosition(ctx, input)
+   662→
+   663→  const categoryPosition = await ctx.prisma.categoryPosition.update({
+   664→    where: {
+   665→      categoryId_positionId: {
+   666→        categoryId: input.categoryId,
+   667→        positionId: input.positionId,
+   668→      },
+   669→    },
+   670→    data: { sort: input.sort },
+   671→  })
+   672→  return categoryPosition
+   673→}
+   674→
+   675→export async function adminRemovePositionFromCategory(
+   676→  ctx: TRPCContext,
+   677→  input: { categoryId: string; positionId: string },
+   678→) {
+   679→  await validateCategoryAndPosition(ctx, input)
+   680→
+   681→  const categoryPosition = await ctx.prisma.categoryPosition.delete({
+   682→    where: {
+   683→      categoryId_positionId: {
+   684→        categoryId: input.categoryId,
+   685→        positionId: input.positionId,
+   686→      },
+   687→    },
+   688→  })
+   689→  return categoryPosition
+   690→}
+   691→
+   692→/**
+   693→ * 验证 category 和 position 是否存在
+   694→ */
+   695→export async function validateCategoryAndPosition(
+   696→  ctx: TRPCContext,
+   697→  input: { categoryId: string; positionId: string },
+   698→): Promise<[Category, Position]> {
+   699→  const [category, position] = await Promise.all([
+   700→    ctx.prisma.category.findUnique({
+   701→      where: { categoryId: input.categoryId },
+   702→    }),
+   703→    ctx.prisma.position.findUnique({
+   704→      where: { positionId: input.positionId },
+   705→    }),
+   706→  ])
+   707→
+   708→  if (!category) {
+   709→    throw new TRPCError({
+   710→      code: EServerErrorCode.NOT_FOUND,
+   711→      message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+   712→    })
+   713→  }
+   714→
+   715→  if (!position) {
+   716→    throw new TRPCError({
+   717→      code: EServerErrorCode.NOT_FOUND,
+   718→      message: EServerErrorMsg.POSITION_NOT_FOUND,
+   719→    })
+   720→  }
+   721→
+   722→  return [category, position]
+   723→}
+   724→
+   725→// TO Client
+   726→
+   727→export async function listVisibleCategoriesWithPosition(
+   728→  ctx: TRPCContext,
+   729→  input: {
+   730→    pageSize: number
+   731→    page: number
+   732→    categoryCode?: string
+   733→    parentCategoryCode?: string
+   734→  },
+   735→) {
+   736→  const { count, list: categories } = await queryCategoriesWithPosition(
+   737→    ctx,
+   738→    input,
+   739→  )
+   740→
+   741→  return {
+   742→    total: count,
+   743→    list: await Promise.all(
+   744→      categories.map(async (category) => ({
+   745→        ...category,
+   746→        positions: category.positions.map((position, index) => ({
+   747→          ...position.position,
+   748→          link:
+   749→            position.position.link ||
+   750→            (position.position.config
+   751→              ? getPositionLink(
+   752→                  position.position.config,
+   753→                  index,
+   754→                  category.categoryCode,
+   755→                )
+   756→              : ''),
+   757→          inflowLink: position.position.inflowLink,
+   758→        })),
+   759→      })),
+   760→    ),
+   761→  }
+   762→}
+   763→
+   764→export async function listVisibleTemplates(
+   765→  ctx: TRPCContext,
+   766→  input: {
+   767→    pageSize: number
+   768→    page?: number
+   769→    categoryCode?: string
+   770→    parentCategoryCode?: string
+   771→    categoryTypes?: string[]
+   772→    videoModel?: string
+   773→  },
+   774→) {
+   775→  const user = ctx.session?.user
+   776→  const isAnonymous =
+   777→    user?.id?.startsWith('anon-') || user?._id?.startsWith('anon-')
+   778→  const userId = user && !isAnonymous && user.id ? user.id : undefined
+   779→
+   780→  const { total, list: rawTemplates } = await queryTemplatesWithCache(ctx, {
+   781→    pageSize: input.pageSize,
+   782→    page: input.page ?? 1,
+   783→    parentCategoryCode: input.parentCategoryCode,
+   784→    categoryCode: input.categoryCode,
+   785→    categoryTypes: input.categoryTypes
+   786→      ? input.categoryTypes.map((type) => type as CreateVideoType)
+   787→      : undefined,
+   788→    videoModel: input.videoModel,
+   789→  })
+   790→
+   791→  // 去重，保持原有顺序
+   792→  const seenIds = new Set<string>()
+   793→  const templates = rawTemplates.filter((template) => {
+   794→    if (seenIds.has(template.id)) return false
+   795→    seenIds.add(template.id)
+   796→    return true
+   797→  })
+   798→
+   799→  const creatorUserIds = templates
+   800→    .map((template) => template.user?.id)
+   801→    .filter((id) => id !== undefined)
+   802→
+   803→  const [
+   804→    translatedMap,
+   805→    activityInfoMap,
+   806→    useCountMap,
+   807→    followingMap,
+   808→    shareCountMap,
+   809→  ] = await Promise.all([
+   810→    batchTranslateTemplates({
+   811→      hostKey: ctx.resolvedHost.deepHostKey,
+   812→      templates,
+   813→      language: ctx.language,
+   814→    }),
+   815→    queryActivityInfoMapByTemplateIdList({
+   816→      hostKey: ctx.resolvedHost.deepHostKey,
+   817→      templateIdList: templates.map((template) => template.id),
+   818→      userId,
+   819→    }),
+   820→    queryEffectsUsedCountWithCache(ctx),
+   821→    queryFollowingMap({
+   822→      hostKey: ctx.resolvedHost.deepHostKey,
+   823→      followerUserId: userId,
+   824→      followedUserIds: creatorUserIds,
+   825→    }),
+   826→    queryEffectsShareCountWithCache(ctx),
+   827→  ])
+   828→
+   829→  return {
+   830→    total,
+   831→    list: templates
+   832→      .map((template) => {
+   833→        return generationTemplateToVo({
+   834→          template,
+   835→          translatedMap,
+   836→          activityInfoMap,
+   837→          ctx,
+   838→          useCountMap,
+   839→          followingMap,
+   840→          shareCountMap,
+   841→        })
+   842→      })
+   843→      .filter(Boolean)
+   844→      .filter((t) => t !== null),
+   845→  }
+   846→}
+   847→
+   848→export async function listVisibleTemplatesForApp(
+   849→  ctx: TRPCContext,
+   850→  input: {
+   851→    pageSize: number
+   852→    page?: number
+   853→    categoryCode?: string
+   854→    parentCategoryCode?: string
+   855→    categoryTypes?: string[]
+   856→    videoModel?: string
+   857→  },
+   858→) {
+   859→  const user = ctx.session?.user
+   860→  const isAnonymous =
+   861→    user?.id?.startsWith('anon-') || user?._id?.startsWith('anon-')
+   862→  const userId = user && !isAnonymous && user.id ? user.id : undefined
+   863→
+   864→  const { total, list: rawTemplates } = await queryTemplatesWithCacheForApp(
+   865→    ctx,
+   866→    {
+   867→      pageSize: input.pageSize,
+   868→      page: input.page ?? 1,
+   869→      parentCategoryCode: input.parentCategoryCode,
+   870→      categoryCode: input.categoryCode,
+   871→      categoryTypes: input.categoryTypes
+   872→        ? input.categoryTypes.map((type) => type as CreateVideoType)
+   873→        : undefined,
+   874→      videoModel: input.videoModel,
+   875→    },
+   876→  )
+   877→
+   878→  // 去重，保持原有顺序
+   879→  const seenIds = new Set<string>()
+   880→  const templates = rawTemplates.filter((template) => {
+   881→    if (seenIds.has(template.id)) return false
+   882→    seenIds.add(template.id)
+   883→    return true
+   884→  })
+   885→
+   886→  const [
+   887→    translatedMap,
+   888→    activityInfoMap,
+   889→    useCountMap,
+   890→    followingMap,
+   891→    shareCountMap,
+   892→  ] = await Promise.all([
+   893→    batchTranslateTemplates({
+   894→      hostKey: ctx.resolvedHost.deepHostKey,
+   895→      templates,
+   896→      language: ctx.language,
+   897→    }),
+   898→    queryActivityInfoMapByTemplateIdList({
+   899→      hostKey: ctx.resolvedHost.deepHostKey,
+   900→      templateIdList: templates.map((template) => template.id),
+   901→      userId,
+   902→    }),
+   903→    queryEffectsUsedCountWithCache(ctx),
+   904→    queryFollowingMap({
+   905→      hostKey: ctx.resolvedHost.deepHostKey,
+   906→      followerUserId: userId,
+   907→      followedUserIds: templates
+   908→        .map((template) => template.user?.id)
+   909→        .filter((id) => id !== undefined),
+   910→    }),
+   911→    queryEffectsShareCountWithCache(ctx),
+   912→  ])
+   913→
+   914→  return {
+   915→    total,
+   916→    list: templates
+   917→      .map((template) => {
+   918→        return generationTemplateToVo({
+   919→          template,
+   920→          translatedMap,
+   921→          activityInfoMap,
+   922→          ctx,
+   923→          useCountMap,
+   924→          followingMap,
+   925→          shareCountMap,
+   926→        })
+   927→      })
+   928→      .filter(Boolean)
+   929→      .filter((t) => t !== null),
+   930→  }
+   931→}
+   932→
+   933→/**
+   934→ * 查询出所有app侧的分类列表
+   935→ */
+   936→export async function queryAllAppCategoryList(): Promise<{
+   937→  list: Category[]
+   938→  total: number
+   939→}> {
+   940→  const { count, list: categories } = await queryCategoriesWithoutCtx({
+   941→    pageSize: 500,
+   942→    page: 1,
+   943→    parentCategoryCode: TEMPLATE_RECOMMEND_PARENT_CATEGORY_CODE_3_POINT_0,
+   944→  })
+   945→  return {
+   946→    list: categories as any,
+   947→    total: count,
+   948→  }
+   949→}
+   950→
+   951→export async function queryCategoriesWithoutCtx(input: {
+   952→  pageSize: number
+   953→  page: number
+   954→  categoryCode?: string
+   955→  parentCategoryCode?: string
+   956→  categoryTypes?: string[]
+   957→  videoModel?: string
+   958→  translate?: boolean
+   959→  uri?: string
+   960→}) {
+   961→  let parentId: string | undefined
+   962→  const prisma = getAppPrisma()
+   963→  if (input.parentCategoryCode) {
+   964→    const category = await prisma.category.findUnique({
+   965→      where: { categoryCode: input.parentCategoryCode },
+   966→      select: {
+   967→        categoryId: true,
+   968→      },
+   969→    })
+   970→
+   971→    if (!category) {
+   972→      throw new TRPCError({
+   973→        code: EServerErrorCode.NOT_FOUND,
+   974→        message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+   975→      })
+   976→    }
+   977→
+   978→    parentId = category.categoryId
+   979→  }
+   980→
+   981→  const { pageSize, page } = input
+   982→
+   983→  const now = new Date()
+   984→  const whereCondition: Prisma.CategoryWhereInput = {
+   985→    ...(input.uri ? { uri: input.uri } : {}),
+   986→    ...(parentId ? { parentIds: { has: parentId } } : {}),
+   987→    ...(input.categoryCode ? { categoryCode: input.categoryCode } : {}),
+   988→    ...(input.categoryTypes
+   989→      ? { categoryType: { in: input.categoryTypes } }
+   990→      : {}),
+   991→    ...(input.videoModel ? { videoModels: { has: input.videoModel } } : {}),
+   992→    status: CategoryStatus.ENABLED,
+   993→    AND: [
+   994→      {
+   995→        OR: [{ startDate: { lte: now } }, { startDate: null }],
+   996→      },
+   997→      {
+   998→        OR: [{ endDate: { gte: now } }, { endDate: null }],
+   999→      },
+  1000→    ],
+  1001→  }
+  1002→
+  1003→  const [count, categories, relations] = await Promise.all([
+  1004→    prisma.category.count({
+  1005→      where: whereCondition,
+  1006→    }),
+  1007→    prisma.category.findMany({
+  1008→      where: whereCondition,
+  1009→      orderBy: [{ sort: 'desc' }],
+  1010→      skip: (page - 1) * pageSize,
+  1011→      take: pageSize,
+  1012→      select: {
+  1013→        id: true,
+  1014→        categoryId: true,
+  1015→        categoryCode: true,
+  1016→        categoryType: true,
+  1017→        title: true,
+  1018→        description: true,
+  1019→        sort: true,
+  1020→        status: true,
+  1021→        source: true,
+  1022→        uri: true,
+  1023→      },
+  1024→    }),
+  1025→    queryTemplateCategoryRelationsWithCacheForApp(),
+  1026→  ])
+  1027→
+  1028→  return {
+  1029→    count,
+  1030→    list: categories.map((category) => ({
+  1031→      ...category,
+  1032→      latestContentCreatedAt: relations
+  1033→        .filter((relation) => relation.createdDate)
+  1034→        .filter((relation) => relation.categoryId === category.categoryId)
+  1035→        .sort((a, b) => b.createdDate!.getTime() - a.createdDate!.getTime())[0]
+  1036→        ?.createdDate,
+  1037→    })),
+  1038→  }
+  1039→}
+  1040→
+  1041→/**
+  1042→ * 根据 categoryCode 获取子分类及其工具
+  1043→ */
+  1044→export async function getSubCategoriesWithTools(
+  1045→  ctx: TRPCContext,
+  1046→  input: {
+  1047→    categoryCode: string
+  1048→    toolPageSize?: number
+  1049→    toolPage?: number
+  1050→  },
+  1051→) {
+  1052→  // 1. 获取父分类的工具
+  1053→  const { list: tools } = await getToolList(ctx, {
+  1054→    page: input.toolPage ?? 1,
+  1055→    pageSize: input.toolPageSize ?? 20,
+  1056→    categoryCode: input.categoryCode,
+  1057→    isUserList: true,
+  1058→  })
+  1059→
+  1060→  // 2. 获取子分类
+  1061→  const { list: subCategories } = await listVisibleCategoriesWithPosition(ctx, {
+  1062→    pageSize: 100, // 获取所有子分类
+  1063→    page: 1,
+  1064→    parentCategoryCode: input.categoryCode,
+  1065→  })
+  1066→
+  1067→  // 3. 分别获取每个子分类下的工具
+  1068→  const categoriesWithTools = await Promise.all(
+  1069→    subCategories.map(async (category) => {
+  1070→      const { list: tools } = await getToolList(ctx, {
+  1071→        page: input.toolPage ?? 1,
+  1072→        pageSize: input.toolPageSize ?? 20,
+  1073→        categoryCode: category.categoryCode,
+  1074→        isUserList: true,
+  1075→      })
+  1076→
+  1077→      return {
+  1078→        ...category,
+  1079→        tools,
+  1080→      }
+  1081→    }),
+  1082→  )
+  1083→
+  1084→  return {
+  1085→    tools,
+  1086→    categories: categoriesWithTools,
+  1087→  }
+  1088→}
+  1089→
+  1090→/**
+  1091→ * 根据 categoryCode 获取子分类及其关联资源（从 CategoryRelationResource 表）
+  1092→ */
+  1093→export async function getSubCategoriesWithResources(
+  1094→  ctx: TRPCContext,
+  1095→  input: {
+  1096→    parentCategoryCode: string
+  1097→    pageSize?: number
+  1098→    page?: number
+  1099→    templateStatus?: GenerationTemplateStatus[]
+  1100→    toolStatus?: ToolStatus[]
+  1101→    resourceType?: ECategoryRelationResourceType
+  1102→  },
+  1103→) {
+  1104→  const page = input.page ?? 1
+  1105→  const pageSize = input.pageSize ?? 20
+  1106→
+  1107→  // 设置默认 status 过滤
+  1108→  const templateStatusFilter = input.templateStatus?.length
+  1109→    ? input.templateStatus
+  1110→    : [GenerationTemplateStatus.ENABLED]
+  1111→  const toolStatusFilter = input.toolStatus?.length
+  1112→    ? input.toolStatus
+  1113→    : [ToolStatus.ENABLED, ToolStatus.COMING_SOON]
+  1114→
+  1115→  const templateStatusKey = templateStatusFilter.sort().join(',')
+  1116→  const toolStatusKey = toolStatusFilter.sort().join(',')
+  1117→  const language = ctx.language || 'en'
+  1118→  const cacheKey = `${input.parentCategoryCode}:${page}:${pageSize}:${templateStatusKey}:${toolStatusKey}:${language}`
+  1119→
+  1120→  return subCategoriesWithResourcesCache.getOrSet(cacheKey, async () =>
+  1121→    getSubCategoriesWithResourcesInternal(ctx, input),
+  1122→  )
+  1123→}
+  1124→
+  1125→interface CategoryRelationResourceItem {
+  1126→  id: string
+  1127→  title: string
+  1128→  code: string
+  1129→  cover: string | null
+  1130→  coverVideo: string | null
+  1131→  coverWebp: string | null
+  1132→  marks: string[] | null
+  1133→  status: GenerationTemplateStatus | ToolStatus
+  1134→  resourceType: ECategoryRelationResourceType
+  1135→  sort: number | null
+  1136→  metadata:
+  1137→    | {
+  1138→        height: number | null | undefined
+  1139→        width: number | null | undefined
+  1140→        hasAudio: boolean | null | undefined
+  1141→        aspectRatio: string | null | undefined
+  1142→      }
+  1143→    | null
+  1144→    | undefined
+  1145→}
+  1146→
+  1147→async function queryCategoryRelationResources(input: {
+  1148→  categoryId: string
+  1149→  page: number
+  1150→  pageSize: number
+  1151→  templateStatusFilter: GenerationTemplateStatus[]
+  1152→  toolStatusFilter: ToolStatus[]
+  1153→  resourceType?: ECategoryRelationResourceType
+  1154→}): Promise<CategoryRelationResourceItem[]> {
+  1155→  const prisma = getAppPrisma()
+  1156→  const where: Prisma.CategoryRelationResourceWhereInput = {
+  1157→    categoryId: input.categoryId,
+  1158→  }
+  1159→
+  1160→  if (input.resourceType) {
+  1161→    where.resourceType = input.resourceType
+  1162→  } else {
+  1163→    where.resourceType = {
+  1164→      in: [
+  1165→        ECategoryRelationResourceType.TEMPLATE,
+  1166→        ECategoryRelationResourceType.TOOL,
+  1167→        ECategoryRelationResourceType.LINK,
+  1168→      ],
+  1169→    }
+  1170→  }
+  1171→
+  1172→  const relations = await prisma.categoryRelationResource.findMany({
+  1173→    where,
+  1174→    orderBy: [{ sort: 'desc' }, { id: 'desc' }],
+  1175→    skip: (input.page - 1) * input.pageSize,
+  1176→    take: input.pageSize,
+  1177→  })
+  1178→
+  1179→  if (relations.length === 0) {
+  1180→    return []
+  1181→  }
+  1182→
+  1183→  const templateIds = relations
+  1184→    .filter((r) => r.resourceType === ECategoryRelationResourceType.TEMPLATE)
+  1185→    .map((r) => r.resourceId)
+  1186→  const toolIds = relations
+  1187→    .filter((r) => r.resourceType === ECategoryRelationResourceType.TOOL)
+  1188→    .map((r) => r.resourceId)
+  1189→  const linkIds = relations
+  1190→    .filter((r) => r.resourceType === ECategoryRelationResourceType.LINK)
+  1191→    .map((r) => r.resourceId)
+  1192→
+  1193→  const [templates, tools, links] = await Promise.all([
+  1194→    templateIds.length > 0
+  1195→      ? prisma.generationTemplate.findMany({
+  1196→          where: {
+  1197→            id: { in: templateIds },
+  1198→            status: { in: input.templateStatusFilter },
+  1199→          },
+  1200→          select: {
+  1201→            id: true,
+  1202→            title: true,
+  1203→            templateCode: true,
+  1204→            coverImg: true,
+  1205→            coverVideo: true,
+  1206→            coverWebp: true,
+  1207→            status: true,
+  1208→            videoType: true,
+  1209→            coverMetadata: true,
+  1210→          },
+  1211→        })
+  1212→      : [],
+  1213→    toolIds.length > 0
+  1214→      ? prisma.tool.findMany({
+  1215→          where: {
+  1216→            id: { in: toolIds },
+  1217→            status: { in: input.toolStatusFilter },
+  1218→          },
+  1219→          select: {
+  1220→            id: true,
+  1221→            title: true,
+  1222→            toolCode: true,
+  1223→            cover: true,
+  1224→            coverVideo: true,
+  1225→            coverWebp: true,
+  1226→            status: true,
+  1227→            toolType: true,
+  1228→            marks: true,
+  1229→            coverMetadata: true,
+  1230→          },
+  1231→        })
+  1232→      : [],
+  1233→    linkIds.length > 0
+  1234→      ? prisma.homeLink.findMany({
+  1235→          where: { linkId: { in: linkIds }, linkStatus: 'active' },
+  1236→          select: {
+  1237→            linkId: true,
+  1238→            title: true,
+  1239→            link: true,
+  1240→            cover: true,
+  1241→            video: true,
+  1242→            seoLink: true,
+  1243→            coverMetadata: true,
+  1244→            linkStatus: true,
+  1245→          },
+  1246→        })
+  1247→      : [],
+  1248→  ])
+  1249→
+  1250→  const items: CategoryRelationResourceItem[] = relations
+  1251→    .map((relation): CategoryRelationResourceItem | null => {
+  1252→      if (relation.resourceType === ECategoryRelationResourceType.TEMPLATE) {
+  1253→        const template = templates.find((t) => t.id === relation.resourceId)
+  1254→        if (!template) return null
+  1255→        return {
+  1256→          id: template.id,
+  1257→          title: template.title,
+  1258→          code: template.templateCode,
+  1259→          cover: template.coverImg,
+  1260→          coverVideo: template.coverVideo,
+  1261→          coverWebp: template.coverWebp,
+  1262→          marks: null,
+  1263→          status: template.status,
+  1264→          resourceType: relation.resourceType,
+  1265→          sort: relation.sort,
+  1266→          metadata: formatCoverMetadata(template.coverMetadata),
+  1267→        }
+  1268→      }
+  1269→      if (relation.resourceType === ECategoryRelationResourceType.TOOL) {
+  1270→        const tool = tools.find((t) => t.id === relation.resourceId)
+  1271→        if (!tool) return null
+  1272→        return {
+  1273→          id: tool.id,
+  1274→          title: tool.title,
+  1275→          code: tool.toolCode,
+  1276→          cover: tool.cover,
+  1277→          coverVideo: tool.coverVideo,
+  1278→          coverWebp: tool.coverWebp,
+  1279→          marks: tool.marks || [],
+  1280→          status: tool.status,
+  1281→          resourceType: relation.resourceType,
+  1282→          sort: relation.sort,
+  1283→          metadata: formatCoverMetadata(tool.coverMetadata),
+  1284→        }
+  1285→      }
+  1286→      if (relation.resourceType === ECategoryRelationResourceType.LINK) {
+  1287→        const link = links.find((l) => l.linkId === relation.resourceId)
+  1288→        if (!link) return null
+  1289→        return {
+  1290→          id: link.linkId,
+  1291→          title: link.title,
+  1292→          code: link.linkId,
+  1293→          cover: link.cover,
+  1294→          coverVideo: link.video,
+  1295→          coverWebp: null,
+  1296→          resourceType: relation.resourceType,
+  1297→          sort: relation.sort,
+  1298→          metadata: formatCoverMetadata(link.coverMetadata),
+  1299→          marks: [],
+  1300→          status: 'ENABLED',
+  1301→        }
+  1302→      }
+  1303→
+  1304→      return null
+  1305→    })
+  1306→    .filter((item) => item !== null)
+  1307→
+  1308→  return items
+  1309→}
+  1310→
+  1311→/**
+  1312→ * 查询子分类和关联资源数据
+  1313→ *
+  1314→ * -resources: 关联资源数据
+  1315→ * -categories: 子分类数据
+  1316→ * --resources: 子分类下的关联资源数据
+  1317→ */
+  1318→async function getSubCategoriesWithResourcesInternal(
+  1319→  ctx: TRPCContext,
+  1320→  input: {
+  1321→    parentCategoryCode: string
+  1322→    pageSize?: number
+  1323→    page?: number
+  1324→    templateStatus?: GenerationTemplateStatus[]
+  1325→    toolStatus?: ToolStatus[]
+  1326→    resourceType?: ECategoryRelationResourceType
+  1327→  },
+  1328→) {
+  1329→  const prisma = getHostKeyPrisma(ctx.resolvedHost.deepHostKey)
+  1330→  const page = input.page ?? 1
+  1331→  const pageSize = input.pageSize ?? 20
+  1332→
+  1333→  // 设置默认 status 过滤
+  1334→  const templateStatusFilter = input.templateStatus?.length
+  1335→    ? input.templateStatus
+  1336→    : [GenerationTemplateStatus.ENABLED]
+  1337→  const toolStatusFilter = input.toolStatus?.length
+  1338→    ? input.toolStatus
+  1339→    : [ToolStatus.ENABLED, ToolStatus.COMING_SOON]
+  1340→
+  1341→  // 通过 categoryCode 获取父分类的 category
+  1342→  const parentCategory = await prisma.category.findUnique({
+  1343→    where: { categoryCode: input.parentCategoryCode },
+  1344→    select: { categoryId: true },
+  1345→  })
+  1346→
+  1347→  if (!parentCategory) {
+  1348→    return {
+  1349→      resources: [],
+  1350→      categories: [],
+  1351→    }
+  1352→  }
+  1353→
+  1354→  // 获取父分类的关联资源
+  1355→  const parentResources = await queryCategoryRelationResources({
+  1356→    categoryId: parentCategory.categoryId,
+  1357→    page,
+  1358→    pageSize,
+  1359→    templateStatusFilter,
+  1360→    toolStatusFilter,
+  1361→    resourceType: input.resourceType,
+  1362→  })
+  1363→
+  1364→  // 获取子分类
+  1365→  const { list: subCategories } = await listVisibleCategoriesWithPosition(ctx, {
+  1366→    pageSize: 100, // 获取所有子分类
+  1367→    page: 1,
+  1368→    parentCategoryCode: input.parentCategoryCode,
+  1369→  })
+  1370→
+  1371→  // 获取每个子分类下的关联资源
+  1372→  const categoriesWithResources = await Promise.all(
+  1373→    subCategories.map(async (category) => {
+  1374→      const resources = await queryCategoryRelationResources({
+  1375→        categoryId: category.categoryId,
+  1376→        page,
+  1377→        pageSize,
+  1378→        templateStatusFilter,
+  1379→        toolStatusFilter,
+  1380→      })
+  1381→
+  1382→      return {
+  1383→        ...category,
+  1384→        resources,
+  1385→      }
+  1386→    }),
+  1387→  )
+  1388→
+  1389→  // 收集所有需要翻译的文本
+  1390→  const inputList: string[] = []
+  1391→  const titleSet = new Set<string>()
+  1392→
+  1393→  // 收集父分类资源 titles
+  1394→  parentResources.forEach((resource) => {
+  1395→    if (resource.title && !titleSet.has(resource.title)) {
+  1396→      inputList.push(resource.title)
+  1397→      titleSet.add(resource.title)
+  1398→    }
+  1399→  })
+  1400→
+  1401→  // 收集 category titles（子分类的）
+  1402→  subCategories.forEach((category) => {
+  1403→    if (category.title && !titleSet.has(category.title)) {
+  1404→      inputList.push(category.title)
+  1405→      titleSet.add(category.title)
+  1406→    }
+  1407→  })
+  1408→
+  1409→  // 收集子分类中的 template 和 tool titles
+  1410→  categoriesWithResources.forEach((categoryWithResources) => {
+  1411→    categoryWithResources.resources.forEach((resource) => {
+  1412→      if (resource.title && !titleSet.has(resource.title)) {
+  1413→        inputList.push(resource.title)
+  1414→        titleSet.add(resource.title)
+  1415→      }
+  1416→    })
+  1417→  })
+  1418→
+  1419→  // 批量翻译
+  1420→  const translateMap =
+  1421→    inputList.length > 0 && ctx.language && ctx.language !== 'en'
+  1422→      ? await batchTranslate({
+  1423→          hostKey: ctx.resolvedHost.deepHostKey,
+  1424→          inputList,
+  1425→          language: ctx.language,
+  1426→        })
+  1427→      : {}
+  1428→
+  1429→  // 应用翻译到 parentResources
+  1430→  const translatedParentResources = parentResources.map((resource) => ({
+  1431→    ...resource,
+  1432→    title: translateMap[resource.title] || resource.title,
+  1433→  }))
+  1434→
+  1435→  // 应用翻译到 categoriesWithResources
+  1436→  const translatedCategoriesWithResources = categoriesWithResources.map(
+  1437→    (categoryWithResources) => ({
+  1438→      ...categoryWithResources,
+  1439→      title:
+  1440→        translateMap[categoryWithResources.title] ||
+  1441→        categoryWithResources.title,
+  1442→      resources: categoryWithResources.resources.map((resource) => ({
+  1443→        ...resource,
+  1444→        title: translateMap[resource.title] || resource.title,
+  1445→      })),
+  1446→    }),
+  1447→  )
+  1448→
+  1449→  return {
+  1450→    resources: translatedParentResources,
+  1451→    categories: translatedCategoriesWithResources,
+  1452→  }
+  1453→}
+  1454→
+  1455→/**
+  1456→ * 查询分类和模版数据
+  1457→ */
+  1458→export async function queryCategories(
+  1459→  ctx: TRPCContext,
+  1460→  input: {
+  1461→    pageSize: number
+  1462→    page: number
+  1463→    categoryCode?: string
+  1464→    parentCategoryCode?: string
+  1465→    categoryTypes?: string[]
+  1466→    videoModel?: string
+  1467→    translate?: boolean
+  1468→    uri?: string
+  1469→  },
+  1470→) {
+  1471→  const system = ctx.req.headers['user-agent'] as string
+  1472→  const isApp = system.includes('ios') || system.includes('android')
+  1473→  const appVersion = ctx.appVersion ? versionToNumber(ctx.appVersion) : null
+  1474→  const { translate = true } = input
+  1475→  let parentId: string | undefined
+  1476→  if (input.parentCategoryCode) {
+  1477→    const category = await ctx.prisma.category.findUnique({
+  1478→      where: { categoryCode: input.parentCategoryCode },
+  1479→      select: {
+  1480→        categoryId: true,
+  1481→      },
+  1482→    })
+  1483→
+  1484→    if (!category) {
+  1485→      throw new TRPCError({
+  1486→        code: EServerErrorCode.NOT_FOUND,
+  1487→        message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+  1488→      })
+  1489→    }
+  1490→
+  1491→    parentId = category.categoryId
+  1492→  }
+  1493→
+  1494→  const { pageSize, page } = input
+  1495→
+  1496→  const now = new Date()
+  1497→  const whereCondition: Prisma.CategoryWhereInput = {
+  1498→    ...(input.uri ? { uri: input.uri } : {}),
+  1499→    ...(parentId ? { parentIds: { has: parentId } } : {}),
+  1500→    ...(input.categoryCode ? { categoryCode: input.categoryCode } : {}),
+  1501→    ...(input.categoryTypes
+  1502→      ? { categoryType: { in: input.categoryTypes } }
+  1503→      : {}),
+  1504→    ...(input.videoModel ? { videoModels: { has: input.videoModel } } : {}),
+  1505→    status: CategoryStatus.ENABLED,
+  1506→    AND: [
+  1507→      {
+  1508→        openType: {
+  1509→          in: [
+  1510→            OpenType.ALL,
+  1511→            ...(isApp
+  1512→              ? [
+  1513→                  OpenType.APP,
+  1514→                  system === 'ios' ? OpenType.IOS : OpenType.ANDROID,
+  1515→                ]
+  1516→              : [OpenType.WEBSITE]),
+  1517→          ],
+  1518→        },
+  1519→      },
+  1520→      ...(typeof appVersion === 'number'
+  1521→        ? [
+  1522→            {
+  1523→              OR: [{ minVersion: { lte: appVersion } }, { minVersion: null }],
+  1524→            },
+  1525→          ]
+  1526→        : []),
+  1527→      ...(typeof appVersion === 'number'
+  1528→        ? [
+  1529→            {
+  1530→              OR: [{ maxVersion: { gte: appVersion } }, { maxVersion: null }],
+  1531→            },
+  1532→          ]
+  1533→        : []),
+  1534→      {
+  1535→        OR: [{ startDate: { lte: now } }, { startDate: null }],
+  1536→      },
+  1537→      {
+  1538→        OR: [{ endDate: { gte: now } }, { endDate: null }],
+  1539→      },
+  1540→    ],
+  1541→  }
+  1542→
+  1543→  const [count, categories, relations] = await Promise.all([
+  1544→    ctx.prisma.category.count({
+  1545→      where: whereCondition,
+  1546→    }),
+  1547→    ctx.prisma.category.findMany({
+  1548→      where: whereCondition,
+  1549→      orderBy: [{ sort: 'desc' }],
+  1550→      skip: (page - 1) * pageSize,
+  1551→      take: pageSize,
+  1552→      select: {
+  1553→        id: true,
+  1554→        categoryId: true,
+  1555→        categoryCode: true,
+  1556→        categoryType: true,
+  1557→        title: true,
+  1558→        description: true,
+  1559→        sort: true,
+  1560→        status: true,
+  1561→        source: true,
+  1562→        uri: true,
+  1563→        resourceType: true,
+  1564→      },
+  1565→    }),
+  1566→    queryTemplateCategoryRelationsWithCache(ctx),
+  1567→  ])
+  1568→
+  1569→  if (ctx.language && ctx.language !== 'en' && translate) {
+  1570→    // 翻译每个分类及其相关字段
+  1571→    for (const category of categories) {
+  1572→      // 翻译分类字段
+  1573→      Object.assign(
+  1574→        category,
+  1575→        await translateObjectFields(ctx, category, ['title', 'description']),
+  1576→      )
+  1577→    }
+  1578→  }
+  1579→
+  1580→  return {
+  1581→    count,
+  1582→    list: categories.map((category) => ({
+  1583→      ...category,
+  1584→      latestContentCreatedAt: relations
+  1585→        .filter((relation) => relation.createdDate)
+  1586→        .filter((relation) => relation.categoryId === category.categoryId)
+  1587→        .sort((a, b) => b.createdDate!.getTime() - a.createdDate!.getTime())[0]
+  1588→        ?.createdDate,
+  1589→    })),
+  1590→    // 过滤掉没有模版数据的分类
+  1591→    // .filter((category) => category.latestContentCreatedAt),
+  1592→  }
+  1593→}
+  1594→
+  1595→/**
+  1596→ * @deprecated
+  1597→ * 查询分类和模版数据 带Positions
+  1598→ */
+  1599→export async function queryCategoriesWithPosition(
+  1600→  ctx: TRPCContext,
+  1601→  input: {
+  1602→    pageSize: number
+  1603→    page: number
+  1604→    categoryCode?: string
+  1605→    parentCategoryCode?: string
+  1606→    categoryTypes?: string[]
+  1607→    videoModel?: string
+  1608→    includeTemplates?: boolean
+  1609→    translate?: boolean
+  1610→    uri?: string
+  1611→  },
+  1612→) {
+  1613→  const system = ctx.req.headers['user-agent'] as string
+  1614→  const isApp = system.includes('ios') || system.includes('android')
+  1615→  const appVersion = ctx.appVersion ? versionToNumber(ctx.appVersion) : null
+  1616→  const { includeTemplates = true, translate = true } = input
+  1617→  let parentId: string | undefined
+  1618→  if (input.parentCategoryCode) {
+  1619→    const category = await ctx.prisma.category.findUnique({
+  1620→      where: { categoryCode: input.parentCategoryCode },
+  1621→      select: {
+  1622→        categoryId: true,
+  1623→      },
+  1624→    })
+  1625→
+  1626→    if (!category) {
+  1627→      throw new TRPCError({
+  1628→        code: EServerErrorCode.NOT_FOUND,
+  1629→        message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+  1630→      })
+  1631→    }
+  1632→
+  1633→    parentId = category.categoryId
+  1634→  }
+  1635→
+  1636→  const { pageSize, page } = input
+  1637→
+  1638→  const now = new Date()
+  1639→  const whereCondition = {
+  1640→    ...(input.uri ? { uri: input.uri } : {}),
+  1641→    ...(parentId ? { parentIds: { has: parentId } } : {}),
+  1642→    ...(input.categoryCode ? { categoryCode: input.categoryCode } : {}),
+  1643→    ...(input.categoryTypes
+  1644→      ? { categoryType: { in: input.categoryTypes } }
+  1645→      : {}),
+  1646→    ...(input.videoModel ? { videoModels: { has: input.videoModel } } : {}),
+  1647→    status: {
+  1648→      in: [CategoryStatus.ENABLED],
+  1649→    },
+  1650→    AND: [
+  1651→      {
+  1652→        openType: {
+  1653→          in: [
+  1654→            OpenType.ALL,
+  1655→            ...(isApp
+  1656→              ? [
+  1657→                  OpenType.APP,
+  1658→                  system === 'ios' ? OpenType.IOS : OpenType.ANDROID,
+  1659→                ]
+  1660→              : [OpenType.WEBSITE]),
+  1661→          ],
+  1662→        },
+  1663→      },
+  1664→      ...(typeof appVersion === 'number'
+  1665→        ? [
+  1666→            {
+  1667→              OR: [{ minVersion: { lte: appVersion } }, { minVersion: null }],
+  1668→            },
+  1669→          ]
+  1670→        : []),
+  1671→      ...(typeof appVersion === 'number'
+  1672→        ? [
+  1673→            {
+  1674→              OR: [{ maxVersion: { gte: appVersion } }, { maxVersion: null }],
+  1675→            },
+  1676→          ]
+  1677→        : []),
+  1678→      {
+  1679→        OR: [{ startDate: { lte: now } }, { startDate: null }],
+  1680→      },
+  1681→      {
+  1682→        OR: [{ endDate: { gte: now } }, { endDate: null }],
+  1683→      },
+  1684→    ],
+  1685→  }
+  1686→
+  1687→  const [count, categories] = await Promise.all([
+  1688→    ctx.prisma.category.count({
+  1689→      where: whereCondition,
+  1690→    }),
+  1691→    ctx.prisma.category.findMany({
+  1692→      where: whereCondition,
+  1693→      orderBy: [{ sort: 'desc' }],
+  1694→      skip: (page - 1) * pageSize,
+  1695→      take: pageSize,
+  1696→      select: {
+  1697→        id: true,
+  1698→        categoryId: true,
+  1699→        categoryCode: true,
+  1700→        categoryType: true,
+  1701→        title: true,
+  1702→        description: true,
+  1703→        sort: true,
+  1704→        status: true,
+  1705→        source: true,
+  1706→        uri: true,
+  1707→        positions: {
+  1708→          where: {
+  1709→            position: {
+  1710→              status: PositionStatus.ENABLED,
+  1711→            },
+  1712→          },
+  1713→          orderBy: {
+  1714→            sort: 'desc',
+  1715→          },
+  1716→          select: {
+  1717→            position: {
+  1718→              select: {
+  1719→                positionId: true,
+  1720→                title: true,
+  1721→                description: true,
+  1722→                status: true,
+  1723→                cover: true,
+  1724→                coverVideo: true,
+  1725→                coverWebp: true,
+  1726→                marks: true,
+  1727→                link: true,
+  1728→                config: true,
+  1729→                inflowLink: true,
+  1730→              },
+  1731→            },
+  1732→          },
+  1733→        },
+  1734→        templates: {
+  1735→          where: {
+  1736→            template: {
+  1737→              status: GenerationTemplateStatus.ENABLED,
+  1738→              ...(!includeTemplates && {
+  1739→                id: '',
+  1740→              }),
+  1741→            },
+  1742→          },
+  1743→          orderBy: {
+  1744→            sort: 'desc',
+  1745→          },
+  1746→          select: {
+  1747→            template: {
+  1748→              include: {
+  1749→                category: true,
+  1750→                videoToVideoStyle: true,
+  1751→                categoryTemplates: {
+  1752→                  include: {
+  1753→                    category: true,
+  1754→                  },
+  1755→                },
+  1756→              },
+  1757→            },
+  1758→          },
+  1759→        },
+  1760→      },
+  1761→    }),
+  1762→  ])
+  1763→
+  1764→  if (ctx.language && ctx.language !== 'en' && translate) {
+  1765→    // 翻译每个分类及其相关字段
+  1766→    for (const category of categories) {
+  1767→      // 翻译分类字段
+  1768→      Object.assign(
+  1769→        category,
+  1770→        await translateObjectFields(ctx, category, ['title', 'description']),
+  1771→      )
+  1772→
+  1773→      for (const { position } of category.positions) {
+  1774→        Object.assign(
+  1775→          position,
+  1776→          await translateObjectFields(ctx, position, ['title', 'description']),
+  1777→        )
+  1778→      }
+  1779→    }
+  1780→  }
+  1781→
+  1782→  return {
+  1783→    count,
+  1784→    list: categories,
+  1785→  }
+  1786→}
+  1787→
+  1788→/**
+  1789→ * 翻译对象中的文本字段
+  1790→ */
+  1791→async function translateObjectFields<T extends Record<string, any>>(
+  1792→  ctx: TRPCContext,
+  1793→  obj: T,
+  1794→  fields: (keyof T)[],
+  1795→): Promise<T> {
+  1796→  const inputList: string[] = []
+  1797→  const fieldValues: { field: keyof T; value: string }[] = []
+  1798→
+  1799→  // 收集需要翻译的字段
+  1800→  for (const field of fields) {
+  1801→    const value = obj[field]
+  1802→    if (typeof value === 'string' && value) {
+  1803→      inputList.push(value)
+  1804→      fieldValues.push({ field, value })
+  1805→    }
+  1806→  }
+  1807→
+  1808→  if (inputList.length === 0) return obj
+  1809→
+  1810→  const translateMap = await batchTranslate({
+  1811→    hostKey: ctx.hostKey as EHostKey,
+  1812→    inputList,
+  1813→    language: ctx.language,
+  1814→  })
+  1815→
+  1816→  // 替换翻译后的值
+  1817→  const result = { ...obj }
+  1818→  for (const { field, value } of fieldValues) {
+  1819→    result[field] = translateMap[value] as T[keyof T]
+  1820→  }
+  1821→
+  1822→  return result
+  1823→}
+  1824→
+  1825→export async function queryCategoryById(input: {
+  1826→  categoryId: string
+  1827→}): Promise<Category | null> {
+  1828→  const category = await getAppPrisma().category.findFirst({
+  1829→    where: { categoryId: input.categoryId },
+  1830→  })
+  1831→  return category
+  1832→}
+  1833→
+  1834→const MIN_TEMPLATE_COUNT_FOR_RECOMMEND = 10
+  1835→
+  1836→/**
+  1837→ * 检查分类下模版数量是否低于阈值
+  1838→ * 如果父分类是 TEMPLATE_RECOMMEND_PARENT_CATEGORY_CODE_3_POINT_0 且模版数量不足，抛出提示错误
+  1839→ */
+  1840→async function checkCategoryTemplateCountWarning(
+  1841→  categoryId: string,
+  1842→): Promise<void> {
+  1843→  const prisma = getAppPrisma()
+  1844→  const [category, parentCategory] = await Promise.all([
+  1845→    prisma.category.findFirst({
+  1846→      where: { categoryId },
+  1847→      select: { title: true, parentIds: true },
+  1848→    }),
+  1849→    prisma.category.findFirst({
+  1850→      where: {
+  1851→        categoryCode: TEMPLATE_RECOMMEND_PARENT_CATEGORY_CODE_3_POINT_0,
+  1852→      },
+  1853→      select: { categoryId: true },
+  1854→    }),
+  1855→  ])
+  1856→
+  1857→  if (!category || !parentCategory) {
+  1858→    return
+  1859→  }
+  1860→
+  1861→  const isUnderRecommendParent = category.parentIds?.includes(
+  1862→    parentCategory.categoryId,
+  1863→  )
+  1864→
+  1865→  if (!isUnderRecommendParent) {
+  1866→    return
+  1867→  }
+  1868→
+  1869→  const templateCount = await prisma.categoryGenerationTemplate.count({
+  1870→    where: {
+  1871→      categoryId,
+  1872→      template: { status: GenerationTemplateStatus.ENABLED },
+  1873→    },
+  1874→  })
+  1875→
+  1876→  if (templateCount < MIN_TEMPLATE_COUNT_FOR_RECOMMEND) {
+  1877→    throw new TRPCError({
+  1878→      code: EServerErrorCode.BAD_REQUEST,
+  1879→      message: `Category "${category.title}" has only ${templateCount} templates, which is less than ${MIN_TEMPLATE_COUNT_FOR_RECOMMEND}. Please add more templates as soon as possible.`,
+  1880→    })
+  1881→  }
+  1882→}
+  1883→
+  1884→function formatCoverMetadata(coverMetadata: any | null) {
+  1885→  if (!coverMetadata) {
+  1886→    return {
+  1887→      width: 1024,
+  1888→      height: 1024,
+  1889→      hasAudio: false,
+  1890→      duration: 0,
+  1891→      aspectRatio: '1:1',
+  1892→    }
+  1893→  }
+  1894→  return {
+  1895→    width: Number(coverMetadata.width ?? 1024),
+  1896→    height: Number(coverMetadata.height ?? 1024),
+  1897→    hasAudio: Boolean(coverMetadata.hasAudio ?? false),
+  1898→    duration: Number(coverMetadata.duration ?? 0),
+  1899→    aspectRatio:
+  1900→      getAspectRatio(
+  1901→        Number(coverMetadata.width ?? 1024),
+  1902→        Number(coverMetadata.height ?? 1024),
+  1903→      ) || '1:1',
+  1904→  }
+  1905→}
+  1906→
+  1907→interface ResourceItem {
+  1908→  resourceType: ECategoryRelationResourceType
+  1909→  resourceId: string
+  1910→  coverVideo: string | null
+  1911→  coverImage: string | null
+  1912→  metadata: {
+  1913→    height: number
+  1914→    width: number
+  1915→    hasAudio: boolean
+  1916→    aspectRatio: string
+  1917→  } | null
+  1918→  effect?: Awaited<ReturnType<typeof fetchTemplatesByCategory>>['list'][number]
+  1919→  tool?: Awaited<ReturnType<typeof queryTools>>['list'][number]
+  1920→  link?: Awaited<ReturnType<typeof queryHomeLinks>>['list'][number]
+  1921→  community?: Awaited<
+  1922→    ReturnType<typeof trendingListWithConfigBiz>
+  1923→  >['data'][number]
+  1924→}
+  1925→
+  1926→/**
+  1927→ * 临时方案：后续需优化。
+  1928→ * 用于将 categoryCode 解析为 trendingConfigId。
+  1929→ * 目前约定 categoryCode 格式为：`community_${trendingConfigId}`。
+  1930→ */
+  1931→function parseTrendingConfigIdFromCategoryCode(categoryCode: string): number {
+  1932→  try {
+  1933→    const match = categoryCode.match(/community_(\d+)/)
+  1934→    return match ? Number.parseInt(match[1]) : 0
+  1935→  } catch {
+  1936→    return 0
+  1937→  }
+  1938→}
+  1939→
+  1940→export async function queryResources(
+  1941→  ctx: TRPCContext,
+  1942→  input: {
+  1943→    pageSize: number
+  1944→    categoryCode: string
+  1945→  },
+  1946→): Promise<{
+  1947→  list: ResourceItem[]
+  1948→}> {
+  1949→  const prisma = getAppPrisma()
+  1950→  // 查询category类型
+  1951→  const category = await prisma.category.findUnique({
+  1952→    where: { categoryCode: input.categoryCode },
+  1953→    select: { resourceType: true },
+  1954→  })
+  1955→  if (!category) {
+  1956→    throw new TRPCError({
+  1957→      code: EServerErrorCode.NOT_FOUND,
+  1958→      message: EServerErrorMsg.CATEGORY_NOT_FOUND,
+  1959→    })
+  1960→  }
+  1961→  const resourceType = category.resourceType
+  1962→  if (resourceType === ECategoryRelationResourceType.TEMPLATE) {
+  1963→    // 特效列表
+  1964→    const result = await fetchTemplatesByCategory(ctx, {
+  1965→      pageSize: input.pageSize,
+  1966→      page: 1,
+  1967→      categoryCode: input.categoryCode,
+  1968→    })
+  1969→    return {
+  1970→      list: result.list.map((template) => ({
+  1971→        resourceType,
+  1972→        resourceId: template.id,
+  1973→        effect: template,
+  1974→        coverVideo: template.coverVideo,
+  1975→        coverImage: template.coverImg,
+  1976→        metadata: formatCoverMetadata(template.coverMetadata),
+  1977→      })),
+  1978→    }
+  1979→  }
+  1980→  if (resourceType === ECategoryRelationResourceType.COMMUNITY) {
+  1981→    // 社区列表
+  1982→    const trendingConfigId = parseTrendingConfigIdFromCategoryCode(
+  1983→      input.categoryCode,
+  1984→    )
+  1985→    const queryMockData = async (): Promise<
+  1986→      Awaited<ReturnType<typeof trendingListWithConfigBiz>>
+  1987→    > => {
+  1988→      const mockPath = resolve('../server/constant/explore.mock.json')
+  1989→      const data = JSON.parse(readFileSync(mockPath, 'utf-8')) as Awaited<
+  1990→        ReturnType<typeof trendingListWithConfigBiz>
+  1991→      >
+  1992→      return data
+  1993→    }
+  1994→    let result: Awaited<ReturnType<typeof trendingListWithConfigBiz>>
+  1995→    if (IS_DEV) {
+  1996→      result = await queryMockData()
+  1997→    } else {
+  1998→      result = await trendingListWithConfigBiz(ctx.resolvedHost.deepHostKey, {
+  1999→        size: input.pageSize,
+  2000→        page: 1,
+  2001→        trendingQueryType: TrendingQueryType.Trending,
+  2002→        trendingConfigId,
+  2003→        userId: ctx.session?.user?.id || '',
+  2004→        language: ctx.language,
+  2005→        isApp: isFromApp(ctx.platform),
+  2006→        deviceType: ctx.platform,
+  2007→      })
+  2008→    }
+  2009→    type TrendingVideoItem = Awaited<
+  2010→      ReturnType<typeof trendingListWithConfigBiz>
+  2011→    >['data'][number]
+  2012→    return {
+  2013→      list: result.data.map((video: TrendingVideoItem) => ({
+  2014→        resourceType,
+  2015→        resourceId: video.videoId,
+  2016→        community: video,
+  2017→        coverVideo: video.mediaUrl || null,
+  2018→        coverImage: video.cover,
+  2019→        metadata: formatCoverMetadata(video.videoMeta),
+  2020→      })),
+  2021→    }
+  2022→  }
+  2023→  if (resourceType === ECategoryRelationResourceType.TOOL) {
+  2024→    const result = await queryTools(ctx, {
+  2025→      categoryCode: input.categoryCode,
+  2026→      pageSize: input.pageSize,
+  2027→      page: 1,
+  2028→    })
+  2029→    return {
+  2030→      list: result.list.map((tool) => ({
+  2031→        resourceType,
+  2032→        resourceId: tool.id,
+  2033→        tool,
+  2034→        coverVideo: tool.coverVideo,
+  2035→        coverImage: tool.cover,
+  2036→        metadata: formatCoverMetadata(tool.coverMetadata),
+  2037→      })),
+  2038→    }
+  2039→  }
+  2040→  if (resourceType === ECategoryRelationResourceType.LINK) {
+  2041→    const result = await queryHomeLinks(ctx, {
+  2042→      categoryCode: input.categoryCode,
+  2043→      pageSize: input.pageSize,
+  2044→      page: 1,
+  2045→    })
+  2046→    return {
+  2047→      list: result.list.map((item) => ({
+  2048→        resourceType,
+  2049→        resourceId: item.linkId,
+  2050→        link: item,
+  2051→        coverVideo: item.video,
+  2052→        coverImage: item.cover,
+  2053→        metadata: formatCoverMetadata(item.coverMetadata),
+  2054→      })),
+  2055→    }
+  2056→  }
+  2057→  return {
+  2058→    list: [],
+  2059→  }
+  2060→}
+  2061→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

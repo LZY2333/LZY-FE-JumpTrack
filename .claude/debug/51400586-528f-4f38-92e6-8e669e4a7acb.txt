@@ -1,0 +1,16 @@
+2026-02-26T01:33:36.737Z [DEBUG] detectFileEncoding failed for expected reason: ENOENT
+2026-02-26T01:33:36.737Z [DEBUG] MDM settings load completed in 1ms
+2026-02-26T01:33:36.755Z [DEBUG] [init] configureGlobalMTLS starting
+2026-02-26T01:33:36.755Z [DEBUG] [init] configureGlobalMTLS complete
+2026-02-26T01:33:36.755Z [DEBUG] [init] configureGlobalAgents starting
+2026-02-26T01:33:36.756Z [DEBUG] [init] configureGlobalAgents complete
+2026-02-26T01:33:36.758Z [DEBUG] update: Starting update check
+2026-02-26T01:33:36.758Z [DEBUG] update: Running diagnostic
+2026-02-26T01:33:36.776Z [DEBUG] Git remote URL: https://cnb.cool/awesomeaicode/pollo/ai-video-collection.git
+2026-02-26T01:33:36.776Z [DEBUG] Parsed repository: null from URL: https://cnb.cool/awesomeaicode/pollo/ai-video-collection.git
+2026-02-26T01:33:36.922Z [DEBUG] update: Installation type: npm-global
+2026-02-26T01:33:36.922Z [DEBUG] update: Config install method: global
+2026-02-26T01:33:36.922Z [DEBUG] update: Checking npm registry for latest version
+2026-02-26T01:33:36.922Z [DEBUG] update: Package URL: @anthropic-ai/claude-code
+2026-02-26T01:33:36.922Z [DEBUG] update: Running: npm view @anthropic-ai/claude-code@latest version
+2026-02-26T01:33:37.173Z [DEBUG] update: Latest version from npm: 2.1.59

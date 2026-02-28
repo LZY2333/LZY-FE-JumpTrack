@@ -1,0 +1,1286 @@
+2026-02-06T06:37:57.499Z [DEBUG] [init] configureGlobalMTLS starting
+2026-02-06T06:37:57.500Z [DEBUG] [init] configureGlobalMTLS complete
+2026-02-06T06:37:57.500Z [DEBUG] [init] configureGlobalAgents starting
+2026-02-06T06:37:57.500Z [DEBUG] [init] configureGlobalAgents complete
+2026-02-06T06:37:57.504Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-02-06T06:37:57.513Z [DEBUG] [ToolSearch:optimistic] mode=standard, ENABLE_TOOL_SEARCH=undefined, result=false
+2026-02-06T06:37:57.513Z [DEBUG] [STARTUP] Running setup()...
+2026-02-06T06:37:57.513Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-02-06T06:37:57.514Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[]
+2026-02-06T06:37:57.514Z [DEBUG] Error log sink initialized
+2026-02-06T06:37:57.519Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-06T06:37:57.519Z [DEBUG] Total plugin skills loaded: 0
+2026-02-06T06:37:57.519Z [DEBUG] Total plugin commands loaded: 0
+2026-02-06T06:37:57.521Z [DEBUG] [STARTUP] setup() completed in 8ms
+2026-02-06T06:37:57.521Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-02-06T06:37:57.521Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-02-06T06:37:57.522Z [DEBUG] Total plugin agents loaded: 0
+2026-02-06T06:37:57.522Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, additional: 0, legacy commands: 0)
+2026-02-06T06:37:57.522Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills, 2 bundled skills
+2026-02-06T06:37:57.522Z [DEBUG] [STARTUP] Commands and agents loaded in 1ms
+2026-02-06T06:37:57.522Z [DEBUG] [STARTUP] Running showSetupScreens()...
+2026-02-06T06:37:57.523Z [DEBUG] [render] initLayout starting
+2026-02-06T06:37:57.523Z [DEBUG] Layout engine: yoga
+2026-02-06T06:37:57.528Z [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-02-06T06:37:57.538Z [DEBUG] [render] initLayout complete
+2026-02-06T06:37:57.541Z [DEBUG] [keybindings] KeybindingSetup initialized with 100 bindings, 0 warnings
+2026-02-06T06:37:57.552Z [DEBUG] [render] first ink render: 406ms since process start
+2026-02-06T06:37:57.554Z [DEBUG] [keybindings] Watching for changes to /Users/a111111/.claude/keybindings.json
+2026-02-06T06:37:57.554Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-02-06T06:37:58.148Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359878148
+2026-02-06T06:37:58.148Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:37:58.149Z [DEBUG] Temp file written successfully, size: 5283 bytes
+2026-02-06T06:37:58.149Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:37:58.149Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359878148 to /Users/a111111/.claude.json
+2026-02-06T06:37:58.149Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:38:00.029Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359880029
+2026-02-06T06:38:00.029Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:38:00.030Z [DEBUG] Temp file written successfully, size: 5652 bytes
+2026-02-06T06:38:00.030Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:38:00.030Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359880029 to /Users/a111111/.claude.json
+2026-02-06T06:38:00.030Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:38:00.056Z [DEBUG] [Perfetto] initializePerfettoTracing called, env value: undefined
+2026-02-06T06:38:00.057Z [DEBUG] [STARTUP] showSetupScreens() completed in 2535ms
+2026-02-06T06:38:00.057Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-02-06T06:38:00.057Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-02-06T06:38:00.057Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-02-06T06:38:00.058Z [DEBUG] Total LSP servers loaded: 0
+2026-02-06T06:38:00.058Z [DEBUG] [STARTUP] MCP configs loaded in 2554ms
+2026-02-06T06:38:00.060Z [DEBUG] [Reconnection] computeInitialTeamContext: No teammate context set (not a teammate)
+2026-02-06T06:38:00.061Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359880061
+2026-02-06T06:38:00.061Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:38:00.061Z [DEBUG] Temp file written successfully, size: 5652 bytes
+2026-02-06T06:38:00.061Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:38:00.061Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359880061 to /Users/a111111/.claude.json
+2026-02-06T06:38:00.061Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:38:00.063Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-02-06T06:38:00.063Z [DEBUG] LSP manager initialized with 0 servers
+2026-02-06T06:38:00.063Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-02-06T06:38:00.063Z [DEBUG] Found 0 hook matchers in settings
+2026-02-06T06:38:00.063Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-02-06T06:38:00.063Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-02-06T06:38:00.063Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-02-06T06:38:00.063Z [DEBUG] LSP server manager initialized successfully
+2026-02-06T06:38:00.064Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-02-06T06:38:00.067Z [DEBUG] [render] initLayout starting
+2026-02-06T06:38:00.130Z [DEBUG] Git remote URL: null
+2026-02-06T06:38:00.130Z [DEBUG] No git remote URL found
+2026-02-06T06:38:00.130Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2026-02-06T06:38:00.130Z [DEBUG] [render] initLayout complete
+2026-02-06T06:38:00.137Z [DEBUG] [keybindings] KeybindingSetup initialized with 100 bindings, 0 warnings
+2026-02-06T06:38:00.161Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359880161
+2026-02-06T06:38:00.161Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:38:00.161Z [DEBUG] Temp file written successfully, size: 5652 bytes
+2026-02-06T06:38:00.161Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:38:00.161Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359880161 to /Users/a111111/.claude.json
+2026-02-06T06:38:00.162Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:38:00.162Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359880162
+2026-02-06T06:38:00.162Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:38:00.162Z [DEBUG] Temp file written successfully, size: 5652 bytes
+2026-02-06T06:38:00.162Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:38:00.162Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359880162 to /Users/a111111/.claude.json
+2026-02-06T06:38:00.162Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:38:00.164Z [DEBUG] [REPL:mount] REPL mounted, disabled=false
+2026-02-06T06:38:00.165Z [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-02-06T06:38:00.165Z [DEBUG] performStartupChecks called
+2026-02-06T06:38:00.165Z [DEBUG] Starting background plugin installations
+2026-02-06T06:38:00.165Z [DEBUG] performBackgroundPluginInstallations called
+2026-02-06T06:38:00.166Z [DEBUG] [render] first ink render: 3020ms since process start
+2026-02-06T06:38:00.167Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-06T06:38:00.168Z [DEBUG] [claudeai-mcp] Checking gate (cached)...
+2026-02-06T06:38:00.168Z [DEBUG] [claudeai-mcp] Gate returned: true
+2026-02-06T06:38:00.181Z [DEBUG] [claudeai-mcp] No access token
+2026-02-06T06:38:00.182Z [DEBUG] Setting installation status: 0 marketplaces, 0 installable plugins, 0 uninstallable plugins
+2026-02-06T06:38:00.183Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-02-06T06:38:00.211Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359880211
+2026-02-06T06:38:00.211Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:38:00.211Z [DEBUG] Temp file written successfully, size: 5833 bytes
+2026-02-06T06:38:00.211Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:38:00.211Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359880211 to /Users/a111111/.claude.json
+2026-02-06T06:38:00.211Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:38:00.296Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359880296
+2026-02-06T06:38:00.296Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:38:00.296Z [DEBUG] Temp file written successfully, size: 5833 bytes
+2026-02-06T06:38:00.296Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:38:00.296Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359880296 to /Users/a111111/.claude.json
+2026-02-06T06:38:00.296Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:38:00.339Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/arm64-darwin/rg)
+2026-02-06T06:38:00.441Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359880441
+2026-02-06T06:38:00.441Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:38:00.441Z [DEBUG] Temp file written successfully, size: 5879 bytes
+2026-02-06T06:38:00.441Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:38:00.441Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359880441 to /Users/a111111/.claude.json
+2026-02-06T06:38:00.442Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:38:00.442Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:38:00.442Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:38:00.442Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:38:02.612Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at Z4.generate (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:359:8893)
+    at LC.makeStatusError (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:376:2195)
+    at LC.makeRequest (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:376:5420)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1016:3349
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1016:2232
+    at async MO9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1015:9420)
+    at async fS7 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1016:2165)
+    at async nQ1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:3115:10194)
+    at async Gd (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:3115:10890)
+2026-02-06T06:38:02.613Z [DEBUG] countTokensWithFallback: API returned null, trying haiku fallback (20 tools)
+2026-02-06T06:38:02.613Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:38:02.613Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:38:02.613Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:38:06.997Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-06T06:38:07.015Z [DEBUG] Full reset (shrink->below): prevHeight=24, nextHeight=21, viewport=24
+2026-02-06T06:38:41.499Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:38:41.500Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:38:41.500Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:38:41.500Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:38:41.501Z [DEBUG] Sending 1 skills via attachment (initial, 1 total sent)
+2026-02-06T06:38:41.504Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-06T06:38:41.504Z [DEBUG] Found 0 hook matchers in settings
+2026-02-06T06:38:41.504Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-06T06:38:41.505Z [DEBUG] FileHistory: Added snapshot for c5a285fe-2888-46c4-84cc-782df637616c, tracking 0 files
+2026-02-06T06:38:41.506Z [DEBUG] [useDeferredValue] Messages deferred by 2 (0→2)
+2026-02-06T06:38:41.528Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-06T06:38:41.529Z [DEBUG] Writing to temp file: /Users/a111111/.claude/todos/e8a8bd82-b520-45e1-aceb-7ad692d96cb5-agent-e8a8bd82-b520-45e1-aceb-7ad692d96cb5.json.tmp.94475.1770359921529
+2026-02-06T06:38:41.530Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-02-06T06:38:41.530Z [DEBUG] Renaming /Users/a111111/.claude/todos/e8a8bd82-b520-45e1-aceb-7ad692d96cb5-agent-e8a8bd82-b520-45e1-aceb-7ad692d96cb5.json.tmp.94475.1770359921529 to /Users/a111111/.claude/todos/e8a8bd82-b520-45e1-aceb-7ad692d96cb5-agent-e8a8bd82-b520-45e1-aceb-7ad692d96cb5.json
+2026-02-06T06:38:41.530Z [DEBUG] File /Users/a111111/.claude/todos/e8a8bd82-b520-45e1-aceb-7ad692d96cb5-agent-e8a8bd82-b520-45e1-aceb-7ad692d96cb5.json written atomically
+2026-02-06T06:38:41.531Z [DEBUG] [SystemPrompt] path=simple proactive=false
+2026-02-06T06:38:41.604Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-06T06:38:41.605Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:38:41.605Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:38:41.606Z [DEBUG] Total plugin output styles loaded: 0
+2026-02-06T06:38:41.606Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:38:41.609Z [DEBUG] [useDeferredValue] Messages deferred by 2 (0→2)
+2026-02-06T06:38:41.612Z [DEBUG] autocompact: tokens=86 threshold=167000 effectiveWindow=180000
+2026-02-06T06:38:41.613Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:38:41.616Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:38:41.616Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:38:41.617Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:38:41.620Z [DEBUG] [useDeferredValue] Messages deferred by 2 (0→2)
+2026-02-06T06:38:41.626Z [DEBUG] Stats cache is up to date
+2026-02-06T06:38:42.870Z [DEBUG] Successfully refreshed marketplace: claude-plugins-official
+2026-02-06T06:38:42.870Z [DEBUG] Plugin autoupdate: checking installed plugins
+2026-02-06T06:38:46.144Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:38:47.523Z [DEBUG] [useDeferredValue] Messages deferred by 1 (2→3)
+2026-02-06T06:38:48.282Z [DEBUG] [useDeferredValue] Messages deferred by 1 (3→4)
+2026-02-06T06:38:48.285Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:38:48.299Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:38:48.690Z [DEBUG] [useDeferredValue] Messages deferred by 2 (4→6)
+2026-02-06T06:38:48.696Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:38:48.707Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:38:48.717Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:38:48.717Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:38:48.717Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:38:48.717Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:38:48.719Z [DEBUG] autocompact: tokens=19183 threshold=167000 effectiveWindow=180000
+2026-02-06T06:38:48.719Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:38:48.724Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:38:48.724Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:38:48.724Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:38:51.350Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:38:52.374Z [DEBUG] [useDeferredValue] Messages deferred by 1 (6→7)
+2026-02-06T06:38:52.377Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:38:52.383Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:38:52.615Z [DEBUG] [useDeferredValue] Messages deferred by 2 (7→9)
+2026-02-06T06:38:52.620Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:38:52.637Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:38:52.645Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:38:52.645Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:38:52.645Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:38:52.645Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:38:52.647Z [DEBUG] autocompact: tokens=19344 threshold=167000 effectiveWindow=180000
+2026-02-06T06:38:52.647Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:38:52.653Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:38:52.653Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:38:52.654Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:00.143Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:01.469Z [DEBUG] [useDeferredValue] Messages deferred by 1 (9→10)
+2026-02-06T06:39:01.471Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:01.475Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:01.743Z [DEBUG] [useDeferredValue] Messages deferred by 2 (10→12)
+2026-02-06T06:39:01.748Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:01.753Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:01.760Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:01.760Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:01.760Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:01.760Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:01.761Z [DEBUG] autocompact: tokens=19525 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:01.761Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:01.767Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:01.767Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:01.768Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:03.251Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:08.776Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:10.314Z [DEBUG] [useDeferredValue] Messages deferred by 1 (12→13)
+2026-02-06T06:39:10.316Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:10.323Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:10.566Z [DEBUG] [useDeferredValue] Messages deferred by 2 (13→15)
+2026-02-06T06:39:10.572Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:10.577Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:10.583Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:10.583Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:10.583Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:10.583Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:10.584Z [DEBUG] autocompact: tokens=19693 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:10.584Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:10.590Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:10.590Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:10.590Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:13.372Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:14.159Z [DEBUG] [useDeferredValue] Messages deferred by 1 (15→16)
+2026-02-06T06:39:14.160Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:14.166Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:14.922Z [DEBUG] [useDeferredValue] Messages deferred by 2 (16→18)
+2026-02-06T06:39:14.928Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:14.940Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:14.940Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:14.940Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:14.940Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:14.941Z [DEBUG] autocompact: tokens=19880 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:14.941Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:14.948Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:14.948Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:14.948Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:14.955Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at p6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6442)
+    at l1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:4939)
+2026-02-06T06:39:17.951Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:19.868Z [DEBUG] [useDeferredValue] Messages deferred by 1 (18→19)
+2026-02-06T06:39:19.870Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:19.876Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:20.152Z [DEBUG] [useDeferredValue] Messages deferred by 2 (19→21)
+2026-02-06T06:39:20.162Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:20.170Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:20.178Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:20.178Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:20.178Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:20.178Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:20.179Z [DEBUG] autocompact: tokens=20085 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:20.179Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:20.184Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:20.184Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:20.184Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:23.054Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:26.940Z [DEBUG] [useDeferredValue] Messages deferred by 1 (21→22)
+2026-02-06T06:39:26.943Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:26.949Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:27.698Z [DEBUG] [useDeferredValue] Messages deferred by 2 (22→24)
+2026-02-06T06:39:27.703Z [DEBUG] [useDeferredValue] Messages deferred by 2 (22→24)
+2026-02-06T06:39:27.709Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:27.716Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:27.716Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:27.717Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:27.717Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:27.717Z [DEBUG] autocompact: tokens=20499 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:27.718Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:27.724Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:27.724Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:27.725Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:30.674Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:34.107Z [DEBUG] [useDeferredValue] Messages deferred by 1 (24→25)
+2026-02-06T06:39:34.109Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:34.114Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:34.706Z [DEBUG] [useDeferredValue] Messages deferred by 2 (25→27)
+2026-02-06T06:39:34.711Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:34.806Z [ERROR] Error: Error: Tool bash not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:34.810Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:34.810Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:34.810Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:34.810Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:34.810Z [DEBUG] autocompact: tokens=20801 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:34.810Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:34.815Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:34.815Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:34.815Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:37.675Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:41.767Z [DEBUG] [useDeferredValue] Messages deferred by 1 (27→28)
+2026-02-06T06:39:41.769Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:41.777Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:42.081Z [DEBUG] [useDeferredValue] Messages deferred by 2 (28→30)
+2026-02-06T06:39:42.084Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:42.096Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:42.096Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:42.096Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:42.096Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:42.096Z [DEBUG] autocompact: tokens=21141 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:42.097Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:42.101Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:42.101Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:42.101Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:42.106Z [DEBUG] [useDeferredValue] Messages deferred by 1 (30→31)
+2026-02-06T06:39:42.108Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at p6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6442)
+    at l1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:4939)
+2026-02-06T06:39:45.073Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:47.081Z [DEBUG] [useDeferredValue] Messages deferred by 1 (31→32)
+2026-02-06T06:39:47.083Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:47.097Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:47.331Z [DEBUG] [useDeferredValue] Messages deferred by 2 (32→34)
+2026-02-06T06:39:47.334Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:47.360Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:47.364Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:47.364Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:47.364Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:47.364Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:47.364Z [DEBUG] autocompact: tokens=21414 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:47.365Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:47.370Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:47.370Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:47.371Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:51.298Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:54.456Z [DEBUG] [useDeferredValue] Messages deferred by 1 (34→35)
+2026-02-06T06:39:54.458Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:54.463Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:54.629Z [DEBUG] [useDeferredValue] Messages deferred by 2 (35→37)
+2026-02-06T06:39:54.633Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:54.659Z [ERROR] Error: Error: Tool glob not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:54.667Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:54.667Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:54.667Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:54.667Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:54.668Z [DEBUG] autocompact: tokens=21659 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:54.668Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:54.673Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:54.673Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:54.673Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:57.871Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:39:58.818Z [DEBUG] [useDeferredValue] Messages deferred by 1 (37→38)
+2026-02-06T06:39:58.820Z [ERROR] Error: Error: Tool read not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:58.825Z [ERROR] Error: Error: Tool read not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:59.313Z [DEBUG] [useDeferredValue] Messages deferred by 2 (38→40)
+2026-02-06T06:39:59.318Z [ERROR] Error: Error: Tool read not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:59.327Z [ERROR] Error: Error: Tool read not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:39:59.330Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:39:59.330Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:39:59.330Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:39:59.330Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:39:59.331Z [DEBUG] autocompact: tokens=21839 threshold=167000 effectiveWindow=180000
+2026-02-06T06:39:59.331Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:39:59.336Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:39:59.336Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:39:59.336Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:39:59.738Z [DEBUG] [onCancel] focusedInputDialog=undefined streamMode=requesting
+2026-02-06T06:39:59.746Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359999746
+2026-02-06T06:39:59.746Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:39:59.746Z [DEBUG] Temp file written successfully, size: 5916 bytes
+2026-02-06T06:39:59.746Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:39:59.746Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359999746 to /Users/a111111/.claude.json
+2026-02-06T06:39:59.746Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:39:59.747Z [ERROR] API error (attempt 1/11): undefined Request was aborted.
+2026-02-06T06:39:59.747Z [ERROR] Error in API request: Request was aborted.
+2026-02-06T06:39:59.748Z [ERROR] Error: Error: Request was aborted.
+    at LC.makeRequest (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:376:3940)
+    at runNextTicks (node:internal/process/task_queues:64:5)
+    at process.processTimers (node:internal/timers:538:9)
+2026-02-06T06:39:59.750Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359999750
+2026-02-06T06:39:59.750Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:39:59.750Z [DEBUG] Temp file written successfully, size: 5936 bytes
+2026-02-06T06:39:59.750Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:39:59.750Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359999750 to /Users/a111111/.claude.json
+2026-02-06T06:39:59.750Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:39:59.751Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770359999751
+2026-02-06T06:39:59.751Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:39:59.751Z [DEBUG] Temp file written successfully, size: 5936 bytes
+2026-02-06T06:39:59.751Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:39:59.751Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770359999751 to /Users/a111111/.claude.json
+2026-02-06T06:39:59.751Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:39:59.751Z [DEBUG] [useDeferredValue] Messages deferred by 1 (40→41)
+2026-02-06T06:39:59.753Z [DEBUG] Full reset (shrink->below): prevHeight=25, nextHeight=23, viewport=24
+2026-02-06T06:39:59.755Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-06T06:40:32.929Z [DEBUG] Full reset (shrink->below): prevHeight=24, nextHeight=23, viewport=24
+2026-02-06T06:40:53.158Z [DEBUG] Full reset (shrink->below): prevHeight=24, nextHeight=23, viewport=24
+2026-02-06T06:40:54.362Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:40:54.362Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:40:54.362Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:40:54.362Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:40:54.364Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-06T06:40:54.364Z [DEBUG] Found 0 hook matchers in settings
+2026-02-06T06:40:54.364Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-06T06:40:54.364Z [DEBUG] FileHistory: Making snapshot for message f4ae03f6-ae73-4e38-9757-208fabd021a1
+2026-02-06T06:40:54.364Z [DEBUG] FileHistory: Added snapshot for f4ae03f6-ae73-4e38-9757-208fabd021a1, tracking 0 files
+2026-02-06T06:40:54.365Z [DEBUG] [useDeferredValue] Messages deferred by 1 (41→42)
+2026-02-06T06:40:54.377Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-06T06:40:54.378Z [DEBUG] [useDeferredValue] Messages deferred by 1 (41→42)
+2026-02-06T06:40:54.379Z [DEBUG] [SystemPrompt] path=simple proactive=false
+2026-02-06T06:40:54.380Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-06T06:40:54.380Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:40:54.380Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:40:54.381Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:40:54.381Z [DEBUG] autocompact: tokens=22676 threshold=167000 effectiveWindow=180000
+2026-02-06T06:40:54.383Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:40:54.387Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:40:54.387Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:40:54.387Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:40:54.390Z [DEBUG] [useDeferredValue] Messages deferred by 1 (41→42)
+2026-02-06T06:40:54.400Z [DEBUG] Stored paste b98b1adca9dc4f8e to /Users/a111111/.claude/paste-cache/b98b1adca9dc4f8e.txt
+2026-02-06T06:40:54.408Z [DEBUG] High write ratio: blit=1520, write=13652 (90.0% writes), screen=217x80
+2026-02-06T06:41:00.163Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:41:00.812Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:41:06.327Z [DEBUG] [useDeferredValue] Messages deferred by 1 (42→43)
+2026-02-06T06:41:07.237Z [DEBUG] [useDeferredValue] Messages deferred by 1 (43→44)
+2026-02-06T06:41:07.239Z [ERROR] Error: Error: Tool write not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:41:07.251Z [ERROR] Error: Error: Tool write not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:42:22.344Z [WARN] Streaming stall detected: 75.1s gap between events (stall #1)
+2026-02-06T06:42:22.345Z [DEBUG] [useDeferredValue] Messages deferred by 2 (44→46)
+2026-02-06T06:42:22.350Z [ERROR] Error: Error: Tool write not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at t1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86617)
+    at cd1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86458)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81819)
+    at Z6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6322)
+    at Immediate.W8A [as _onImmediate] (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:701:13468)
+2026-02-06T06:42:22.390Z [DEBUG] High write ratio: blit=0, write=14233 (100.0% writes), screen=219x80
+2026-02-06T06:42:22.533Z [WARN] Streaming completed with 1 stall(s), total stall time: 75.1s
+2026-02-06T06:42:22.536Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-06T06:42:22.536Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-06T06:42:22.536Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-06T06:42:22.536Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-06T06:42:22.537Z [DEBUG] autocompact: tokens=29556 threshold=167000 effectiveWindow=180000
+2026-02-06T06:42:22.538Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:42:22.547Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:42:22.547Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:42:22.548Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:42:22.554Z [ERROR] Error: Error: Tool write not found
+    at U64 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:9641)
+    at P9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:20884)
+    at uH (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:39405)
+    at BI (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:50082)
+    at nm (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:86645)
+    at Fe (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85616)
+    at kc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:85440)
+    at Nc (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:81828)
+    at p6 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:6442)
+    at l1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:708:4939)
+2026-02-06T06:42:53.916Z [ERROR] Stream completed without receiving message_start event - triggering non-streaming fallback
+2026-02-06T06:42:53.917Z [ERROR] Error streaming, falling back to non-streaming mode: Stream ended without receiving any events
+2026-02-06T06:42:53.917Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:42:53.917Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:42:53.917Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:43:00.060Z [DEBUG] Metrics opt-out check failed: No API key available
+2026-02-06T06:43:00.060Z [DEBUG] Metrics check failed, defaulting to disabled
+2026-02-06T06:43:00.060Z [DEBUG] Metrics export disabled by organization setting
+2026-02-06T06:43:44.571Z [ERROR] API error (attempt 1/11): undefined Connection error.
+2026-02-06T06:43:44.573Z [DEBUG] [useDeferredValue] Messages deferred by 1 (46→47)
+2026-02-06T06:44:36.112Z [ERROR] API error (attempt 2/11): undefined Connection error.
+2026-02-06T06:44:36.113Z [DEBUG] [useDeferredValue] Messages deferred by 1 (47→48)
+2026-02-06T06:44:36.160Z [DEBUG] High write ratio: blit=0, write=14234 (100.0% writes), screen=219x80
+2026-02-06T06:44:54.383Z [DEBUG] Restarting caffeinate to maintain sleep prevention
+2026-02-06T06:44:54.384Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-06T06:44:54.387Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-06T06:45:13.470Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-06T06:45:13.470Z [DEBUG] Found 0 hook matchers in settings
+2026-02-06T06:45:13.470Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-06T06:45:13.471Z [DEBUG] autocompact: tokens=30743 threshold=167000 effectiveWindow=180000
+2026-02-06T06:45:13.473Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-06T06:45:13.479Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770360313479
+2026-02-06T06:45:13.479Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:45:13.479Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T06:45:13.479Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:45:13.480Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770360313479 to /Users/a111111/.claude.json
+2026-02-06T06:45:13.480Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:45:13.482Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770360313482
+2026-02-06T06:45:13.482Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T06:45:13.482Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T06:45:13.482Z [DEBUG] Applied original permissions to temp file
+2026-02-06T06:45:13.482Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770360313482 to /Users/a111111/.claude.json
+2026-02-06T06:45:13.482Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T06:45:13.486Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-06T06:45:13.486Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-06T06:45:13.486Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-06T06:45:13.490Z [DEBUG] [useDeferredValue] Messages deferred by 2 (48→50)
+2026-02-06T06:45:13.532Z [DEBUG] High write ratio: blit=0, write=14718 (100.0% writes), screen=284x80
+2026-02-06T06:45:40.937Z [DEBUG] Stream started - received first chunk
+2026-02-06T06:45:48.428Z [DEBUG] Forked agent [prompt_suggestion] received message: type=assistant
+2026-02-06T06:45:48.480Z [DEBUG] Forked agent [prompt_suggestion] received message: type=assistant
+2026-02-06T06:45:48.531Z [DEBUG] Getting matching hook commands for SubagentStop with query:
+2026-02-06T06:45:48.531Z [DEBUG] Found 0 hook matchers in settings
+2026-02-06T06:45:48.531Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-06T06:45:48.531Z [DEBUG] Forked agent [prompt_suggestion] finished: 2 messages, types=[assistant, assistant], totalUsage: input=9 output=309 cacheRead=24120 cacheCreate=6638
+2026-02-06T06:46:13.496Z [DEBUG] Getting matching hook commands for Notification with query: idle_prompt
+2026-02-06T06:46:13.496Z [DEBUG] Found 0 hook matchers in settings
+2026-02-06T06:46:13.496Z [DEBUG] Matched 0 unique hooks for query "idle_prompt" (0 before deduplication)
+2026-02-06T06:48:00.065Z [DEBUG] Metrics opt-out check failed: No API key available
+2026-02-06T06:48:00.065Z [DEBUG] Metrics check failed, defaulting to disabled
+2026-02-06T06:48:00.065Z [DEBUG] Metrics export disabled by organization setting
+2026-02-06T07:08:07.527Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-06T07:08:07.527Z [DEBUG] AutoUpdater: Using global update method
+2026-02-06T07:14:11.360Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770362051360
+2026-02-06T07:14:11.360Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T07:14:11.360Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T07:14:11.360Z [DEBUG] Applied original permissions to temp file
+2026-02-06T07:14:11.360Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770362051360 to /Users/a111111/.claude.json
+2026-02-06T07:14:11.361Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T07:38:07.649Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-06T07:38:07.649Z [DEBUG] AutoUpdater: Using global update method
+2026-02-06T07:38:08.312Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770363488312
+2026-02-06T07:38:08.312Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T07:38:08.312Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T07:38:08.312Z [DEBUG] Applied original permissions to temp file
+2026-02-06T07:38:08.312Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770363488312 to /Users/a111111/.claude.json
+2026-02-06T07:38:08.312Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T08:08:07.497Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-06T08:08:07.497Z [DEBUG] AutoUpdater: Using global update method
+2026-02-06T08:08:08.163Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770365288163
+2026-02-06T08:08:08.163Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T08:08:08.163Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T08:08:08.163Z [DEBUG] Applied original permissions to temp file
+2026-02-06T08:08:08.163Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770365288163 to /Users/a111111/.claude.json
+2026-02-06T08:08:08.163Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T08:38:07.561Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-06T08:38:07.561Z [DEBUG] AutoUpdater: Using global update method
+2026-02-06T08:38:08.200Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770367088200
+2026-02-06T08:38:08.200Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T08:38:08.200Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T08:38:08.200Z [DEBUG] Applied original permissions to temp file
+2026-02-06T08:38:08.200Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770367088200 to /Users/a111111/.claude.json
+2026-02-06T08:38:08.200Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T09:08:07.497Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-06T09:08:07.497Z [DEBUG] AutoUpdater: Using global update method
+2026-02-06T09:08:08.066Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770368888066
+2026-02-06T09:08:08.066Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T09:08:08.066Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T09:08:08.066Z [DEBUG] Applied original permissions to temp file
+2026-02-06T09:08:08.066Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770368888066 to /Users/a111111/.claude.json
+2026-02-06T09:08:08.066Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T09:38:07.525Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-06T09:38:07.525Z [DEBUG] AutoUpdater: Using global update method
+2026-02-06T09:38:08.204Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770370688204
+2026-02-06T09:38:08.204Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T09:38:08.204Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T09:38:08.204Z [DEBUG] Applied original permissions to temp file
+2026-02-06T09:38:08.204Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770370688204 to /Users/a111111/.claude.json
+2026-02-06T09:38:08.205Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T10:08:07.670Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-06T10:08:07.670Z [DEBUG] AutoUpdater: Using global update method
+2026-02-06T10:08:09.281Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770372489281
+2026-02-06T10:08:09.281Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T10:08:09.281Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T10:08:09.281Z [DEBUG] Applied original permissions to temp file
+2026-02-06T10:08:09.281Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770372489281 to /Users/a111111/.claude.json
+2026-02-06T10:08:09.281Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T10:43:57.599Z [DEBUG] npm view failed with code 1
+2026-02-06T10:43:57.599Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T11:19:06.416Z [DEBUG] npm view failed with code 1
+2026-02-06T11:19:06.416Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T11:49:01.637Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-06T11:49:01.637Z [DEBUG] AutoUpdater: Using global update method
+2026-02-06T11:49:02.217Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770378542217
+2026-02-06T11:49:02.217Z [DEBUG] Preserving file permissions: 100600
+2026-02-06T11:49:02.217Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-06T11:49:02.217Z [DEBUG] Applied original permissions to temp file
+2026-02-06T11:49:02.217Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770378542217 to /Users/a111111/.claude.json
+2026-02-06T11:49:02.218Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-06T12:05:40.739Z [ERROR] Error: Error: 1P event logging: 1 events failed to export (code=ENOTFOUND, getaddrinfo ENOTFOUND api.anthropic.com)
+    at DWA.queueFailedEvents (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1869:2315)
+    at async DWA.doExport (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1869:1197)
+2026-02-06T12:05:40.744Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events (code=ENOTFOUND, getaddrinfo ENOTFOUND api.anthropic.com)\n    at DWA.doExport (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1869:1372)","message":"Failed to export 1 events (code=ENOTFOUND, getaddrinfo ENOTFOUND api.anthropic.com)","name":"Error"}
+    at tfA.error (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1912:34863)
+    at b0A.error (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1300:6318)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:29391
+    at VB9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1864:29937)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1865:20245
+2026-02-06T12:24:00.329Z [DEBUG] npm view failed with code 1
+2026-02-06T12:24:00.329Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T12:58:04.656Z [DEBUG] npm view failed with code 1
+2026-02-06T12:58:04.656Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T13:41:43.584Z [DEBUG] npm view failed with code 1
+2026-02-06T13:41:43.584Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T14:25:55.954Z [DEBUG] npm view failed with code 1
+2026-02-06T14:25:55.954Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T15:02:15.010Z [DEBUG] npm view failed with code 1
+2026-02-06T15:02:15.010Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T15:45:53.321Z [DEBUG] npm view failed with code 1
+2026-02-06T15:45:53.322Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T16:29:41.086Z [DEBUG] npm view failed with code 1
+2026-02-06T16:29:41.086Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T17:04:22.646Z [DEBUG] npm view failed with code 1
+2026-02-06T17:04:22.646Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T17:45:43.213Z [DEBUG] npm view failed with code 1
+2026-02-06T17:45:43.213Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T18:20:27.823Z [DEBUG] npm view failed with code 1
+2026-02-06T18:20:27.823Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T18:54:37.340Z [DEBUG] npm view failed with code 1
+2026-02-06T18:54:37.340Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T19:32:22.118Z [DEBUG] npm view failed with code 1
+2026-02-06T19:32:22.118Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T20:05:13.961Z [DEBUG] npm view failed with code 1
+2026-02-06T20:05:13.961Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T20:39:03.469Z [DEBUG] npm view failed with code 1
+2026-02-06T20:39:03.469Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T21:11:22.971Z [DEBUG] npm view failed with code 1
+2026-02-06T21:11:22.971Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T21:46:17.590Z [DEBUG] npm view failed with code 1
+2026-02-06T21:46:17.590Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T22:17:38.135Z [DEBUG] npm view failed with code 1
+2026-02-06T22:17:38.135Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T22:50:01.706Z [DEBUG] npm view failed with code 1
+2026-02-06T22:50:01.706Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T23:24:19.216Z [DEBUG] npm view failed with code 1
+2026-02-06T23:24:19.216Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-06T23:59:12.870Z [DEBUG] npm view failed with code 1
+2026-02-06T23:59:12.870Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T00:35:46.148Z [DEBUG] npm view failed with code 1
+2026-02-07T00:35:46.148Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T01:19:20.452Z [DEBUG] npm view failed with code 1
+2026-02-07T01:19:20.452Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T01:52:13.090Z [DEBUG] npm view failed with code 1
+2026-02-07T01:52:13.090Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T02:36:50.406Z [DEBUG] npm view failed with code 1
+2026-02-07T02:36:50.406Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T03:06:45.680Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-07T03:06:45.680Z [DEBUG] AutoUpdater: Using global update method
+2026-02-07T03:06:46.249Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770433606249
+2026-02-07T03:06:46.249Z [DEBUG] Preserving file permissions: 100600
+2026-02-07T03:06:46.249Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-07T03:06:46.249Z [DEBUG] Applied original permissions to temp file
+2026-02-07T03:06:46.249Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770433606249 to /Users/a111111/.claude.json
+2026-02-07T03:06:46.249Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-07T03:46:40.329Z [DEBUG] npm view failed with code 1
+2026-02-07T03:46:40.329Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T04:22:01.180Z [DEBUG] npm view failed with code 1
+2026-02-07T04:22:01.180Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T04:54:26.690Z [DEBUG] npm view failed with code 1
+2026-02-07T04:54:26.690Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T05:39:04.067Z [DEBUG] npm view failed with code 1
+2026-02-07T05:39:04.067Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T06:25:12.679Z [DEBUG] npm view failed with code 1
+2026-02-07T06:25:12.679Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T06:58:53.391Z [DEBUG] npm view failed with code 1
+2026-02-07T06:58:53.391Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T07:37:01.030Z [DEBUG] npm view failed with code 1
+2026-02-07T07:37:01.030Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T08:10:07.974Z [DEBUG] npm view failed with code 1
+2026-02-07T08:10:07.974Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T08:42:33.506Z [DEBUG] npm view failed with code 1
+2026-02-07T08:42:33.506Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T09:29:25.282Z [DEBUG] npm view failed with code 1
+2026-02-07T09:29:25.282Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T10:02:38.306Z [DEBUG] npm view failed with code 1
+2026-02-07T10:02:38.306Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T10:45:12.222Z [DEBUG] npm view failed with code 1
+2026-02-07T10:45:12.222Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T11:25:25.199Z [DEBUG] npm view failed with code 1
+2026-02-07T11:25:25.199Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T11:59:55.417Z [DEBUG] npm view failed with code 1
+2026-02-07T11:59:55.417Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T12:30:29.939Z [DEBUG] npm view failed with code 1
+2026-02-07T12:30:29.939Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T13:03:25.198Z [DEBUG] npm view failed with code 1
+2026-02-07T13:03:25.198Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T13:33:40.196Z [DEBUG] npm view failed with code 1
+2026-02-07T13:33:40.197Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T14:06:40.733Z [DEBUG] npm view failed with code 1
+2026-02-07T14:06:40.733Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T14:50:58.940Z [DEBUG] npm view failed with code 1
+2026-02-07T14:50:58.940Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T15:34:36.300Z [DEBUG] npm view failed with code 1
+2026-02-07T15:34:36.300Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T16:10:03.693Z [DEBUG] npm view failed with code 1
+2026-02-07T16:10:03.693Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T16:50:40.594Z [DEBUG] npm view failed with code 1
+2026-02-07T16:50:40.595Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T17:36:13.893Z [DEBUG] npm view failed with code 1
+2026-02-07T17:36:13.893Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T18:12:05.400Z [DEBUG] npm view failed with code 1
+2026-02-07T18:12:05.400Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T18:44:42.918Z [DEBUG] npm view failed with code 1
+2026-02-07T18:44:42.918Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T19:19:39.773Z [DEBUG] npm view failed with code 1
+2026-02-07T19:19:39.773Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T19:55:49.551Z [DEBUG] npm view failed with code 1
+2026-02-07T19:55:49.551Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T20:29:26.083Z [DEBUG] npm view failed with code 1
+2026-02-07T20:29:26.083Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T21:03:28.062Z [DEBUG] npm view failed with code 1
+2026-02-07T21:03:28.062Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T21:39:39.842Z [DEBUG] npm view failed with code 1
+2026-02-07T21:39:39.842Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T22:17:26.945Z [DEBUG] npm view failed with code 1
+2026-02-07T22:17:26.945Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T22:51:10.541Z [DEBUG] npm view failed with code 1
+2026-02-07T22:51:10.541Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-07T23:24:45.098Z [DEBUG] npm view failed with code 1
+2026-02-07T23:24:45.099Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T00:00:18.414Z [DEBUG] npm view failed with code 1
+2026-02-08T00:00:18.414Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T00:32:19.945Z [DEBUG] npm view failed with code 1
+2026-02-08T00:32:19.945Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T01:02:19.961Z [DEBUG] npm view failed with code 1
+2026-02-08T01:02:19.961Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T01:36:46.014Z [DEBUG] npm view failed with code 1
+2026-02-08T01:36:46.014Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T02:20:12.226Z [DEBUG] npm view failed with code 1
+2026-02-08T02:20:12.226Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T02:53:29.737Z [DEBUG] npm view failed with code 1
+2026-02-08T02:53:29.737Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T03:38:31.263Z [DEBUG] npm view failed with code 1
+2026-02-08T03:38:31.263Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T04:20:55.771Z [DEBUG] npm view failed with code 1
+2026-02-08T04:20:55.771Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T04:54:46.985Z [DEBUG] npm view failed with code 1
+2026-02-08T04:54:46.985Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T05:38:26.331Z [DEBUG] npm view failed with code 1
+2026-02-08T05:38:26.331Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T06:24:01.322Z [DEBUG] npm view failed with code 1
+2026-02-08T06:24:01.322Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T06:57:41.270Z [DEBUG] npm view failed with code 1
+2026-02-08T06:57:41.270Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T07:42:28.594Z [DEBUG] npm view failed with code 1
+2026-02-08T07:42:28.594Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T08:25:15.386Z [DEBUG] npm view failed with code 1
+2026-02-08T08:25:15.386Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T08:58:29.919Z [DEBUG] npm view failed with code 1
+2026-02-08T08:58:29.919Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T09:42:43.206Z [DEBUG] npm view failed with code 1
+2026-02-08T09:42:43.206Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T10:27:16.955Z [DEBUG] npm view failed with code 1
+2026-02-08T10:27:16.955Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T11:00:53.312Z [DEBUG] npm view failed with code 1
+2026-02-08T11:00:53.312Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T11:44:40.695Z [DEBUG] npm view failed with code 1
+2026-02-08T11:44:40.695Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T12:30:46.759Z [DEBUG] npm view failed with code 1
+2026-02-08T12:30:46.759Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T13:03:42.846Z [DEBUG] npm view failed with code 1
+2026-02-08T13:03:42.846Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T13:48:59.363Z [DEBUG] npm view failed with code 1
+2026-02-08T13:48:59.363Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T14:31:12.601Z [DEBUG] npm view failed with code 1
+2026-02-08T14:31:12.601Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T15:03:49.479Z [DEBUG] npm view failed with code 1
+2026-02-08T15:03:49.479Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T15:48:57.763Z [DEBUG] npm view failed with code 1
+2026-02-08T15:48:57.763Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T16:33:25.177Z [DEBUG] npm view failed with code 1
+2026-02-08T16:33:25.177Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T17:05:55.812Z [DEBUG] npm view failed with code 1
+2026-02-08T17:05:55.812Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T17:35:51.145Z [DEBUG] AutoUpdater: Detected installation type: npm-global
+2026-02-08T17:35:51.145Z [DEBUG] AutoUpdater: Using global update method
+2026-02-08T17:35:52.431Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.94475.1770572152431
+2026-02-08T17:35:52.431Z [DEBUG] Preserving file permissions: 100600
+2026-02-08T17:35:52.431Z [DEBUG] Temp file written successfully, size: 5965 bytes
+2026-02-08T17:35:52.431Z [DEBUG] Applied original permissions to temp file
+2026-02-08T17:35:52.431Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.94475.1770572152431 to /Users/a111111/.claude.json
+2026-02-08T17:35:52.431Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-08T18:08:30.825Z [DEBUG] npm view failed with code 1
+2026-02-08T18:08:30.825Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T18:42:54.375Z [DEBUG] npm view failed with code 1
+2026-02-08T18:42:54.375Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T19:17:32.883Z [DEBUG] npm view failed with code 1
+2026-02-08T19:17:32.883Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T19:50:51.404Z [DEBUG] npm view failed with code 1
+2026-02-08T19:50:51.404Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T20:33:58.160Z [DEBUG] npm view failed with code 1
+2026-02-08T20:33:58.160Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T21:08:45.263Z [DEBUG] npm view failed with code 1
+2026-02-08T21:08:45.263Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T21:42:43.620Z [DEBUG] npm view failed with code 1
+2026-02-08T21:42:43.620Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T22:16:33.973Z [DEBUG] npm view failed with code 1
+2026-02-08T22:16:33.973Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T22:50:08.502Z [DEBUG] npm view failed with code 1
+2026-02-08T22:50:08.502Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T23:23:27.038Z [DEBUG] npm view failed with code 1
+2026-02-08T23:23:27.038Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-08T23:56:32.407Z [DEBUG] npm view failed with code 1
+2026-02-08T23:56:32.407Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-09T00:34:29.516Z [DEBUG] npm view failed with code 1
+2026-02-09T00:34:29.516Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-09T01:06:27.281Z [DEBUG] npm view failed with code 1
+2026-02-09T01:06:27.281Z [DEBUG] npm stderr: npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-09T01:07:51.772Z [DEBUG] Getting matching hook commands for SessionEnd with query: other
+2026-02-09T01:07:51.772Z [DEBUG] Found 0 hook matchers in settings
+2026-02-09T01:07:51.772Z [DEBUG] Matched 0 unique hooks for query "other" (0 before deduplication)

@@ -8,6 +8,12 @@
 4. **Page Props**：`web/src/pages/pollo.ai/v/[id]/index.page.tsx` 接收 `videoData`。
 5. **Detail 组件**：`<Detail videoDetail={matchedVideoData} />` 进入详情模块。
 
+**路径直达：**
+- [`server/interface/vo/video-detail.vo.ts`](file:///Users/a111111/demo/test-ai-video-collection/server/interface/vo/video-detail.vo.ts)
+- [`server/router/routes/video.ts`](file:///Users/a111111/demo/test-ai-video-collection/server/router/routes/video.ts)
+- [`web/src/pages/pollo.ai/v/[id]/_helpers/video.ts`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_helpers/video.ts)
+- [`web/src/pages/pollo.ai/v/[id]/index.page.tsx`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/index.page.tsx)
+
 ## 2.在 v/[id]/_blocks/Detail/index.tsx 内部的层层流转
 
 1. **Page → Detail**：`videoData` 通过 `matchedVideoData` 传入 `<Detail />`。
@@ -17,7 +23,11 @@
 5. **Context 下发**：`DetailPrimitive.Root` 将 `videoDetail` 等注入 Context，子组件消费。
 6. **更新链路**：`handleUpdateVideo → onUpdateVideoDetail → videoDetailEmitter` 更新并广播。
 
+**路径直达：**
+- [`web/src/pages/pollo.ai/v/[id]/_blocks/Detail/index.tsx#L164`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_blocks/Detail/index.tsx#L164)
+
 ## 对象字段流转
+
 [123](file:///Users/a111111/Projects/LZY-FE-JumpTrack/skills/variable-flow/SKILL.md)
 
 ```js
@@ -194,3 +204,16 @@ const detailContext = {
   projectDetail: {},                             // 项目详情 [add]
 }
 ```
+
+**路径直达：**
+- [`server/interface/vo/video-detail.vo.ts#L312`](file:///Users/a111111/demo/test-ai-video-collection/server/interface/vo/video-detail.vo.ts#L312)
+- [`web/src/pages/pollo.ai/v/[id]/_helpers/video.ts#L16`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_helpers/video.ts#L16)
+- [`web/src/pages/pollo.ai/v/[id]/index.page.tsx#L23`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/index.page.tsx#L23)
+- [`web/src/pages/pollo.ai/v/[id]/index.page.tsx#L96`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/index.page.tsx#L96)
+- [`web/src/pages/pollo.ai/v/[id]/_blocks/Detail/index.tsx#L35`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_blocks/Detail/index.tsx#L35)
+- [`web/src/pages/pollo.ai/v/[id]/_blocks/Detail/index.tsx#L81`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_blocks/Detail/index.tsx#L81)
+- [`web/src/pages/pollo.ai/v/[id]/_blocks/Detail/index.tsx#L107`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_blocks/Detail/index.tsx#L107)
+- [`web/src/pages/pollo.ai/v/[id]/_blocks/Detail/index.tsx#L149`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_blocks/Detail/index.tsx#L149)
+- [`web/src/pages/pollo.ai/v/[id]/_hooks/useVideoDetail.ts#L11`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_hooks/useVideoDetail.ts#L11)
+- [`web/src/pages/pollo.ai/v/[id]/_blocks/Detail/primitive/context.ts#L8`](file:///Users/a111111/demo/test-ai-video-collection/web/src/pages/pollo.ai/v/%5Bid%5D/_blocks/Detail/primitive/context.ts#L8)
+

@@ -1,0 +1,2026 @@
+2026-02-26T06:10:24.499Z [DEBUG] detectFileEncoding failed for expected reason: ENOENT
+2026-02-26T06:10:24.499Z [DEBUG] MDM settings load completed in 2ms
+2026-02-26T06:10:24.520Z [DEBUG] [init] configureGlobalMTLS starting
+2026-02-26T06:10:24.520Z [DEBUG] [init] configureGlobalMTLS complete
+2026-02-26T06:10:24.520Z [DEBUG] [init] configureGlobalAgents starting
+2026-02-26T06:10:24.520Z [DEBUG] [init] configureGlobalAgents complete
+2026-02-26T06:10:24.523Z [DEBUG] Applying permission update: Adding 4 allow rule(s) to destination 'localSettings': ["Bash(ls:*)","Bash(git --version)","Bash(claude update)","Bash(claude --version)"]
+2026-02-26T06:10:24.535Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-02-26T06:10:24.537Z [DEBUG] [ToolSearch:optimistic] mode=standard, ENABLE_TOOL_SEARCH=undefined, result=false
+2026-02-26T06:10:24.537Z [DEBUG] [STARTUP] Running setup()...
+2026-02-26T06:10:24.542Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:10:24.547Z [DEBUG] Error log sink initialized
+2026-02-26T06:10:24.555Z [DEBUG] [STARTUP] setup() completed in 18ms
+2026-02-26T06:10:24.555Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-02-26T06:10:24.556Z [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-02-26T06:10:24.561Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-02-26T06:10:24.561Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-02-26T06:10:24.562Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:10:24.562Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:10:24.562Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:10:24.562Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-02-26T06:10:24.562Z [DEBUG] Total plugin agents loaded: 0
+2026-02-26T06:10:24.563Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086224563
+2026-02-26T06:10:24.563Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:10:24.563Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:10:24.563Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:10:24.563Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086224563 to /Users/a111111/.claude.json
+2026-02-26T06:10:24.563Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:10:24.564Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-02-26T06:10:24.564Z [DEBUG] Git remote URL: https://cnb.cool/awesomeaicode/pollo/ai-video-collection.git
+2026-02-26T06:10:24.564Z [DEBUG] Parsed repository: null from URL: https://cnb.cool/awesomeaicode/pollo/ai-video-collection.git
+2026-02-26T06:10:24.611Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/arm64-darwin/rg)
+2026-02-26T06:10:24.619Z [DEBUG] Loaded 7 unique skills (7 unconditional, 0 conditional, managed: 0, user: 3, project: 3, additional: 0, legacy commands: 1)
+2026-02-26T06:10:24.619Z [DEBUG] getSkills returning: 7 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:10:24.619Z [DEBUG] [STARTUP] Commands and agents loaded in 64ms
+2026-02-26T06:10:24.622Z [DEBUG] [STARTUP] Running showSetupScreens()...
+2026-02-26T06:10:24.645Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2026-02-26T06:10:24.645Z [DEBUG] [Perfetto] initializePerfettoTracing called, env value: undefined
+2026-02-26T06:10:24.645Z [DEBUG] [3P telemetry] isTelemetryEnabled=false (CLAUDE_CODE_ENABLE_TELEMETRY=undefined)
+2026-02-26T06:10:24.646Z [DEBUG] [STARTUP] showSetupScreens() completed in 24ms
+2026-02-26T06:10:24.646Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-02-26T06:10:24.646Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-02-26T06:10:24.646Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-02-26T06:10:24.646Z [DEBUG] Total LSP servers loaded: 0
+2026-02-26T06:10:24.647Z [ERROR] Failed to fetch org fast mode status, defaulting to disabled: Error: No auth available
+2026-02-26T06:10:24.647Z [DEBUG] [STARTUP] MCP configs loaded in 112ms
+2026-02-26T06:10:24.649Z [DEBUG] MCP server "Framelink Figma MCP": Starting connection with timeout of 30000ms
+2026-02-26T06:10:24.654Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-02-26T06:10:24.654Z [DEBUG] LSP manager initialized with 0 servers
+2026-02-26T06:10:24.655Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-02-26T06:10:24.655Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:10:24.655Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-02-26T06:10:24.655Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-02-26T06:10:24.655Z [DEBUG] LSP server manager initialized successfully
+2026-02-26T06:10:24.655Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-02-26T06:10:24.655Z [DEBUG] [Reconnection] computeInitialTeamContext: No teammate context set (not a teammate)
+2026-02-26T06:10:24.656Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086224656
+2026-02-26T06:10:24.656Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:10:24.656Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:10:24.656Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:10:24.656Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086224656 to /Users/a111111/.claude.json
+2026-02-26T06:10:24.656Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:10:24.708Z [DEBUG] [keybindings] KeybindingSetup initialized with 102 bindings, 0 warnings
+2026-02-26T06:10:24.733Z [DEBUG] [REPL:mount] REPL mounted, disabled=false
+2026-02-26T06:10:24.733Z [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-02-26T06:10:24.734Z [DEBUG] performStartupChecks called
+2026-02-26T06:10:24.734Z [DEBUG] Starting background plugin installations
+2026-02-26T06:10:24.734Z [DEBUG] performBackgroundPluginInstallations called
+2026-02-26T06:10:24.762Z [DEBUG] Loaded 2 CLAUDE.md/rules files:
+  [Project] /Users/a111111/code/ai-video-collection/CLAUDE.md (8984 chars)
+  [AutoMem] /Users/a111111/.claude/projects/-Users-a111111-code-ai-video-collection/memory/MEMORY.md (224 chars)
+2026-02-26T06:10:24.768Z [DEBUG] Watching for changes in setting files /Users/a111111/.claude/settings.json, /Users/a111111/code/ai-video-collection/.claude/settings.json, /Users/a111111/code/ai-video-collection/.claude/settings.local.json...
+2026-02-26T06:10:24.769Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-26T06:10:24.771Z [DEBUG] [claudeai-mcp] Checking gate (cached)...
+2026-02-26T06:10:24.771Z [DEBUG] [claudeai-mcp] Gate returned: true
+2026-02-26T06:10:24.771Z [DEBUG] [claudeai-mcp] No access token
+2026-02-26T06:10:24.774Z [DEBUG] [keybindings] Watching for changes to /Users/a111111/.claude/keybindings.json
+2026-02-26T06:10:24.777Z [DEBUG] Setting installation status: 0 marketplaces, 0 installable plugins, 0 uninstallable plugins
+2026-02-26T06:10:24.778Z [DEBUG] Watching for changes in skill/command directories: /Users/a111111/.claude/skills, /Users/a111111/code/ai-video-collection/.claude/skills, /Users/a111111/code/ai-video-collection/.claude/commands...
+2026-02-26T06:10:24.781Z [DEBUG] Security messages are fresh (<1h old), skipping fetch
+2026-02-26T06:10:24.792Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-02-26T06:10:24.906Z [DEBUG] [claudeai-mcp] Checking gate (cached)...
+2026-02-26T06:10:24.906Z [DEBUG] [claudeai-mcp] Gate returned: true
+2026-02-26T06:10:24.906Z [DEBUG] [claudeai-mcp] No access token
+2026-02-26T06:10:24.909Z [DEBUG] MCP server "ide": Starting connection with timeout of 30000ms
+2026-02-26T06:10:24.915Z [DEBUG] MCP server "ide": Successfully connected to ws-ide server in 9ms
+2026-02-26T06:10:24.915Z [DEBUG] MCP server "ide": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"hasResourceSubscribe":false,"serverVersion":{"name":"Claude Code Cursor MCP","version":"2.1.58"}}
+2026-02-26T06:10:24.915Z [DEBUG] [MCP] Server "ide" connected with subscribe=false
+2026-02-26T06:10:32.691Z [ERROR] MCP server "Framelink Figma MCP" Server stderr: npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm.
+npm warn Unknown user config "email". This will stop working in the next major version of npm.
+2026-02-26T06:10:32.691Z [DEBUG] MCP server "Framelink Figma MCP": Successfully connected to stdio server in 8044ms
+2026-02-26T06:10:32.691Z [DEBUG] MCP server "Framelink Figma MCP": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"hasResourceSubscribe":false,"serverVersion":{"name":"Figma MCP Server","version":"0.6.4"}}
+2026-02-26T06:10:32.691Z [DEBUG] [MCP] Server "Framelink Figma MCP" connected with subscribe=false
+2026-02-26T06:11:18.873Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:11:18.873Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:11:18.874Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:11:18.874Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:11:18.875Z [DEBUG] Sending 8 skills via attachment (initial, 8 total sent)
+2026-02-26T06:11:18.877Z [WARN] [3P telemetry] Event dropped (no event logger initialized): user_prompt
+2026-02-26T06:11:18.878Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-26T06:11:18.878Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:11:18.878Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:11:18.879Z [DEBUG] FileHistory: Added snapshot for 76f60bfb-27a8-4ba4-97de-4a0901acf28f, tracking 0 files
+2026-02-26T06:11:18.880Z [DEBUG] [useDeferredValue] Messages deferred by 3 (0→3)
+2026-02-26T06:11:18.901Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:11:18.902Z [DEBUG] MCP server "ide": Calling MCP tool: closeAllDiffTabs
+2026-02-26T06:11:18.905Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:11:18.908Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:11:18.908Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:11:18.909Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:11:18.915Z [DEBUG] MCP server "ide": Tool 'closeAllDiffTabs' completed successfully in 13ms
+2026-02-26T06:11:18.919Z [DEBUG] Total plugin output styles loaded: 0
+2026-02-26T06:11:18.920Z [DEBUG] git pull: cwd=/Users/a111111/.claude/plugins/marketplaces/claude-plugins-official ref=default
+2026-02-26T06:11:18.968Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086278968
+2026-02-26T06:11:18.968Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:18.968Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:18.968Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:18.968Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086278968 to /Users/a111111/.claude.json
+2026-02-26T06:11:18.968Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:18.971Z [DEBUG] autocompact: tokens=451 threshold=167000 effectiveWindow=180000
+2026-02-26T06:11:18.971Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:11:18.976Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086278976
+2026-02-26T06:11:18.976Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:18.976Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:18.976Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:18.976Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086278976 to /Users/a111111/.claude.json
+2026-02-26T06:11:18.977Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:18.977Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:11:18.977Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:11:18.977Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:11:20.100Z [DEBUG] Successfully refreshed marketplace: claude-plugins-official
+2026-02-26T06:11:20.100Z [DEBUG] Plugin autoupdate: checking installed plugins
+2026-02-26T06:11:20.467Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:11:20.682Z [ERROR] SyntaxError: SyntaxError: Unexpected token 'N', "New Conversation" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:110:1086
+    at K (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:8:7852)
+    at z27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1851:20194)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-02-26T06:11:22.893Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:11:23.894Z [DEBUG] [useDeferredValue] Messages deferred by 1 (3→4)
+2026-02-26T06:11:24.580Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-26T06:11:24.581Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-26T06:11:24.581Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:11:24.581Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-26T06:11:24.586Z [DEBUG] Permission suggestions for Read: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Read",
+        "ruleContent": "//Users/a111111/demo/LZY-FE-JumpTrack/learn-in-project/**"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "session"
+  }
+]
+2026-02-26T06:11:24.587Z [DEBUG] executePermissionRequestHooks called for tool: Read
+2026-02-26T06:11:24.587Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Read
+2026-02-26T06:11:24.587Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:11:24.587Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-26T06:11:24.588Z [DEBUG] [useDeferredValue] Messages deferred by 1 (4→5)
+2026-02-26T06:11:24.598Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:11:24.599Z [ERROR] Error: Error: EISDIR: illegal operation on a directory, read
+    at Module.readSync (node:fs:738:18)
+    at Object.readSync (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:9:1341)
+    at Lj (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:6330:105)
+    at b_ (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:6332:224)
+    at JGz (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:12174:8282)
+    at X (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:12174:7484)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:12174:7816
+    at o8 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:290:62967)
+    at oF (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:290:76003)
+    at TJ (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:290:75885)
+2026-02-26T06:11:24.599Z [DEBUG] [useDeferredValue] Messages deferred by 1 (4→5)
+2026-02-26T06:11:24.599Z [ERROR] Error: Error: EISDIR: illegal operation on a directory, read
+    at Module.readFileSync (node:fs:439:20)
+    at Object.readFileSync (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:9:958)
+    at b_ (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:6332:239)
+    at JGz (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:12174:8282)
+    at X (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:12174:7484)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:12174:7816
+    at o8 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:290:62967)
+    at oF (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:290:76003)
+    at TJ (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:290:75885)
+    at oF (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:290:75982)
+2026-02-26T06:11:24.602Z [DEBUG] [useDeferredValue] Messages deferred by 1 (4→5)
+2026-02-26T06:11:30.987Z [DEBUG] MCP server "ide": Calling MCP tool: close_tab
+2026-02-26T06:11:31.003Z [DEBUG] Full reset (shrink->below): prevHeight=24, nextHeight=19, viewport=24
+2026-02-26T06:11:31.011Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:11:31.012Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-26T06:11:31.014Z [DEBUG] MCP server "ide": Tool 'close_tab' completed successfully in 27ms
+2026-02-26T06:11:31.021Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086291021
+2026-02-26T06:11:31.021Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:31.021Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:31.021Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:31.021Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086291021 to /Users/a111111/.claude.json
+2026-02-26T06:11:31.021Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:31.022Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-26T06:11:31.022Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:11:31.023Z [DEBUG] Matched 1 unique hooks for query "Read" (1 before deduplication)
+2026-02-26T06:11:31.025Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:11:31.025Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:11:31.025Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:11:31.025Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:11:31.025Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:11:31.026Z [DEBUG] [useDeferredValue] Messages deferred by 3 (5→8)
+2026-02-26T06:11:31.028Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 3ms
+2026-02-26T06:11:31.028Z [DEBUG] autocompact: tokens=27984 threshold=167000 effectiveWindow=180000
+2026-02-26T06:11:31.028Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:11:31.031Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086291031
+2026-02-26T06:11:31.031Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:31.031Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:31.031Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:31.031Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086291031 to /Users/a111111/.claude.json
+2026-02-26T06:11:31.031Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:31.032Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:11:31.032Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:11:31.032Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:11:31.034Z [DEBUG] [useDeferredValue] Messages deferred by 3 (5→8)
+2026-02-26T06:11:34.898Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:11:37.086Z [DEBUG] [useDeferredValue] Messages deferred by 1 (8→9)
+2026-02-26T06:11:37.638Z [DEBUG] [useDeferredValue] Messages deferred by 1 (9→10)
+2026-02-26T06:11:39.005Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:11:39.006Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:11:39.006Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:11:39.006Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:11:39.008Z [DEBUG] tree-sitter: WASM files not found
+2026-02-26T06:11:39.016Z [DEBUG] [useDeferredValue] Messages deferred by 1 (10→11)
+2026-02-26T06:11:39.027Z [DEBUG] Creating shell snapshot for zsh (/bin/zsh)
+2026-02-26T06:11:39.027Z [DEBUG] Looking for shell config file: /Users/a111111/.zshrc
+2026-02-26T06:11:39.028Z [DEBUG] Snapshots directory: /Users/a111111/.claude/shell-snapshots
+2026-02-26T06:11:39.028Z [DEBUG] Creating snapshot at: /Users/a111111/.claude/shell-snapshots/snapshot-zsh-1772086299028-wrsao1.sh
+2026-02-26T06:11:39.028Z [DEBUG] Execution timeout: 10000ms
+2026-02-26T06:11:39.344Z [DEBUG] Shell snapshot created successfully (135279 bytes)
+2026-02-26T06:11:39.344Z [DEBUG] No session environment scripts found
+2026-02-26T06:11:39.344Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:11:39.364Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086299364
+2026-02-26T06:11:39.364Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:39.364Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:39.365Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:39.365Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086299364 to /Users/a111111/.claude.json
+2026-02-26T06:11:39.365Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:39.365Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:11:39.365Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:11:39.365Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:11:39.365Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:11:39.365Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:11:39.365Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:11:39.365Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:11:39.415Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-26T06:11:39.415Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-26T06:11:39.415Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:11:39.415Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-26T06:11:39.417Z [DEBUG] [useDeferredValue] Messages deferred by 2 (11→13)
+2026-02-26T06:11:39.421Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086299421
+2026-02-26T06:11:39.421Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:39.421Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:39.421Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:39.421Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086299421 to /Users/a111111/.claude.json
+2026-02-26T06:11:39.421Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:39.422Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-26T06:11:39.422Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:11:39.422Z [DEBUG] Matched 1 unique hooks for query "Read" (1 before deduplication)
+2026-02-26T06:11:39.430Z [DEBUG] High write ratio: blit=0, write=1315 (100.0% writes), screen=29x150
+2026-02-26T06:11:39.695Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:11:39.696Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:11:39.696Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:11:39.696Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:11:39.696Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:11:39.699Z [DEBUG] [useDeferredValue] Messages deferred by 3 (13→16)
+2026-02-26T06:11:39.706Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 11ms
+2026-02-26T06:11:39.707Z [DEBUG] autocompact: tokens=30669 threshold=167000 effectiveWindow=180000
+2026-02-26T06:11:39.707Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:11:39.709Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086299709
+2026-02-26T06:11:39.709Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:39.710Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:39.710Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:39.710Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086299709 to /Users/a111111/.claude.json
+2026-02-26T06:11:39.710Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:39.711Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:11:39.711Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:11:39.712Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:11:39.714Z [DEBUG] [useDeferredValue] Messages deferred by 3 (13→16)
+2026-02-26T06:11:41.123Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:11:42.753Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:11:44.666Z [DEBUG] [useDeferredValue] Messages deferred by 1 (16→17)
+2026-02-26T06:11:48.536Z [DEBUG] [useDeferredValue] Messages deferred by 1 (17→18)
+2026-02-26T06:11:48.560Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-26T06:11:48.560Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:11:48.560Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:11:48.560Z [DEBUG] autocompact: tokens=32030 threshold=167000 effectiveWindow=180000
+2026-02-26T06:11:48.563Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:11:48.566Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086308566
+2026-02-26T06:11:48.566Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:48.566Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:48.566Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:48.566Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086308566 to /Users/a111111/.claude.json
+2026-02-26T06:11:48.566Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:48.567Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:11:48.567Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:11:48.567Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:11:48.570Z [DEBUG] [useDeferredValue] Messages deferred by 1 (17→18)
+2026-02-26T06:11:48.577Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:11:48.772Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086308772
+2026-02-26T06:11:48.772Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:11:48.772Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:11:48.772Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:11:48.772Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086308772 to /Users/a111111/.claude.json
+2026-02-26T06:11:48.773Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:11:51.183Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:11:51.481Z [DEBUG] Forked agent [prompt_suggestion] received message: type=assistant
+2026-02-26T06:11:51.523Z [DEBUG] Getting matching hook commands for SubagentStop with query:
+2026-02-26T06:11:51.523Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:11:51.523Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:11:51.523Z [DEBUG] Forked agent [prompt_suggestion] finished: 1 messages, types=[assistant], totalUsage: input=21752 output=9 cacheRead=10293 cacheCreate=0
+2026-02-26T06:13:15.894Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:13:15.894Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:13:15.894Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:13:15.895Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:13:15.895Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:13:15.909Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 15ms
+2026-02-26T06:13:15.911Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-26T06:13:15.911Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:15.911Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:13:15.911Z [DEBUG] FileHistory: Making snapshot for message c66d3ebb-7b22-48f7-8428-40b447d6d404
+2026-02-26T06:13:15.912Z [DEBUG] FileHistory: Added snapshot for c66d3ebb-7b22-48f7-8428-40b447d6d404, tracking 0 files
+2026-02-26T06:13:15.913Z [DEBUG] [useDeferredValue] Messages deferred by 1 (18→19)
+2026-02-26T06:13:15.918Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:13:15.918Z [DEBUG] MCP server "ide": Calling MCP tool: closeAllDiffTabs
+2026-02-26T06:13:15.920Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:13:15.922Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:13:15.922Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:13:15.923Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:13:15.926Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086395926
+2026-02-26T06:13:15.926Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:15.926Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:15.926Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:15.926Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086395926 to /Users/a111111/.claude.json
+2026-02-26T06:13:15.926Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:15.927Z [DEBUG] autocompact: tokens=31766 threshold=167000 effectiveWindow=180000
+2026-02-26T06:13:15.928Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:13:15.930Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086395930
+2026-02-26T06:13:15.930Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:15.930Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:15.930Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:15.930Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086395930 to /Users/a111111/.claude.json
+2026-02-26T06:13:15.931Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:15.931Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:13:15.931Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:13:15.931Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:13:15.934Z [DEBUG] MCP server "ide": Tool 'closeAllDiffTabs' completed successfully in 16ms
+2026-02-26T06:13:15.935Z [DEBUG] [useDeferredValue] Messages deferred by 1 (18→19)
+2026-02-26T06:13:15.953Z [DEBUG] High write ratio: blit=0, write=1487 (100.0% writes), screen=49x150
+2026-02-26T06:13:17.952Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:13:20.125Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:13:20.511Z [DEBUG] [useDeferredValue] Messages deferred by 1 (19→20)
+2026-02-26T06:13:20.515Z [DEBUG] [useDeferredValue] Messages deferred by 1 (19→20)
+2026-02-26T06:13:21.492Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:13:21.492Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:13:21.492Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:21.492Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:13:21.499Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Bash",
+        "ruleContent": "git checkout master"
+      },
+      {
+        "toolName": "Bash",
+        "ruleContent": "git pull"
+      },
+      {
+        "toolName": "Bash",
+        "ruleContent": "git checkout -b feat/template-category-show-code"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "localSettings"
+  }
+]
+2026-02-26T06:13:21.499Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-26T06:13:21.499Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-26T06:13:21.499Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:21.499Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:13:21.500Z [DEBUG] [useDeferredValue] Messages deferred by 1 (20→21)
+2026-02-26T06:13:21.506Z [DEBUG] High write ratio: blit=0, write=1618 (100.0% writes), screen=55x150
+2026-02-26T06:13:21.507Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:13:21.508Z [DEBUG] [useDeferredValue] Messages deferred by 1 (20→21)
+2026-02-26T06:13:21.509Z [DEBUG] [useDeferredValue] Messages deferred by 1 (20→21)
+2026-02-26T06:13:27.511Z [DEBUG] Getting matching hook commands for Notification with query: permission_prompt
+2026-02-26T06:13:27.511Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:27.511Z [DEBUG] Matched 0 unique hooks for query "permission_prompt" (0 before deduplication)
+2026-02-26T06:13:32.947Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:13:32.949Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-26T06:13:32.952Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:13:33.195Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/commands/analytics-click-exposure.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/add-model/SKILL.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/extension-plugin-creator/README.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/extension-plugin-creator/SKILL.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/IMPLEMENTATION.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/SKILL.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/examples/plans-context.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/examples/onboarding-context.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/references/auto-imports-guide.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/README.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/references/pattern-details.md
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.196Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/scripts/create-context-structure.sh
+2026-02-26T06:13:33.196Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:13:33.196Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:33.196Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:13:33.197Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.199Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.201Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.201Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.201Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.202Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.202Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.202Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.203Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.203Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.203Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.204Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:13:33.205Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:13:33.208Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.208Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.208Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.208Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.208Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.208Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.208Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.209Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.209Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.209Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.209Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.209Z [DEBUG] Loaded 3 unique skills (3 unconditional, 0 conditional, managed: 0, user: 3, project: 0, additional: 0, legacy commands: 0)
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:33.209Z [DEBUG] getSkills returning: 3 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:13:34.928Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086414928
+2026-02-26T06:13:34.928Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:34.929Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:34.929Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:34.929Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086414928 to /Users/a111111/.claude.json
+2026-02-26T06:13:34.929Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:34.930Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:13:34.931Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:13:34.931Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:13:34.931Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:13:34.931Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:13:34.932Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:13:34.932Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:13:34.935Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:13:34.935Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:13:34.935Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:13:34.935Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:13:34.935Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:13:34.936Z [DEBUG] Sending 4 skills via attachment (initial, 4 total sent)
+2026-02-26T06:13:34.937Z [DEBUG] [useDeferredValue] Messages deferred by 1 (21→22)
+2026-02-26T06:13:35.124Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 189ms
+2026-02-26T06:13:35.125Z [DEBUG] autocompact: tokens=33885 threshold=167000 effectiveWindow=180000
+2026-02-26T06:13:35.125Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:13:35.132Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086415132
+2026-02-26T06:13:35.132Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:35.132Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:35.132Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:35.132Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086415132 to /Users/a111111/.claude.json
+2026-02-26T06:13:35.132Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:35.134Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:13:35.134Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:13:35.134Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:13:35.136Z [DEBUG] [useDeferredValue] Messages deferred by 2 (22→24)
+2026-02-26T06:13:39.882Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:13:41.997Z [DEBUG] Edit tool validation error: File has been modified since read, either by the user or by a linter. Read it again before attempting to write it.
+2026-02-26T06:13:41.998Z [DEBUG] [useDeferredValue] Messages deferred by 2 (24→26)
+2026-02-26T06:13:42.006Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:13:42.006Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:13:42.006Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:13:42.006Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:13:42.006Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:13:42.010Z [DEBUG] High write ratio: blit=0, write=1855 (100.0% writes), screen=58x150
+2026-02-26T06:13:42.010Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 4ms
+2026-02-26T06:13:42.011Z [DEBUG] autocompact: tokens=35953 threshold=167000 effectiveWindow=180000
+2026-02-26T06:13:42.011Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:13:42.013Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086422013
+2026-02-26T06:13:42.013Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:42.013Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:42.013Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:42.013Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086422013 to /Users/a111111/.claude.json
+2026-02-26T06:13:42.013Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:42.014Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:13:42.014Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:13:42.014Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:13:43.267Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:13:44.577Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:13:45.247Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-26T06:13:45.247Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-26T06:13:45.247Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:45.247Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-26T06:13:45.249Z [DEBUG] [useDeferredValue] Messages deferred by 1 (26→27)
+2026-02-26T06:13:45.251Z [DEBUG] High write ratio: blit=0, write=1855 (100.0% writes), screen=58x150
+2026-02-26T06:13:45.257Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086425257
+2026-02-26T06:13:45.258Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:45.258Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:45.258Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:45.258Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086425257 to /Users/a111111/.claude.json
+2026-02-26T06:13:45.258Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:45.258Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-26T06:13:45.258Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:13:45.258Z [DEBUG] Matched 1 unique hooks for query "Read" (1 before deduplication)
+2026-02-26T06:13:45.259Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:13:45.259Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:13:45.259Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:13:45.259Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:13:45.259Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:13:45.260Z [DEBUG] [useDeferredValue] Messages deferred by 3 (27→30)
+2026-02-26T06:13:45.261Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 2ms
+2026-02-26T06:13:45.261Z [DEBUG] autocompact: tokens=37773 threshold=167000 effectiveWindow=180000
+2026-02-26T06:13:45.261Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:13:45.263Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086425263
+2026-02-26T06:13:45.263Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:45.263Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:45.263Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:45.263Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086425263 to /Users/a111111/.claude.json
+2026-02-26T06:13:45.263Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:45.263Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:13:45.263Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:13:45.263Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:13:45.265Z [DEBUG] [useDeferredValue] Messages deferred by 3 (27→30)
+2026-02-26T06:13:47.373Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:13:49.247Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-02-26T06:13:49.247Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-02-26T06:13:49.247Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:49.247Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-26T06:13:49.248Z [DEBUG] Permission suggestions for Edit: [
+  {
+    "type": "setMode",
+    "mode": "acceptEdits",
+    "destination": "session"
+  }
+]
+2026-02-26T06:13:49.248Z [DEBUG] executePermissionRequestHooks called for tool: Edit
+2026-02-26T06:13:49.248Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Edit
+2026-02-26T06:13:49.248Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:13:49.248Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-26T06:13:49.249Z [DEBUG] [useDeferredValue] Messages deferred by 1 (30→31)
+2026-02-26T06:13:49.259Z [DEBUG] High write ratio: blit=0, write=1964 (100.0% writes), screen=66x150
+2026-02-26T06:13:49.262Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:13:49.263Z [DEBUG] MCP server "ide": Calling MCP tool: openDiff
+2026-02-26T06:13:49.263Z [DEBUG] [useDeferredValue] Messages deferred by 1 (30→31)
+2026-02-26T06:13:49.266Z [DEBUG] [useDeferredValue] Messages deferred by 1 (30→31)
+2026-02-26T06:13:55.848Z [DEBUG] MCP server "ide": Calling MCP tool: close_tab
+2026-02-26T06:13:55.849Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:13:55.854Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:13:55.855Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-26T06:13:55.855Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 6ms
+2026-02-26T06:13:55.862Z [DEBUG] FileHistory: Tracked file modification for /Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/_components/AddCategory/index.tsx
+2026-02-26T06:13:55.863Z [DEBUG] Writing to temp file: /Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/_components/AddCategory/index.tsx.tmp.70464.1772086435863
+2026-02-26T06:13:55.863Z [DEBUG] Preserving file permissions: 100644
+2026-02-26T06:13:55.863Z [DEBUG] Temp file written successfully, size: 5050 bytes
+2026-02-26T06:13:55.863Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:55.863Z [DEBUG] Renaming /Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/_components/AddCategory/index.tsx.tmp.70464.1772086435863 to /Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/_components/AddCategory/index.tsx
+2026-02-26T06:13:55.863Z [DEBUG] File /Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/_components/AddCategory/index.tsx written atomically
+2026-02-26T06:13:55.864Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086435864
+2026-02-26T06:13:55.864Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:55.864Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:55.864Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:55.864Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086435864 to /Users/a111111/.claude.json
+2026-02-26T06:13:55.864Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:55.864Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-02-26T06:13:55.864Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:13:55.864Z [DEBUG] Matched 1 unique hooks for query "Edit" (1 before deduplication)
+2026-02-26T06:13:55.865Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:13:55.865Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:13:55.865Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:13:55.865Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:13:55.865Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:13:55.865Z [DEBUG] [useDeferredValue] Messages deferred by 3 (31→34)
+2026-02-26T06:13:55.868Z [DEBUG] [lspRecommendation] Looking for LSP plugins for .tsx
+2026-02-26T06:13:55.869Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 4ms
+2026-02-26T06:13:55.869Z [DEBUG] autocompact: tokens=38639 threshold=167000 effectiveWindow=180000
+2026-02-26T06:13:55.869Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:13:55.871Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086435871
+2026-02-26T06:13:55.871Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:13:55.871Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:13:55.871Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:13:55.871Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086435871 to /Users/a111111/.claude.json
+2026-02-26T06:13:55.871Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:13:55.872Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:13:55.872Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:13:55.872Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:13:55.874Z [DEBUG] [useDeferredValue] Messages deferred by 3 (31→34)
+2026-02-26T06:13:55.875Z [DEBUG] MCP server "ide": Tool 'close_tab' completed successfully in 27ms
+2026-02-26T06:13:55.913Z [DEBUG] MCP server "ide": Tool 'openDiff' completed successfully in 6s
+2026-02-26T06:13:55.913Z [DEBUG] MCP server "ide": Calling MCP tool: close_tab
+2026-02-26T06:13:55.914Z [DEBUG] MCP server "ide": Tool 'close_tab' completed successfully in 1ms
+2026-02-26T06:13:56.018Z [DEBUG] [binaryCheck] Binary 'typescript-language-server' not found
+2026-02-26T06:13:56.018Z [DEBUG] [lspRecommendation] Skipping typescript-lsp@claude-plugins-official (binary 'typescript-language-server' not found)
+2026-02-26T06:13:58.224Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:14:00.389Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:14:00.390Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:14:00.390Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:14:00.390Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:14:00.396Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Bash",
+        "ruleContent": "git add web/src/_blocks/Managements/_components/AddCategory/index.tsx"
+      },
+      {
+        "toolName": "Bash",
+        "ruleContent": "git commit:*"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "localSettings"
+  }
+]
+2026-02-26T06:14:00.396Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-26T06:14:00.396Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-26T06:14:00.396Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:14:00.396Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:14:00.396Z [DEBUG] [useDeferredValue] Messages deferred by 1 (34→35)
+2026-02-26T06:14:00.401Z [DEBUG] High write ratio: blit=0, write=3445 (100.0% writes), screen=87x150
+2026-02-26T06:14:00.402Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:14:00.403Z [DEBUG] [useDeferredValue] Messages deferred by 1 (34→35)
+2026-02-26T06:14:00.404Z [DEBUG] [useDeferredValue] Messages deferred by 1 (34→35)
+2026-02-26T06:14:18.405Z [DEBUG] Getting matching hook commands for Notification with query: permission_prompt
+2026-02-26T06:14:18.405Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:14:18.405Z [DEBUG] Matched 0 unique hooks for query "permission_prompt" (0 before deduplication)
+2026-02-26T06:14:18.662Z [DEBUG] Full reset (scrollback changes): scrollbackRows=68, firstChangeY=65
+  prev: "⏺ Bash(git add web/src/_blocks/Managements/_components/AddCategory/index.tsx && git commit -m "$(cat <<'EOF'                                          "
+  next: "  Bash(git add web/src/_blocks/Managements/_components/AddCategory/index.tsx && git commit -m "$(cat <<'EOF'                                          "
+2026-02-26T06:14:18.671Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:14:18.672Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-26T06:14:18.675Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:14:21.683Z [DEBUG] [useDeferredValue] Messages deferred by 1 (35→36)
+2026-02-26T06:14:22.683Z [DEBUG] [useDeferredValue] Messages deferred by 1 (36→37)
+2026-02-26T06:14:23.726Z [DEBUG] [useDeferredValue] Messages deferred by 1 (37→38)
+2026-02-26T06:14:24.692Z [DEBUG] [useDeferredValue] Messages deferred by 1 (38→39)
+2026-02-26T06:14:25.693Z [DEBUG] [useDeferredValue] Messages deferred by 1 (39→40)
+2026-02-26T06:14:26.693Z [DEBUG] [useDeferredValue] Messages deferred by 1 (40→41)
+2026-02-26T06:14:27.694Z [DEBUG] [useDeferredValue] Messages deferred by 1 (41→42)
+2026-02-26T06:14:28.695Z [DEBUG] [useDeferredValue] Messages deferred by 1 (42→43)
+2026-02-26T06:14:29.722Z [DEBUG] [useDeferredValue] Messages deferred by 1 (43→44)
+2026-02-26T06:14:30.697Z [DEBUG] [useDeferredValue] Messages deferred by 1 (44→45)
+2026-02-26T06:14:31.710Z [DEBUG] [useDeferredValue] Messages deferred by 1 (45→46)
+2026-02-26T06:14:32.697Z [DEBUG] [useDeferredValue] Messages deferred by 1 (46→47)
+2026-02-26T06:14:33.698Z [DEBUG] [useDeferredValue] Messages deferred by 1 (47→48)
+2026-02-26T06:14:34.699Z [DEBUG] [useDeferredValue] Messages deferred by 1 (48→49)
+2026-02-26T06:14:35.698Z [DEBUG] [useDeferredValue] Messages deferred by 1 (49→50)
+2026-02-26T06:14:36.700Z [DEBUG] [useDeferredValue] Messages deferred by 1 (50→51)
+2026-02-26T06:14:37.700Z [DEBUG] [useDeferredValue] Messages deferred by 1 (51→52)
+2026-02-26T06:14:38.701Z [DEBUG] [useDeferredValue] Messages deferred by 1 (52→53)
+2026-02-26T06:14:39.702Z [DEBUG] [useDeferredValue] Messages deferred by 1 (53→54)
+2026-02-26T06:14:40.702Z [DEBUG] [useDeferredValue] Messages deferred by 1 (54→55)
+2026-02-26T06:14:41.703Z [DEBUG] [useDeferredValue] Messages deferred by 1 (55→56)
+2026-02-26T06:14:42.704Z [DEBUG] [useDeferredValue] Messages deferred by 1 (56→57)
+2026-02-26T06:14:43.705Z [DEBUG] [useDeferredValue] Messages deferred by 1 (57→58)
+2026-02-26T06:14:44.705Z [DEBUG] [useDeferredValue] Messages deferred by 1 (58→59)
+2026-02-26T06:14:45.707Z [DEBUG] [useDeferredValue] Messages deferred by 1 (59→60)
+2026-02-26T06:14:46.707Z [DEBUG] [useDeferredValue] Messages deferred by 1 (60→61)
+2026-02-26T06:14:47.708Z [DEBUG] [useDeferredValue] Messages deferred by 1 (61→62)
+2026-02-26T06:14:48.708Z [DEBUG] [useDeferredValue] Messages deferred by 1 (62→63)
+2026-02-26T06:14:49.710Z [DEBUG] [useDeferredValue] Messages deferred by 1 (63→64)
+2026-02-26T06:14:50.710Z [DEBUG] [useDeferredValue] Messages deferred by 1 (64→65)
+2026-02-26T06:14:51.710Z [DEBUG] [useDeferredValue] Messages deferred by 1 (65→66)
+2026-02-26T06:14:52.711Z [DEBUG] [useDeferredValue] Messages deferred by 1 (66→67)
+2026-02-26T06:14:53.166Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086493166
+2026-02-26T06:14:53.166Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:14:53.166Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:14:53.167Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:14:53.167Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086493166 to /Users/a111111/.claude.json
+2026-02-26T06:14:53.167Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:14:53.167Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:14:53.167Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:14:53.167Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:14:53.167Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:14:53.167Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:14:53.167Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:14:53.167Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:14:53.169Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:14:53.169Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:14:53.169Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:14:53.169Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:14:53.169Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:14:53.169Z [DEBUG] [useDeferredValue] Messages deferred by 1 (67→68)
+2026-02-26T06:14:53.172Z [DEBUG] High write ratio: blit=0, write=3286 (100.0% writes), screen=75x150
+2026-02-26T06:14:53.174Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 5ms
+2026-02-26T06:14:53.174Z [DEBUG] autocompact: tokens=39728 threshold=167000 effectiveWindow=180000
+2026-02-26T06:14:53.174Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:14:53.176Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086493176
+2026-02-26T06:14:53.176Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:14:53.176Z [DEBUG] Temp file written successfully, size: 11375 bytes
+2026-02-26T06:14:53.176Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:14:53.176Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086493176 to /Users/a111111/.claude.json
+2026-02-26T06:14:53.176Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:14:53.176Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:14:53.176Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:14:53.176Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:14:53.178Z [DEBUG] [useDeferredValue] Messages deferred by 2 (67→69)
+2026-02-26T06:14:55.355Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:14:57.429Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:14:59.339Z [DEBUG] [useDeferredValue] Messages deferred by 1 (69→70)
+2026-02-26T06:14:59.753Z [DEBUG] executePreToolHooks called for tool: Skill
+2026-02-26T06:14:59.753Z [DEBUG] Getting matching hook commands for PreToolUse with query: Skill
+2026-02-26T06:14:59.753Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:14:59.753Z [DEBUG] Matched 0 unique hooks for query "Skill" (0 before deduplication)
+2026-02-26T06:14:59.755Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086499755
+2026-02-26T06:14:59.755Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:14:59.755Z [DEBUG] Temp file written successfully, size: 11490 bytes
+2026-02-26T06:14:59.755Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:14:59.755Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086499755 to /Users/a111111/.claude.json
+2026-02-26T06:14:59.755Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:14:59.756Z [DEBUG] Metadata string for bottom-links:
+2026-02-26T06:14:59.756Z [DEBUG] <command-message>custom-bottom-links</command-message>
+<command-name>/custom-bottom-links</command-name>
+2026-02-26T06:14:59.756Z [DEBUG] command-message tags in metadata: 1
+2026-02-26T06:14:59.756Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:14:59.756Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:14:59.756Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:14:59.756Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:14:59.756Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:14:59.757Z [DEBUG] [useDeferredValue] Messages deferred by 1 (70→71)
+2026-02-26T06:14:59.761Z [DEBUG] High write ratio: blit=0, write=3684 (100.0% writes), screen=84x150
+2026-02-26T06:14:59.762Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 6ms
+2026-02-26T06:14:59.762Z [DEBUG] processPromptSlashCommand creating 3 messages for bottom-links
+2026-02-26T06:14:59.762Z [DEBUG] Message 1: <command-message>custom-bottom-links</command-message>
+<command-name>/custom-bottom-links</command-name>
+2026-02-26T06:14:59.762Z [DEBUG] Message 2 [META]: [{"type":"text","text":"Base directory for this skill: /Users/a111111/.claude/skills/custom-bottom-links\n\n# Bottom Links\n\n## Overview\n\nUse short workspace-relative paths in the prose and add a j
+2026-02-26T06:14:59.762Z [DEBUG] Message 3: [ATTACHMENT]
+2026-02-26T06:14:59.762Z [DEBUG] SkillTool returning 2 newMessages for skill custom-bottom-links
+2026-02-26T06:14:59.762Z [DEBUG] newMessage 1: [{"type":"text","text":"Base directory for this skill: /Users/a111111/.claude/skills/custom-bottom-links\n\n# Bottom Links\n\n## Overview\n\nUse short...
+2026-02-26T06:14:59.763Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086499763
+2026-02-26T06:14:59.763Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:14:59.763Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:14:59.763Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:14:59.763Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086499763 to /Users/a111111/.claude.json
+2026-02-26T06:14:59.763Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:14:59.764Z [DEBUG] Getting matching hook commands for PostToolUse with query: Skill
+2026-02-26T06:14:59.764Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:14:59.764Z [DEBUG] Matched 0 unique hooks for query "Skill" (0 before deduplication)
+2026-02-26T06:14:59.764Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:14:59.764Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:14:59.764Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:14:59.764Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:14:59.764Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:14:59.764Z [DEBUG] [useDeferredValue] Messages deferred by 4 (70→74)
+2026-02-26T06:14:59.766Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 2ms
+2026-02-26T06:14:59.766Z [DEBUG] autocompact: tokens=40364 threshold=167000 effectiveWindow=180000
+2026-02-26T06:14:59.766Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:14:59.768Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086499768
+2026-02-26T06:14:59.768Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:14:59.768Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:14:59.768Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:14:59.768Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086499768 to /Users/a111111/.claude.json
+2026-02-26T06:14:59.768Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:14:59.769Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:14:59.769Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:14:59.769Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:14:59.771Z [DEBUG] [useDeferredValue] Messages deferred by 4 (70→74)
+2026-02-26T06:15:01.492Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:15:01.815Z [DEBUG] [useDeferredValue] Messages deferred by 1 (74→75)
+2026-02-26T06:15:01.845Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-26T06:15:01.845Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:01.845Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:15:01.845Z [DEBUG] autocompact: tokens=40689 threshold=167000 effectiveWindow=180000
+2026-02-26T06:15:01.850Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:15:01.853Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086501853
+2026-02-26T06:15:01.853Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:15:01.853Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:15:01.853Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:15:01.853Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086501853 to /Users/a111111/.claude.json
+2026-02-26T06:15:01.854Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:15:01.854Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:15:01.854Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:15:01.855Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:15:01.858Z [DEBUG] [useDeferredValue] Messages deferred by 1 (75→76)
+2026-02-26T06:15:01.862Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:15:05.461Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:15:05.700Z [DEBUG] Forked agent [prompt_suggestion] received message: type=assistant
+2026-02-26T06:15:05.766Z [DEBUG] Getting matching hook commands for SubagentStop with query:
+2026-02-26T06:15:05.766Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:05.766Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:15:05.766Z [DEBUG] Forked agent [prompt_suggestion] finished: 1 messages, types=[assistant], totalUsage: input=30413 output=6 cacheRead=10293 cacheCreate=0
+2026-02-26T06:15:05.768Z [DEBUG] [Speculation] enabled=false
+2026-02-26T06:15:24.651Z [DEBUG] Failed to check metrics opt-out status: Auth error: No API key available
+2026-02-26T06:15:24.651Z [ERROR] Error: Error: Auth error: No API key available
+    at $c7 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:35154)
+    at KbY (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:35432)
+    at Y (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:111:17821)
+    at yf1 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:36127)
+    at xS8.doExport (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:36943)
+    at xS8.export (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2483:36646)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:118:169642
+    at XZA.with (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:118:70403)
+    at Ml1.with (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:118:70979)
+    at file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:118:169582
+2026-02-26T06:15:24.651Z [DEBUG] Metrics export disabled by organization setting
+2026-02-26T06:15:43.132Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/analytics-click-exposure/references/createflow-patterns.md
+2026-02-26T06:15:43.133Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.133Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.133Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.133Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.135Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.135Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.135Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.135Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/analytics-click-exposure/SKILL.md
+2026-02-26T06:15:43.136Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.136Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.136Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.136Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.137Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.137Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.137Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.137Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/analytics-click-exposure/references/implementation-patterns.md
+2026-02-26T06:15:43.137Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.137Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.137Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.137Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.138Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.138Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.138Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.138Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/local-payment-button/SKILL.md
+2026-02-26T06:15:43.138Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.138Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.138Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.138Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.139Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.139Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.139Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.139Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/code-simplifier/SKILL.md
+2026-02-26T06:15:43.139Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.139Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.139Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.139Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.140Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.140Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.140Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.140Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/code-review/SKILL.md
+2026-02-26T06:15:43.140Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.140Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.140Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.140Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.141Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.141Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.141Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.141Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/add-model/SKILL.md
+2026-02-26T06:15:43.141Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.141Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.141Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.141Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.142Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.142Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.142Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.142Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/extension-plugin-creator/README.md
+2026-02-26T06:15:43.142Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.142Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.142Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.142Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.143Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.143Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.143Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.143Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/local-payment-button/references/integration-checklist.md
+2026-02-26T06:15:43.143Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.143Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.143Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.143Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.143Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.143Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.143Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.144Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/analytics-click-exposure/references/checklist-and-debug.md
+2026-02-26T06:15:43.144Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.144Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.144Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.144Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.144Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.144Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.144Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.146Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/extension-plugin-creator/SKILL.md
+2026-02-26T06:15:43.146Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.146Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.146Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.146Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.147Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.147Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.147Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.147Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/README.md
+2026-02-26T06:15:43.147Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.147Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.147Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.147Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.147Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.147Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.147Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.147Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/IMPLEMENTATION.md
+2026-02-26T06:15:43.147Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.147Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.147Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.148Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.149Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.149Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.149Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.149Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/examples/onboarding-context.md
+2026-02-26T06:15:43.149Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.149Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.149Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.149Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.149Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.149Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.149Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.149Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/examples/plans-context.md
+2026-02-26T06:15:43.150Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.150Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.150Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.150Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.150Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.150Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.150Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.150Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/references/auto-imports-guide.md
+2026-02-26T06:15:43.150Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.150Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.150Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.150Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.151Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.151Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.151Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.151Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/references/pattern-details.md
+2026-02-26T06:15:43.151Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.151Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.151Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.151Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.151Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.151Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.151Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.151Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/scripts/create-context-structure.sh
+2026-02-26T06:15:43.152Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.152Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.152Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.152Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.152Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.152Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.152Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.152Z [DEBUG] Detected skill change: /Users/a111111/code/ai-video-collection/.claude/skills/react-context-creator/SKILL.md
+2026-02-26T06:15:43.152Z [DEBUG] Getting matching hook commands for ConfigChange with query: skills
+2026-02-26T06:15:43.152Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:15:43.152Z [DEBUG] Matched 0 unique hooks for query "skills" (0 before deduplication)
+2026-02-26T06:15:43.152Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/a111111/.claude/skills, project=[/Users/a111111/code/ai-video-collection/.claude/skills]
+2026-02-26T06:15:43.153Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-02-26T06:15:43.153Z [DEBUG] Total plugin skills loaded: 0
+2026-02-26T06:15:43.153Z [DEBUG] Total plugin commands loaded: 0
+2026-02-26T06:15:43.154Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.154Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.155Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.155Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.155Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.155Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.155Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.155Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.155Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.155Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.155Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.155Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.156Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.156Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.156Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.156Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.156Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.156Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.156Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.156Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.166Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.166Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.166Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.166Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.166Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.166Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.167Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.167Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.167Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.167Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.167Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.167Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.167Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.167Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.167Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.167Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:15:43.167Z [DEBUG] Loaded 10 unique skills (10 unconditional, 0 conditional, managed: 0, user: 3, project: 7, additional: 0, legacy commands: 0)
+2026-02-26T06:15:43.167Z [DEBUG] getSkills returning: 10 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-02-26T06:20:00.248Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:20:00.249Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:20:00.249Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:20:00.249Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:20:00.249Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:20:00.250Z [DEBUG] Sending 10 skills via attachment (initial, 10 total sent)
+2026-02-26T06:20:00.265Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 17ms
+2026-02-26T06:20:00.267Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-26T06:20:00.267Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:20:00.267Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:20:00.268Z [DEBUG] FileHistory: Making snapshot for message a315e715-65c4-4420-b659-e7aad8d6f343
+2026-02-26T06:20:00.274Z [DEBUG] FileHistory: Added snapshot for a315e715-65c4-4420-b659-e7aad8d6f343, tracking 1 files
+2026-02-26T06:20:00.276Z [DEBUG] [useDeferredValue] Messages deferred by 3 (76→79)
+2026-02-26T06:20:00.286Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:20:00.286Z [DEBUG] MCP server "ide": Calling MCP tool: closeAllDiffTabs
+2026-02-26T06:20:00.287Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:20:00.289Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:00.289Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:00.290Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:00.293Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086800293
+2026-02-26T06:20:00.293Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:00.293Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:00.293Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:00.293Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086800293 to /Users/a111111/.claude.json
+2026-02-26T06:20:00.293Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:00.294Z [DEBUG] autocompact: tokens=41226 threshold=167000 effectiveWindow=180000
+2026-02-26T06:20:00.295Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:20:00.300Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086800300
+2026-02-26T06:20:00.300Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:00.301Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:00.301Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:00.301Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086800300 to /Users/a111111/.claude.json
+2026-02-26T06:20:00.301Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:00.303Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:00.303Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:00.303Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:00.310Z [DEBUG] [useDeferredValue] Messages deferred by 3 (76→79)
+2026-02-26T06:20:00.334Z [DEBUG] High write ratio: blit=0, write=4359 (100.0% writes), screen=96x150
+2026-02-26T06:20:00.440Z [DEBUG] MCP server "ide": Tool 'closeAllDiffTabs' completed successfully in 154ms
+2026-02-26T06:20:02.451Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:05.040Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:07.301Z [DEBUG] [useDeferredValue] Messages deferred by 1 (79→80)
+2026-02-26T06:20:07.310Z [DEBUG] [useDeferredValue] Messages deferred by 1 (79→80)
+2026-02-26T06:20:08.699Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:20:08.700Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:20:08.700Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:20:08.700Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:20:08.711Z [DEBUG] [useDeferredValue] Messages deferred by 1 (80→81)
+2026-02-26T06:20:08.720Z [DEBUG] High write ratio: blit=0, write=4375 (100.0% writes), screen=96x150
+2026-02-26T06:20:08.721Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:20:08.763Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086808763
+2026-02-26T06:20:08.763Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:08.763Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:08.763Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:08.763Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086808763 to /Users/a111111/.claude.json
+2026-02-26T06:20:08.763Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:08.764Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:20:08.764Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:08.764Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:08.765Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:20:08.765Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:20:08.765Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:20:08.765Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:08.766Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:20:08.766Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:20:08.766Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:20:08.766Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:20:08.766Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:20:08.767Z [DEBUG] [useDeferredValue] Messages deferred by 1 (81→82)
+2026-02-26T06:20:08.769Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 3ms
+2026-02-26T06:20:08.770Z [DEBUG] autocompact: tokens=41749 threshold=167000 effectiveWindow=180000
+2026-02-26T06:20:08.770Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:20:08.772Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086808772
+2026-02-26T06:20:08.772Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:08.772Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:08.772Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:08.772Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086808772 to /Users/a111111/.claude.json
+2026-02-26T06:20:08.772Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:08.773Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:08.773Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:08.773Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:08.775Z [DEBUG] [useDeferredValue] Messages deferred by 1 (81→82)
+2026-02-26T06:20:10.983Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:11.220Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:11.472Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:11.472Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:11.472Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:12.053Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:20:12.054Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:20:12.054Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:20:12.054Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:20:12.063Z [DEBUG] [useDeferredValue] Messages deferred by 1 (82→83)
+2026-02-26T06:20:12.073Z [DEBUG] High write ratio: blit=0, write=4419 (100.0% writes), screen=98x150
+2026-02-26T06:20:12.074Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:20:12.106Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086812106
+2026-02-26T06:20:12.106Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:12.106Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:12.106Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:12.106Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086812106 to /Users/a111111/.claude.json
+2026-02-26T06:20:12.106Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:12.107Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:20:12.107Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:12.107Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:12.107Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:20:12.107Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:20:12.107Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:20:12.107Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:12.108Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:20:12.108Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:20:12.108Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:20:12.108Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:20:12.108Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:20:12.108Z [DEBUG] [useDeferredValue] Messages deferred by 1 (83→84)
+2026-02-26T06:20:12.111Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 3ms
+2026-02-26T06:20:12.111Z [DEBUG] autocompact: tokens=42567 threshold=167000 effectiveWindow=180000
+2026-02-26T06:20:12.112Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:20:12.114Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086812114
+2026-02-26T06:20:12.114Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:12.115Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:12.115Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:12.115Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086812114 to /Users/a111111/.claude.json
+2026-02-26T06:20:12.115Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:12.116Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:12.116Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:12.116Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:12.118Z [DEBUG] [useDeferredValue] Messages deferred by 1 (83→84)
+2026-02-26T06:20:13.334Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:13.354Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at V7.generate (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:331:28247)
+    at Mh.makeStatusError (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:370:2195)
+    at Mh.makeRequest (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:370:5420)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2023:15888
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:889:2624
+    at async xu9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:888:102583)
+    at async X87 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:889:2557)
+    at async C27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1863:7633)
+    at async S27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1867:2463)
+2026-02-26T06:20:13.354Z [ERROR] MaxFileReadTokenExceededError: MaxFileReadTokenExceededError: File content (48904 tokens) exceeds maximum allowed tokens (25000). Please use offset and limit parameters to read specific portions of the file, or use the GrepTool to search for specific content.
+    at C27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1863:7662)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async S27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1867:2463)
+    at async Object.call (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1872:5968)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:6276:1776
+2026-02-26T06:20:14.004Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:14.004Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:14.004Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:14.992Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at V7.generate (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:331:28247)
+    at Mh.makeStatusError (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:370:2195)
+    at Mh.makeRequest (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:370:5420)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2023:15888
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:889:2624
+    at async xu9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:888:102583)
+    at async X87 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:889:2557)
+    at async C27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1863:7633)
+    at async S27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1867:2463)
+2026-02-26T06:20:14.992Z [ERROR] MaxFileReadTokenExceededError: MaxFileReadTokenExceededError: File content (48904 tokens) exceeds maximum allowed tokens (25000). Please use offset and limit parameters to read specific portions of the file, or use the GrepTool to search for specific content.
+    at C27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1863:7662)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async S27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1867:2463)
+    at async Object.call (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1872:5968)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:6276:1776
+2026-02-26T06:20:15.949Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:16.917Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:20:16.917Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:20:16.917Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:20:16.917Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:20:16.921Z [DEBUG] [useDeferredValue] Messages deferred by 1 (84→85)
+2026-02-26T06:20:16.927Z [DEBUG] High write ratio: blit=0, write=4420 (100.0% writes), screen=98x150
+2026-02-26T06:20:16.927Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:20:16.955Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086816955
+2026-02-26T06:20:16.955Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:16.955Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:16.955Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:16.955Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086816955 to /Users/a111111/.claude.json
+2026-02-26T06:20:16.955Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:16.956Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:20:16.956Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:16.956Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:16.956Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:20:16.956Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:20:16.956Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:20:16.956Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:16.957Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:20:16.957Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:20:16.957Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:20:16.957Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:20:16.957Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:20:16.958Z [DEBUG] [useDeferredValue] Messages deferred by 1 (85→86)
+2026-02-26T06:20:16.961Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 4ms
+2026-02-26T06:20:16.962Z [DEBUG] autocompact: tokens=42876 threshold=167000 effectiveWindow=180000
+2026-02-26T06:20:16.962Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:20:16.965Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086816965
+2026-02-26T06:20:16.965Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:16.965Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:16.965Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:16.965Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086816965 to /Users/a111111/.claude.json
+2026-02-26T06:20:16.965Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:16.966Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:16.966Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:16.966Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:16.968Z [DEBUG] [useDeferredValue] Messages deferred by 1 (85→86)
+2026-02-26T06:20:18.018Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:18.108Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:18.108Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:18.108Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:19.441Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:19.563Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at V7.generate (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:331:28247)
+    at Mh.makeStatusError (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:370:2195)
+    at Mh.makeRequest (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:370:5420)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2023:15888
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:889:2624
+    at async xu9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:888:102583)
+    at async X87 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:889:2557)
+    at async C27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1863:7633)
+    at async S27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1867:2463)
+2026-02-26T06:20:19.563Z [ERROR] MaxFileReadTokenExceededError: MaxFileReadTokenExceededError: File content (48904 tokens) exceeds maximum allowed tokens (25000). Please use offset and limit parameters to read specific portions of the file, or use the GrepTool to search for specific content.
+    at C27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1863:7662)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async S27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1867:2463)
+    at async Object.call (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1872:5968)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:6276:1776
+2026-02-26T06:20:20.692Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:20:20.693Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:20:20.693Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:20:20.693Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:20:20.699Z [DEBUG] [useDeferredValue] Messages deferred by 1 (86→87)
+2026-02-26T06:20:20.708Z [DEBUG] High write ratio: blit=0, write=4420 (100.0% writes), screen=98x150
+2026-02-26T06:20:20.710Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:20:20.744Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086820744
+2026-02-26T06:20:20.744Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:20.744Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:20.744Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:20.744Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086820744 to /Users/a111111/.claude.json
+2026-02-26T06:20:20.744Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:20.744Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:20:20.744Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:20.744Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:20.745Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:20:20.745Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:20:20.745Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:20:20.745Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:20.745Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:20:20.745Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:20:20.746Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:20:20.746Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:20:20.746Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:20:20.746Z [DEBUG] [useDeferredValue] Messages deferred by 1 (87→88)
+2026-02-26T06:20:20.750Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 5ms
+2026-02-26T06:20:20.750Z [DEBUG] autocompact: tokens=43377 threshold=167000 effectiveWindow=180000
+2026-02-26T06:20:20.751Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:20:20.753Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086820753
+2026-02-26T06:20:20.753Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:20.753Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:20.753Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:20.753Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086820753 to /Users/a111111/.claude.json
+2026-02-26T06:20:20.753Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:20.754Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:20.754Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:20.754Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:20.756Z [DEBUG] [useDeferredValue] Messages deferred by 1 (87→88)
+2026-02-26T06:20:22.482Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:22.490Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:22.490Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:22.490Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:23.466Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at V7.generate (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:331:28247)
+    at Mh.makeStatusError (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:370:2195)
+    at Mh.makeRequest (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:370:5420)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:2023:15888
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:889:2624
+    at async xu9 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:888:102583)
+    at async X87 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:889:2557)
+    at async C27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1863:7633)
+    at async S27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1867:2463)
+2026-02-26T06:20:23.466Z [ERROR] MaxFileReadTokenExceededError: MaxFileReadTokenExceededError: File content (48904 tokens) exceeds maximum allowed tokens (25000). Please use offset and limit parameters to read specific portions of the file, or use the GrepTool to search for specific content.
+    at C27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1863:7662)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async S27 (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1867:2463)
+    at async Object.call (file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:1872:5968)
+    at async file:///Users/a111111/.nvm/versions/node/v24.13.0/lib/node_modules/@anthropic-ai/claude-code/cli.js:6276:1776
+2026-02-26T06:20:24.652Z [DEBUG] Metrics export disabled by organization setting
+2026-02-26T06:20:30.863Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:32.399Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-26T06:20:32.400Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-26T06:20:32.400Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:20:32.400Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-26T06:20:32.401Z [DEBUG] [useDeferredValue] Messages deferred by 1 (88→89)
+2026-02-26T06:20:32.408Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086832408
+2026-02-26T06:20:32.408Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:32.408Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:32.408Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:32.408Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086832408 to /Users/a111111/.claude.json
+2026-02-26T06:20:32.408Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:32.409Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-26T06:20:32.409Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:20:32.409Z [DEBUG] Matched 1 unique hooks for query "Read" (1 before deduplication)
+2026-02-26T06:20:32.422Z [DEBUG] [useDeferredValue] Messages deferred by 3 (89→92)
+2026-02-26T06:20:32.450Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:20:32.450Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:20:32.450Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:20:32.450Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:20:32.450Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:20:32.453Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 3ms
+2026-02-26T06:20:32.454Z [DEBUG] autocompact: tokens=44087 threshold=167000 effectiveWindow=180000
+2026-02-26T06:20:32.454Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:20:32.456Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086832456
+2026-02-26T06:20:32.456Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:32.456Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:32.456Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:32.456Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086832456 to /Users/a111111/.claude.json
+2026-02-26T06:20:32.456Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:32.457Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:32.457Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:32.457Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:35.202Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:41.529Z [DEBUG] [useDeferredValue] Messages deferred by 1 (92→93)
+2026-02-26T06:20:43.707Z [DEBUG] [useDeferredValue] Messages deferred by 1 (93→94)
+2026-02-26T06:20:43.735Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-26T06:20:43.735Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:20:43.735Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:20:43.735Z [DEBUG] autocompact: tokens=44890 threshold=167000 effectiveWindow=180000
+2026-02-26T06:20:43.742Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:20:43.746Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772086843746
+2026-02-26T06:20:43.747Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:20:43.747Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:20:43.747Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:20:43.747Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772086843746 to /Users/a111111/.claude.json
+2026-02-26T06:20:43.748Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:20:43.750Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:20:43.750Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:20:43.750Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:20:43.753Z [DEBUG] [useDeferredValue] Messages deferred by 2 (93→95)
+2026-02-26T06:20:43.760Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:20:47.922Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:20:48.038Z [DEBUG] Forked agent [prompt_suggestion] received message: type=assistant
+2026-02-26T06:20:48.104Z [DEBUG] Getting matching hook commands for SubagentStop with query:
+2026-02-26T06:20:48.104Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:20:48.104Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:20:48.104Z [DEBUG] Forked agent [prompt_suggestion] finished: 1 messages, types=[assistant], totalUsage: input=34611 output=6 cacheRead=10293 cacheCreate=0
+2026-02-26T06:20:48.105Z [DEBUG] [Speculation] enabled=false
+2026-02-26T06:21:43.763Z [DEBUG] Getting matching hook commands for Notification with query: idle_prompt
+2026-02-26T06:21:43.764Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:21:43.764Z [DEBUG] Matched 0 unique hooks for query "idle_prompt" (0 before deduplication)
+2026-02-26T06:25:24.656Z [DEBUG] Metrics export disabled by organization setting
+2026-02-26T06:29:57.365Z [DEBUG] High write ratio: blit=139, write=3964 (96.6% writes), screen=118x93
+2026-02-26T06:29:59.103Z [DEBUG] High write ratio: blit=139, write=5000 (97.3% writes), screen=116x150
+2026-02-26T06:30:59.130Z [DEBUG] Getting matching hook commands for Notification with query: idle_prompt
+2026-02-26T06:30:59.130Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:30:59.130Z [DEBUG] Matched 0 unique hooks for query "idle_prompt" (0 before deduplication)
+2026-02-26T06:31:18.915Z [DEBUG] detectFileEncoding failed for expected reason: ENOENT
+2026-02-26T06:31:18.915Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /Users/a111111/code/ai-video-collection/.claude/settings.json
+2026-02-26T06:37:07.227Z [DEBUG] High write ratio: blit=139, write=4987 (97.3% writes), screen=116x149
+2026-02-26T06:37:07.252Z [DEBUG] High write ratio: blit=139, write=4971 (97.3% writes), screen=116x148
+2026-02-26T06:37:07.281Z [DEBUG] High write ratio: blit=139, write=4939 (97.3% writes), screen=116x146
+2026-02-26T06:37:07.305Z [DEBUG] High write ratio: blit=139, write=4923 (97.3% writes), screen=116x145
+2026-02-26T06:37:07.334Z [DEBUG] High write ratio: blit=139, write=4891 (97.2% writes), screen=116x143
+2026-02-26T06:37:07.387Z [DEBUG] High write ratio: blit=139, write=4875 (97.2% writes), screen=116x142
+2026-02-26T06:37:07.427Z [DEBUG] High write ratio: blit=139, write=4859 (97.2% writes), screen=116x141
+2026-02-26T06:37:07.507Z [DEBUG] High write ratio: blit=139, write=4843 (97.2% writes), screen=116x140
+2026-02-26T06:37:07.549Z [DEBUG] High write ratio: blit=139, write=4827 (97.2% writes), screen=116x139
+2026-02-26T06:37:07.573Z [DEBUG] High write ratio: blit=139, write=4811 (97.2% writes), screen=116x138
+2026-02-26T06:37:07.602Z [DEBUG] High write ratio: blit=139, write=4795 (97.2% writes), screen=116x137
+2026-02-26T06:37:07.637Z [DEBUG] High write ratio: blit=139, write=4763 (97.2% writes), screen=116x135
+2026-02-26T06:37:07.698Z [DEBUG] High write ratio: blit=139, write=4747 (97.2% writes), screen=116x134
+2026-02-26T06:37:07.735Z [DEBUG] High write ratio: blit=139, write=4731 (97.1% writes), screen=116x133
+2026-02-26T06:37:07.783Z [DEBUG] High write ratio: blit=139, write=4715 (97.1% writes), screen=116x132
+2026-02-26T06:37:07.808Z [DEBUG] High write ratio: blit=139, write=4699 (97.1% writes), screen=116x131
+2026-02-26T06:37:07.833Z [DEBUG] High write ratio: blit=139, write=4683 (97.1% writes), screen=116x130
+2026-02-26T06:37:07.857Z [DEBUG] High write ratio: blit=139, write=4667 (97.1% writes), screen=116x129
+2026-02-26T06:37:07.883Z [DEBUG] High write ratio: blit=139, write=4635 (97.1% writes), screen=116x127
+2026-02-26T06:37:07.918Z [DEBUG] High write ratio: blit=139, write=4553 (97.0% writes), screen=116x124
+2026-02-26T06:37:07.951Z [DEBUG] High write ratio: blit=139, write=4521 (97.0% writes), screen=117x122
+2026-02-26T06:37:07.977Z [DEBUG] High write ratio: blit=139, write=4504 (97.0% writes), screen=117x121
+2026-02-26T06:37:08.000Z [DEBUG] High write ratio: blit=139, write=4489 (97.0% writes), screen=117x120
+2026-02-26T06:37:08.104Z [DEBUG] High write ratio: blit=139, write=4473 (97.0% writes), screen=117x119
+2026-02-26T06:37:08.338Z [DEBUG] High write ratio: blit=139, write=4456 (97.0% writes), screen=117x118
+2026-02-26T06:37:08.361Z [DEBUG] High write ratio: blit=139, write=4441 (97.0% writes), screen=117x117
+2026-02-26T06:37:08.384Z [DEBUG] High write ratio: blit=139, write=4425 (97.0% writes), screen=117x116
+2026-02-26T06:37:08.404Z [DEBUG] High write ratio: blit=139, write=4409 (96.9% writes), screen=117x115
+2026-02-26T06:37:08.503Z [DEBUG] High write ratio: blit=139, write=4425 (97.0% writes), screen=117x116
+2026-02-26T06:37:08.540Z [DEBUG] High write ratio: blit=139, write=4441 (97.0% writes), screen=117x117
+2026-02-26T06:37:08.560Z [DEBUG] High write ratio: blit=139, write=4456 (97.0% writes), screen=117x118
+2026-02-26T06:37:08.658Z [DEBUG] High write ratio: blit=139, write=4473 (97.0% writes), screen=117x119
+2026-02-26T06:37:08.709Z [DEBUG] High write ratio: blit=139, write=4504 (97.0% writes), screen=117x121
+2026-02-26T06:37:08.737Z [DEBUG] High write ratio: blit=139, write=4619 (97.1% writes), screen=116x126
+2026-02-26T06:37:08.767Z [DEBUG] High write ratio: blit=139, write=4667 (97.1% writes), screen=116x129
+2026-02-26T06:37:08.794Z [DEBUG] High write ratio: blit=139, write=4699 (97.1% writes), screen=116x131
+2026-02-26T06:37:08.970Z [DEBUG] High write ratio: blit=139, write=4715 (97.1% writes), screen=116x132
+2026-02-26T06:37:09.003Z [DEBUG] High write ratio: blit=139, write=4763 (97.2% writes), screen=116x135
+2026-02-26T06:37:09.036Z [DEBUG] High write ratio: blit=139, write=4779 (97.2% writes), screen=116x136
+2026-02-26T06:40:24.796Z [DEBUG] detectFileEncoding failed for expected reason: ENOENT
+2026-02-26T06:45:24.664Z [DEBUG] Metrics export disabled by organization setting
+2026-02-26T06:45:39.846Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:45:39.846Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:45:39.847Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:45:39.847Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:45:39.847Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:45:39.864Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 18ms
+2026-02-26T06:45:39.866Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-26T06:45:39.866Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:45:39.866Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:45:39.866Z [DEBUG] FileHistory: Making snapshot for message a16092a6-6774-46d1-9988-e280ab941324
+2026-02-26T06:45:39.868Z [DEBUG] FileHistory: Added snapshot for a16092a6-6774-46d1-9988-e280ab941324, tracking 1 files
+2026-02-26T06:45:39.869Z [DEBUG] [useDeferredValue] Messages deferred by 2 (95→97)
+2026-02-26T06:45:39.878Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:45:39.878Z [DEBUG] MCP server "ide": Calling MCP tool: closeAllDiffTabs
+2026-02-26T06:45:39.879Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:45:39.880Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:45:39.880Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:45:39.881Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:45:39.882Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088339882
+2026-02-26T06:45:39.882Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:45:39.882Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:45:39.882Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:45:39.882Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088339882 to /Users/a111111/.claude.json
+2026-02-26T06:45:39.883Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:45:39.883Z [DEBUG] autocompact: tokens=44698 threshold=167000 effectiveWindow=180000
+2026-02-26T06:45:39.885Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:45:39.887Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088339887
+2026-02-26T06:45:39.887Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:45:39.887Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:45:39.887Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:45:39.887Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088339887 to /Users/a111111/.claude.json
+2026-02-26T06:45:39.887Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:45:39.888Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:45:39.888Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:45:39.888Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:45:39.890Z [DEBUG] MCP server "ide": Tool 'closeAllDiffTabs' completed successfully in 12ms
+2026-02-26T06:45:39.891Z [DEBUG] [useDeferredValue] Messages deferred by 2 (95→97)
+2026-02-26T06:45:39.913Z [DEBUG] High write ratio: blit=0, write=4988 (100.0% writes), screen=120x136
+2026-02-26T06:45:41.827Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:45:43.297Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:45:45.104Z [DEBUG] [useDeferredValue] Messages deferred by 1 (97→98)
+2026-02-26T06:45:46.235Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:45:46.235Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:45:46.235Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:45:46.235Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:45:46.239Z [DEBUG] [useDeferredValue] Messages deferred by 1 (98→99)
+2026-02-26T06:45:46.249Z [DEBUG] High write ratio: blit=0, write=5004 (100.0% writes), screen=120x136
+2026-02-26T06:45:46.249Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:45:46.323Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088346323
+2026-02-26T06:45:46.323Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:45:46.323Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:45:46.323Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:45:46.323Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088346323 to /Users/a111111/.claude.json
+2026-02-26T06:45:46.325Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:45:46.325Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:45:46.325Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:45:46.325Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:45:46.326Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:45:46.326Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:45:46.326Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:45:46.326Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:45:46.760Z [DEBUG] [useDeferredValue] Messages deferred by 1 (99→100)
+2026-02-26T06:45:46.769Z [DEBUG] [useDeferredValue] Messages deferred by 1 (99→100)
+2026-02-26T06:45:47.351Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:45:47.351Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:45:47.351Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:45:47.351Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:45:47.354Z [DEBUG] [useDeferredValue] Messages deferred by 1 (100→101)
+2026-02-26T06:45:47.365Z [DEBUG] High write ratio: blit=0, write=5123 (100.0% writes), screen=123x136
+2026-02-26T06:45:47.366Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:45:47.367Z [DEBUG] [useDeferredValue] Messages deferred by 1 (100→101)
+2026-02-26T06:45:47.403Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088347403
+2026-02-26T06:45:47.403Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:45:47.403Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:45:47.404Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:45:47.404Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088347403 to /Users/a111111/.claude.json
+2026-02-26T06:45:47.404Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:45:47.404Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:45:47.404Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:45:47.404Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:45:47.404Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:45:47.404Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:45:47.404Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:45:47.404Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:45:47.405Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:45:47.405Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:45:47.405Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:45:47.405Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:45:47.405Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:45:47.405Z [DEBUG] [useDeferredValue] Messages deferred by 1 (101→102)
+2026-02-26T06:45:47.409Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 4ms
+2026-02-26T06:45:47.409Z [DEBUG] autocompact: tokens=45178 threshold=167000 effectiveWindow=180000
+2026-02-26T06:45:47.409Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:45:47.411Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088347411
+2026-02-26T06:45:47.411Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:45:47.411Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:45:47.411Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:45:47.411Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088347411 to /Users/a111111/.claude.json
+2026-02-26T06:45:47.411Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:45:47.412Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:45:47.412Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:45:47.412Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:45:47.414Z [DEBUG] [useDeferredValue] Messages deferred by 2 (101→103)
+2026-02-26T06:45:48.221Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:45:48.306Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:45:51.416Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:45:54.070Z [DEBUG] [useDeferredValue] Messages deferred by 1 (103→104)
+2026-02-26T06:45:54.724Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:45:54.725Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:45:54.725Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:45:54.725Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:45:54.728Z [DEBUG] [useDeferredValue] Messages deferred by 1 (104→105)
+2026-02-26T06:45:54.734Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:45:54.734Z [DEBUG] [useDeferredValue] Messages deferred by 1 (104→105)
+2026-02-26T06:45:54.742Z [DEBUG] High write ratio: blit=0, write=5206 (100.0% writes), screen=126x136
+2026-02-26T06:45:54.785Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088354785
+2026-02-26T06:45:54.785Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:45:54.785Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:45:54.785Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:45:54.785Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088354785 to /Users/a111111/.claude.json
+2026-02-26T06:45:54.785Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:45:54.785Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:45:54.785Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:45:54.785Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:45:54.785Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:45:54.785Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:45:54.785Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:45:54.785Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:45:55.217Z [DEBUG] [useDeferredValue] Messages deferred by 1 (105→106)
+2026-02-26T06:45:55.575Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:45:55.576Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:45:55.576Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:45:55.576Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:45:55.580Z [DEBUG] [useDeferredValue] Messages deferred by 1 (106→107)
+2026-02-26T06:45:55.590Z [DEBUG] High write ratio: blit=0, write=5332 (100.0% writes), screen=129x136
+2026-02-26T06:45:55.591Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:45:55.627Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088355627
+2026-02-26T06:45:55.627Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:45:55.627Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:45:55.627Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:45:55.627Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088355627 to /Users/a111111/.claude.json
+2026-02-26T06:45:55.627Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:45:55.627Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:45:55.627Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:45:55.627Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:45:55.627Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:45:55.627Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:45:55.627Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:45:55.627Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:45:55.628Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:45:55.628Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:45:55.628Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:45:55.628Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:45:55.628Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:45:55.629Z [DEBUG] [useDeferredValue] Messages deferred by 1 (107→108)
+2026-02-26T06:45:55.632Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 4ms
+2026-02-26T06:45:55.633Z [DEBUG] autocompact: tokens=45563 threshold=167000 effectiveWindow=180000
+2026-02-26T06:45:55.633Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:45:55.635Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088355635
+2026-02-26T06:45:55.635Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:45:55.635Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:45:55.635Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:45:55.635Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088355635 to /Users/a111111/.claude.json
+2026-02-26T06:45:55.635Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:45:55.635Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:45:55.635Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:45:55.635Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:45:55.637Z [DEBUG] [useDeferredValue] Messages deferred by 1 (107→108)
+2026-02-26T06:45:56.966Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:45:57.670Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:45:57.933Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:46:00.179Z [DEBUG] [useDeferredValue] Messages deferred by 1 (108→109)
+2026-02-26T06:46:00.970Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:46:00.971Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:46:00.971Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:46:00.971Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:46:00.971Z [DEBUG] Permission suggestions for Bash: []
+2026-02-26T06:46:00.971Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-26T06:46:00.971Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-26T06:46:00.971Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:46:00.971Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:46:00.972Z [DEBUG] [useDeferredValue] Messages deferred by 1 (109→110)
+2026-02-26T06:46:00.976Z [DEBUG] High write ratio: blit=0, write=5535 (100.0% writes), screen=139x136
+2026-02-26T06:46:00.977Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:46:00.978Z [DEBUG] [useDeferredValue] Messages deferred by 1 (109→110)
+2026-02-26T06:46:06.830Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:46:06.831Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-26T06:46:06.833Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:46:06.976Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088366976
+2026-02-26T06:46:06.976Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:46:06.976Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:46:06.976Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:46:06.976Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088366976 to /Users/a111111/.claude.json
+2026-02-26T06:46:06.976Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:46:06.976Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:46:06.976Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:46:06.976Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:46:06.977Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:46:06.977Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:46:06.977Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:46:06.977Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:46:06.977Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:46:06.978Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:46:06.978Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:46:06.978Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:46:06.978Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:46:06.978Z [DEBUG] [useDeferredValue] Messages deferred by 1 (110→111)
+2026-02-26T06:46:06.981Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 4ms
+2026-02-26T06:46:06.982Z [DEBUG] autocompact: tokens=46020 threshold=167000 effectiveWindow=180000
+2026-02-26T06:46:06.982Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:46:06.983Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088366983
+2026-02-26T06:46:06.983Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:46:06.983Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:46:06.983Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:46:06.983Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088366983 to /Users/a111111/.claude.json
+2026-02-26T06:46:06.983Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:46:06.984Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:46:06.984Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:46:06.984Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:46:06.986Z [DEBUG] [useDeferredValue] Messages deferred by 1 (110→111)
+2026-02-26T06:46:09.045Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:46:10.605Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:46:29.233Z [DEBUG] [useDeferredValue] Messages deferred by 1 (111→112)
+2026-02-26T06:46:29.716Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:46:29.717Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:46:29.717Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:46:29.717Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:46:29.722Z [DEBUG] [useDeferredValue] Messages deferred by 1 (112→113)
+2026-02-26T06:46:29.731Z [DEBUG] High write ratio: blit=0, write=5851 (100.0% writes), screen=138x136
+2026-02-26T06:46:29.733Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:46:30.037Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088390037
+2026-02-26T06:46:30.037Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:46:30.037Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:46:30.038Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:46:30.038Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088390037 to /Users/a111111/.claude.json
+2026-02-26T06:46:30.038Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:46:30.038Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:46:30.038Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:46:30.038Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:46:30.038Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:46:30.038Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:46:30.038Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:46:30.038Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:46:30.039Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:46:30.039Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:46:30.039Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:46:30.039Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:46:30.039Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:46:30.040Z [DEBUG] [useDeferredValue] Messages deferred by 1 (113→114)
+2026-02-26T06:46:30.042Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 3ms
+2026-02-26T06:46:30.042Z [DEBUG] autocompact: tokens=47165 threshold=167000 effectiveWindow=180000
+2026-02-26T06:46:30.043Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:46:30.044Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088390044
+2026-02-26T06:46:30.044Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:46:30.044Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:46:30.044Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:46:30.044Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088390044 to /Users/a111111/.claude.json
+2026-02-26T06:46:30.044Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:46:30.045Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:46:30.045Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:46:30.045Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:46:30.046Z [DEBUG] [useDeferredValue] Messages deferred by 1 (113→114)
+2026-02-26T06:46:33.567Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:46:34.301Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:46:42.742Z [DEBUG] [useDeferredValue] Messages deferred by 1 (114→115)
+2026-02-26T06:46:42.747Z [DEBUG] [useDeferredValue] Messages deferred by 1 (114→115)
+2026-02-26T06:46:42.754Z [DEBUG] [useDeferredValue] Messages deferred by 1 (114→115)
+2026-02-26T06:46:42.823Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:46:42.823Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:46:42.823Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:46:42.824Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:46:42.827Z [DEBUG] [useDeferredValue] Messages deferred by 1 (115→116)
+2026-02-26T06:46:42.836Z [DEBUG] High write ratio: blit=0, write=6035 (100.0% writes), screen=142x136
+2026-02-26T06:46:42.837Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:46:43.121Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088403121
+2026-02-26T06:46:43.121Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:46:43.121Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:46:43.121Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:46:43.121Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088403121 to /Users/a111111/.claude.json
+2026-02-26T06:46:43.121Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:46:43.121Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:46:43.121Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:46:43.121Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:46:43.122Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:46:43.122Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:46:43.122Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:46:43.122Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:46:43.123Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:46:43.123Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:46:43.123Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:46:43.123Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:46:43.123Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:46:43.124Z [DEBUG] [useDeferredValue] Messages deferred by 1 (116→117)
+2026-02-26T06:46:43.127Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 4ms
+2026-02-26T06:46:43.127Z [DEBUG] autocompact: tokens=47710 threshold=167000 effectiveWindow=180000
+2026-02-26T06:46:43.128Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:46:43.129Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088403129
+2026-02-26T06:46:43.129Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:46:43.130Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:46:43.130Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:46:43.130Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088403129 to /Users/a111111/.claude.json
+2026-02-26T06:46:43.130Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:46:43.130Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:46:43.130Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:46:43.131Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:46:43.132Z [DEBUG] [useDeferredValue] Messages deferred by 1 (116→117)
+2026-02-26T06:46:44.067Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:46:44.854Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:47:03.978Z [DEBUG] [useDeferredValue] Messages deferred by 1 (117→118)
+2026-02-26T06:47:03.991Z [DEBUG] [useDeferredValue] Messages deferred by 1 (118→119)
+2026-02-26T06:47:04.951Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:47:04.952Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:47:04.952Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:47:04.952Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:47:04.953Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-26T06:47:04.953Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-26T06:47:04.953Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:47:04.953Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:47:04.953Z [DEBUG] [useDeferredValue] Messages deferred by 1 (119→120)
+2026-02-26T06:47:04.956Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:47:04.956Z [DEBUG] [useDeferredValue] Messages deferred by 1 (119→120)
+2026-02-26T06:47:04.964Z [DEBUG] High write ratio: blit=0, write=6348 (100.0% writes), screen=157x136
+2026-02-26T06:47:07.514Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:47:07.514Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-26T06:47:07.515Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:47:07.640Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088427640
+2026-02-26T06:47:07.640Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:47:07.641Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:47:07.641Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:47:07.641Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088427640 to /Users/a111111/.claude.json
+2026-02-26T06:47:07.641Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:47:07.641Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:47:07.641Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:47:07.641Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:47:07.641Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:47:07.641Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:47:07.641Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:47:07.641Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:47:07.642Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:47:07.642Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:47:07.642Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:47:07.642Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:47:07.642Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:47:07.642Z [DEBUG] [useDeferredValue] Messages deferred by 1 (120→121)
+2026-02-26T06:47:07.645Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 3ms
+2026-02-26T06:47:07.646Z [DEBUG] autocompact: tokens=49065 threshold=167000 effectiveWindow=180000
+2026-02-26T06:47:07.646Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:47:07.647Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088427647
+2026-02-26T06:47:07.647Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:47:07.647Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:47:07.647Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:47:07.647Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088427647 to /Users/a111111/.claude.json
+2026-02-26T06:47:07.647Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:47:07.648Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:47:07.648Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:47:07.648Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:47:07.649Z [DEBUG] [useDeferredValue] Messages deferred by 1 (120→121)
+2026-02-26T06:47:09.265Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:47:12.514Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:47:14.766Z [DEBUG] [useDeferredValue] Messages deferred by 1 (121→122)
+2026-02-26T06:47:14.869Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:47:14.869Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:47:14.869Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:47:14.869Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:47:14.871Z [DEBUG] [useDeferredValue] Messages deferred by 1 (122→123)
+2026-02-26T06:47:14.875Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:47:14.885Z [DEBUG] High write ratio: blit=0, write=6593 (100.0% writes), screen=157x136
+2026-02-26T06:47:14.918Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088434918
+2026-02-26T06:47:14.918Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:47:14.919Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:47:14.919Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:47:14.919Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088434918 to /Users/a111111/.claude.json
+2026-02-26T06:47:14.919Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:47:14.919Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:47:14.919Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:47:14.919Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:47:14.919Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:47:14.919Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:47:14.919Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:47:14.919Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:47:14.981Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:47:14.981Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:47:14.981Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:47:14.981Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:47:14.981Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:47:14.981Z [DEBUG] [useDeferredValue] Messages deferred by 1 (123→124)
+2026-02-26T06:47:14.984Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 3ms
+2026-02-26T06:47:14.985Z [DEBUG] autocompact: tokens=49534 threshold=167000 effectiveWindow=180000
+2026-02-26T06:47:14.985Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:47:14.986Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088434986
+2026-02-26T06:47:14.986Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:47:14.987Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:47:14.987Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:47:14.987Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088434986 to /Users/a111111/.claude.json
+2026-02-26T06:47:14.987Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:47:14.987Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:47:14.987Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:47:14.987Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:47:14.990Z [DEBUG] [useDeferredValue] Messages deferred by 1 (123→124)
+2026-02-26T06:47:16.289Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:47:17.194Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:47:17.861Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-26T06:47:17.861Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-26T06:47:17.861Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:47:17.861Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:47:17.863Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Bash",
+        "ruleContent": "git ls-remote origin refs/heads/feat/*"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "localSettings"
+  }
+]
+2026-02-26T06:47:17.863Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-26T06:47:17.864Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-26T06:47:17.864Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:47:17.864Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:47:17.864Z [DEBUG] [useDeferredValue] Messages deferred by 1 (124→125)
+2026-02-26T06:47:17.875Z [DEBUG] High write ratio: blit=0, write=6798 (100.0% writes), screen=164x136
+2026-02-26T06:47:17.876Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:47:17.877Z [DEBUG] [useDeferredValue] Messages deferred by 1 (124→125)
+2026-02-26T06:47:23.880Z [DEBUG] Getting matching hook commands for Notification with query: permission_prompt
+2026-02-26T06:47:23.880Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:47:23.880Z [DEBUG] Matched 0 unique hooks for query "permission_prompt" (0 before deduplication)
+2026-02-26T06:47:39.736Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:47:39.737Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-02-26T06:47:39.739Z [DEBUG] Spawning shell without login (-l flag skipped)
+2026-02-26T06:47:40.082Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088460082
+2026-02-26T06:47:40.082Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:47:40.082Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:47:40.082Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:47:40.082Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088460082 to /Users/a111111/.claude.json
+2026-02-26T06:47:40.083Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:47:40.083Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:47:40.083Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:47:40.083Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:47:40.083Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-26T06:47:40.083Z [DEBUG] Found 5 hook matchers in settings
+2026-02-26T06:47:40.083Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-26T06:47:40.083Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:47:40.084Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:47:40.084Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:47:40.084Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:47:40.084Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:47:40.084Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:47:40.084Z [DEBUG] [useDeferredValue] Messages deferred by 1 (125→126)
+2026-02-26T06:47:40.088Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 4ms
+2026-02-26T06:47:40.088Z [DEBUG] autocompact: tokens=49874 threshold=167000 effectiveWindow=180000
+2026-02-26T06:47:40.088Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:47:40.090Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088460090
+2026-02-26T06:47:40.090Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:47:40.090Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:47:40.090Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:47:40.090Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088460090 to /Users/a111111/.claude.json
+2026-02-26T06:47:40.090Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:47:40.090Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:47:40.090Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:47:40.090Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:47:40.092Z [DEBUG] [useDeferredValue] Messages deferred by 1 (125→126)
+2026-02-26T06:47:41.119Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:47:44.960Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:47:58.998Z [DEBUG] [useDeferredValue] Messages deferred by 1 (126→127)
+2026-02-26T06:48:03.624Z [DEBUG] [useDeferredValue] Messages deferred by 1 (127→128)
+2026-02-26T06:48:03.675Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-26T06:48:03.675Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:48:03.675Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:48:03.675Z [DEBUG] autocompact: tokens=51368 threshold=167000 effectiveWindow=180000
+2026-02-26T06:48:03.680Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:48:03.683Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088483683
+2026-02-26T06:48:03.683Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:48:03.683Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:48:03.683Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:48:03.683Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088483683 to /Users/a111111/.claude.json
+2026-02-26T06:48:03.683Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:48:03.684Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:48:03.684Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:48:03.684Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:48:03.688Z [DEBUG] [useDeferredValue] Messages deferred by 1 (128→129)
+2026-02-26T06:48:03.693Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:48:06.934Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:48:07.586Z [DEBUG] Forked agent [prompt_suggestion] received message: type=assistant
+2026-02-26T06:48:07.621Z [DEBUG] Getting matching hook commands for SubagentStop with query:
+2026-02-26T06:48:07.621Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:48:07.621Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:48:07.621Z [DEBUG] Forked agent [prompt_suggestion] finished: 1 messages, types=[assistant], totalUsage: input=41079 output=23 cacheRead=10293 cacheCreate=0
+2026-02-26T06:48:07.622Z [DEBUG] [Speculation] enabled=false
+2026-02-26T06:49:57.279Z [DEBUG] MCP server "ide": Calling MCP tool: getDiagnostics
+2026-02-26T06:49:57.280Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-26T06:49:57.280Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-26T06:49:57.280Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-26T06:49:57.280Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-26T06:49:57.285Z [DEBUG] MCP server "ide": Tool 'getDiagnostics' completed successfully in 6ms
+2026-02-26T06:49:57.286Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-26T06:49:57.286Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:49:57.286Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:49:57.286Z [DEBUG] FileHistory: Making snapshot for message d06640f2-3943-45f5-8b7e-2e327da9835c
+2026-02-26T06:49:57.286Z [DEBUG] FileHistory: Added snapshot for d06640f2-3943-45f5-8b7e-2e327da9835c, tracking 1 files
+2026-02-26T06:49:57.287Z [DEBUG] [useDeferredValue] Messages deferred by 2 (129→131)
+2026-02-26T06:49:57.291Z [DEBUG] Started caffeinate to prevent sleep
+2026-02-26T06:49:57.291Z [DEBUG] MCP server "ide": Calling MCP tool: closeAllDiffTabs
+2026-02-26T06:49:57.291Z [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. This feature is only available on Claude Sonnet 4+, Opus 4+, and newer models.
+2026-02-26T06:49:57.293Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:49:57.293Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:49:57.293Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:49:57.296Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088597296
+2026-02-26T06:49:57.296Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:49:57.296Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:49:57.296Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:49:57.296Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088597296 to /Users/a111111/.claude.json
+2026-02-26T06:49:57.296Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:49:57.297Z [DEBUG] autocompact: tokens=51232 threshold=167000 effectiveWindow=180000
+2026-02-26T06:49:57.298Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:49:57.300Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088597300
+2026-02-26T06:49:57.300Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:49:57.300Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:49:57.300Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:49:57.300Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088597300 to /Users/a111111/.claude.json
+2026-02-26T06:49:57.300Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:49:57.301Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:49:57.301Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:49:57.301Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:49:57.304Z [DEBUG] MCP server "ide": Tool 'closeAllDiffTabs' completed successfully in 13ms
+2026-02-26T06:49:57.306Z [DEBUG] [useDeferredValue] Messages deferred by 2 (129→131)
+2026-02-26T06:49:57.330Z [DEBUG] High write ratio: blit=0, write=7478 (100.0% writes), screen=184x136
+2026-02-26T06:49:57.966Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:50:00.157Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:50:10.912Z [DEBUG] [useDeferredValue] Messages deferred by 1 (131→132)
+2026-02-26T06:50:17.436Z [DEBUG] [useDeferredValue] Messages deferred by 1 (132→133)
+2026-02-26T06:50:17.460Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-26T06:50:17.460Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:50:17.460Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:50:17.460Z [DEBUG] autocompact: tokens=52422 threshold=167000 effectiveWindow=180000
+2026-02-26T06:50:17.463Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-02-26T06:50:17.465Z [DEBUG] Writing to temp file: /Users/a111111/.claude.json.tmp.70464.1772088617465
+2026-02-26T06:50:17.465Z [DEBUG] Preserving file permissions: 100600
+2026-02-26T06:50:17.465Z [DEBUG] Temp file written successfully, size: 11569 bytes
+2026-02-26T06:50:17.465Z [DEBUG] Applied original permissions to temp file
+2026-02-26T06:50:17.465Z [DEBUG] Renaming /Users/a111111/.claude.json.tmp.70464.1772088617465 to /Users/a111111/.claude.json
+2026-02-26T06:50:17.465Z [DEBUG] File /Users/a111111/.claude.json written atomically
+2026-02-26T06:50:17.466Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-02-26T06:50:17.466Z [DEBUG] [API:auth] OAuth token check starting
+2026-02-26T06:50:17.466Z [DEBUG] [API:auth] OAuth token check complete
+2026-02-26T06:50:17.473Z [DEBUG] Stopped caffeinate, allowing sleep
+2026-02-26T06:50:22.044Z [DEBUG] Stream started - received first chunk
+2026-02-26T06:50:22.430Z [DEBUG] Forked agent [prompt_suggestion] received message: type=assistant
+2026-02-26T06:50:22.495Z [DEBUG] Getting matching hook commands for SubagentStop with query:
+2026-02-26T06:50:22.495Z [DEBUG] Found 0 hook matchers in settings
+2026-02-26T06:50:22.495Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-26T06:50:22.495Z [DEBUG] Forked agent [prompt_suggestion] finished: 1 messages, types=[assistant], totalUsage: input=42143 output=14 cacheRead=10293 cacheCreate=0
+2026-02-26T06:50:24.708Z [DEBUG] Metrics export disabled by organization setting
+2026-02-26T07:10:24.858Z [DEBUG] detectFileEncoding failed for expected reason: ENOENT
+2026-02-26T07:11:26.865Z [DEBUG] [onCancel] focusedInputDialog=undefined streamMode=tool-use
