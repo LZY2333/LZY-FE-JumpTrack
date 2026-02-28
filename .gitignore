@@ -1,0 +1,41 @@
+# agent-configs/.claude/ 运行时及缓存文件
+agent-configs/.claude/.update.lock
+agent-configs/.claude/cache/
+agent-configs/.claude/paste-cache/
+agent-configs/.claude/stats-cache.json
+agent-configs/.claude/session-env/
+agent-configs/.claude/shell-snapshots/
+agent-configs/.claude/debug/
+agent-configs/.claude/plans/
+agent-configs/.claude/file-history/
+agent-configs/.claude/backups/
+agent-configs/.claude/telemetry/
+
+# ⚠️ 敏感：完整对话历史
+agent-configs/.claude/history.jsonl
+
+# agent-configs/.codex/ 运行时及缓存文件
+agent-configs/.codex/.codex-global-state.json
+agent-configs/.codex/.personality_migration
+agent-configs/.codex/log/
+agent-configs/.codex/sessions/
+agent-configs/.codex/shell_snapshots/
+agent-configs/.codex/sqlite/
+agent-configs/.codex/*.sqlite
+agent-configs/.codex/tmp/
+agent-configs/.codex/vendor_imports/
+agent-configs/.codex/skills.bak*/
+agent-configs/.codex/*.sqlite-wal
+agent-configs/.codex/*.sqlite-shm
+agent-configs/.codex/version.json
+agent-configs/.codex/config.toml
+agent-configs/.codex/rules/
+agent-configs/.codex/prompts/
+agent-configs/.codex/skills
+
+# ⚠️ 敏感：认证及对话历史
+agent-configs/.codex/auth.json
+agent-configs/.codex/history.jsonl
+
+# OS
+.DS_Store

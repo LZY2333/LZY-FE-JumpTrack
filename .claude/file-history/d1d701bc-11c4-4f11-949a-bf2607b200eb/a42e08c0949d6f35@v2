@@ -1,8 +1,0 @@
-# Claude Memory
-
-## Skills 管理规则
-
-- `~/.claude/skills` 是软链接，指向 `/Users/a111111/demo/LZY-FE-JumpTrack/skills`
-- **用户主动要求创建的 skill**：存放在 `/Users/a111111/demo/LZY-FE-JumpTrack/skills/[skill-name]/`
-- **Claude 自动创建的 skill**：存放在 `/Users/a111111/demo/LZY-FE-JumpTrack/skills/auto-generated/[skill-name]/`
-- 创建 skill 时必须遵守上述目录规则，不得将自动生成的 skill 放在根目录
