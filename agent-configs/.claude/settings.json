@@ -105,6 +105,7 @@
     ],
     "deny": []
   },
+  "model": "opus",
   "language": "简体中文",
-  "model": "opus"
+  "skipDangerousModePermissionPrompt": true
 }
