@@ -38,21 +38,21 @@
 - 主入口是 `pathname = /app`（含一组 `/app/*` 重写别名）。
 - 工具切换主要靠 query（`target`、`code`、`category`...）和 store 驱动，不是传统页面跳转。
 - 典型链路：
-  - 左侧点击：`setInFlowTargetQueryParams(...)`
-  - `QuerySyncProvider` 监听 store，`history.pushState` 同步 URL
-  - `MainContent` 用 `formConfig[target].render(...)` 渲染左侧表单
+    - 左侧点击：`setInFlowTargetQueryParams(...)`
+    - `QuerySyncProvider` 监听 store，`history.pushState` 同步 URL
+    - `MainContent` 用 `formConfig[target].render(...)` 渲染左侧表单
 - 关键代码：
-  - `web/src/pages/pollo.ai/app/_home/LeftMenuLayout/index.tsx`
-  - `web/src/pages/pollo.ai/_context/InflowQuery/QuerySyncProvider.tsx`
-  - `web/src/pages/pollo.ai/app/_constants/formConfig.tsx`
+    - `web/src/pages/pollo.ai/app/_home/LeftMenuLayout/index.tsx`
+    - `web/src/pages/pollo.ai/_context/InflowQuery/QuerySyncProvider.tsx`
+    - `web/src/pages/pollo.ai/app/_constants/formConfig.tsx`
 
 ## 1.2 独立 SEO 路由（未登录主入口）
 
 - 各能力有独立路径：`/ai-image-generator`、`/image-to-video`、`/text-to-video`、`/video-effects`、`/tool` 等。
 - 左侧 compact 菜单是 `<Link href="/xxx">` 直接跳页面。
 - 关键代码：
-  - `web/src/pages/pollo.ai/_components/MenuLayout/LeftCompactMenu/hooks/useCompactMenuList.tsx`
-  - `web/src/pages/pollo.ai/_components/MenuLayout/LeftCompactMenu/index.tsx`
+    - `web/src/pages/pollo.ai/_components/MenuLayout/LeftCompactMenu/hooks/useCompactMenuList.tsx`
+    - `web/src/pages/pollo.ai/_components/MenuLayout/LeftCompactMenu/index.tsx`
 
 ## 1.3 为什么看起来“登录后大量变成 /app 开头”
 
@@ -143,22 +143,22 @@
 ## 5.1 一一对应（15 项）
 
 | 已登录 type (`useMenuList`) | 未登录 route (`useCompactMenuList`) |
-| --- | --- |
-| `text-to-image` | `/ai-image-generator` |
-| `image-to-image` | `/image-to-image-ai` |
-| `photo-effects` | `/photo-effects` |
-| `image-tools` | `/image-tools` |
-| `image-to-video` | `/image-to-video` |
-| `text-to-video` | `/text-to-video` |
-| `reference-to-video` | `/reference-to-video` |
-| `ai-avatar` | `/ai-avatar` |
-| `use-cases` | `/use-cases` |
-| `mimic-motion` | `/mimic-motion` |
-| `ai-video-editor` | `/ai-video-editor` |
-| `video-to-video` | `/video-to-video` |
-| `ai-animation-generator` | `/ai-animation-generator` |
-| `video-effects` | `/video-effects` |
-| `tool` | `/tool` |
+| --------------------------- | ----------------------------------- |
+| `text-to-image`             | `/ai-image-generator`               |
+| `image-to-image`            | `/image-to-image-ai`                |
+| `photo-effects`             | `/photo-effects`                    |
+| `image-tools`               | `/image-tools`                      |
+| `image-to-video`            | `/image-to-video`                   |
+| `text-to-video`             | `/text-to-video`                    |
+| `reference-to-video`        | `/reference-to-video`               |
+| `ai-avatar`                 | `/ai-avatar`                        |
+| `use-cases`                 | `/use-cases`                        |
+| `mimic-motion`              | `/mimic-motion`                     |
+| `ai-video-editor`           | `/ai-video-editor`                  |
+| `video-to-video`            | `/video-to-video`                   |
+| `ai-animation-generator`    | `/ai-animation-generator`           |
+| `video-effects`             | `/video-effects`                    |
+| `tool`                      | `/tool`                             |
 
 ## 5.2 关键不一致点
 
@@ -348,15 +348,15 @@ Phase 3：逐步拆除 `/app` 体系
 ## 10. 我建议你们先确认的关键问题（请回复）
 
 1. 本次统一是否包含 `/app/[...params]` 的 agent/extensions 子系统，还是仅工具工作台（tool/image-tools/effects/generators）？
-先只做工具工作台
+   先只做工具工作台
 2. “assets 不刷新”验收标准是 A（实例不卸载）还是 B（允许卸载但秒恢复）？
-A（实例不卸载）
+   A（实例不卸载）
 3. 未登录右侧“社区资源”是否直接复用各页面现有模块，还是做统一 CommunityContent 容器？
-直接复用各页面现有模块
+   直接复用各页面现有模块
 4. chat 模式是否必须在所有 15 个工具路由统一可用，还是先覆盖原支持的 5 个菜单项？
-先覆盖原支持的 5 个菜单项
+   先覆盖原支持的 5 个菜单项
 5. 历史链接兼容策略：`/app?target=...` 是否需要长期 301 到新独立路由，还是短期内部 rewrite 即可？
-直接抛弃 /app?target=...理由
+   直接抛弃 /app?target=...理由
 
 ---
 

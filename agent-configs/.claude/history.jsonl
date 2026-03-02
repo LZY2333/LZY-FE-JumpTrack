@@ -243,3 +243,26 @@
 {"display":"调整","pastedContents":{},"timestamp":1772415214943,"project":"/Users/a111111/demo/LZY-FE-JumpTrack","sessionId":"f1da8143-cd4a-4128-9df3-ea0c46901288"}
 {"display":"增加尽可能多的文件,都是个人使用,不考虑敏感内容","pastedContents":{},"timestamp":1772415988147,"project":"/Users/a111111/demo/LZY-FE-JumpTrack","sessionId":"f1da8143-cd4a-4128-9df3-ea0c46901288"}
 {"display":"同意,然后执行一次commit + push","pastedContents":{},"timestamp":1772416292543,"project":"/Users/a111111/demo/LZY-FE-JumpTrack","sessionId":"f1da8143-cd4a-4128-9df3-ea0c46901288"}
+{"display":"提取其中所有文字","pastedContents":{},"timestamp":1772416433133,"project":"/Users/a111111/code/ai-video-collection","sessionId":"bf95dd2f-cf4d-48df-8ddc-63cb04ade455"}
+{"display":"创建博文,总结下面文章中的agent管理方法,每个板块中的每个点不要遗漏,每个点为精炼的关键词+一句话,内容再是实操demo:https://mp.weixin.qq.com/s/N1WgUN8ddXrw0p0o5IiykA.输出位置:/Users/a111111/demo/LazyBlog/docs/posts/AI.","pastedContents":{},"timestamp":1772419685680,"project":"/Users/a111111/code/ai-video-collection","sessionId":"2b5a2044-47cc-4322-aad4-4aee5e71d07a"}
+{"display":"[Pasted text #1 +142 lines]","pastedContents":{"1":{"id":1,"type":"text","contentHash":"292d83d66c3baf81"}},"timestamp":1772419841915,"project":"/Users/a111111/code/ai-video-collection","sessionId":"2b5a2044-47cc-4322-aad4-4aee5e71d07a"}
+{"display":"同意","pastedContents":{},"timestamp":1772419961414,"project":"/Users/a111111/code/ai-video-collection","sessionId":"2b5a2044-47cc-4322-aad4-4aee5e71d07a"}
+{"display":"给## ### 增加编号","pastedContents":{},"timestamp":1772420371784,"project":"/Users/a111111/code/ai-video-collection","sessionId":"2b5a2044-47cc-4322-aad4-4aee5e71d07a"}
+{"display":"websearch,给编号的最佳实践是怎样的?","pastedContents":{},"timestamp":1772420424823,"project":"/Users/a111111/code/ai-video-collection","sessionId":"2b5a2044-47cc-4322-aad4-4aee5e71d07a"}
+{"display":"两个menu的显示隐藏如何控制的,两者不应该同时出现吧?","pastedContents":{},"timestamp":1772430123667,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"代码是否有问题,直接CSS隐藏,但是组件还会渲染啊,当初为何不使用if","pastedContents":{},"timestamp":1772430242515,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"还有哪些类似的nextjs常见写法,与常规react不同的地方","pastedContents":{},"timestamp":1772430980065,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"showHeaderMenu 为什么也写成css的,直接给if,不展示PCMenu","pastedContents":{},"timestamp":1772431380986,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"代码中存在大量 {...headerProps} props直接透传的情况,这样的组件设计和调用组件,是否合理,有没有更优写法","pastedContents":{},"timestamp":1772432045240,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"使用{...props} 是否会导致组件百分百重新渲染","pastedContents":{},"timestamp":1772432219603,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"选中的内容,这种写法是否有性能问题","pastedContents":{},"timestamp":1772432413860,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"直接封装target传入,内部使用target对象,不是更能减少重新渲染","pastedContents":{},"timestamp":1772432555726,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"这里provider为什么要这样包,直接作为组件包在外层不行吗","pastedContents":{},"timestamp":1772432946710,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"withLayouts 可直接视作嵌套在组件外层,没有做其他处理?为什么不直接写,这样调用有什么好处","pastedContents":{},"timestamp":1772434007584,"project":"/Users/a111111/code/ai-video-collection","sessionId":"eff287c1-efef-4973-ab6a-b2eb23f88ce0"}
+{"display":"/resume ","pastedContents":{},"timestamp":1772440387053,"project":"/Users/a111111/code/ai-video-collection","sessionId":"b23ce6b1-9143-433b-8155-a0bf618fd454"}
+{"display":"/resume ","pastedContents":{},"timestamp":1772440539386,"project":"/Users/a111111/code/ai-video-collection","sessionId":"606bde7b-b706-4c00-b5a9-fec2a0cb21f0"}
+{"display":"提交 并 push LazY","pastedContents":{},"timestamp":1772444171945,"project":"/Users/a111111/demo/LZY-FE-JumpTrack/learn-in-project","sessionId":"9e55e412-0678-4e55-ae19-607835084b9a"}
+{"display":"commit 并 push LazyBlog 以及 LZY-FE-JumpTrack 两个仓库,并将这个功能写成skill","pastedContents":{},"timestamp":1772444246029,"project":"/Users/a111111/demo/LZY-FE-JumpTrack/learn-in-project","sessionId":"9e55e412-0678-4e55-ae19-607835084b9a"}
+{"display":"增加触发关键词,触发关键词要简单","pastedContents":{},"timestamp":1772444394418,"project":"/Users/a111111/demo/LZY-FE-JumpTrack/learn-in-project","sessionId":"9e55e412-0678-4e55-ae19-607835084b9a"}
+{"display":"关键词为 推送笔记 push资料库 等","pastedContents":{},"timestamp":1772444442063,"project":"/Users/a111111/demo/LZY-FE-JumpTrack/learn-in-project","sessionId":"9e55e412-0678-4e55-ae19-607835084b9a"}
+{"display":"同意","pastedContents":{},"timestamp":1772444457609,"project":"/Users/a111111/demo/LZY-FE-JumpTrack/learn-in-project","sessionId":"9e55e412-0678-4e55-ae19-607835084b9a"}
