@@ -1,0 +1,4 @@
+interface:
+  display_name: "Variable Flow"
+  short_description: "Generate variable flow and field inheritance docs."
+  default_prompt: "Summarize variable flow layers, show inherited/added fields, and output a single JS code block with inline comments."

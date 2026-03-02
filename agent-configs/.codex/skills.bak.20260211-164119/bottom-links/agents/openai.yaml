@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bottom File Links"
+  short_description: "Add bottom file links list for quick jumps"
+  default_prompt: "Use relative file paths and output a final bottom list of unique path:line entries."
