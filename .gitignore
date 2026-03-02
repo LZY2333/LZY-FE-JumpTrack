@@ -11,6 +11,12 @@ agent-configs/.claude/file-history/
 agent-configs/.claude/backups/
 agent-configs/.claude/telemetry/
 
+# agent-configs/.claude/ 会话及运行时数据
+agent-configs/.claude/history.jsonl
+agent-configs/.claude/projects/
+agent-configs/.claude/plugins/known_marketplaces.json
+agent-configs/.claude/plugins/marketplaces/
+
 # agent-configs/.codex/ 运行时及缓存文件
 agent-configs/.codex/log/
 agent-configs/.codex/sessions/
@@ -21,6 +27,13 @@ agent-configs/.codex/tmp/
 agent-configs/.codex/vendor_imports/
 agent-configs/.codex/*.sqlite-wal
 agent-configs/.codex/*.sqlite-shm
+
+# agent-configs/.codex/ 会话、运行时及敏感数据
+agent-configs/.codex/auth.json
+agent-configs/.codex/history.jsonl
+agent-configs/.codex/.codex-global-state.json
+agent-configs/.codex/version.json
+agent-configs/.codex/.personality_migration
 
 # OS
 .DS_Store
