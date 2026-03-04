@@ -1,25 +1,18 @@
 # 学习
 
-## 预备prompt -------------------------------
+## 预备skill -------------------------------
 
-## 生成业务功能
+## skill: 业务功能生成
 
-很多组件做得过于通用,暴露过多props,或将部分逻辑交于外部处理再传入使用,应当更内聚
+更内聚: 不要过于通用(暴露过多props),或将部分逻辑交于外部处理再传入使用,应当更内聚
 
-### 区分好组件职责边界,逻辑边界
+规划组件边界: 各个组件职责边界,逻辑边界,要清晰
 
-### 是否有类似功能实现
+复用: 原有业务是否有可以复用
 
-## 注释
+## skill: 项目代码分析当前产品
 
-给当前文件源码加上注释,需要注释的源码为: 自定义函数 自定义变量 JSX内每个自定义组件 解构的变量,注释内容为: 注释对象的作用/功能
-
-## 变量流转
-
-videoDetail变量 数据怎么层层传递的,在组件和hooks之间的流转, 并在文件末尾打印出 videoDetail内含哪些字段,字段作用,videoDetail最初创建的
-文件位置
-路径流转请补充 video-detail.vo.ts 到Page的部分,字段展示部分改成按流转状态每层的变量展示,且只考虑前端使用到的出现过的字段,且需要考虑继承关系,使用js格式代码块打印其字
-段及字段注释说明,例如 2中\_videoDetail用到了非自己新增的b属性,代表1中videoDetail 及 videoData 已经具有b属性,需要标出,假设2中\_videoDetail还新增了c属性,则 videoDetail:
+通过项目代码，快速了解当前产品。有哪些板块，其术语，其展示位置，其文件位置，其产品职责，最后其引用位置，文件位置（距离）。有哪些页面，同上。
 
 ## 功能实现 -------------------------------
 
@@ -104,23 +97,4 @@ Header(props.showLoginUserInfo) // 第 1 层：解构
   </div>
 ```
 
-## 周报
-
-nextjs
-
-tailwind css
-
-1. 试用平台功能, 熟悉整理平台业务功能模块全景
-
-- 主页侧边栏各个模块的 定位与职责
-- 理清了 创作区 娱乐区 社区 的产品分层。
-
-1. 理清文生图链路, /app?target=text-to-image 与 /ai-image-generator 表单展示逻辑
-
-- 从左侧 Txt2Img 点击一路追到 表单render(TextToImageFormGenerate)。
-- 明确 app 页与 ai-image-generator 页共享同一套表单生成逻辑(FormGenerate)与 Context/Store 体系
-
-1. Video Detail 详情页 及 字段流转
-
-- 从后端 VideoDetailVo 到前端 Page/Detail/hooks/context 的完整字段流转。
-- 掌握了 videoDetail、selectedGeneration、menuOptionsData 的继承与覆盖关系。
+## 周报 -------------------------------

@@ -7,3 +7,4 @@ prefix_rule(pattern=["python3", "/Users/a111111/.codex/skills/.system/skill-crea
 prefix_rule(pattern=["python3", "/Users/a111111/.codex/skills/.system/skill-creator/scripts/quick_validate.py"], decision="allow")
 prefix_rule(pattern=["cat"], decision="allow")
 prefix_rule(pattern=["mv", ".agents/skills"], decision="allow")
+prefix_rule(pattern=["open", "https://pollo.ai"], decision="allow")
