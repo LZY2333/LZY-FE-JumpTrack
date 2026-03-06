@@ -1,0 +1,15 @@
+{
+  "underlying_goal": "Check today's token usage",
+  "goal_categories": {
+    "warmup_minimal": 1
+  },
+  "outcome": "not_achieved",
+  "user_satisfaction_counts": {},
+  "claude_helpfulness": "unhelpful",
+  "session_type": "quick_question",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "none",
+  "brief_summary": "User asked about today's token usage but interrupted the request before getting an answer.",
+  "session_id": "af263d26-05d8-4520-9bda-b9d3a29ea112"
+}

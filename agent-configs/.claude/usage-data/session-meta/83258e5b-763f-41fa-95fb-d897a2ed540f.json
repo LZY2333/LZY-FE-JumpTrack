@@ -1,0 +1,50 @@
+{
+  "session_id": "83258e5b-763f-41fa-95fb-d897a2ed540f",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-02-09T01:48:14.840Z",
+  "duration_minutes": 18,
+  "user_message_count": 4,
+  "assistant_message_count": 35,
+  "tool_counts": {
+    "Bash": 10,
+    "Glob": 1,
+    "Read": 4,
+    "Grep": 3
+  },
+  "languages": {
+    "TypeScript": 3,
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 15108,
+  "output_tokens": 3187,
+  "first_prompt": "如何select line",
+  "user_interruptions": 0,
+  "user_response_times": [
+    40.952,
+    154.164,
+    720.3
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    9,
+    9,
+    9,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-02-09T01:48:14.840Z",
+    "2026-02-09T01:49:11.831Z",
+    "2026-02-09T01:52:04.552Z",
+    "2026-02-09T02:06:01.731Z"
+  ]
+}

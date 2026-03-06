@@ -1,0 +1,17 @@
+{
+  "underlying_goal": "Learn how to update local master branch to latest without necessarily switching branches",
+  "goal_categories": {
+    "quick_question": 2
+  },
+  "outcome": "fully_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 1
+  },
+  "claude_helpfulness": "very_helpful",
+  "session_type": "quick_question",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "good_explanations",
+  "brief_summary": "User asked how to update local master branch, got clear answers including a method without switching branches.",
+  "session_id": "57258ec7-55c4-4318-bc5d-1afb5fccfdad"
+}

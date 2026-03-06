@@ -1,0 +1,41 @@
+{
+  "session_id": "35270745-2ea5-4055-9047-07c3c1529503",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-03T07:07:29.893Z",
+  "duration_minutes": 1,
+  "user_message_count": 1,
+  "assistant_message_count": 22,
+  "tool_counts": {
+    "Read": 5,
+    "Glob": 5,
+    "Grep": 8
+  },
+  "languages": {
+    "TypeScript": 5
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 786,
+  "output_tokens": 1779,
+  "first_prompt": "/Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/PGC/_components/PGCTemplate.tsx 和 /Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/Templates/index.tsx 两个组件是什么关系,…",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "File Not Found": 2,
+    "Other": 3
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-03-03T07:07:29.893Z"
+  ]
+}

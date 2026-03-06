@@ -1,0 +1,51 @@
+{
+  "session_id": "10bf75ad-ead0-4820-9336-2cc80ea1b636",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-03T01:27:02.876Z",
+  "duration_minutes": 2,
+  "user_message_count": 4,
+  "assistant_message_count": 6,
+  "tool_counts": {
+    "Write": 1
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 18,
+  "output_tokens": 1983,
+  "first_prompt": "/Users/a111111/demo/LZY-FE-JumpTrack/learn-in-project 将选中代码创建一个新文件放在该目录下",
+  "user_interruptions": 0,
+  "user_response_times": [
+    38.377,
+    30.384,
+    13.724
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 69,
+  "lines_removed": 0,
+  "files_modified": 1,
+  "message_hours": [
+    9,
+    9,
+    9,
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-03-03T01:27:02.876Z",
+    "2026-03-03T01:27:54.498Z",
+    "2026-03-03T01:28:37.332Z",
+    "2026-03-03T01:28:55.929Z"
+  ]
+}",
+    "2026-03-03T01:28:55.929Z",
+    "2026-03-03T01:34:37.802Z",
+    "2026-03-03T01:35:49.978Z"
+  ]
+}

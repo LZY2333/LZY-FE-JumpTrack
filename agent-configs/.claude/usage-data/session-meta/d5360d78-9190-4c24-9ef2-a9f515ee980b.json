@@ -1,0 +1,38 @@
+{
+  "session_id": "d5360d78-9190-4c24-9ef2-a9f515ee980b",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-02-28T06:21:28.004Z",
+  "duration_minutes": 2,
+  "user_message_count": 4,
+  "assistant_message_count": 2,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 6,
+  "output_tokens": 593,
+  "first_prompt": "cursor 及 vscode 有没有类似 jb这样可读性更强的全局搜索功能",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    14,
+    14,
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-02-28T06:21:28.004Z",
+    "2026-02-28T06:21:28.004Z",
+    "2026-02-28T06:21:28.004Z",
+    "2026-02-28T06:22:49.550Z"
+  ]
+}

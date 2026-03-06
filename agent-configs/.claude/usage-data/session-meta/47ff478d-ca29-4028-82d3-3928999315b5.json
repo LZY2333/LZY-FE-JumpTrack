@@ -1,0 +1,52 @@
+{
+  "session_id": "47ff478d-ca29-4028-82d3-3928999315b5",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-06T01:56:48.184Z",
+  "duration_minutes": 20,
+  "user_message_count": 6,
+  "assistant_message_count": 8,
+  "tool_counts": {
+    "Skill": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 24,
+  "output_tokens": 1670,
+  "first_prompt": "如何设置prettier 不给 /Users/a111111/code/ai-video-collection/web/src/pages/pollo.ai/\\_components/HeaderActions/index.tsx:1 中的'_'前自动加'\\'",
+  "user_interruptions": 1,
+  "user_response_times": [
+    336.958,
+    137.576,
+    6.706,
+    52.831,
+    639.214
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "User Rejected": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    9,
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-03-06T01:56:48.184Z",
+    "2026-03-06T02:02:39.040Z",
+    "2026-03-06T02:05:08.642Z",
+    "2026-03-06T02:05:20.375Z",
+    "2026-03-06T02:06:06.500Z",
+    "2026-03-06T02:16:53.497Z"
+  ]
+}

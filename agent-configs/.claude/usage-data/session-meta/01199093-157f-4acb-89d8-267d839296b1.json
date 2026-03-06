@@ -1,0 +1,34 @@
+{
+  "session_id": "01199093-157f-4acb-89d8-267d839296b1",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-04T12:11:23.400Z",
+  "duration_minutes": 1,
+  "user_message_count": 2,
+  "assistant_message_count": 0,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "first_prompt": "useHeaderContainerObserver 这种监听变化,是否做成全局事件更好,或者zustand状态,这样任意组件都可以通过hooks拿到",
+  "user_interruptions": 1,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    20,
+    20
+  ],
+  "user_message_timestamps": [
+    "2026-03-04T12:11:23.400Z",
+    "2026-03-04T12:12:09.547Z"
+  ]
+}

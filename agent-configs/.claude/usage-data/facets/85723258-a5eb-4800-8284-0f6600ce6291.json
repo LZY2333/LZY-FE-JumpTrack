@@ -1,0 +1,19 @@
+{
+  "underlying_goal": "Read and extract the content of a Feishu wiki document about 'Pollo 2.0 产品框架改版'",
+  "goal_categories": {
+    "information_retrieval": 1
+  },
+  "outcome": "partially_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 1
+  },
+  "claude_helpfulness": "moderately_helpful",
+  "session_type": "single_task",
+  "friction_counts": {
+    "wrong_approach": 1
+  },
+  "friction_detail": "Feishu's virtual scrolling prevented Claude from extracting the full document content, requiring many repeated attempts to scroll and capture missing sections.",
+  "primary_success": "none",
+  "brief_summary": "User wanted to read a Feishu wiki page but Claude struggled with virtual scrolling and the user interrupted before full content was extracted.",
+  "session_id": "85723258-a5eb-4800-8284-0f6600ce6291"
+}

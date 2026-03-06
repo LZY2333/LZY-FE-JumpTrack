@@ -1,0 +1,104 @@
+{
+  "session_id": "1250b17e-707a-4fb9-aa0f-5b2b0dd9aa2e",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-04T10:10:22.231Z",
+  "duration_minutes": 3,
+  "user_message_count": 2,
+  "assistant_message_count": 22,
+  "tool_counts": {
+    "Read": 2,
+    "Edit": 11
+  },
+  "languages": {
+    "Markdown": 13
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 32,
+  "output_tokens": 10264,
+  "first_prompt": "还原表格内容,完整的路径加在当前块下方",
+  "user_interruptions": 0,
+  "user_response_times": [
+    21.336
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 120,
+  "lines_removed": 54,
+  "files_modified": 1,
+  "message_hours": [
+    18,
+    18
+  ],
+  "user_message_timestamps": [
+    "2026-03-04T10:10:22.232Z",
+    "2026-03-04T10:12:24.356Z"
+  ]
+}10:12:24.356Z",
+    "2026-03-04T10:14:32.938Z"
+  ]
+}er": 1,
+    "File Not Found": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 445,
+  "lines_removed": 34,
+  "files_modified": 1,
+  "message_hours": [
+    9,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    12,
+    12,
+    12,
+    12,
+    12,
+    14,
+    14,
+    14,
+    18
+  ],
+  "user_message_timestamps": [
+    "2026-03-04T01:48:03.717Z",
+    "2026-03-04T02:05:09.351Z",
+    "2026-03-04T02:37:09.470Z",
+    "2026-03-04T02:51:53.892Z",
+    "2026-03-04T02:52:00.403Z",
+    "2026-03-04T02:52:18.008Z",
+    "2026-03-04T02:52:22.430Z",
+    "2026-03-04T02:52:50.505Z",
+    "2026-03-04T03:01:44.439Z",
+    "2026-03-04T03:08:32.725Z",
+    "2026-03-04T03:13:25.765Z",
+    "2026-03-04T03:15:36.750Z",
+    "2026-03-04T03:22:53.710Z",
+    "2026-03-04T03:29:45.117Z",
+    "2026-03-04T04:16:09.264Z",
+    "2026-03-04T04:16:20.742Z",
+    "2026-03-04T04:16:46.942Z",
+    "2026-03-04T04:19:21.044Z",
+    "2026-03-04T04:41:17.011Z",
+    "2026-03-04T06:06:38.413Z",
+    "2026-03-04T06:24:07.592Z",
+    "2026-03-04T06:49:49.903Z",
+    "2026-03-04T10:06:20.949Z"
+  ]
+}

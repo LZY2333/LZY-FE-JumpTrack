@@ -1,0 +1,56 @@
+{
+  "session_id": "23fdcd3a-f7f8-48e1-8324-8adb160ced67",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-03T06:21:54.738Z",
+  "duration_minutes": 0,
+  "user_message_count": 1,
+  "assistant_message_count": 4,
+  "tool_counts": {
+    "Read": 2
+  },
+  "languages": {
+    "TypeScript": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 12,
+  "output_tokens": 303,
+  "first_prompt": "/Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/Templates/index.tsx:56 是不是获取当前表格数据的接口,其中的 已关联的分类列 /Users/a111111/code/ai-video-collection/web/src/_blocks/Managements/_components/Ad…",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-03-03T06:21:54.738Z"
+  ]
+}nes_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    14,
+    14,
+    14,
+    14,
+    14,
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-03-03T06:21:54.738Z",
+    "2026-03-03T06:33:28.289Z",
+    "2026-03-03T06:38:40.959Z",
+    "2026-03-03T06:41:06.463Z",
+    "2026-03-03T06:42:00.441Z",
+    "2026-03-03T06:42:00.874Z",
+    "2026-03-03T06:56:35.977Z"
+  ]
+}

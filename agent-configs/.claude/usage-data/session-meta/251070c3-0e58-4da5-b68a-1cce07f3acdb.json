@@ -1,0 +1,71 @@
+{
+  "session_id": "251070c3-0e58-4da5-b68a-1cce07f3acdb",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-05T01:32:17.747Z",
+  "duration_minutes": 41,
+  "user_message_count": 7,
+  "assistant_message_count": 40,
+  "tool_counts": {
+    "Read": 18,
+    "Grep": 3,
+    "Glob": 4,
+    "Bash": 1
+  },
+  "languages": {
+    "TypeScript": 18
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 124,
+  "output_tokens": 5154,
+  "first_prompt": "hi",
+  "user_interruptions": 1,
+  "user_response_times": [
+    1425.29,
+    1429.267,
+    1440.175,
+    230.652,
+    177.939,
+    413.513
+  ],
+  "tool_errors": 3,
+  "tool_error_categories": {
+    "File Not Found": 2,
+    "Other": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    9,
+    9,
+    9,
+    9,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-03-05T01:32:17.747Z",
+    "2026-03-05T01:56:09.176Z",
+    "2026-03-05T01:56:13.153Z",
+    "2026-03-05T01:56:24.061Z",
+    "2026-03-05T02:00:58.205Z",
+    "2026-03-05T02:04:35.667Z",
+    "2026-03-05T02:12:31.470Z"
+  ]
+}",
+    "2026-03-05T01:56:24.061Z",
+    "2026-03-05T02:00:58.205Z",
+    "2026-03-05T02:04:35.667Z",
+    "2026-03-05T02:12:31.470Z",
+    "2026-03-05T02:15:25.170Z",
+    "2026-03-05T02:17:49.407Z",
+    "2026-03-05T02:18:37.449Z",
+    "2026-03-05T02:21:00.745Z"
+  ]
+}

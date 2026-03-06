@@ -1,0 +1,52 @@
+{
+  "session_id": "0639938c-e013-4744-80ff-81c4b4b7c698",
+  "project_path": "/Users/a111111/demo/LZY-FE-JumpTrack/learn-in-project",
+  "start_time": "2026-03-02T09:44:38.878Z",
+  "duration_minutes": 2,
+  "user_message_count": 4,
+  "assistant_message_count": 24,
+  "tool_counts": {
+    "Skill": 1,
+    "Bash": 13,
+    "Read": 1
+  },
+  "languages": {
+    "JSON": 1
+  },
+  "git_commits": 1,
+  "git_pushes": 1,
+  "input_tokens": 40,
+  "output_tokens": 2420,
+  "first_prompt": "推送笔记",
+  "user_interruptions": 0,
+  "user_response_times": [
+    37.387,
+    27.31
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    17,
+    17,
+    17,
+    17
+  ],
+  "user_message_timestamps": [
+    "2026-03-02T09:44:38.878Z",
+    "2026-03-02T09:44:43.107Z",
+    "2026-03-02T09:45:45.303Z",
+    "2026-03-02T09:46:28.308Z"
+  ]
+}-02T09:45:45.303Z",
+    "2026-03-02T09:46:28.308Z",
+    "2026-03-02T09:47:56.507Z",
+    "2026-03-02T09:49:21.129Z"
+  ]
+}

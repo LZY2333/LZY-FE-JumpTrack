@@ -1,0 +1,52 @@
+{
+  "session_id": "fc9eba19-1130-42b8-ac02-bf6f1ba8c289",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-04T01:24:58.533Z",
+  "duration_minutes": 187,
+  "user_message_count": 3,
+  "assistant_message_count": 72,
+  "tool_counts": {
+    "Grep": 28,
+    "Glob": 9,
+    "Read": 14,
+    "Bash": 4
+  },
+  "languages": {
+    "TypeScript": 14
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 96,
+  "output_tokens": 8817,
+  "first_prompt": "哪些路由会进 ai-image-generator,其配置项在哪?",
+  "user_interruptions": 0,
+  "user_response_times": [
+    569.036
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    9,
+    12,
+    12
+  ],
+  "user_message_timestamps": [
+    "2026-03-04T01:24:58.533Z",
+    "2026-03-04T04:21:17.689Z",
+    "2026-03-04T04:31:28.293Z"
+  ]
+}6-03-04T01:24:58.533Z",
+    "2026-03-04T04:21:17.689Z",
+    "2026-03-04T04:31:28.293Z",
+    "2026-03-04T04:34:25.727Z",
+    "2026-03-04T04:35:50.111Z",
+    "2026-03-04T04:37:57.577Z"
+  ]
+}

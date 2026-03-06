@@ -1,0 +1,46 @@
+{
+  "session_id": "f1da8143-cd4a-4128-9df3-ea0c46901288",
+  "project_path": "/Users/a111111/demo/LZY-FE-JumpTrack",
+  "start_time": "2026-03-02T01:32:55.449Z",
+  "duration_minutes": 21,
+  "user_message_count": 4,
+  "assistant_message_count": 18,
+  "tool_counts": {
+    "Read": 1,
+    "Bash": 8,
+    "Edit": 1
+  },
+  "languages": {},
+  "git_commits": 1,
+  "git_pushes": 1,
+  "input_tokens": 36,
+  "output_tokens": 3504,
+  "first_prompt": "远程仓库 没有 .codex中的内容,之前提交并 push过,哪一步出了问题?.gitignore?",
+  "user_interruptions": 0,
+  "user_response_times": [
+    17.142,
+    759.628,
+    295.115
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 1,
+  "lines_removed": 16,
+  "files_modified": 1,
+  "message_hours": [
+    9,
+    9,
+    9,
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-03-02T01:32:55.449Z",
+    "2026-03-02T01:33:34.965Z",
+    "2026-03-02T01:46:28.172Z",
+    "2026-03-02T01:51:32.565Z"
+  ]
+}

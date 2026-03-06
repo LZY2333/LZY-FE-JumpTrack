@@ -1,0 +1,26 @@
+{
+  "underlying_goal": "Create and iteratively refine a Claude Code skill for managing project code comments via git stash/patch workflow, then use it to stash/restore annotations",
+  "goal_categories": {
+    "skill_creation": 1,
+    "skill_modification": 7,
+    "git_operations": 4,
+    "file_deletion": 1,
+    "knowledge_questions": 3
+  },
+  "outcome": "mostly_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 8,
+    "dissatisfied": 2,
+    "frustrated": 1
+  },
+  "claude_helpfulness": "very_helpful",
+  "session_type": "iterative_refinement",
+  "friction_counts": {
+    "wrong_approach": 2,
+    "buggy_code": 2
+  },
+  "friction_detail": "Skill had issues: used non-existent git flag (--check), restored files as staged instead of unstaged, and skill file was named wrong (instructions.md vs SKILL.md).",
+  "primary_success": "multi_file_changes",
+  "brief_summary": "User wanted a Claude skill for stashing/restoring code comments via git, iteratively refined it through ~7 rounds of feedback fixing naming, flow, and behavior issues, and successfully used it to stash and restore annotations.",
+  "session_id": "0a4eb7e9-b87f-44d0-8b6f-cc8c9472e782"
+}

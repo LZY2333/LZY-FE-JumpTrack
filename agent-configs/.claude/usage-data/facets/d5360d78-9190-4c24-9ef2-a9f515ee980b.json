@@ -1,0 +1,17 @@
+{
+  "underlying_goal": "Find out if VSCode/Cursor has a more readable global search feature similar to JetBrains IDEs",
+  "goal_categories": {
+    "quick_question": 1
+  },
+  "outcome": "mostly_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 1
+  },
+  "claude_helpfulness": "moderately_helpful",
+  "session_type": "quick_question",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "good_explanations",
+  "brief_summary": "User asked about JetBrains-like global search in VSCode/Cursor and received recommendations for native features and plugins.",
+  "session_id": "d5360d78-9190-4c24-9ef2-a9f515ee980b"
+}

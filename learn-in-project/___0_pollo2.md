@@ -8,14 +8,15 @@
 
 现有项目 所有的url 登录与未登录 或称 SEO页与/app页: 未登录展示 SEO文章, 已登录展示 社区灵感流
 
-2.0项目, 在功能合并上
+2.0项目, **已经不论登录与未登录**
+
+修改 SEO文章始终在底部, 社区灵感流 在 SEO文章上方, 已生成态时 Creations 组件展示， 灵感流页面隐藏
 
 增加 顶部tab切换(为 原本用户后台的 chat 和 form模式切换)
 
-增加 未生成/已生成 态(目的是合并 seo页与用户后台),增加 生成结果区, 替换的是 SEO文章/社区灵感流 的位置(chat模式ui略有不同)
+增加 未生成/已生成 态(目的是合并 seo页与用户后台),增加 生成结果区, 替换的是 社区灵感流 的位置(chat模式ui略有不同)
 
 - 生成结果区组件 是新组件, /app右侧内嵌History(Creations 组件) 直接放generate
--
 
 - Form Mode 点击"添加"→ 清空参数，右侧回到缺省态（Sample Video）
     > 为什么要清空参数，用户想连续生成怎么办? 右侧为什么要回到缺省态(灵感流)，不应该展示生成中的内容吗
@@ -59,10 +60,11 @@ chat模式支持的功能 → 回填参数，并选中模式 → 点击生成，
 
 ### 功能板块
 
-功能表单 SEO文章(HideLoggedInContent) 社区灵感流(InspirationModal)
-
+功能表单(原/app左侧，现一级功能页左侧)
+SEO文章(HideLoggedInContent)
+社区灵感流(InspirationModal)
 聚合页(/photo-effects /ai-effect /image-tools)
-一级功能页(/text-to-video)
+功能页(/text-to-video)
 信息流及历史记录(原/app右侧，现/generate)
 agent对话记录
 

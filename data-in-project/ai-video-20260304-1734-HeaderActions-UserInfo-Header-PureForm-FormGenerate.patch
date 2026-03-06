@@ -1,0 +1,1015 @@
+diff --git a/.comment-stash-log.md b/.comment-stash-log.md
+new file mode 100644
+index 0000000000..6653cd2a1e
+--- /dev/null
++++ b/.comment-stash-log.md
+@@ -0,0 +1,14 @@
++# 项目注释变更记录
++
++---
++
++## HeaderActions, UserInfo, Header, PureForm, FormGenerate
++- **Stash Message:** `[项目注释] HeaderActions, UserInfo, Header, PureForm, FormGenerate`
++- **时间:** 2026-03-04 17:34
++- **变更统计:** 5 files changed, 299 insertions(+), 87 deletions(-)
++- **变更组件:**
++  - `/Users/a111111/code/ai-video-collection/web/src/pages/pollo.ai/_components/HeaderActions/index.tsx:1`
++  - `/Users/a111111/code/ai-video-collection/web/src/pages/pollo.ai/_components/UserInfo/index.tsx:1`
++  - `/Users/a111111/code/ai-video-collection/web/src/pages/pollo.ai/_layout/Header/index.tsx:1`
++  - `/Users/a111111/code/ai-video-collection/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/PureForm/index.tsx:1`
++  - `/Users/a111111/code/ai-video-collection/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/index.tsx:1`
+diff --git a/web/src/pages/pollo.ai/_components/HeaderActions/index.tsx b/web/src/pages/pollo.ai/_components/HeaderActions/index.tsx
+index 46c11c4a35..4f1af100a4 100644
+--- a/web/src/pages/pollo.ai/_components/HeaderActions/index.tsx
++++ b/web/src/pages/pollo.ai/_components/HeaderActions/index.tsx
+@@ -9,37 +9,54 @@ import React from 'react'
+ import { useGetAccountMenuList } from '../../app/_hooks/menu'
+ import { profileMenuClassName } from './constants'
+ 
++// 用户操作菜单面板 Props 类型定义
+ interface IHeaderActionsProps {
+   className?: string
++  // 图标自定义样式
+   iconStyle?: string
++  // 是否为 Web 端
+   isWeb?: boolean
++  // 菜单项自定义样式
+   itemClassName?: string
++  // 多语言选项列表
+   locales?: string[] | null
++  // 控制 Popover 展开/关闭的回调
+   handleOpenChange?: (open: boolean) => void
+ }
++// 用户操作菜单面板组件，展示个人中心、设置、语言切换、退出等菜单项
+ export default function HeaderActions(props: IHeaderActionsProps) {
+-  const { className, itemClassName, locales, handleOpenChange } = props
++  const {
++    className,
++    itemClassName, // 菜单项自定义样式
++    locales, // 多语言选项
++    handleOpenChange, // 控制弹窗展开/关闭
++  } = props
+ 
++  // 触发 lingui 国际化重渲染
+   useLingui()
+ 
++  // 退出登录函数
+   const signOut = useSignOut()
+ 
+-  // 回调函数，用于关闭弹窗
++  // 菜单项点击后关闭弹窗的回调
+   const handleCallback = () => {
+     handleOpenChange?.(false)
+   }
+ 
++  // 获取账户菜单列表配置（个人中心、设置、语言切换等）
+   const { tabs } = useGetAccountMenuList(
+     locales
+       ? { locales, callback: handleCallback }
+       : { callback: handleCallback },
+   )
+ 
++  // 菜单项通用样式（hover 高亮、圆角、间距等）
+   const itemCls = cls`
+     hover:text-f-primary hover:bg-f-bg-layout text-f-text flex items-center gap-x-2
+     space-x-[2px] rounded px-2 py-2.5 text-base font-semibold transition-all hover:cursor-pointer md:py-1.5 md:text-sm
+   `
+ 
++  // 菜单项点击事件（防抖），通过事件委托获取 data-button-name 触发埋点
+   const { run: handleClick } = useDebounceFn(
+     (e) => {
+       const target = e.target as HTMLElement
+@@ -62,6 +79,7 @@ export default function HeaderActions(props: IHeaderActionsProps) {
+   )
+ 
+   return (
++    // 菜单列表容器
+     <ul
+       id={profileMenuClassName}
+       className={tw`min-w-[140px] gap-y-2 overflow-hidden  p-2${className}`}
+@@ -70,9 +88,11 @@ export default function HeaderActions(props: IHeaderActionsProps) {
+       }
+       onClick={handleClick}
+     >
++      {/* 动态菜单项列表，位于菜单面板内部，遍历 tabs 配置渲染各菜单项（个人中心、设置、语言切换等） */}
+       {tabs.map((v) => {
+         return (
+           <li key={v.title} data-button-name={v.buttonName}>
++            {/* 有 url 时渲染为链接菜单项，点击跳转到对应页面 */}
+             {v.url ? (
+               <Link
+                 href={v.url}
+@@ -82,6 +102,7 @@ export default function HeaderActions(props: IHeaderActionsProps) {
+                 {v.icon}
+               </Link>
+             ) : v.render ? (
++              /* 有自定义 render 时渲染为自定义菜单项（如语言切换组件） */
+               <React.Fragment key={v.title}>
+                 {v.render(tw`${itemCls} ${itemClassName} ${v.className}`)}
+               </React.Fragment>
+@@ -89,7 +110,9 @@ export default function HeaderActions(props: IHeaderActionsProps) {
+           </li>
+         )
+       })}
++      {/* 后台管理入口，位于菜单项列表末尾、退出按钮上方，展示后台管理跳转链接；仅有管理权限的用户可见 */}
+       <WebMenuEntry />
++      {/* 退出登录按钮，位于菜单面板最底部，点击执行退出登录并关闭弹窗 */}
+       <li
+         className={tw`${itemCls} ${itemClassName}`}
+         data-button-name={
+diff --git a/web/src/pages/pollo.ai/_components/UserInfo/index.tsx b/web/src/pages/pollo.ai/_components/UserInfo/index.tsx
+index 610d09439b..7f319b27b9 100644
+--- a/web/src/pages/pollo.ai/_components/UserInfo/index.tsx
++++ b/web/src/pages/pollo.ai/_components/UserInfo/index.tsx
+@@ -13,27 +13,43 @@ import { match } from 'ts-pattern'
+ import { useMobileMenuStore } from '../../_layout/Header/_store/mobileMenuStore'
+ import DynamicHeaderActions from '../HeaderActions/dynamic'
+ import { usePrefetchContent } from '../HeaderActions/prefetch'
++// 用户信息组件的 Props 类型定义
+ interface IUserInfoProps {
++  // 是否为 Web 端（区分 PC/移动端渲染逻辑）
+   isWeb?: boolean
+   className?: string
++  // 是否显示弹出菜单内容
+   showPopover?: boolean
++  // 多语言选项列表
+   locales?: string[] | null
+ }
+ 
++// 用户信息组件，展示用户头像并提供菜单操作入口
+ export default function UserInfo(props: IUserInfoProps) {
+-  const { isWeb, className, showPopover = true, locales } = props
++  const {
++    isWeb, // 是否为 Web 端
++    className,
++    showPopover = true, // 是否显示弹出菜单
++    locales, // 多语言选项
++  } = props
++  // 桌面端 Popover 的展开状态
+   const [open, setOpen] = useState(false)
++  // 预加载菜单面板内容
+   usePrefetchContent()
++  // 移动端用户菜单展开/收起状态
+   const {
+-    userMenuOpen: isMobileUserMenuOpen,
+-    setUserMenuOpen: setIsMobileUserMenuOpen,
++    userMenuOpen: isMobileUserMenuOpen, // 移动端用户菜单是否展开
++    setUserMenuOpen: setIsMobileUserMenuOpen, // 设置移动端用户菜单展开状态
+   } = useMobileMenuStore()
++  // 当前语言标识
+   const locale = useLocale()
+ 
++  // 桌面端 Popover 展开状态变更回调
+   const handleOpenChange = (open: boolean) => {
+     setOpen(open)
+   }
+ 
++  // 移动端菜单切换事件（防抖），切换展开状态并触发埋点
+   const { run: handleMobileMenuToggle } = useDebounceFn(
+     (e: React.MouseEvent) => {
+       setIsMobileUserMenuOpen(!isMobileUserMenuOpen)
+@@ -52,8 +68,10 @@ export default function UserInfo(props: IUserInfoProps) {
+     { wait: 200, leading: true, trailing: false },
+   )
+ 
++  // 下拉箭头图标样式（移动端隐藏，md 以上显示）
+   const iconClass = cls`i-com--down hidden size-5 text-[#bab7c0] md:block`
+ 
++  // 鼠标移入头像区域事件（防抖），触发 hover 埋点
+   const { run: handleMouseEnter } = useDebounceFn(
+     (e: React.MouseEvent) => {
+       tracker.trackEvent(
+@@ -71,20 +89,24 @@ export default function UserInfo(props: IUserInfoProps) {
+     { wait: 300, leading: true, trailing: false },
+   )
+ 
++  // 语言切换时自动关闭 Popover
+   useUpdateEffect(() => {
+     setOpen(false)
+   }, [locale])
+ 
++  // isWeb 为 true 时渲染 Web 端布局（区分桌面端和移动端）
+   if (isWeb) {
+     return (
+       <>
+-        {/* PC端实现 (桌面端显示，md:flex) */}
++        {/* 桌面端头像区域，位于 header 右侧，展示用户头像+下拉箭头，点击/右键弹出操作菜单；md 以上屏幕可见 */}
+         <div className='hidden md:flex'>
++          {/* 桌面端弹出菜单，位于头像下方，展示用户操作面板（个人中心、设置、退出等） */}
+           <DynamicPopover
+             onOpenChange={handleOpenChange}
+             placement='bottomRight'
+             content={
+               <>
++                {/* 用户操作菜单面板，位于 Popover 弹层内部，展示个人中心/设置/退出等菜单项；仅 showPopover 为 true 时渲染 */}
+                 {showPopover && (
+                   <DynamicHeaderActions
+                     isWeb
+@@ -115,13 +137,14 @@ export default function UserInfo(props: IUserInfoProps) {
+               }
+               onMouseEnter={handleMouseEnter}
+             >
++              {/* 用户头像，位于触发区域左侧，展示用户头像图片或首字母 */}
+               <UserAvatar />
+               <span className={iconClass} />
+             </div>
+           </DynamicPopover>
+         </div>
+ 
+-        {/* 移动端触发按钮 (移动端显示，md:hidden) */}
++        {/* 移动端头像触发按钮，位于 header 右侧，展示用户头像，点击展开全屏菜单；md 以下屏幕可见 */}
+         <div
+           className={cls`flex items-center md:hidden ${className} hover:cursor-pointer`}
+         >
+@@ -133,12 +156,13 @@ export default function UserInfo(props: IUserInfoProps) {
+             }
+             onClick={handleMobileMenuToggle}
+           >
++            {/* 用户头像，位于触发区域内，展示用户头像图片或首字母 */}
+             <UserAvatar />
+             <span className={iconClass} />
+           </div>
+         </div>
+ 
+-        {/* 移动端全屏菜单 */}
++        {/* 移动端全屏菜单，位于 header 下方铺满视口，展示用户操作菜单列表；仅移动端用户菜单展开时渲染 */}
+         {isMobileUserMenuOpen && (
+           <div
+             style={{
+@@ -155,6 +179,7 @@ export default function UserInfo(props: IUserInfoProps) {
+               }}
+               className='space-y-4 text-sm font-semibold'
+             >
++              {/* 移动端用户操作菜单面板，位于全屏菜单内部，展示个人中心/设置/退出等菜单项；仅 showPopover 为 true 时渲染 */}
+               {showPopover && (
+                 <div className='text-f-text-secondary block'>
+                   <DynamicHeaderActions
+@@ -175,13 +200,16 @@ export default function UserInfo(props: IUserInfoProps) {
+     )
+   }
+ 
++  // 非 Web 端（如嵌入式场景）的渲染逻辑
+   return (
+     <div className={cls`flex items-center ${className} hover:cursor-pointer`}>
+       <div className={cls` `}>
++        {/* 弹出菜单，位于头像下方，展示用户操作面板 */}
+         <DynamicPopover
+           placement='bottomRight'
+           content={
+             <>
++              {/* 用户操作菜单面板，位于 Popover 弹层内，展示菜单项；仅 showPopover 为 true 时渲染 */}
+               {showPopover && (
+                 <DynamicHeaderActions
+                   handleOpenChange={handleOpenChange}
+@@ -205,6 +233,7 @@ export default function UserInfo(props: IUserInfoProps) {
+           }}
+         >
+           <div className='relative flex items-center gap-0.5'>
++            {/* 用户头像，位于触发区域左侧，展示用户头像图片或首字母 */}
+             <UserAvatar />
+             <span className={iconClass} />
+           </div>
+@@ -214,25 +243,36 @@ export default function UserInfo(props: IUserInfoProps) {
+   )
+ }
+ 
++// 用户头像 Props 类型定义
+ interface IUserAvatarProps {
+   className?: string
+ }
++
++// 用户头像组件，展示用户头像图片或用户名首字母
+ export function UserAvatar(props: IUserAvatarProps) {
+   const { t } = useLingui()
+ 
+   const { className } = props
++  // 组件是否已挂载（缓存状态，用于控制头像图片的延迟渲染）
+   const [mount, setMount] = useCachedState<boolean>('user-avatar-mount', false)
++  // 组件首次挂载时标记为已挂载
+   useMount(() => {
+     setMount(true)
+   })
++  // 获取当前用户信息
+   const { user } = useSiteSpecificContext()
+-  const { userName, userImage } = user
++  const {
++    userName, // 用户名
++    userImage, // 用户头像 URL
++  } = user
+ 
++  // 用户名首字母（缓存状态，用于无头像时的占位显示）
+   const [firstChar, setFirstChar] = useCachedState<string>(
+     'user-avatar-first-char',
+     '',
+   )
+ 
++  // 用户名变更时更新首字母
+   useEffect(() => {
+     setFirstChar((userName || '').charAt(0))
+   }, [userName])
+@@ -248,7 +288,9 @@ export function UserAvatar(props: IUserAvatarProps) {
+     >
+       {match(!!userImage && mount)
+         .with(true, () => (
++          // 有头像图片且已挂载时，展示用户头像图片（圆形裁剪）
+           <figure className='relative size-full overflow-hidden rounded-full'>
++            {/* 用户头像图片，位于头像容器内，展示用户上传的头像 */}
+             <LazyImage
+               className={cls`size-full`}
+               fill
+@@ -258,8 +300,10 @@ export function UserAvatar(props: IUserAvatarProps) {
+           </figure>
+         ))
+         .otherwise(() => (
++          // 无头像图片或未挂载时，展示用户名首字母或默认用户图标
+           <span className='text-xs leading-none'>
+             <span className='[&:empty+span]:block'>{firstChar}</span>
++            {/* 默认用户图标，位于头像容器内，展示灰色用户轮廓图标；仅首字母为空时显示 */}
+             <CssIcon
+               className={cls`i-com--user-solid bg-f-text-quaternary absolute inset-0 hidden size-full scale-110`}
+             />
+diff --git a/web/src/pages/pollo.ai/_layout/Header/index.tsx b/web/src/pages/pollo.ai/_layout/Header/index.tsx
+index 0eab17bbaa..275a4154b0 100644
+--- a/web/src/pages/pollo.ai/_layout/Header/index.tsx
++++ b/web/src/pages/pollo.ai/_layout/Header/index.tsx
+@@ -37,33 +37,40 @@ import MessageDrawer from './MessageDrawer'
+ import ProjectDropdown from './ProjectDropdown'
+ import StartForFree from './StartForFree'
+ 
++// 全局顶部导航栏组件
+ export default function Header(props: ICommonHeaderProps) {
+   const {
+-    className,
+-    transparentOnScrollTop0 = false,
+-    showHeaderMenu = true,
+-    showLoginUserInfo = true,
+-    stayOnPage = false,
+-    locales,
+-    showCreditsInfo = true,
+-    isCompactMenu = false,
++    className, // 自定义外层样式
++    transparentOnScrollTop0 = false, // 页面滚动到顶部时是否透明背景
++    showHeaderMenu = true, // 是否显示导航菜单
++    showLoginUserInfo = true, // 是否显示登录/用户信息区域
++    stayOnPage = false, // 登录注册后是否停留在当前页面
++    locales, // 多语言配置
++    showCreditsInfo = true, // 是否显示积分信息
++    isCompactMenu = false, // 是否使用紧凑模式菜单（带左侧边栏入口）
+     showProjectList: _showProjectList = false, // 已废弃：ProjectDropdown 已移到全局 Header
+-    showAdvertisement = false,
++    showAdvertisement = false, // 是否显示广告/促销横幅
+   } = props
++  // 获取页面滚动位置
+   const scroll = useScroll()
++  // 移动端菜单展开/收起状态
+   const {
+-    headerMenuOpen: isMobileMenuOpen,
+-    setHeaderMenuOpen: setIsMobileMenuOpen,
++    headerMenuOpen: isMobileMenuOpen, // 移动端菜单是否展开
++    setHeaderMenuOpen: setIsMobileMenuOpen, // 设置移动端菜单展开状态
+   } = useMobileMenuStore()
++  // 是否满足领取积分的展示条件
+   const { canShow: canShowClaimCredits } = useShowClaimCredits()
+ 
++  // Logo 元素引用，用于烟花动画定位
+   const logoRef = useRef<HTMLSpanElement>(null)
++  // 判断页面是否滚动到顶部（仅 transparentOnScrollTop0 为 true 时生效）
+   const isScrollTop0 = useMemo(() => {
+     if (transparentOnScrollTop0) {
+       return scroll?.top === undefined ? true : scroll.top === 0
+     }
+     return false
+   }, [transparentOnScrollTop0, scroll?.top])
++  // 根据滚动位置计算 header 背景样式（顶部透明或固定背景色）
+   const headerClass = useMemo(() => {
+     if (transparentOnScrollTop0) {
+       return `-mb-[52px] ${isScrollTop0 ? 'bg-transparent' : 'bg-f-other-5'}`
+@@ -71,11 +78,16 @@ export default function Header(props: ICommonHeaderProps) {
+ 
+     return `bg-f-other-5`
+   }, [transparentOnScrollTop0, isScrollTop0])
++  // 触发 lingui 国际化重渲染
+   useLingui()
++  // 监听 header 容器高度变化，更新 CSS 变量 --header-container-height
+   useHeaderContainerObserver()
++  // 空闲时延迟挂载标志，用于懒加载非首屏组件
+   const idleMounted = useIdleMounted()
+ 
++  // 用户是否已登录
+   const { isSignIn } = useSessionInfo()
++  // Logo 点击事件（防抖），触发埋点上报
+   const { run: handleLogoClick } = useDebounceFn(
+     (e: React.MouseEvent) => {
+       tracker.trackEvent(
+@@ -93,23 +105,30 @@ export default function Header(props: ICommonHeaderProps) {
+     { wait: 200, leading: true, trailing: false },
+   )
+ 
+-  const { isActivePromotion, promotionIsLoading } = useDiscountPromotion()
++  // 获取促销活动状态
++  const {
++    isActivePromotion, // 当前是否有生效中的促销活动
++    promotionIsLoading, // 促销数据是否加载中
++  } = useDiscountPromotion()
++  // 获取促销活动的 header 配置（Logo 和横幅样式）
+   const { headerLogo, banner } = usePromotionConfig()
+   const {
+-    text,
+-    textClassName,
+-    boxClassName,
+-    icon,
+-    btnClassName,
+-    btnText,
+-    bannerLink,
+-    bgImage,
++    text, // 横幅文案
++    textClassName, // 横幅文案样式
++    boxClassName, // 横幅容器样式
++    icon, // 横幅图标
++    btnClassName, // 按钮样式
++    btnText, // 按钮文案
++    bannerLink, // 按钮跳转链接
++    bgImage, // 横幅背景图
+   } = banner
+ 
+-  // 性能检测与烟花
++  // 获取设备性能等级，用于控制烟花动画效果
+   const { tier } = useDevicePerformance()
++  // 烟花动画启动函数
+   const { launchFireworks } = useFireworks()
+ 
++  // Logo hover 事件（防抖），促销活动期间触发烟花动画
+   const { run: handleLogoHover } = useDebounceFn(
+     () => {
+       if (isActivePromotion && logoRef.current) {
+@@ -119,6 +138,7 @@ export default function Header(props: ICommonHeaderProps) {
+     { wait: 500, leading: true, trailing: false },
+   )
+ 
++  // 是否为促销广告页面（需同时满足：开启广告、数据已加载、促销活动生效中）
+   const isAdPromotionPage =
+     showAdvertisement && !promotionIsLoading && isActivePromotion
+   return (
+@@ -132,9 +152,12 @@ export default function Header(props: ICommonHeaderProps) {
+         ${isMobileMenuOpen && 'z-[2000] !bg-[#12111b]'}
+       `}
+     >
++      {/* 空闲挂载后才渲染，避免阻塞首屏 */}
+       {idleMounted && (
+         <>
++          {/* 顶部通知横幅区域，位于 header 最顶部，展示促销/公告等横幅条 */}
+           <TopBanners />
++          {/* 促销弹窗，位于页面中央覆盖层，展示促销活动弹窗（如折扣码弹窗） */}
+           <PromotionPopups />
+         </>
+       )}
+@@ -152,6 +175,7 @@ export default function Header(props: ICommonHeaderProps) {
+           }}
+           className={cls`flex items-center justify-between px-4 lg:pe-8 xl:gap-5 ${isAdPromotionPage ? 'py-2' : ''} ${isCompactMenu ? 'border-f-border-secondary border-b border-solid' : ''}`}
+         >
++          {/* 促销背景图，位于 header 内容层下方，铺满整个 header 区域；仅促销广告页面且有背景图时展示，lg 以上屏幕可见 */}
+           {isAdPromotionPage && bgImage && (
+             <LazyImage
+               fill
+@@ -161,6 +185,7 @@ export default function Header(props: ICommonHeaderProps) {
+             />
+           )}
+           <div className='flex items-center gap-x-2 gap-y-4 sm:gap-4'>
++            {/* 紧凑模式下的左侧菜单入口按钮，位于 header 最左侧，展示侧边栏折叠/展开入口；仅 isCompactMenu 为 true 时展示，xl 以上屏幕可见 */}
+             {isCompactMenu ? (
+               <div className='hidden xl:block'>
+                 <WorkspaceHeader.LeftMenu />
+@@ -192,9 +217,12 @@ export default function Header(props: ICommonHeaderProps) {
+               {isActivePromotion && headerLogo?.hoverImage}
+             </Link>
+           </div>
++          {/* showAdvertisement 为 true 时展示广告/促销区域，位于 header 中部 Logo 右侧，lg 以上屏幕可见 */}
+           {showAdvertisement ? (
+             <div className={cls`hidden lg:block`}>
++              {/* 促销加载中不渲染；无促销活动时展示常规广告；有促销活动时展示促销横幅 */}
+               {promotionIsLoading ? null : !isActivePromotion ? (
++                /* 常规广告组件，位于 header 中部，展示默认广告内容；仅无促销活动时展示 */
+                 <Advertisement />
+               ) : (
+                 <div
+@@ -225,6 +253,7 @@ export default function Header(props: ICommonHeaderProps) {
+           <div
+             className={cls`user-valid:xl:gap-4 user-valid:2xl:gap-6 flex items-center gap-x-1.5 gap-y-3 sm:gap-x-4 xl:gap-6 2xl:gap-8`}
+           >
++            {/* 导航菜单，位于 header 右侧区域左部，展示主导航链接列表（移动端为抽屉菜单） */}
+             <HeaderMenu
+               showHeaderMenu={showHeaderMenu}
+               isMobileMenuOpen={isMobileMenuOpen}
+@@ -232,9 +261,10 @@ export default function Header(props: ICommonHeaderProps) {
+               showLoginUserInfo={showLoginUserInfo}
+               setIsMobileMenuOpen={setIsMobileMenuOpen}
+             />
++            {/* showLoginUserInfo 为 true 时展示用户相关操作区域 */}
+             {showLoginUserInfo ? (
+               <>
+-                {/* 全局 projectId 切换功能，放在积分左侧 */}
++                {/* 项目切换下拉框，位于 header 右侧积分信息左侧，展示当前项目名称并支持切换；仅用户已登录时展示 */}
+                 {isSignIn && (
+                   <ProjectDropdown
+                     className={cls`
+@@ -243,13 +273,17 @@ export default function Header(props: ICommonHeaderProps) {
+                   />
+                 )}
+ 
++                {/* 历史记录入口，位于 header 右侧项目下拉框右侧，展示历史记录图标按钮；仅用户已登录时展示 */}
+                 {isSignIn && <History />}
+ 
++                {/* showCreditsInfo 为 true 时展示积分相关信息 */}
+                 {showCreditsInfo && (
+                   <>
++                    {/* 积分余额展示，位于 header 右侧历史记录右侧，展示当前剩余积分数值；已登录用户可见 */}
+                     <CreditsInfo
+                       className={cls`user-valid:block hidden ${isAdPromotionPage ? 'relative z-[1]' : ''}`}
+                     />
++                    {/* 领取积分按钮，位于 header 右侧积分信息右侧，展示关注领积分引导按钮；仅满足领取条件且 md 以上屏幕已登录时展示 */}
+                     {canShowClaimCredits && (
+                       <FollowClaimCredits
+                         className={cls`md:user-valid:flex hidden ${isAdPromotionPage ? 'relative z-[1]' : ''}`}
+@@ -257,13 +291,15 @@ export default function Header(props: ICommonHeaderProps) {
+                     )}
+                   </>
+                 )}
++                {/* 消息抽屉，位于 header 右侧积分区域右侧，展示消息通知图标并点击打开消息列表抽屉；仅用户已登录时展示 */}
+                 {isSignIn && <MessageDrawer />}
+-                {/* //不展示头部链接菜单的默认为工具页面，工具页面登录注册不跳转 */}
++                {/* 用户头像/登录入口，位于 header 最右侧，已登录时展示头像下拉菜单，未登录时展示登录按钮 */}
+                 <LoginUserInfo
+                   locales={locales}
+                   stayOnPage={stayOnPage}
+                   className={cls`${isAdPromotionPage ? 'relative z-[1]' : ''}`}
+                 />
++                {/* 免费试用按钮，位于 header 最右侧登录入口旁，展示 "Start for Free" 引导按钮；仅未登录用户可见 */}
+                 <StartForFree
+                   stayOnPage={stayOnPage}
+                   className={cls`user-vague:block hidden truncate ${isAdPromotionPage ? 'relative z-[1] text-center' : ''}`}
+diff --git a/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/PureForm/index.tsx b/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/PureForm/index.tsx
+index 1e8c770ad9..dd17fc8fa2 100644
+--- a/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/PureForm/index.tsx
++++ b/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/PureForm/index.tsx
+@@ -31,60 +31,80 @@ import { textToImageSchema } from '../schema'
+ import { useText2ImageRuntimeConfig } from './useText2ImageRuntimeConfig'
+ 
+ import type { ExtendedTextToImageSchemaInput } from '..'
++
++// 纯表单组件的 Props 类型定义
+ export interface FormGenerateProps
+   extends ProFormProps<ExtendedTextToImageSchemaInput> {
++  // 是否显示表单标题
+   showFromTitle?: boolean
++  // 是否正在提交中
+   isLoading?: boolean
++  // 表单标题配置（标题文本、返回箭头等）
+   formTitleProps?: FormTitleProps
++  // 底部吸底区域的自定义样式
+   stickyItemClassName?: string
++  // 创建按钮的自定义样式
+   createButtonClassName?: string
++  // 标题的自定义样式
+   titleClassName?: string
++  // 初始提示词
+   prompt?: string
++  // 表单字段变更回调
+   onFieldsChange?: (changedValues: any[]) => void
++  // 是否隐藏模型提示信息
+   isHideModelTip?: boolean
+   // seo 页面支持免费用户不登录生成
+   enabledFreeUserGenerated?: boolean
+ }
+ 
++// 文生图纯表单组件，负责渲染所有表单字段和提交按钮
+ const FormGenerate: React.FC<FormGenerateProps> = (props) => {
+   const {
+-    showFromTitle = true,
+-    isLoading,
+-    formTitleProps,
+-    stickyItemClassName,
+-    createButtonClassName,
+-    titleClassName,
+-    form: propsForm,
+-    prompt,
+-    onFieldsChange,
+-    isHideModelTip,
+-    enabledFreeUserGenerated = false,
+-    ...formProps
++    showFromTitle = true, // 是否显示表单标题
++    isLoading, // 提交加载状态
++    formTitleProps, // 标题配置
++    stickyItemClassName, // 吸底区域样式
++    createButtonClassName, // 创建按钮样式
++    titleClassName, // 标题样式
++    form: propsForm, // 外部传入的表单实例
++    prompt, // 初始提示词
++    onFieldsChange, // 字段变更回调
++    isHideModelTip, // 是否隐藏模型提示
++    enabledFreeUserGenerated = false, // 是否允许免费用户生成
++    ...formProps // 其余透传给 ProForm 的 props
+   } = props
+ 
++  // 创建或复用表单实例
+   const [form] = ProForm.useForm<ExtendedTextToImageSchemaInput>(propsForm)
+ 
++  // 监听当前选中的模型名称
+   const modelName = ProForm.useWatch('modelName', form)
++  // 监听当前选中的模式
+   const mode = ProForm.useWatch('mode', form)
+ 
++  // 根据当前模型和模式获取表单字段的运行时配置
+   const {
+-    isHiddenNumOutputs,
+-    isHiddenAspectRatio,
+-    isHiddenStyle,
+-    isHiddenLoRA,
+-    isHiddenQuality,
+-    promptMaxLength,
+-    isHiddenMode,
+-    isHiddenResolution,
+-    modeList,
+-    radioList,
+-    qualityList,
++    isHiddenNumOutputs, // 是否隐藏生成数量选择
++    isHiddenAspectRatio, // 是否隐藏宽高比选择
++    isHiddenStyle, // 是否隐藏风格选择
++    isHiddenLoRA, // 是否隐藏 LoRA 选择
++    isHiddenQuality, // 是否隐藏质量选择
++    promptMaxLength, // 提示词最大长度限制
++    isHiddenMode, // 是否隐藏模式选择
++    isHiddenResolution, // 是否隐藏分辨率选择
++    modeList, // 可用模式列表
++    radioList, // 分辨率单选列表
++    qualityList, // 质量选项列表
+   } = useText2ImageRuntimeConfig({ modelName, mode })
+ 
++  // tRPC 工具实例，用于手动调用查询
+   const apiCtx = api.useUtils()
+ 
++  // antd 全局消息提示
+   const { message } = useAntdContext()
++  // 是否正在检查 LoRA 状态
+   const [isCheckedLoraStatus, setIsCheckedLoraStatus] = useState(false)
++  // 检查初始 LoRA 是否已被下架，若下架则提示用户并从表单中移除
+   const checkLoraStatus = useMemoizedFn(async () => {
+     setIsCheckedLoraStatus(true)
+     try {
+@@ -94,10 +114,12 @@ const FormGenerate: React.FC<FormGenerateProps> = (props) => {
+         return
+       }
+ 
++      // 查询 LoRA 在线状态
+       const loraStatus = await apiCtx.text2Image.lorasStatus.fetch({
+         uuids: loras.map((lora) => lora.uuid),
+       })
+ 
++      // 筛选出已下架的 LoRA
+       const withdrawLoras = loras.filter(
+         (lora) =>
+           loraStatus.find((loraStatus) => loraStatus.uuid === lora.uuid)
+@@ -127,24 +149,33 @@ const FormGenerate: React.FC<FormGenerateProps> = (props) => {
+     }
+   })
+ 
++  // 获取文生图模型映射表和下拉选项列表
+   const { models, options } = useText2ImageModels()
+ 
++  // 根据模型名称获取当前模型的完整配置信息
+   const model = useMemo(() => {
+     return models[modelName as keyof typeof models]
+   }, [models, modelName])
+ 
++  // 判断当前模型是否为免费模型
+   const { isFree } = useModelIsFree(modelName as EImageModel | undefined)
+ 
++  // 组件挂载时检查 LoRA 状态
+   useEffect(() => {
+     checkLoraStatus()
+   }, [checkLoraStatus])
+ 
++  // 获取当前模型的活动信息（免费次数等）
+   const { activityInfo } = useActivityInfo({
+     model,
+   })
+ 
+-  const { freeTimes, userCount } = activityInfo || {}
++  const {
++    freeTimes, // 免费生成总次数
++    userCount, // 用户已使用的免费次数
++  } = activityInfo || {}
+ 
++  // 文生图主表单
+   return (
+     <ProForm<ExtendedTextToImageSchemaInput>
+       submitter={false}
+@@ -154,6 +185,7 @@ const FormGenerate: React.FC<FormGenerateProps> = (props) => {
+       {...formProps}
+       form={form}
+     >
++      {/* 表单标题（含返回箭头） */}
+       {showFromTitle && (
+         <FormTitle
+           type='image'
+@@ -163,39 +195,56 @@ const FormGenerate: React.FC<FormGenerateProps> = (props) => {
+         />
+       )}
+ 
+-      {/* 模型选择 */}
++      {/* 模型选择下拉框 */}
+       <ProFormModel
+         options={options}
+         modelName='modelName'
+         isHideModelTip={isHideModelTip}
+       />
+ 
++      {/* LoRA 模型选择 */}
+       {!isHiddenLoRA && <ProFormLoRA />}
+ 
++      {/* 提示词输入框 */}
+       <ProFormPrompt showIdea prompt={prompt} maxLength={promptMaxLength} />
++      {/* 生成模式选择 */}
+       {!isHiddenMode && <ProFormMode modeList={modeList} />}
++      {/* 风格选择 */}
+       {!isHiddenStyle && <ProFormStyle />}
++      {/* 宽高比选择 */}
+       {!isHiddenAspectRatio && <ProFormAspectRatio showLabelBetaTag={isFree} />}
++      {/* 生成数量选择 */}
+       {!isHiddenNumOutputs && <ProFormNumOutputs />}
++      {/* 分辨率选择 */}
+       {!isHiddenResolution && (
+         <ProFormResolutionForImage radioList={radioList} />
+       )}
++      {/* 质量选择 */}
+       {!isHiddenQuality && <ProFormQuality list={qualityList} />}
+ 
++      {/* 折叠面板：发布模式和版权保护 */}
+       <CollapseWithDefaultFields type='image'>
++        {/* 发布模式选择（公开/私有） */}
+         <ProFormPublishMode mediaType='image' />
++        {/* 版权保护开关 */}
+         <ProFormCopyProtection mediaType='image' />
+       </CollapseWithDefaultFields>
+ 
++      {/* 底部吸底区域：积分消耗提示 + 创建按钮 */}
+       <FormStickyElement itemClassName={stickyItemClassName}>
++        {/* 积分/免费次数消耗提示 */}
+         <ProFormCreditsRequired {...activityInfo} />
++        {/* 根据提示词校验结果动态控制创建按钮的禁用状态 */}
+         <ProFormItem noStyle dependencies={['prompt']}>
+           {(form: FormInstance<ExtendedTextToImageSchemaInput>) => {
++            // 获取并去除首尾空格的提示词
+             const prompt = form.getFieldValue('prompt')?.trim()
+             let disabled = false
+             if (promptMaxLength) {
++              // 有最大长度限制时，提示词为空或超长则禁用
+               disabled = !prompt || prompt.length > promptMaxLength
+             } else {
++              // 无最大长度限制时，使用 zod schema 校验提示词
+               const { success } = textToImageSchema
+                 .pick({
+                   prompt: true,
+@@ -206,6 +255,7 @@ const FormGenerate: React.FC<FormGenerateProps> = (props) => {
+               disabled = !success
+             }
+             return (
++              // 创建/生成按钮
+               <CreateButton
+                 wrapperClassName={createButtonClassName}
+                 loading={isLoading}
+diff --git a/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/index.tsx b/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/index.tsx
+index 3730c0743c..d2536dc7fd 100644
+--- a/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/index.tsx
++++ b/web/src/pages/pollo.ai/ai-image-generator/Main/_components/FormGenerate/index.tsx
+@@ -26,6 +26,7 @@ import { transformToFormValues, transformToPayload } from './adapter'
+ import PureForm from './PureForm'
+ import { textToImageSchema, type TextToImageSchemaInput } from './schema'
+ 
++// 扩展文生图表单输入类型，增加模型和模型分类字段
+ export type ExtendedTextToImageSchemaInput = TextToImageSchemaInput & {
+   model?: string
+   modelCategory?: string
+@@ -33,57 +34,76 @@ export type ExtendedTextToImageSchemaInput = TextToImageSchemaInput & {
+ 
+ // 图像模型不需要扩展类型，直接使用原始类型
+ 
++// 表单生成组件的 Props 类型定义
+ export interface FormGenerateProps {
++  // 是否来自工具页面
+   isFromTool?: boolean
++  // 生成成功后的回调，参数为生成记录 id
+   onGenerate?: (id: number) => void
+   className?: string
++  // 表单标题
+   title?: React.ReactNode
++  // 是否显示返回箭头
+   haveArrow?: boolean
++  // 标题是否渲染为 h1 标签
+   isH1Dom?: boolean
++  // 入口标识码，用于区分不同来源
+   entryCode?: EntryCodeType
++  // 初始值，包含模型和风格
+   initialValues?: {
+     model: EImageModel
+     style?: string
+   }
++  // 返回箭头的跳转链接
+   arrowBackLink?: string
++  // 初始提示词
+   prompt?: string
++  // inflow 来源标识码
+   inflowCode?: string
++  // 是否为图像生成器子页面
+   isImageGeneratorChildPage?: boolean
++  // 是否隐藏模型提示信息
+   isHideModelTip?: boolean
+   // seo 页面支持免费用户不登录生成
+   enabledFreeUserGenerated?: boolean
+ }
+ 
++// 文生图表单主组件
+ const Form: React.FC<FormGenerateProps> = (props) => {
+   const {
+-    title,
+-    onGenerate,
+-    haveArrow,
+-    entryCode = EntryCodeType.TextToImage,
+-    initialValues,
+-    isFromTool = false,
+-    isH1Dom = false,
+-    arrowBackLink,
+-    prompt,
+-    inflowCode,
+-    isImageGeneratorChildPage,
+-    isHideModelTip,
+-    enabledFreeUserGenerated = false,
++    title, // 表单标题
++    onGenerate, // 生成成功回调
++    haveArrow, // 是否显示返回箭头
++    entryCode = EntryCodeType.TextToImage, // 入口标识码
++    initialValues, // 初始值（模型、风格）
++    isFromTool = false, // 是否来自工具页面
++    isH1Dom = false, // 标题是否为 h1
++    arrowBackLink, // 返回箭头链接
++    prompt, // 初始提示词
++    inflowCode, // inflow 来源标识码
++    isImageGeneratorChildPage, // 是否为图像生成器子页面
++    isHideModelTip, // 是否隐藏模型提示
++    enabledFreeUserGenerated = false, // 是否允许免费用户生成
+   } = props
++  // 获取文生图模型列表和默认模型
+   const { defaultModel, models } = useText2ImageModels()
++  // 获取 inflow 生成处理函数和 inflow 状态
+   const { handleInFlowGenerate, isInFlow } = useInFlowGenerate()
+ 
++  // 从 inflow 路由查询状态中获取参数
+   const {
+-    modelName: queryModelName,
+-    customType,
+-    setInFlowTargetQueryParams,
++    modelName: queryModelName, // URL 查询参数中的模型名
++    customType, // 自定义类型标识
++    setInFlowTargetQueryParams, // 设置 inflow 目标页面查询参数
+   } = useInflowRouteQueryStoreSelector((state) => ({
+     modelName: state.query?.modelName,
+     customType: state.query?.customType,
+     setInFlowTargetQueryParams: state.setInFlowTargetQueryParams,
+   }))
++  // 当前页面路径
+   const pathName = useUrl().pathname
+ 
++  // 是否加载推荐的 Lora 模型（图像生成器子页面或路径包含 /ai-image-generator/）
+   const isLoadRecommendedLoras = useMemo(() => {
+     if (isImageGeneratorChildPage) {
+       return isImageGeneratorChildPage
+@@ -91,12 +111,17 @@ const Form: React.FC<FormGenerateProps> = (props) => {
+     return pathName.includes('/ai-image-generator/')
+   }, [isImageGeneratorChildPage, pathName])
+ 
++  // 创建表单实例
+   const [form] = ProForm.useForm<ExtendedTextToImageSchemaInput>()
+ 
++  // 初始化创作流埋点
+   useCreateFlowStart({ entryCode })
++  // 获取表单提交埋点注入函数
+   const { injectFormSubmitTrack } = useInjectFormTrack()
++  // 获取表单字段变更埋点追踪函数
+   const { trackFormChanges } = useTrackFormChange(form, entryCode)
+ 
++  // 获取表单初始值（结合本地缓存和远程数据）
+   const { formData } = useFormInitialValues({
+     formKey: `${kebabCase(entryCode)}-form`,
+     form,
+@@ -104,11 +129,13 @@ const Form: React.FC<FormGenerateProps> = (props) => {
+       ? ['prompt', 'enableMagicPrompt', 'loras', 'modelCategory']
+       : ['prompt', 'enableMagicPrompt', 'modelCategory'],
+     postRemoteData: (_, detail) => {
++      // 将远程数据转换为表单值格式
+       const result = transformToFormValues(detail)
+ 
+       return result
+     },
+   })
++  // 确定当前使用的模型名称，按优先级：URL 查询参数 > 初始值 > 缓存值 > 默认模型
+   const modelName = isLoadRecommendedLoras
+     ? queryModelName || initialValues?.model || defaultModel
+     : queryModelName ||
+@@ -122,26 +149,32 @@ const Form: React.FC<FormGenerateProps> = (props) => {
+     models,
+   })
+ 
+-  const { mutateAsync: createText2Image, isLoading } =
+-    api.text2Image.create.useMutation({
+-      onSuccess: (data: { id: number }) => {
+-        onGenerate?.(data.id)
+-        if (isInFlow) {
+-          setInFlowTargetQueryParams({
+-            recordId: String(data.id),
+-          })
+-        }
+-        refetch()
+-      },
+-      onError: () => {},
+-    })
++  // 文生图创建接口 mutation
++  const {
++    mutateAsync: createText2Image, // 调用文生图创建接口
++    isLoading, // 是否正在提交中
++  } = api.text2Image.create.useMutation({
++    onSuccess: (data: { id: number }) => {
++      onGenerate?.(data.id)
++      if (isInFlow) {
++        // inflow 模式下设置目标页面的记录 id
++        setInFlowTargetQueryParams({
++          recordId: String(data.id),
++        })
++      }
++      // 刷新模型免费状态
++      refetch()
++    },
++    onError: () => {},
++  })
+ 
+-  // 比如文章模型落地页带过来的 pollo.ai/im
++  // 从模型落地页同步本地表单值（如文章模型落地页带过来的 pollo.ai/im）
+   useLocalFormValuesFromModelPage({
+     form,
+     initialType: `custom-${customType}`,
+   })
+ 
++  // 渲染纯表单组件，负责表单 UI 和提交逻辑
+   return (
+     <PureForm
+       data-widget-name={trackComponentName.form.value.form.name}
+@@ -172,8 +205,11 @@ const Form: React.FC<FormGenerateProps> = (props) => {
+       onValuesChange={trackFormChanges}
+       enabledFreeUserGenerated={enabledFreeUserGenerated}
+       onFinish={async (values) => {
++        // 使用 zod schema 校验表单值
+         const result = textToImageSchema.parse(values)
++        // 将表单值转换为接口请求参数
+         const payload = transformToPayload(result, entryCode)
++        // 注入表单提交埋点数据
+         const injectedPayload = injectFormSubmitTrack({
+           payload,
+           resourceObj: {
+@@ -182,10 +218,12 @@ const Form: React.FC<FormGenerateProps> = (props) => {
+           },
+         })
+         if (enabledFreeUserGenerated) {
++          // 免费用户直接调用生成接口
+           try {
+             await createText2Image(injectedPayload)
+           } catch {}
+         } else {
++          // 非免费用户走 inflow 生成流程（含登录/付费拦截）
+           handleInFlowGenerate(createText2Image, injectedPayload, {
+             target: isFromTool
+               ? MENU_LIST_CONST.IMAGE_GENERATORS_TOOL
+@@ -198,5 +236,26 @@ const Form: React.FC<FormGenerateProps> = (props) => {
+   )
+ }
+ 
++// 使用表单埋点 Provider 包裹，注入埋点上下文
+ const FormGenerate = withFormTrackProvider(Form)
+ export default FormGenerate
++
++/**
++ * FormGenerate 调用位置及作用：
++ *
++ * 1. Hero/index.tsx — SEO 工具落地页（isFromTool=true 时渲染）
++ *    传入预设模型/风格/提示词/返回箭头等，用于 /ai-image-generator 下各工具子页面
++ *    @see web/src/pages/pollo.ai/ai-image-generator/Main/_components/Hero/index.tsx:146
++ *
++ * 2. Hero/ImageGenerateForm.tsx — /ai-image-generator 主页（isFromTool=false 时渲染）
++ *    作为 text-to-image tab 的表单，仅传入基础参数，支持免费用户生成
++ *    @see web/src/pages/pollo.ai/ai-image-generator/Main/_components/Hero/ImageGenerateForm.tsx:54
++ *
++ * 3. app/_constants/formConfig.tsx — app 端左侧菜单 Text to Image 表单配置
++ *    别名 TextToImageFormGenerate，在 app?target=text-to-image 时作为菜单表单渲染
++ *    @see web/src/pages/pollo.ai/app/_constants/formConfig.tsx:151
++ *
++ * 4. app/_home/components/AIGeneratorsTool.tsx — CMS 驱动的 AI 图像生成器工具页
++ *    根据 CMS 数据动态配置模型/提示词/Lora，用于 /ai-image-generator/{code} 子页面
++ *    @see web/src/pages/pollo.ai/app/_home/components/AIGeneratorsTool.tsx:38
++ */

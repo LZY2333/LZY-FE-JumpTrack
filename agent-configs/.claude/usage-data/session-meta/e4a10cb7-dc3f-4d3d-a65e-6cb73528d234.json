@@ -1,0 +1,51 @@
+{
+  "session_id": "e4a10cb7-dc3f-4d3d-a65e-6cb73528d234",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-02-27T01:42:39.526Z",
+  "duration_minutes": 13,
+  "user_message_count": 4,
+  "assistant_message_count": 35,
+  "tool_counts": {
+    "Read": 4,
+    "Task": 2,
+    "Grep": 4,
+    "Glob": 1
+  },
+  "languages": {
+    "TypeScript": 4
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 55,
+  "output_tokens": 10845,
+  "first_prompt": "本地访问/app/managements/templages 进入页面了,表格以及表格信息都展示了,但是覆盖的loading还在转,随后崩溃,当前仅修改了选中内容,控制台报错信息如下::\\\"read\\\"}} [Redis Cache] Error\",\"datetime\":\"2026-02-27T01:39:59.006Z\"} @loc/web:dev: 2026-02-27 09:39:59|{\"…",
+  "user_interruptions": 0,
+  "user_response_times": [
+    86.912,
+    81.516,
+    182.732
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    9,
+    9,
+    9,
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-02-27T01:42:39.526Z",
+    "2026-02-27T01:47:44.436Z",
+    "2026-02-27T01:49:29.189Z",
+    "2026-02-27T01:53:49.067Z"
+  ]
+}

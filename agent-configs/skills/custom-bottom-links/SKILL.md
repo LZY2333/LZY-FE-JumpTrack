@@ -7,29 +7,42 @@ description: Add a bottom-of-response file link list in `path:line` format and k
 
 ## Overview
 
-Use short workspace-relative paths in the prose and add a jump list of all file paths at the end of each response for quick navigation.
+Every response that mentions file paths must end with a jump list for quick IDE navigation.
 
-## Response Guidelines
+## Rules
 
-- Use **workspace-relative paths** from the workspace root for files inside the repo (strip absolute prefixes like `/Users/...`).
-- If a file is **outside the workspace**, use an **absolute path**. This includes files in other projects, home-directory dotfiles, or any path not under the current workspace root. **Never use paths relative to another project directory.**
-- **Never use `..` segments** in the jump list; they often break clickability.
-- **Require clickable format**: use `path:line` (or `path:line:col`) only.
-- If a line number is unknown, use `:1` and mention in prose that the exact line is unknown.
-- De-duplicate paths; keep the first-seen order.
-- When summarizing terminal output that includes file paths, restate those paths in relative (or absolute, if outside workspace) form in the response.
+1. **All paths must be absolute** (e.g. `/Users/a111111/code/project/src/index.tsx:42`).
+2. Format: `path:line` or `path:line:col`. Line unknown → use `:1`.
+3. One path per line, de-duplicate, keep first-seen order.
+4. Jump list block must be preceded by one blank line, no other content on path lines.
 
-## Jump Links Block
+## Demo
 
-At the very end of the response, output each mentioned file path once in Cursor-clickable format:
+✅ Correct:
 
 ```
-path/to/file.ts:42
-path/to/other.tsx:10:5
+Here is the analysis of the rendering chain...
+
+/Users/a111111/code/project/src/pages/_app.tsx:27
+/Users/a111111/code/project/src/layouts/RootLayout/index.tsx:29
+/Users/a111111/.claude/skills/custom-bottom-links/SKILL.md:1
 ```
 
-Requirements:
+❌ Wrong — relative path, IDE cannot resolve:
 
-- One path per line.
-- No extra text on the same line as the path.
-- Include only the paths that appeared in the response.
+```
+src/pages/_app.tsx:27
+```
+
+❌ Wrong — `---` touching paths, parsed as part of path:
+
+```
+---
+/Users/a111111/code/project/src/pages/_app.tsx:27
+```
+
+❌ Wrong — extra text on same line:
+
+```
+/Users/a111111/code/project/src/pages/_app.tsx:27 ← entry file
+```

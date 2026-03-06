@@ -1,0 +1,15 @@
+{
+  "underlying_goal": "Translate a skill configuration directory's content from English to Chinese",
+  "goal_categories": {
+    "translation": 1
+  },
+  "outcome": "not_achieved",
+  "user_satisfaction_counts": {},
+  "claude_helpfulness": "unhelpful",
+  "session_type": "single_task",
+  "friction_counts": {},
+  "friction_detail": "User interrupted Claude before it could complete any work",
+  "primary_success": "none",
+  "brief_summary": "User asked to translate a skill config directory to Chinese but interrupted Claude's first tool call, achieving nothing.",
+  "session_id": "04a5f48e-ece2-4629-a0a7-09405cee81ce"
+}

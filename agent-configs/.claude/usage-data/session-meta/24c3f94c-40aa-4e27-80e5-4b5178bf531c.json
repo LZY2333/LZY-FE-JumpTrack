@@ -1,0 +1,46 @@
+{
+  "session_id": "24c3f94c-40aa-4e27-80e5-4b5178bf531c",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-03T07:25:26.990Z",
+  "duration_minutes": 77,
+  "user_message_count": 3,
+  "assistant_message_count": 35,
+  "tool_counts": {
+    "Grep": 14,
+    "Read": 14,
+    "Glob": 2
+  },
+  "languages": {
+    "TypeScript": 12,
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 2727,
+  "output_tokens": 2884,
+  "first_prompt": "当前项目 form模式 chat模式 我能理解,agent模式是什么?对用户来说与前两者有什么操作上的不同?",
+  "user_interruptions": 0,
+  "user_response_times": [
+    2347.36,
+    2159.704
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    15,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-03-03T07:25:26.990Z",
+    "2026-03-03T08:04:42.955Z",
+    "2026-03-03T08:42:12.080Z"
+  ]
+}

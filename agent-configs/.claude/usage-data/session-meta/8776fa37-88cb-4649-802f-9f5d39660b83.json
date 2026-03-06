@@ -1,0 +1,32 @@
+{
+  "session_id": "8776fa37-88cb-4649-802f-9f5d39660b83",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-03T07:00:57.936Z",
+  "duration_minutes": 1,
+  "user_message_count": 1,
+  "assistant_message_count": 2,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 6,
+  "output_tokens": 1625,
+  "first_prompt": "图示是 git lens 代码行内commit信息 hover展示的面板.内部每个按钮是什么作用?",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-03-03T07:00:57.936Z"
+  ]
+}

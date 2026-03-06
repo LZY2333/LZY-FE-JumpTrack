@@ -1,0 +1,17 @@
+{
+  "underlying_goal": "Understand what agent mode is in the project and how it differs from form and chat modes from a user perspective",
+  "goal_categories": {
+    "conceptual_question": 2
+  },
+  "outcome": "mostly_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 2
+  },
+  "claude_helpfulness": "very_helpful",
+  "session_type": "exploration",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "good_explanations",
+  "brief_summary": "User asked about the differences between form, chat, and agent modes in the project; Claude explored the codebase and provided clear explanations with typical page examples.",
+  "session_id": "24c3f94c-40aa-4e27-80e5-4b5178bf531c"
+}

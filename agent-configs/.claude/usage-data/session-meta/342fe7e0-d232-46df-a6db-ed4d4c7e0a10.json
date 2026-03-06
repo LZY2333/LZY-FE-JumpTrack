@@ -1,0 +1,41 @@
+{
+  "session_id": "342fe7e0-d232-46df-a6db-ed4d4c7e0a10",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-02-05T12:06:07.692Z",
+  "duration_minutes": 10,
+  "user_message_count": 3,
+  "assistant_message_count": 10,
+  "tool_counts": {
+    "Task": 2
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 96,
+  "output_tokens": 1287,
+  "first_prompt": "hi",
+  "user_interruptions": 0,
+  "user_response_times": [
+    31.438,
+    433.088
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    20,
+    20,
+    20
+  ],
+  "user_message_timestamps": [
+    "2026-02-05T12:06:07.692Z",
+    "2026-02-05T12:06:45.401Z",
+    "2026-02-05T12:16:17.444Z"
+  ]
+}}

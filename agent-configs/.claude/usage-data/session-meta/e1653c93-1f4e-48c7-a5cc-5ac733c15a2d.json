@@ -1,0 +1,63 @@
+{
+  "session_id": "e1653c93-1f4e-48c7-a5cc-5ac733c15a2d",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-05T02:14:05.057Z",
+  "duration_minutes": 29,
+  "user_message_count": 5,
+  "assistant_message_count": 37,
+  "tool_counts": {
+    "ToolSearch": 2,
+    "Read": 8,
+    "Grep": 4,
+    "Glob": 8,
+    "Bash": 1
+  },
+  "languages": {
+    "TypeScript": 8
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 123,
+  "output_tokens": 3521,
+  "first_prompt": "目前 pollo.ai 直接访问似乎不是展示 /Users/a111111/code/ai-video-collection/web/src/pages/pollo.ai/index.page.tsx 这个首页了,怎么做到的,哪些文件配置了?",
+  "user_interruptions": 0,
+  "user_response_times": [
+    836.638,
+    15.814,
+    14.651,
+    603.176
+  ],
+  "tool_errors": 2,
+  "tool_error_categories": {
+    "File Not Found": 1,
+    "Other": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-03-05T02:14:05.057Z",
+    "2026-03-05T02:29:22.242Z",
+    "2026-03-05T02:29:44.368Z",
+    "2026-03-05T02:33:15.328Z",
+    "2026-03-05T02:43:27.488Z"
+  ]
+} "2026-03-05T02:29:44.368Z",
+    "2026-03-05T02:33:15.328Z",
+    "2026-03-05T02:43:27.488Z",
+    "2026-03-05T02:45:06.269Z",
+    "2026-03-05T02:45:31.061Z",
+    "2026-03-05T02:48:08.478Z"
+  ]
+}

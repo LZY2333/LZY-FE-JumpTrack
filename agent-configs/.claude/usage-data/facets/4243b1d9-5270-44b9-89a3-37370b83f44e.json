@@ -1,0 +1,17 @@
+{
+  "underlying_goal": "Resume previous work on fixing UI components (EllipsisText/OptionButton) across web and mobile",
+  "goal_categories": {
+    "resume_previous_work": 1
+  },
+  "outcome": "not_achieved",
+  "user_satisfaction_counts": {},
+  "claude_helpfulness": "slightly_helpful",
+  "session_type": "single_task",
+  "friction_counts": {
+    "user_rejected_action": 1
+  },
+  "friction_detail": "User interrupted Claude's tool use before meaningful work was completed.",
+  "primary_success": "none",
+  "brief_summary": "User asked to resume previous work on UI components but interrupted the session before any progress was made.",
+  "session_id": "4243b1d9-5270-44b9-89a3-37370b83f44e"
+}

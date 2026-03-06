@@ -1,0 +1,63 @@
+{
+  "session_id": "f8d2b930-2cec-4cef-98dd-78f5adb15021",
+  "project_path": "/Users/a111111/code/ai-video-collection",
+  "start_time": "2026-03-03T12:15:40.091Z",
+  "duration_minutes": 9,
+  "user_message_count": 7,
+  "assistant_message_count": 41,
+  "tool_counts": {
+    "Glob": 1,
+    "Read": 2,
+    "Bash": 16,
+    "mcp__chrome-devtools__list_pages": 3,
+    "mcp__chrome-devtools__navigate_page": 1,
+    "mcp__chrome-devtools__take_screenshot": 1
+  },
+  "languages": {
+    "JSON": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 159,
+  "output_tokens": 4192,
+  "first_prompt": "如何使用刚刚下载的mcp",
+  "user_interruptions": 1,
+  "user_response_times": [
+    78.821,
+    31.638,
+    9.173,
+    84.32,
+    18.825,
+    28.296
+  ],
+  "tool_errors": 8,
+  "tool_error_categories": {
+    "Other": 2,
+    "Command Failed": 6
+  },
+  "uses_task_agent": false,
+  "uses_mcp": true,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20
+  ],
+  "user_message_timestamps": [
+    "2026-03-03T12:15:40.091Z",
+    "2026-03-03T12:17:42.996Z",
+    "2026-03-03T12:18:34.688Z",
+    "2026-03-03T12:19:13.852Z",
+    "2026-03-03T12:20:57.844Z",
+    "2026-03-03T12:21:57.622Z",
+    "2026-03-03T12:24:22.692Z"
+  ]
+}
