@@ -2,15 +2,12 @@
 
 ## 5 Pollo 2.0 开始
 
-03.02 https://bcn0tgplxp2e.feishu.cn/wiki/EZPqwRSZJiSMPUk3KXWcmydYn7d
+03.02 <https://bcn0tgplxp2e.feishu.cn/wiki/EZPqwRSZJiSMPUk3KXWcmydYn7d>
 
 5.1 顶部Header
 5.1.2 顶部信息栏
 5.1.3 顶部导航栏
-修改按钮跳转地址
-301 重定向，配置所有旧路径 -> 新路径？（或者 cms 配置）
-
-5.1.4 消息提醒
+5.1.4 消息提醒(暂不修改)
 5.1.5 history改造
 5.1.6 project改造
 

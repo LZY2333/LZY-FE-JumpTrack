@@ -104,26 +104,50 @@ Header(props.showLoginUserInfo) // 第 1 层：解构
 
 ## 开发
 
+1. 去除 home 和 effects自测(涉及页面多) 自测及上线
+2. 后管 categoryCode 接口修改方案沟通(这周对接).
+
 ## Pollo 2.0
 
-## AI开发探索
+1. 学习 产品框架 资源
+2. 梳理 改版2.0 需求文档
+3. 顶部导航栏 模块代码熟悉, 修改plan文档准备.
+
+## AI编码率探索
 
 1. custom skills: 4 -> 8
 有两个skills对于新人理解项目比较友好,准备分享出来
 
-2. 提高 AI Coding 一次性成功率(而不是反复 prompt 与 review)
+2. 提高 AI编码率 探索
+两个skill(优化中):
+temp-ai-spec(解决prd → spec): 当前需求的 同时面向开发/AI 的规格文档
+temp-ai-plan(解决spec → plan/task): plan list, 代码修改细项
 
-四阶段门控: prd -> AI questions -> spec.md -> plan -> implement small tasks
+痛点:
+AI编码: 提高 AI Coding 一次性成功率
+反复 prompt 与 review, 是AI体验不好 以及 AI编码 心慌的主要问题
 
-skill1: prd → spec
+业内成熟方案:
+[GitHub Spec Kit] 四阶段门控: prd -> spec -> plan -> tasks -> Implement
+输出太重,review困难
+输出格式与我们团队不符
+定制成本高
+使用麻烦,要下载cli,要习惯其指令
+深度绑定项目,生成spec
 
-skill2: spec → plan
+重构/新项目/大模块 多加一步:
+skill0: discuss → prd
+ad的 discuss-before-plan / brainstorming
 
-AI: plan → code
-
-discuss-before-plan / brainstorming 更偏向
-
-我的skill 更偏向对 spec plan 文档的规范.
+discuss 参考
+<https://skills.sh/obra/superpowers/brainstorming>
+<https://skills.sh/adonis0123/adonis-skills/discuss-before-plan>
+spec 参考
+<https://skills.sh/github/awesome-copilot/create-specification>
+[GitHub Spec Kit](https://github.com/github/spec-kit)
+[Addy Osmani: How to write a good spec for AI agents](https://addyo.substack.com/p/how-to-write-a-good-spec-for-ai-agents)
+plan 参考
+<https://skills.sh/obra/superpowers/writing-plans>
 
 ## Skill工厂 -------------------------------
 
