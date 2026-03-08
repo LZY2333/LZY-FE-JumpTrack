@@ -102,6 +102,29 @@ Header(props.showLoginUserInfo) // 第 1 层：解构
 
 ## 周报 -------------------------------
 
+## 开发
+
+## Pollo 2.0
+
+## AI开发探索
+
+1. custom skills: 4 -> 8
+有两个skills对于新人理解项目比较友好,准备分享出来
+
+2. 提高 AI Coding 一次性成功率(而不是反复 prompt 与 review)
+
+四阶段门控: prd -> AI questions -> spec.md -> plan -> implement small tasks
+
+skill1: prd → spec
+
+skill2: spec → plan
+
+AI: plan → code
+
+discuss-before-plan / brainstorming 更偏向
+
+我的skill 更偏向对 spec plan 文档的规范.
+
 ## Skill工厂 -------------------------------
 
 **需求文档(产品) -> 需求文档(开发+AI) -> 详设文档+伪代码(AI） -> 详设评审(开发) -> 编码(AI) -> Review(开发)**
@@ -113,8 +136,8 @@ Header(props.showLoginUserInfo) // 第 1 层：解构
 > emmm就是一个特别大的需求，需要拆分为多个步骤，想清楚想明白的拆分，拆分下来每完成一个步骤需要归档完成内容以及任何进度
 
 1. 当前工作目录下生成一个 产品文档模板,内涵
-    ## 基本数据: 产品文档
-    ## 非目标:
+   ## 基本数据: 产品文档
+   ## 非目标
 
 - 产出格式是什么？需要包含哪些固定章节（如背景、功能点、接口约定、影响范围等）？
 
