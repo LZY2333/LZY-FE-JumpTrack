@@ -1,5 +1,21 @@
 # todo
 
+## 6 Pollo 2.0 两星期
+
+周二 周三 顶部导航栏: Credits下拉、Video Image Tools下拉、User下拉
+
+周四 project改造
+
+周五 增加消息提醒toast
+
+周一 周二 apps聚合页改造
+
+周三 Reference to Video
+
+周四 Text to Video
+
+周五 Image to Video
+
 ## 5 Pollo 2.0 开始
 
 03.02 <https://bcn0tgplxp2e.feishu.cn/wiki/EZPqwRSZJiSMPUk3KXWcmydYn7d>

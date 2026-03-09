@@ -22,6 +22,9 @@ trust_level = "trusted"
 [projects."/Users/a111111/demo/test-ai-video-collection"]
 trust_level = "trusted"
 
+[projects."/Users/a111111/demo/LZY-FE-JumpTrack"]
+trust_level = "trusted"
+
 [notice.model_migrations]
 "gpt-5.1-codex-max" = "gpt-5.2-codex"
 "gpt-5.2-codex" = "gpt-5.3-codex"
