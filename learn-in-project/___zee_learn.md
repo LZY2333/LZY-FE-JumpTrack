@@ -1,21 +1,10 @@
 # 学习
 
-## 预备skill -------------------------------
+## 记录！！！！！
 
-## skill: 业务功能生成
+痛点: 如果基于文档的代码修改一遍不过，后续修改必须同步文档
 
-更内聚: 不要过于通用(暴露过多props),或将部分逻辑交于外部处理再传入使用,应当更内聚
-
-规划组件边界: 各个组件职责边界,逻辑边界,要清晰
-
-复用: 原有业务是否有可以复用
-
-**文档记录修改**
-以代码块(内含:顶部注释文件名和简单路径,内部含 代码行数, ...省略非修改代码,)的方式展示需要修改文件的内容,每个文件一个代码块, 底部统一给出具体路径.
-
-## skill: 项目代码分析当前产品
-
-通过项目代码，快速了解当前产品。有哪些板块，其术语，其展示位置，其文件位置，其产品职责，最后其引用位置，文件位置（距离）。有哪些页面，同上。
+痛点: 文档没有代码清晰，得打磨了很久的文档才能比代码清晰
 
 ## 功能实现 -------------------------------
 
@@ -102,85 +91,4 @@ Header(props.showLoginUserInfo) // 第 1 层：解构
 
 ## 周报 -------------------------------
 
-## 开发
-
-1. 去除 home 和 effects自测(涉及页面多) 自测及上线
-2. 后管 categoryCode 接口修改方案沟通(这周对接).
-
-## Pollo 2.0
-
-1. 学习 产品框架 资源
-2. 梳理 改版2.0 需求文档
-3. 顶部导航栏 模块代码熟悉, 修改plan文档准备.
-
-## AI编码率探索
-
-1. custom skills: 4 -> 8
-有两个skills对于新人理解项目比较友好,准备分享出来
-
-2. 提高 AI编码率 探索
-两个skill(优化中):
-temp-ai-spec(解决prd → spec): 当前需求的 同时面向开发/AI 的规格文档
-temp-ai-plan(解决spec → plan/task): plan list, 代码修改细项
-
-痛点:
-AI编码: 提高 AI Coding 一次性成功率
-反复 prompt 与 review, 是AI体验不好 以及 AI编码 心慌的主要问题
-
-业内成熟方案:
-[GitHub Spec Kit] 四阶段门控: prd -> spec -> plan -> tasks -> Implement
-输出太重,review困难
-输出格式与我们团队不符
-定制成本高
-使用麻烦,要下载cli,要习惯其指令
-深度绑定项目,生成spec
-
-重构/新项目/大模块 多加一步:
-skill0: discuss → prd
-ad的 discuss-before-plan / brainstorming
-
-discuss 参考
-<https://skills.sh/obra/superpowers/brainstorming>
-<https://skills.sh/adonis0123/adonis-skills/discuss-before-plan>
-spec 参考
-<https://skills.sh/github/awesome-copilot/create-specification>
-[GitHub Spec Kit](https://github.com/github/spec-kit)
-[Addy Osmani: How to write a good spec for AI agents](https://addyo.substack.com/p/how-to-write-a-good-spec-for-ai-agents)
-plan 参考
-<https://skills.sh/obra/superpowers/writing-plans>
-
 ## Skill工厂 -------------------------------
-
-**需求文档(产品) -> 需求文档(开发+AI) -> 详设文档+伪代码(AI） -> 详设评审(开发) -> 编码(AI) -> Review(开发)**
-
-关于「需求文档(开发+AI)」skill：
-
-- 输入是什么？产品的 PRD 文本 / 飞书链接 / 粘贴内容？
-
-> emmm就是一个特别大的需求，需要拆分为多个步骤，想清楚想明白的拆分，拆分下来每完成一个步骤需要归档完成内容以及任何进度
-
-1. 当前工作目录下生成一个 产品文档模板,内涵
-   ## 基本数据: 产品文档
-   ## 非目标
-
-- 产出格式是什么？需要包含哪些固定章节（如背景、功能点、接口约定、影响范围等）？
-
-    给出你的建议，参照市面最佳事件
-    格式要求精简，顶部有修改总览，
-    修改总览:
-    排序，且有编号(123)，顺序即代码修改plan
-    要有产品文档章节对应，例如 5.1(1/5), 要能知道是否覆盖了所有需求文档内容
-    有
-
-- 是否需要结合当前代码库分析影响范围？
-  需要
-
-关于「详设文档+伪代码」skill：
-
-- 输入是上一步产出的开发需求文档？
-- 详设需要细化到什么程度？（组件拆分、数据流、状态管理、API 调用链？）
-- 伪代码是写在详设文档内，还是单独文件？
-- 是否需要自动分析现有代码库来生成方案？
-
-探索 程序员负责翻译文档 AI执行生成修改计划 AI修改代码 程序员Review
-文档理解 产品理解 代码理解 产品会

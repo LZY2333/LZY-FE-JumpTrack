@@ -2,19 +2,22 @@
 
 ## 6 Pollo 2.0 两星期
 
-周二 周三 顶部导航栏: Credits下拉、Video Image Tools下拉、User下拉
+### 周二 周三 顶部导航栏: Credits下拉、Video Image Tools下拉、User下拉、移动端导航栏
 
-周四 project改造
+1.✅ Video Image Tools下拉
+2.✅ Credits下拉 3. User下拉 4. 移动端导航栏 5. history / 左上角导航 / workspace 删除 6. 梳理哪些页面不展示
 
-周五 增加消息提醒toast
+### 周四 project改造
 
-周一 周二 apps聚合页改造
+### 周五 增加消息提醒toast
 
-周三 Reference to Video
+### 周一 周二 apps聚合页改造
 
-周四 Text to Video
+### 周三 Reference to Video
 
-周五 Image to Video
+### 周四 Text to Video
+
+### 周五 Image to Video
 
 ## 5 Pollo 2.0 开始
 
