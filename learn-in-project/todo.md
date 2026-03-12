@@ -4,10 +4,18 @@
 
 ### 周二 周三 顶部导航栏: Credits下拉、Video Image Tools下拉、User下拉、移动端导航栏
 
-1.✅ Video Image Tools下拉
-2.✅ Credits下拉 3. User下拉 4. 移动端导航栏 5. history / 左上角导航 / workspace 删除 6. 梳理哪些页面不展示
+Video Image Tools下拉
+Credits下拉
+User下拉
+移动端导航栏
+history / 左上角导航 / workspace 删除
+梳理哪些页面不展示
 
 ### 周四 project改造
+
+顶部 +Project 改成灰色
+顶部 +Project 点击生成
+非 active Project hover增加文字变白色
 
 ### 周五 增加消息提醒toast
 
