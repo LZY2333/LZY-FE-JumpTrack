@@ -101,11 +101,26 @@
       "Bash(open*)",
       "Bash(python*)",
       "Bash(python3*)",
-      "Bash(cd*)"
+      "Bash(cd*)",
+      "Bash(cd * && git *)",
+      "Bash(cd * && npm *)",
+      "Bash(cd * && pnpm *)",
+      "Bash(cd * && ls*)",
+      "Bash(cd * && cat *)",
+      "Bash(git add * && git commit *)",
+      "Bash(git push*)",
+      "Bash(cd * && git push*)"
     ],
-    "deny": []
+    "deny": [],
+    "additionalDirectories": [
+      "/Users/a111111/demo/LazyBlog",
+      "/Users/a111111/demo/LZY-FE-JumpTrack"
+    ]
   },
   "model": "opus",
   "language": "简体中文",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "attribution": {
+    "commit": ""
+  }
 }

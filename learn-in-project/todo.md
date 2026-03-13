@@ -2,22 +2,36 @@
 
 ## 6 Pollo 2.0 两星期
 
+**小屏幕问题**
+
+**梳理哪些页面不展示**
+
+**检查遗漏翻译问题**
+
+**URL修改**
+
 ### 周二 周三 顶部导航栏: Credits下拉、Video Image Tools下拉、User下拉、移动端导航栏
 
-Video Image Tools下拉
-Credits下拉
-User下拉
-移动端导航栏
+✅ Video Image Tools下拉
+Video Image Tools下拉(移动端)
+✅ Credits下拉
+✅ User下拉
+✅ User下拉(移动端)
+
 history / 左上角导航 / workspace 删除
-梳理哪些页面不展示
 
-### 周四 project改造
+### ✅ 周四 project改造
 
-顶部 +Project 改成灰色
-顶部 +Project 点击生成
-非 active Project hover增加文字变白色
+✅ PC端project
+✅ 移动端project
 
 ### 周五 增加消息提醒toast
+
+✅ 1. 全局挂载
+✅ 2. 统一监听事件
+✅ 3. 轮询
+✅ 4. 查询生成状态的接口
+5. 自测
 
 ### 周一 周二 apps聚合页改造
 
@@ -37,6 +51,8 @@ history / 左上角导航 / workspace 删除
 5.1.4 消息提醒(暂不修改)
 5.1.5 history改造
 5.1.6 project改造
+
+弹窗关闭以后，language回归收起状态
 
 ## 4
 

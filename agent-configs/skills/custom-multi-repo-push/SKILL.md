@@ -21,14 +21,25 @@ description: >
 
 ## 执行步骤
 
-1. 依次对每个仓库运行 `git status --short`，检查是否有变更
-2. 跳过无变更的仓库
-3. 对有变更的仓库：
-   - 运行 `git log --oneline -5` 分析 commit 风格
-   - 运行 `git diff` 查看变更内容
-   - 根据变更生成 commit message
-4. 汇总展示所有仓库的执行计划（含 `git add` + `git commit` + `git push` 命令）
-5. 等待用户同意后，依次执行
+### 阶段一：检查状态
+
+并行对所有仓库运行 `git status --short`，跳过无变更的仓库。
+
+### 阶段二：逐仓库分析（串行，防止上下文混淆）
+
+对每个有变更的仓库，**单独完成以下流程后再处理下一个**：
+1. 运行 `git log --oneline -5` 分析 commit 风格
+2. 运行 `git diff` 查看变更内容
+3. 基于该仓库自身的 diff 生成 commit message
+
+### 阶段三：展示计划并等待同意
+
+汇总所有仓库的执行计划（含 `git add` + `git commit` + `git push` 命令），等待用户同意后再执行。
+
+### 阶段四：执行（合并命令减少权限询问）
+
+- 每个仓库将 `git add` + `git commit` 合并为一条 `&&` 链式命令执行
+- 所有仓库 commit 完成后，将所有 `git push` 合并为一条 `&&` 链式命令统一推送
 
 ## Commit Message 规范
 

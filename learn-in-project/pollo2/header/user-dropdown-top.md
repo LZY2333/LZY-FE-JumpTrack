@@ -239,7 +239,7 @@
 +       onClick={() => setIsOpen(!isOpen)}
 +     >
 +       <span>{title}</span>
-+       <span className={cls`block size-5 transition-transform duration-200 ${isOpen ? 'i-com--up' : 'i-com--down'}`} />
++       <span className={cls`i-com--down block size-5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
 +     </div>
 +     {isOpen && (
 +       <ul className='flex w-full flex-col gap-0.5 pt-1'>
@@ -259,7 +259,7 @@
   )
 ```
 
-> PC 端不再使用 hover 弹出侧面板，改为与移动端统一的点击展开内联列表。语言子项样式：`px-6 py-2 text-sm`（Figma: padding 8px 24px, 14px font, 400 weight）。箭头折叠 `com-down`，展开 `com-up`。
+> PC 端不再使用 hover 弹出侧面板，改为与移动端统一的点击展开内联列表。语言子项样式：`px-6 py-2 text-sm`（Figma: padding 8px 24px, 14px font, 400 weight）。箭头始终为 `i-com--down`，展开时通过 `rotate-180` 旋转（复用旧版移动端动画效果）。
 
 ### web/src/pages/pollo.ai/app/\_components/ContactUsMenuItem/index.tsx
 
