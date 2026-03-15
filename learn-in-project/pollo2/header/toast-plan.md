@@ -1143,3 +1143,175 @@ export function useGenerationResultToast() {
   }, [flushCompletedTasks, isAuth, router.asPath])
 }
 ```
+
+---
+
+## 改造方案：复用 `useRecordsStatusMonitor`
+
+### 改造目标
+
+将 `useGenerationResultToast` 中的手动轮询逻辑全部移除，改为复用 `useRecordsStatusMonitor`，模仿 `useCreations` 的写法。
+
+### 改造思路
+
+1. 监听 `creationGenerate` 事件，收到 `success` 时构造最小化 `CreationItem` 存入 state
+2. 将 state 数组传给 `useRecordsStatusMonitor`，由它负责轮询 `queryRecordDetail`
+3. 通过 `onFinished` 回调拿到终态结果，弹 toast 并从 state 中移除已完成任务
+4. 删除所有手动轮询逻辑（`timerRef`、`pollingRef`、`pendingTasksRef`、`pollPendingTasksRef`、`clearPollingTimer`、`scheduleNextPolling`、`pollPendingTasks`、`POLLING_INTERVAL`、`apiCtx`）
+
+### 关键设计
+
+构造最小化 `CreationItem`，只需满足 `useRecordsStatusMonitor` 的读取字段：
+
+```ts
+{
+  generateRecord: { id: recordId, status: EVideoStatus.Processing },
+  // 额外挂载 taskLabel 供 toast 使用，不影响 useRecordsStatusMonitor 逻辑
+  _taskLabel: taskLabel,
+} as unknown as CreationItem
+```
+
+`useRecordsStatusMonitor` 内部通过 `record.generateRecord.status` 筛选 processing 记录，通过 `record.generateRecord.id` 查询详情，`onFinished` 返回完整的 `CreationItem`（从 API 查回的真实数据），通过 `result.generateRecord.status` 判断 succeed/failed。
+
+### 新版代码
+
+```ts
+import { useAntdContext } from '@/contexts/AntdContext/hooks'
+import { useSessionInfo } from '@/contexts/AuthContext/hooks/sessionInfo'
+import { useRecordsStatusMonitor } from '@/hooks/useRecordsStatusMonitor'
+import { creationGenerateEmitter } from '@/pages/pollo.ai/_components/Creations/events'
+import { EVideoStatus } from '@loc/server/enums/video'
+import { useLingui } from '@lingui/react/macro'
+import { useMemoizedFn } from 'ahooks'
+import { useRouter } from 'next/router'
+
+import type { CreationItem } from '@/pages/pollo.ai/_types/video'
+
+interface PendingRecord extends CreationItem {
+  _taskLabel: string
+}
+
+function shouldSkipGenerationToastByPath(path: string) {
+  const purePath = path.split('?')[0]
+  return purePath === '/generate' || purePath.startsWith('/ai-video-agent')
+}
+
+export function useGenerationResultToast() {
+  const router = useRouter()
+  const { message } = useAntdContext()
+  const { t } = useLingui()
+  const { sessionAuthenticated: isAuth } = useSessionInfo()
+
+  const [pendingRecords, setPendingRecords] = useState<PendingRecord[]>([])
+  const displayedKeysRef = useRef<Set<string>>(new Set())
+
+  const openResultToast = useMemoizedFn(
+    (params: {
+      recordId: number
+      taskLabel: string
+      finalStatus: 'succeed' | 'failed'
+    }) => {
+      if (shouldSkipGenerationToastByPath(router.asPath)) {
+        return
+      }
+
+      const toastKey = `${params.recordId}-${params.finalStatus}`
+      if (displayedKeysRef.current.has(toastKey)) {
+        return
+      }
+
+      const isSuccess = params.finalStatus === 'succeed'
+      message.open({
+        key: toastKey,
+        type: isSuccess ? 'success' : 'error',
+        duration: 10,
+        content: `${params.taskLabel} ${isSuccess ? t`completed` : t`failed`}`,
+        onClick: () => {
+          router.push('/generate')
+        },
+      })
+      displayedKeysRef.current.add(toastKey)
+    },
+  )
+
+  // 复用 useRecordsStatusMonitor 轮询终态
+  useRecordsStatusMonitor(pendingRecords, {
+    onFinished: (finishedItems) => {
+      const finishedIds = new Set(
+        finishedItems.map((item) => item.generateRecord.id),
+      )
+
+      finishedItems.forEach((item) => {
+        const pending = pendingRecords.find(
+          (r) => r.generateRecord.id === item.generateRecord.id,
+        )
+        if (!pending) return
+
+        const status = item.generateRecord.status as EVideoStatus
+        if (
+          status === EVideoStatus.Succeed ||
+          status === EVideoStatus.Failed
+        ) {
+          openResultToast({
+            recordId: item.generateRecord.id,
+            taskLabel: pending._taskLabel,
+            finalStatus:
+              status === EVideoStatus.Succeed ? 'succeed' : 'failed',
+          })
+        }
+      })
+
+      // 移除已完成的任务
+      setPendingRecords((prev) =>
+        prev.filter((r) => !finishedIds.has(r.generateRecord.id)),
+      )
+    },
+  })
+
+  // 监听生成事件，构造最小化 CreationItem 加入轮询队列
+  useEffect(() => {
+    if (!isAuth) {
+      setPendingRecords([])
+      return
+    }
+
+    const unbind = creationGenerateEmitter.on(
+      'creationGenerate',
+      (payload) => {
+        if (payload.type !== 'success' || !payload.id) {
+          return
+        }
+
+        const record = {
+          generateRecord: {
+            id: payload.id,
+            status: EVideoStatus.Processing,
+          },
+          _taskLabel: payload.taskLabel || 'Generation',
+        } as unknown as PendingRecord
+
+        setPendingRecords((prev) => {
+          if (prev.some((r) => r.generateRecord.id === payload.id)) {
+            return prev
+          }
+          return [...prev, record]
+        })
+      },
+    )
+
+    return () => {
+      unbind()
+    }
+  }, [isAuth])
+}
+```
+
+### 对比原方案
+
+| | 原方案 | 新方案 |
+|---|---|---|
+| 轮询逻辑 | 手动维护 timerRef + pollingRef + setTimeout 链 | 复用 useRecordsStatusMonitor |
+| 数据源 | pendingTasksRef (Map) | pendingRecords (state) |
+| 终态判断 | 手动比对 detail.status | useRecordsStatusMonitor.onFinished |
+| 代码量 | ~175 行 | ~100 行 |
+| 与 useCreations 一致性 | 低 | 高，模式相同 |

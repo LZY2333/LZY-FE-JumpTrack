@@ -10,6 +10,8 @@ agent-configs/.claude/plans/
 agent-configs/.claude/file-history/
 agent-configs/.claude/backups/
 agent-configs/.claude/telemetry/
+agent-configs/.claude/ide/
+agent-configs/.claude/tasks/
 
 # agent-configs/.claude/ 会话及运行时数据
 agent-configs/.claude/history.jsonl

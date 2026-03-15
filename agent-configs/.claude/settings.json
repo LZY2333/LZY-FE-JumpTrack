@@ -1,4 +1,7 @@
 {
+  "attribution": {
+    "commit": ""
+  },
   "permissions": {
     "allow": [
       "Read",
@@ -117,10 +120,19 @@
       "/Users/a111111/demo/LZY-FE-JumpTrack"
     ]
   },
-  "model": "opus",
   "language": "简体中文",
   "skipDangerousModePermissionPrompt": true,
-  "attribution": {
-    "commit": ""
+  "mcpServers": {
+    "figma": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "figma-developer-mcp",
+        "--stdio"
+      ],
+      "env": {
+        "FIGMA_API_KEY": "YOUR_FIGMA_API_KEY"
+      }
+    }
   }
 }

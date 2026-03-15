@@ -12,13 +12,21 @@
 
 ### 周二 周三 顶部导航栏: Credits下拉、Video Image Tools下拉、User下拉、移动端导航栏
 
-✅ Video Image Tools下拉
-Video Image Tools下拉(移动端)
-✅ Credits下拉
-✅ User下拉
-✅ User下拉(移动端)
+✅ 1.Video Image Tools下拉
+2.Video Image Tools下拉(移动端)
+✅ 3. Credits下拉
+✅ 4. User下拉
+✅ 5. User下拉(移动端)
+✅ 6. history / 左上角导航 / workspace 删除
+7. 导航路径修改
 
-history / 左上角导航 / workspace 删除
+LanguageTab/index语言链接处补回 RTL 对齐：
+// 当前
+className='text-f-text-secondary hover:text-f-primary hover:bg-f-bg-layout block rounded px-6 py-2 text-sm font-normal'
+// 建议
+className='text-f-text-secondary hover:text-f-primary hover:bg-f-bg-layout block rounded px-6 py-2 text-sm font-normal ltr:text-left rtl:text-right'
+
+HeaderAction
 
 ### ✅ 周四 project改造
 
@@ -32,6 +40,25 @@ history / 左上角导航 / workspace 删除
 ✅ 3. 轮询
 ✅ 4. 查询生成状态的接口
 5. 自测
+6. 如何解决翻译问题?
+
+useRewardsEvent 的事件监听器 增加卸载
+
+useGenerationResultToast 删除初始化
+
+问产品:移动端适配?
+问产品:3秒一次轮询, 同时成功2条, 需要做只弹一条toast吗(毕竟目的只是提醒和跳转)? 如果一条成功一条失败,只弹成功?
+
+**是否复用useRecordsStatusMonitor**
+
+1. useGenerationResultToast 是事件驱动,没必要事件硬塞records数组,再传给 useRecordsStatusMonitor 做响应式
+2. useRecordsStatusMonitor 非专门轮询作用, toast 后续可能会分化(去重、限频、点击跳转、本地缓存、轮询)
+如果要强行对接，你需要：
+3. 把 pendingRef 的 Map 转成数组传给 monitor，还得构造 CreationItem 结构
+4. 在 onFinished 回调里再做 toast 逻辑和去重
+5. 核心逻辑: monitor 的 clearTimer 行为（有完成就停）和 toast 的需求冲突 —— toast 需要持续轮询直到队列清空(当然外部也可以再次setRecord继续)
+
+轮询报错,之后重试次数
 
 ### 周一 周二 apps聚合页改造
 
