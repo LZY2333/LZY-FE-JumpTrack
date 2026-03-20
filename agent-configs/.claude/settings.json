@@ -120,7 +120,9 @@
       "/Users/a111111/demo/LZY-FE-JumpTrack"
     ]
   },
+  "model": "opus[1m]",
   "language": "简体中文",
+  "reasoning_effort": "high",
   "skipDangerousModePermissionPrompt": true,
   "mcpServers": {
     "figma": {
