@@ -1,19 +1,35 @@
 # todo
 
-mcp:chrome-devtools
-skill:figma-to-code
-skill:requirement-compiler
-skill:superpowers
-claude
+last card 不管怎么拖动, 最终态均定格在该卡片被盖住部分. 浏览器宽度缩小,或者说容器宽度变化之后,则再不会出现这个问题。
+
+create my avatar 及上面的 + 号,  包括其中的文字, 也要考虑放大/缩小.
+
+## avatar
+
+✅ my avatar 移动到 assets,兼容移动端
+✅ H5 左上角菜单栏彻底使用 左侧菜单栏数据
+✅ apps 滚动到最后一项会只显示部分
+✅ assets 容器修改，参考use-cases
+✅ 消息提醒增加来源判断，agent generate 页面的来源不用弹toast
+✅ 消息提醒移动端不展示
+✅ feat3-test123.pollo.ai/app/ai-instrument-playing form顶部app返回按钮修改，改为跳/app
+
+✅ 修复apps 卡片跳转与回退的页面滚动
+✅ 修复avatar 滚动定位受到sticky tab遮罩
+
+refetch中将数据置为空，导致 load more 与 setCurrentPage 的查询竞态
 
 ## 6. Pollo2.0 两星期
 
-**小屏幕问题**
-
-**检查遗漏翻译问题**
-
 ### apps聚合页改造
-移动端要不要考虑
+
+✅ useGenerateResultToast消息提醒继续修改
+✅ apps跳转后会到内容页再滚动到上方
+✅ apps滚动到最后一项会只显示部分
+✅ apps去除agent标识
+✅ 合并master分支
+消息提醒数字遮挡可点击范围
+消息提醒数字移动端要等比缩小
 
 ### 剩余事项综合
 ✅ Video Image Tools下拉(移动端)
@@ -24,12 +40,10 @@ claude
 ✅ 所有的default project都改成【user name’s workspace】
 ✅ projectId初始化获取优化
 ✅ UserInfo间距调整,去除divider,增加y轴滚动条
-
 ✅ 问产品:小屏左侧菜单 以及左上角的导航菜单同时存在
 ✅ 移动端左上角导航栏effects 和pro effects 重复
-toast提醒修改样式
-Project样式偏移
-
+✅ toast提醒修改样式
+✅ Project样式偏移
 ✅ 小屏幕多project间距有问题
 
 后管代码自测
@@ -108,7 +122,7 @@ useGenerationResultToast 删除初始化
 2.✅ 修复 部分 categoryCode 丢失的问题
 
 ## 1
-
+‘
 02.25 按钮文案超长 web端 移动端
 
 1. ✅ 移动端 视频详情
@@ -124,3 +138,13 @@ useGenerationResultToast 删除初始化
 ## 0 prompt
 
 让 ai 判断如果对非变更代码有影响
+
+```js
+{/* 全局禁用浏览器自动滚动恢复，避免 SPA 后退时 smooth scroll 闪烁 */}
+{/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
+<script
+dangerouslySetInnerHTML={{
+    __html: `if("scrollRestoration"in history)history.scrollRestoration="manual"`,
+}}
+/>
+```
