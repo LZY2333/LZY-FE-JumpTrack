@@ -26,7 +26,8 @@ description: >
 ### Commit Message 规范
 
 - 遵循[约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)格式
-- **只写一行**，不写正文和 footer
+- 第一行为标题行，格式 `<type>(<scope>): <中文描述>`
+- 可选添加正文（空一行后写），用于补充变更细节
 - 参考当前分支已有 commit 的用词，**同一分支保持用词一致**
 - 除 type tag（feat、fix、docs 等）、专业术语、组件名、英文专有名词外，**使用中文**描述
 - emoji 由 git hook 自动添加，无需手动写
@@ -35,15 +36,21 @@ description: >
 
 ```
 <type>(<scope>): <中文描述>
+
+<可选正文：补充变更细节>
 ```
 
 **示例：**
 
 ```
 feat: 新增用户登录功能
+
+- 添加登录表单组件
+- 接入 NextAuth.js 认证流程
+```
+
+```
 fix: 修复视频列表加载失败问题
-refactor: 重构支付模块逻辑
-chore: 更新依赖版本
 ```
 
 ---

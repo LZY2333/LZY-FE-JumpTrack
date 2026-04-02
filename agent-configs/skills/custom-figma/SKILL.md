@@ -27,7 +27,7 @@ description: >
 
 ## 一、调用策略
 
-本 skill 通过 **Figma 官方 MCP**（npm 包 `figma-developer-mcp`，配置在 `~/.claude/settings.json` 的 `figma` server）与 Figma 交互。
+本 skill 通过 **Framelink Figma MCP**（npm 包 `figma-developer-mcp`，配置名 `Framelink-Figma-MCP`，token 从环境变量 `FIGMA_MCP_API_KEY` 读取）与 Figma 交互。
 
 Figma API 返回任何错误（403、429、500 等）时，**立即停止流程**，将错误信息告知用户。
 

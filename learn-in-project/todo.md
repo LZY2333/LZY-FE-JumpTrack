@@ -1,8 +1,28 @@
 # todo
 
-last card 不管怎么拖动, 最终态均定格在该卡片被盖住部分. 浏览器宽度缩小,或者说容器宽度变化之后,则再不会出现这个问题。
+## Pollo 3.0.1 image generation页面
 
-create my avatar 及上面的 + 号,  包括其中的文字, 也要考虑放大/缩小.
+理解 /generate页面
+理解 /ai-image-generator页面
+
+assets 页面底部导航挡住userInfo 弹窗
+✅ 移动端去除 generate 飞入动画效果
+
+## 问题修复
+生产 PC端 信息流页面抖动
+✅ 生产 移动端 在history点击播放按钮视频不会播放，要进入视频详情页才能播放
+
+Pollo2.0
+✅ 移动端 usrInfo面板 被 底部导航遮罩
+✅ 移动端 usrInfo面板 页面/assets，底部导航可以向上滚动，如果存在顶部广告则可滚动距离更大
+✅ 移动端 usrInfo面板 Earn 30% Commission 点击跳转未收起
+✅ 移动端 usrInfo面板 一级导航字号样式统一，补充图标
+✅ 新建 avatar 声音选择为空，加载不出图片
+✅ PC端顶部导航 新UI icon精致样式 hover统一
+
+Genie
+✅ 作品生成时，切换到别的workspace又切换回来，generate icon不会显示生成进度了
+✅ generate 左侧导航栏 与 对话框 generating 数量不一致
 
 ## avatar
 
@@ -17,7 +37,8 @@ create my avatar 及上面的 + 号,  包括其中的文字, 也要考虑放大/
 ✅ 修复apps 卡片跳转与回退的页面滚动
 ✅ 修复avatar 滚动定位受到sticky tab遮罩
 
-refetch中将数据置为空，导致 load more 与 setCurrentPage 的查询竞态
+✅ refetch中将数据置为空，导致 load more 与 setCurrentPage 的查询竞态
+✅ create my avatar 及上面的 + 号,  包括其中的文字, 也要考虑放大/缩小.
 
 ## 6. Pollo2.0 两星期
 
