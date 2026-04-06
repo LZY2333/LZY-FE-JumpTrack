@@ -17,7 +17,6 @@
       "/Users/a111111/demo/LZY-FE-JumpTrack"
     ]
   },
-  "model": "opus",
   "enabledPlugins": {
     "codex@openai-codex": true
   },
@@ -31,5 +30,6 @@
   },
   "language": "简体中文",
   "effortLevel": "medium",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "model": "opus"
 }
