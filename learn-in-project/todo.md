@@ -1,12 +1,12 @@
 # todo
 
-## Pollo 3.0.1 image generation页面
+## Safari 信息流抖动
 
-理解 /generate页面
-理解 /ai-image-generator页面
+你先理解一下 Creations 功能，是向上滚动，加载更旧的history
+然后了解一下 @tanstack/react-virtual
 
-assets 页面底部导航挡住userInfo 弹窗
-✅ 移动端去除 generate 飞入动画效果
+页面 /genrate 信息流板块 用户history有多个25张图片的生成历史时, 初始化向上滚动(未触顶) 会触发上下闪动 .
+这个问题(线上 + Safari) 必现且持续十几秒, 本地运行 或 chrome运行 极少出现.
 
 ## 问题修复
 生产 PC端 信息流页面抖动
