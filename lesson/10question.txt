@@ -1,0 +1,264 @@
+
+到这里，大家写的NodeJS + Vite，将一个前端项目编译回了最原始的脚本。
+
+接下来，将正式进入这个"脚本"主战场，JS的主战场 —— 浏览器。
+
+## 单页面应用是怎么做到的?
+
+### 1. 先对齐概念：多页面（MPA） vs 单页面（SPA）
+
+后端最熟悉的是 **多页面**模型——每个 URL 对应服务器上一个真实文件 / 一个 Controller：
+
+```txt
+传统多页面（MPA）
+点击 /about  → 浏览器向服务器发起 GET /about
+            → 服务器返回一个全新的 about.html
+            → 浏览器整页销毁、重新加载、白屏一下
+```
+
+```txt
+单页面（SPA）效果是: 
+点击 /about  → 不向服务器要新 html
+            → JS 把页面里的一块内容换掉
+            → URL 也跟着变成 /about，但页面没刷新
+```
+
+好处：不全屏刷新、状态不丢失（如已填的表单）、切换快、后端压力小、前后端分离。
+
+其本质就是一句话: JS利用现有资源, 控制页面变化, 改变URL, 改变内容, 却不向后端发起页面请求。
+
+### 2. 怎么做到URL改变，却不向后端发起请求?
+
+正常情况下，只要 URL 变了，浏览器就会向服务器发请求、整页刷新。
+
+```js
+location.href = '/about'   // 浏览器立刻跳转 + 刷新，SPA 就破功了
+```
+
+全靠浏览器, 或者说浏览器提供的 BOM 中的 **Hash** 和 **History API**。
+
+### 3. 首先是 Hash 路由
+
+其特征是 `https://site.com/#/about`
+
+URL 中 `#` 后面的部分叫 hash（锚点），**浏览器永远不会把它发给服务器**，且改它不会刷新页面。
+
+```js
+// 调用hash模式 的API 非常简单
+location.hash = '/about'        // 地址栏变成 site.com/#/about，页面不刷新
+
+// 监听 hash 变化（前进、后退、手动改都会触发）
+window.addEventListener('hashchange', () => {
+  console.log('hash 变了：', location.hash)   // "#/about"
+})
+```
+
+利用这个特性，做到了 修改url 且不发送后端请求，不需要controller监听`/about`路由。
+
+而同时JS 又能通过 监听hash变化, 切换组件, 来做到更新内容。
+
+> 同时你会注意到, 修改URL至特定路由 与 特定路由应该展示什么组件, 两者完全解耦
+
+### 4. History 路由
+
+其特征是 `https://site.com/about` 和正常多页面路由完全一样, 却同样不会发送后端请求。
+
+这个机制 依赖浏览器提供的 `history` 对象, 使用它改变url同样不会触发跳转请求。
+
+| API | 作用 |
+|------|------|
+| `history.pushState(state, title, url)` | 新增一条历史记录，地址栏变为 `url`，**不刷新** |
+| `history.replaceState(state, title, url)` | 替换当前历史记录（不新增），**不刷新** |
+| `history.back()` / `forward()` / `go(n)` | 前进、后退、跳 n 步（等价于浏览器的 ← → 按钮） |
+| `popstate` 事件 | 用户点前进/后退时触发（**注意：pushState 本身不触发它**） |
+
+```js
+// 改地址栏为 /about，不触发请求
+history.pushState({ from: 'home' }, '', '/about')
+
+// 监听浏览器前进/后退
+window.addEventListener('popstate', (e) => {
+  console.log('用户点了前进/后退，当前路径：', location.pathname)
+  console.log('当时存的状态：', e.state)   // { from: 'home' }
+})
+```
+
+URL没有 `#` 更干净更漂亮，且浏览器的前进后退按钮同样支持(hash路由也支持)。
+
+缺点是, 用户 在地址栏按回车时 或 刷新页面时 会向后端发起 对应url 的请求(hash路由不会), 因此History路由需要后端支持。
+
+> React-Router Vue-Router 均可在两种路由模式任选其一
+
+### 5. Nginx配置
+
+如果你看过现代前端项目的nginx的配置, 那么你会知道他其实只干三件事
+
+```conf
+server {
+  listen 80;
+  server_name app.example.com;
+  root /var/www/dist;          # 打包产物目录
+
+  # 1. 返回静态资源, 且强缓存
+  location /assets/ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+  }
+
+  # 2. 不管你去哪个子路由, 返回 index.html
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  # 3. /api/ 反向代理到真后端
+  location /api/ {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+}
+```
+
+所以nginx是一个前端老手必备的知识，属于前端的一部分
+
+### 6. 再次理解SPA原理
+
+本质就是两块:
+
+1. 通过不触发请求的方式修改URL
+2. 监听URL的变化, 拿 URL 去路由表里 match，把对应组件渲染出来。
+
+```html
+<!-- 唯一的 index.html -->
+<a href="/" data-link>首页</a>
+<a href="/about" data-link>关于</a>
+<a href="/user/42" data-link>用户42</a>
+<div id="app"></div>
+
+<script>
+// ① 路由表：路径 → 该渲染什么内容（等价于后端的 URL → Controller 映射）
+const routes = {
+  '/':      () => '<h1>首页</h1>',
+  '/about': () => '<h1>关于我们</h1>',
+}
+
+// ② 根据当前 URL 渲染对应内容（match + render）
+function render() {
+  const view = routes[location.pathname] || (() => '<h1>404</h1>')
+  document.querySelector('#app').innerHTML = view()
+}
+
+// ③ 拦截站内链接点击：阻止浏览器默认跳转，改用 pushState
+document.addEventListener('click', (e) => {
+  if (e.target.matches('a[data-link]')) {
+    e.preventDefault()                       // 关键：拦下浏览器的整页跳转
+    history.pushState(null, '', e.target.href) // 只改地址栏
+    render()                                  // 自己换内容
+  }
+})
+
+// ④ 响应浏览器前进/后退
+window.addEventListener('popstate', render)
+
+render()  // 首次进入页面，渲染一次
+</script>
+```
+
+这些事情 vue-router、react-router 都帮你做好了，只需要调用API就行。
+
+### 7. vue-router / react-router
+
+**Vue（vue-router）：**
+
+```js
+// src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import Home from '@/views/Home.vue'
+
+const routes = [
+  { path: '/',          component: Home },
+  { path: '/user/:id',  component: () => import('@/views/User.vue') }, // 懒加载
+]
+
+export default createRouter({
+  history: createWebHistory(),   // history 模式；createWebHashHistory() 即 hash 模式
+  routes,                        // ← 这就是上面手写版的"路由表"
+})
+```
+
+```vue
+<!-- App.vue -->
+<router-link to="/about">关于</router-link>  <!-- 等价手写版的 <a data-link> -->
+<router-view />                               <!-- 内容出口，等价 #app -->
+```
+
+**React（react-router）：**
+
+```jsx
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+
+function App() {
+  return (
+    <BrowserRouter>                          {/* history 模式；HashRouter 即 hash */}
+      <Link to="/about">关于</Link>           {/* 导航入口 */}
+      <Routes>                               {/* 路由表 */}
+        <Route path="/"         element={<Home />} />
+        <Route path="/user/:id" element={<User />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
+```
+
+两者命名几乎一一对应：`<router-link>`↔`<Link>`、`<router-view>`↔`<Routes>`、`createWebHistory`↔`BrowserRouter`。
+
+### 7. 路由的完整能力地图
+
+| 能力 | vue-router | react-router | 说明 |
+|------|-----------|--------------|------|
+| **动态参数** | `path: '/user/:id'` | `path="/user/:id"` | URL 上的变量，如 `/user/42` |
+| 读参数 | `useRoute().params.id` | `useParams().id` | 拿到 `42` |
+| 读查询串 | `useRoute().query.kw` | `useSearchParams()` | `?kw=x` 的部分 |
+| **编程式导航** | `useRouter().push('/about')` | `useNavigate()('/about')` | 不靠点链接，用代码跳转 |
+| 替换 / 回退 | `.replace()` / `.back()` | `navigate(-1)` | 对应 `replaceState` / `history.back` |
+| **嵌套路由** | `children: [...]` | 嵌套 `<Route>` | 父布局 + 子内容出口 |
+| **路由守卫** | `router.beforeEach()` | `<Route loader>`/包装组件 | 鉴权拦截，最常用 |
+| **懒加载** | `() => import(...)` | `lazy(() => import(...))` | 路由级代码分割 |
+
+两个对后端最有用的点，展开看：
+
+**① 路由守卫 —— 前端的"拦截器 / 过滤器"**，未登录就踢回登录页：
+
+```js
+router.beforeEach((to, from) => {
+  if (to.path !== '/login' && !localStorage.getItem('token')) {
+    return '/login'        // 拦截并改道，等价后端的 Interceptor
+  }
+})
+```
+
+**② 懒加载 —— 呼应第一节的"代码分割"伏笔**。`() => import()` 写法让打包工具把每个路由单独拆成一个 `.js` 文件，首屏只下载当前页，访问到才加载对应分包：
+
+```js
+{ path: '/report', component: () => import('@/views/Report.vue') }
+// 打包后：Report 单独成 report.a1b2.js，进首页时不加载，点进去才请求
+```
+
+### 小结与伏笔
+
+- SPA 路由的本质：**全站一个 html，用 JS 模拟换页**——拦截导航、改地址栏、匹配渲染，三步而已。
+- 两把钥匙：`location.hash`（hash 模式）与 `history.pushState`（history 模式）。
+- History 模式刷新会 404，**必须后端配 fallback 到 index.html**。
+- 路由库 = 这三步 + 参数 / 嵌套 / 守卫 / 懒加载。
+
+**伏笔**：路由表里写的 `component: Home`，那个 `Home` 既不是 HTML 标签，也不是普通函数，却能被当作"页面"渲染出来——**组件到底是什么？为什么能像标签一样互相引用？** 正是下一节的内容。
+
+## (组件化)组件并不是原生HTML标签, 却能像标签一样相互引用, 还能在浏览器上运行, 这是怎么实现的?
+
+## this的指向?
+
+## 样式
+
+## TS
+
+## promise
