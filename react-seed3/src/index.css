@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --ant-primary-color: #ff2d2d;
+  --ant-primary-color-hover: #ff5c5c;
+  --ant-primary-color-active: #cc0000;
+  --ant-primary-color-outline: rgba(255, 45, 45, 0.2);
+}
+
+.ant-layout-sider,
+.ant-layout-sider .ant-menu {
+  background: #fff5f5 !important;
+}
+
+.ant-layout-header {
+  background: #fff5f5 !important;
+  border-bottom: 1px solid #ffd6d6;
+}
+
+.ant-layout-sider {
+  border-right: 1px solid #ffd6d6;
+}
+
+.ant-menu-light .ant-menu-item:hover,
+.ant-menu-light .ant-menu-item-active {
+  color: var(--ant-primary-color) !important;
+}
+
+.ant-menu-light .ant-menu-item-selected {
+  background-color: #fff0f0 !important;
+  color: var(--ant-primary-color) !important;
+}
+
+.ant-menu-light .ant-menu-item-selected::after {
+  border-right-color: var(--ant-primary-color) !important;
+}
