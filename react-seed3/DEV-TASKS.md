@@ -33,7 +33,7 @@
 
 ### T-03 当前用户 Store
 
-- [x] `src/store/useAuthStore.ts`，存 `{ id, name, roles }`，默认 U003
+- [x] `src/store/useUserStore.ts`，存 `{ id, name, roles }`，默认 U003
 - [x] Header 右上角角色切换下拉
 
 ---

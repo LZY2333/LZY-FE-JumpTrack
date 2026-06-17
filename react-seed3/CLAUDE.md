@@ -18,9 +18,24 @@
 `@/` 指向 `src/`，所有跨目录引用使用别名，禁止使用 `../../` 相对路径。
 
 ```ts
-import useAuthStore from '@/store/useAuthStore';
+import useUserStore from '@/store/useUserStore';
 import type { TaskDetail } from '@/types/task';
 ```
+
+## 命名规范
+
+| 目录 | 文件夹命名 | 文件命名 |
+|---|---|---|
+| `src/pages/` | kebab-case（`task-pool/`） | `index.tsx` |
+| `src/components/` | PascalCase（`TaskForm/`） | `index.tsx` |
+| `src/store/` | — | camelCase（`useUserStore.ts`） |
+| `src/types/` | — | camelCase（`task.ts`、`enums.ts`） |
+| `src/mock/` | — | camelCase（`tasks.ts`） |
+
+- `pages/` 用 kebab-case，与 URL 路径对应；`components/` 用 PascalCase，与组件名对应
+- 每个页面/组件文件夹的主文件统一为 `index.tsx`，import 路径无需写文件名
+- 非组件文件（hook、store、工具、类型）统一用 camelCase 单文件，不建文件夹
+- 组件函数名始终用 PascalCase，与文件夹命名风格无关
 
 ## 样式规范
 

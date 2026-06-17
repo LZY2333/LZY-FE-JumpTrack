@@ -1,22 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Spin, Typography, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import axios from 'axios';
-import TaskForm from '@/components/TaskForm';
-import type { TaskDetail } from '@/types/task';
+import TaskForm, { TaskFormRef } from '@/components/TaskForm';
+import type { TaskDetail } from '@/types';
+import { getTask, submitTask } from '@/api/tasks';
 
 export default function MakerPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [task, setTask] = useState<TaskDetail | null>(null);
+  const formRef = useRef<TaskFormRef>(null);
 
   useEffect(() => {
-    if (id) axios.get(`/api/task/${id}`).then(res => setTask(res.data.data));
+    if (id) getTask(id).then(setTask);
   }, [id]);
 
   const handleSubmit = () => {
-    axios.post(`/api/task/submit/${id}`).then(() => {
+    const updated = formRef.current?.getValues();
+    if (!id || !updated) return;
+    submitTask(id, updated).then(() => {
       message.success('提交成功');
       navigate('/');
     });
@@ -31,7 +34,7 @@ export default function MakerPage() {
         <Typography.Text strong>任务 {id} – OPC AET Maker</Typography.Text>
       </div>
 
-      <TaskForm task={task} />
+      <TaskForm ref={formRef} task={task} />
 
       <div className="mt-6 flex justify-between">
         <Button onClick={() => navigate('/')}>Cancel</Button>

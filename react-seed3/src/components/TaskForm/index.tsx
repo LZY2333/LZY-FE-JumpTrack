@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Button, Card, Col, DatePicker, Form, Input, InputNumber, List, Modal, Radio, Row, Upload } from 'antd';
 import { DeleteOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
 import type { Moment } from 'moment';
 import moment from 'moment';
-import type { TaskDetail } from '@/types/task';
+import type { TaskDetail } from '@/types';
 
 interface Attachment {
   name: string;
@@ -14,6 +14,10 @@ interface Props {
   task: TaskDetail;
   readonly?: boolean;
   modifiedFields?: string[];
+}
+
+export interface TaskFormRef {
+  getValues: () => TaskDetail;
 }
 
 const customerFields = (task: TaskDetail) => [
@@ -27,7 +31,7 @@ const customerFields = (task: TaskDetail) => [
   { label: 'Custodian Account', value: task.custodianAccount },
 ];
 
-export default function TaskForm({ task, readonly = false, modifiedFields = [] }: Props) {
+const TaskForm = forwardRef<TaskFormRef, Props>(({ task, readonly = false, modifiedFields = [] }, ref) => {
   const [form] = Form.useForm();
   const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
   const [attachments, setAttachments] = useState<Attachment[]>(task.attachments);
@@ -48,6 +52,28 @@ export default function TaskForm({ task, readonly = false, modifiedFields = [] }
     });
     setAttachments(task.attachments);
   }, [task, form]);
+
+  // 提交时把表单当前值与用户实际触碰过的字段名一并暴露给父组件，
+  // 后端按值 diff 无法还原已修改后又改回原值这类交互事实，因此 modifiedFields 必须由前端给出
+  useImperativeHandle(ref, () => ({
+    getValues: () => {
+      const values = form.getFieldsValue();
+      return {
+        ...task,
+        ourRef: values.ourRef,
+        yourRef: values.yourRef,
+        aipDate: values.aipDate ? (values.aipDate as Moment).format('YYYY-MM-DD') : '',
+        aipExpiryDate: values.aipExpiryDate ? (values.aipExpiryDate as Moment).format('YYYY-MM-DD') : '',
+        faDate: values.faDate ? (values.faDate as Moment).format('YYYY-MM-DD') : '',
+        ciesTerminationDate: values.ciesTerminationDate ? (values.ciesTerminationDate as Moment).format('YYYY-MM-DD') : '',
+        transferred3M: values.transferred3M,
+        withdrawableInterests: { HKD: values.withdrawableHKD, USD: values.withdrawableUSD },
+        transferredInterests: { HKD: values.transferredHKD, USD: values.transferredUSD },
+        attachments,
+        modifiedFields: Array.from(changedFields),
+      };
+    },
+  }), [task, form, attachments, changedFields]);
 
   // Maker 模式：用户手动改过的字段加黄色边框；Checker 模式：Maker 已保存的修改字段加黄色背景
   // 两种高亮来源不同，故用不同样式区分
@@ -113,7 +139,7 @@ export default function TaskForm({ task, readonly = false, modifiedFields = [] }
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item name="aipExpiryDate" label="AIP Expiry Date（系统计算）">
+                <Form.Item name="aipExpiryDate" label="AIP Expiry Date">
                   <DatePicker className="w-full" disabled />
                 </Form.Item>
               </Col>
@@ -207,4 +233,6 @@ export default function TaskForm({ task, readonly = false, modifiedFields = [] }
       </Col>
     </Row>
   );
-}
+});
+
+export default TaskForm;

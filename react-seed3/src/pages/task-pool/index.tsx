@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Badge, Button, DatePicker, Modal, Select, Space, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { Moment } from 'moment';
-import axios from 'axios';
-import useAuthStore from '@/store/useAuthStore';
+import useUserStore from '@/store/useUserStore';
 import { TaskStatus, Role } from '@/types/enums';
-import type { Task } from '@/mock/tasks';
+import type { Task } from '@/types';
+import { getTasks } from '@/api/tasks';
 
 const STATUS_COLOR: Record<TaskStatus, string> = {
   [TaskStatus.Pending]: 'blue',
@@ -19,15 +19,14 @@ const ALERT_KEY = 'cies_expiry_alerted';
 
 export default function TaskPool() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [dateRange, setDateRange] = useState<[Moment, Moment] | null>(null);
   const [alertTasks, setAlertTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    axios.get('/api/tasks').then(res => {
-      const data: Task[] = res.data.data;
+    getTasks().then(data => {
       setTasks(data);
       if (!sessionStorage.getItem(ALERT_KEY)) {
         const due = data.filter(t => t.daysUntilDue !== null && t.daysUntilDue <= 2);
@@ -46,6 +45,7 @@ export default function TaskPool() {
   }), [tasks, statusFilter, dateRange]);
 
   const handleDoubleClick = (record: Task) => {
+    if(!user) return;
     const { roles } = user;
     // 任务状态优先于角色：双角色用户（maker+checker）在任务已提交（Pending Checker）时进入 checker 页，
     // 否则进入 maker 页；纯 checker 用户始终进入 checker 页

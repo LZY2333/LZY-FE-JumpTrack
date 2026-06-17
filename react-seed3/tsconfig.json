@@ -15,6 +15,6 @@
     "esModuleInterop": true,
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["src"],
+  "include": ["src", "mock"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

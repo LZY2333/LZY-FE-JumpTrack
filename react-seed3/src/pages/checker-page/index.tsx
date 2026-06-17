@@ -2,31 +2,31 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Spin, Typography, message } from 'antd';
 import { ArrowLeftOutlined, CheckOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import TaskForm from '@/components/TaskForm';
-import useAuthStore from '@/store/useAuthStore';
-import type { TaskDetail } from '@/types/task';
+import useUserStore from '@/store/useUserStore';
+import type { TaskDetail } from '@/types';
+import { getTask, returnTask, approveTask } from '@/api/tasks';
 
 export default function CheckerPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   const [task, setTask] = useState<TaskDetail | null>(null);
 
   useEffect(() => {
-    if (id) axios.get(`/api/task/${id}`).then(res => setTask(res.data.data));
+    if (id) getTask(id).then(setTask);
   }, [id]);
 
   const handleReturn = () => {
-    axios.post(`/api/task/return/${id}`).then(() => navigate('/'));
+    returnTask(id!).then(() => navigate('/'));
   };
 
   const handleApprove = () => {
-    if (task?.makerId === user.id) {
+    if (task?.makerId === user?.id) {
       message.error('Maker 与 Checker 不能为同一人');
       return;
     }
-    axios.post(`/api/task/approve/${id}`).then(() => {
+    approveTask(id!).then(() => {
       message.success('审核通过');
       navigate('/');
     });

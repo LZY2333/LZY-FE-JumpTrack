@@ -1,9 +1,9 @@
-import { type ReactNode } from 'react';
+import type { ReactElement } from 'react';
 import { Navigate } from 'react-router-dom';
-import useAuthStore from '@/store/useAuthStore';
+import useUserStore from '@/store/useUserStore';
 import { Role } from '@/types/enums';
 
-export default function PrivateRoute({ children }: { children: ReactNode }) {
-  const { user } = useAuthStore();
-  return user.roles.includes(Role.Admin) ? <>{children}</> : <Navigate to="/" replace />;
+export default function PrivateRoute({ role, children }: { role: Role; children: ReactElement }) {
+  const { user } = useUserStore();
+  return user?.roles.includes(role) ? children : <Navigate to="/" replace />;
 }

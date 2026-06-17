@@ -36,3 +36,7 @@
 .ant-menu-light .ant-menu-item-selected::after {
   border-right-color: var(--ant-primary-color) !important;
 }
+
+.ant-tag {
+  margin-right: 0;
+}

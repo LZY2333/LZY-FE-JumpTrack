@@ -1,13 +1,6 @@
 import { TaskStatus } from '@/types/enums';
-
-export interface Task {
-  id: string;
-  refNo: string;
-  customerName: string;
-  createdAt: string;
-  status: TaskStatus;
-  daysUntilDue: number | null;
-}
+import type { Task, TaskDetail } from '@/types';
+import { mockTaskDetail } from './taskDetail';
 
 // 模块级可变数组：Node.js 模块单例，dev server 进程存活期间状态持久，mock 接口直接修改此数组
 export const mockTasks: Task[] = [
@@ -33,9 +26,10 @@ export default [
   {
     url: '/api/task/submit/:id',
     method: 'post',
-    response: (opt: { url: string }) => {
+    response: (opt: { url: string; body: TaskDetail }) => {
       const task = mockTasks.find(t => t.id === extractId(opt.url));
       if (task) task.status = TaskStatus.PendingChecker;
+      Object.assign(mockTaskDetail, opt.body);
       return { code: 0 };
     },
   },

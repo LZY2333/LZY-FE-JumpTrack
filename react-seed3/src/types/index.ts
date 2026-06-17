@@ -1,4 +1,19 @@
-import { YesNo } from './enums';
+import { Role, TaskStatus, YesNo } from './enums';
+
+export interface User {
+  id: string;
+  name: string;
+  roles: Role[];
+}
+
+export interface Task {
+  id: string;
+  refNo: string;
+  customerName: string;
+  createdAt: string;
+  status: TaskStatus;
+  daysUntilDue: number | null;
+}
 
 export interface TaskDetail {
   id: string;
