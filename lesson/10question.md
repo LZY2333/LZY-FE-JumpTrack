@@ -596,12 +596,369 @@ router.beforeEach((to, from) => {
 
 **伏笔**：路由表里写的 `component: Home`，那个 `Home` 既不是 HTML 标签，也不是普通函数，却能被当作"页面"渲染出来——**组件到底是什么？为什么能像标签一样互相引用？** 正是下一节的内容。
 
-## (组件化)组件并不是原生HTML标签, 却能像标签一样相互引用, 还能在浏览器上运行, 这是怎么实现的?
+## 组件到底是什么？为什么能像标签一样引用？(组件化)
 
-## this的指向?
+```jsx
+<Home />          // 浏览器：这是什么？我只认识 div、h1…
+<HelloWorld name="LZY" />
+```
 
-## 样式
+如果直接把这段塞进 `.html`，浏览器会当成未知标签忽略掉。
 
-## TS
+### 1. 组件的本质：一个返回「虚拟 DOM」的函数
 
-## promise
+### 2. React 组件
+
+```jsx
+// 组件源码 Hello.jsx:
+function Hello({ name }) {
+  return <h1 className="title">Hello {name}</h1>
+}
+```
+
+```js
+// npm run build 编译后(React 17+):
+import { jsxs as _jsxs } from "react/jsx-runtime"
+function Hello({ name }) {
+  return _jsxs("h1", { className: "title", children: ["Hello ", name] })
+}
+// React 17 以前(classic)
+function Hello({ name }) {
+  return React.createElement("h1", { className: "title" }, "Hello ", name)
+}
+```
+
+```js
+// 浏览器执行后:
+const props = {name: 'LZY'}
+const VDom = Hello(props)
+console.log(VDom)
+// { type: "h1", props: { className: "title" }, children: ["Hello ", "LZY"] }
+```
+
+### 3. 自定义组件：引用的本质是函数调用
+
+```jsx
+// 组件源码 App.jsx:  父组件里引用子组件 Hello
+import Hello from './Hello'
+function App() {
+  return (
+    <div className="app">
+      <Hello name="LZY" />
+      <Hello name="Tom" />
+    </div>
+  )
+}
+```
+
+```js
+// npm run build 编译后(React 17+):
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime"
+import Hello from './Hello'
+function App() {
+  return _jsxs("div", { className: "app", children: [
+    _jsx(Hello, { name: "LZY" }),        // ← 自定义组件：type 是 Hello 函数本身
+    _jsx(Hello, { name: "Tom" })
+  ] })
+}
+// React17以前(classic)
+function App() {
+  return React.createElement("div", { className: "app" },
+    React.createElement(Hello, { name: "LZY" }),   // ← 第一个参数是 Hello 函数，不是字符串
+    React.createElement(Hello, { name: "Tom" })
+  )
+}
+```
+
+于是「组件嵌套组件」本质就是「函数调用函数」，依赖关系一路串成第 1 节讲的依赖树。这就是它能像标签一样无限相互引用的原因。
+
+### 4. Vue 组件也是同样的道理，顺便看一眼
+
+```vue
+<!-- 组件源码: Hello.vue -->
+<template>
+  <h1 class="title">Hello {{ name }}</h1>
+</template>
+
+<script setup>
+defineProps({ name: String })
+</script>
+```
+
+```js
+// @vue/compiler-sfc 编译后
+import { toDisplayString as _toDisplayString, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+export function render(_ctx) {
+  return (_openBlock(), _createElementBlock(
+    "h1",
+    { class: "title" },
+    "Hello " + _toDisplayString(_ctx.name),
+    1 /* TEXT */
+  ))
+}
+```
+
+```js
+// vite.config.js
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'   // 内部驱动 @vue/compiler-sfc 编译 .vue
+
+export default defineConfig({
+  plugins: [vue()],
+})
+```
+
+```js
+// vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'   // 内部驱动 babel/esbuild 做 JSX 转换
+
+export default defineConfig({
+  plugins: [react()],
+})
+```
+
+> `.jsx` 交给 plugin-react，`.vue` 交给 plugin-vue，最终都转成执行返回值为虚拟 DOM 的函数
+
+### 5. 为什么需要虚拟 DOM？
+
+真实 DOM：浏览器一个页面里的真实节点。
+
+虚拟 DOM：则是用一个普通 JS 对象，描述一个真实 DOM 节点长什么样。
+
+```js
+// React element 真实长相
+const ReactElement = {
+  $$typeof: Symbol(react.element),
+  type: "h1",
+  key: null,
+  ref: null,
+  props: {
+    className: "title",
+    children: ["Hello ", "LZY"]
+  }
+}
+
+// Vue VNode 真实长相（你选中代码 render 执行后）
+const VueVNode = {
+  __v_isVNode: true,                 // Vue 的 VNode 标记
+  type: "h1",
+  props: { class: "title" },
+  children: "Hello LZY",
+  shapeFlag: 9,                      // ELEMENT + TEXT_CHILDREN，告诉运行时"我是元素、孩子是文本"
+  patchFlag: 1,                      // /* TEXT */ 编译期算好的"只有文本会变"
+  key: null,
+  ref: null,
+  el: null,                          // 挂载后指向真实 DOM 节点
+  dynamicChildren: null
+  // …还有 appContext 等
+}
+```
+
+**真实节点的缺点**：一个最小的 `<div>` 真实节点，挂着几百个属性（`style`、`offsetTop`、事件…），内存占用大，且一旦修改就会立即引发页面变化。
+
+虚拟 DOM 作为一个中间对象，先在内存里用极少的字段描述真实 DOM。
+
+有了这个基础之后我们可以做到:
+
+- **最小化真实 DOM 操作**：状态变化时，生成新虚拟 DOM，与旧的**比对（diff）**，只把**变化的那几处**打补丁到真实 DOM，避免全量重建。
+- **声明式开发**：你只描述「UI 是什么」，框架负责「怎么变」，不用手写一行行 DOM 增删改。
+- **批量更新**：多次状态变更可合并成一次 diff、一次提交，减少重排重绘次数。
+- **跨平台**：虚拟 DOM 只是 JS 对象，换个渲染器就能渲染到别处（React Native 渲染成原生 App，SSR 渲染成 HTML 字符串），不绑定浏览器。
+- **可优化、可预测**：UI 变成「数据 → 对象树」的纯函数映射，便于 diff 策略（`key`）、编译期优化（Vue 的 `patchFlag`）等做文章。
+
+### 6. 编译与渲染分离
+
+经过上面的步骤，我们终于得到了虚拟 DOM。接下来要做的，就是把它变成真实 DOM。
+
+React 代码里常常能看到下面这两条 import：
+
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+```
+
+仔细观察会发现一条分工规律：组件、Hooks（`useState`、`useEffect`…）、`createElement` / JSX 这些「描述 UI」的能力，都从 `'react'` 引入；而 `render`、`createRoot`、`hydrate` 这些「把 UI 真正挂到页面上」的能力，则从 `'react-dom'` 引入。
+
+一句话总结：
+
+- `'react'` 是**声明层**，只负责定义「UI 长什么样」，产出与平台无关的虚拟 DOM；
+- `'react-dom'` 是**渲染层**，负责把虚拟 DOM 落地到具体宿主环境（浏览器 DOM）。
+
+换个渲染层就能换平台——比如 `react-native` 渲染成原生组件、`react-three-fiber` 渲染成 3D 场景。
+
+这就是「编译（声明）与渲染分离」。
+
+```txt
+【开发机 / Node.js，打包期】
+① 源码          Hello.jsx / Hello.vue        ← 你写的，浏览器不认识
+      │  编译器（babel / esbuild / @vue/compiler-sfc，由 vite 插件驱动）
+      ▼
+② 编译产物      转译后的 JS（render 函数 / createElement 调用）  ← 浏览器能认的 JS
+      │  打包器（Rollup，build 时；dev 时 vite 走 ESM 不打包）
+      ▼
+③ 打包产物      bundle / dist 产物（带 hash 的 .js + .css + index.html）
+─────────────────────────  部署，浏览器下载  ─────────────────────────
+【用户浏览器，运行期】
+      │  JS 引擎执行（V8）：调用 render 函数
+      ▼
+④ 虚拟 DOM      VNode 对象树（内存里的 JS 对象，描述 UI）
+      │  框架渲染器 / 协调器（React Reconciler、Vue renderer）：diff + 调 DOM API
+      ▼
+⑤ 真实 DOM      document 上的真实节点树（document.createElement 产物）
+      │  浏览器渲染引擎：样式计算 → 布局(重排) → 绘制(重绘) → 合成
+      ▼
+⑥ 像素 / UI     用户最终看到的画面
+```
+
+## 为什么改一个变量，页面就自己变了？（响应式 / 数据驱动）
+
+我们了解一个框架，要知道框架整个业务流程其实是要解决两件事
+
+包括看源码，我们也是要按照两个脉络去看:
+
+初始化 和 更新
+
+上面的所有内容其实是解决了第一个问题，初始化，那么我们这节要解决下一个问题，更新:
+
+### 1. 先看清这件"反直觉"的事
+
+如果不用框架，纯手写原生 JS，想让页面上的数字变一下，你得亲自去操作 DOM：
+
+```js
+let count = 0
+const btn = document.getElementById('btn')
+btn.onclick = () => {
+  count++
+  btn.textContent = `点了 ${count} 次`   // 必须手动把新值写回 DOM
+}
+```
+
+数据（`count`）和视图（按钮文本）是两套东西，你得**手动**把数据搬到视图上。漏写一行，页面就不动。
+
+框架颠覆的就是这一点：
+
+> 你只改一个 JS 变量（`count++` 或 `setCount`），不碰任何 DOM，页面上对应的那块就自己变了。
+
+这就是「**响应式 / 数据驱动**」：UI 是数据的「投影」，数据一变，投影自动跟着变。你不再操心「怎么把新值塞进 DOM」，只操心「数据应该是多少」。
+
+那么问题来了——**框架是怎么"知道"我改了数据、又是怎么把变化精确反映到页面上的？**
+
+### 2. 响应式要解决的两件事
+
+把上面的问题拆开，任何框架的「更新」流程，本质都要解决两件事：
+
+1. **监听**：数据一变，框架要第一时间知道「变了」，还要知道「谁用了这个数据」。
+2. **更新**：知道之后，重新生成新的虚拟 DOM，和旧的 diff，只把变化处打补丁到真实 DOM（这一步就是上一节讲的渲染）。
+
+第 2 步 Vue 和 React 几乎一样（都是 diff + patch）。**真正分道扬镳的是第 1 步——"怎么知道数据变了"**：
+
+- **Vue 走「自动追踪」**：劫持你的数据对象，你怎么改它都能拦截到。
+- **React 走「手动通知」**：不劫持数据，要你自己调用 `setState` 告诉它「我变了」。
+
+### 3. Vue：Proxy 劫持（自动追踪）
+
+Vue 3 用 ES6 的 `Proxy` 把你的数据对象包了一层。读取（get）时偷偷记下「谁在用我」（依赖收集），赋值（set）时通知所有用到它的地方更新（触发更新）。
+
+```js
+// 极简版，示意 Vue 响应式的核心
+const state = reactive({ count: 0 })   // 内部用 Proxy 包了一层
+
+effect(() => {
+  // 读 state.count → Proxy 的 get 触发 → 记下"这个 effect 依赖 count"
+  console.log('视图渲染：', state.count)
+})
+
+state.count++   // 赋值 → Proxy 的 set 触发 → 通知上面的 effect 重新执行
+```
+
+> 关键点：你**直接改** `state.count++` 就行，Proxy 的 `set` 拦截器会自动被触发，用到它的组件自动重渲染。你感觉不到「通知」这一步，所以叫「自动追踪」。
+
+### 4. React：setState 触发重渲染（手动通知）
+
+React 反过来：它**不碰你的数据**，也就无从"自动知道"你改了什么。约定是——你必须通过 `setState`（函数组件里是 `useState` 返回的 setter）来告诉 React「状态变了，请重渲染」。
+
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <button onClick={() => setCount(count + 1)}>   {/* ✅ 调 setter，React 才知道 */}
+      点了 {count} 次
+    </button>
+  )
+}
+```
+
+收到 `setCount` 后，React 会**重新执行整个 `Counter` 函数**，得到一棵新的虚拟 DOM，再去 diff、patch。
+
+```jsx
+// ❌ 反例：直接改变量，React 完全无感，页面不会动
+let count = 0
+function Counter() {
+  return <button onClick={() => count++}>点了 {count} 次</button>
+}
+```
+
+直接 `count++` 不会触发任何重渲染——因为没人通知 React，它根本不知道发生了什么。这也是为什么 React 里**绝不能直接改 state**，必须走 setter。
+
+两条路线对比：
+
+| | Vue | React |
+|---|---|---|
+| 怎么知道数据变了 | Proxy 劫持，自动拦截 | 你手动调 `setState` 通知 |
+| 改数据的写法 | 直接改 `state.count++` | 调 setter `setCount(count+1)` |
+| 更新粒度 | 精确到用到该数据的组件 | 默认重渲染整个组件（及子树） |
+| 心智模型 | 「数据是响应式的」 | 「状态变了要通知我」 |
+
+### 5. 变了之后：虚拟 DOM diff 与 key
+
+不管是 Vue 的自动触发，还是 React 的手动通知，**接下来的动作是一样的**：拿到「新虚拟 DOM」，和「旧虚拟 DOM」逐层比对（diff），算出最小差异，只把变化的那几处 patch 到真实 DOM。
+
+列表场景下，diff 算法需要一个线索来判断「新旧两棵树里，哪个节点是同一个」——这就是 `key` 的作用。
+
+```jsx
+// 列表头部插入一项
+// 旧：[B, C]      新：[A, B, C]
+
+// ❌ 不写 key（按位置比对）：
+// 位置0: B→A 改文本, 位置1: C→B 改文本, 位置2: 新增 C  → 改了 3 处
+
+// ✅ 写 key（按身份比对）：
+// key=B、key=C 原地不动，只在头部新增 key=A  → 只动 1 处
+{list.map(item => <li key={item.id}>{item.name}</li>)}
+```
+
+> 所以列表要写 `key`，而且必须用**稳定且唯一**的 id（别用数组下标 `index`——插入/删除时下标会整体错位，等于没写）。`key` 是给 diff 算法的「身份证」，让它能跨次渲染认出「你还是原来那个节点」，从而复用而不是重建。
+
+### 小结：一次更新的完整链路
+
+```txt
+① 数据变化      Vue: 改 state.count   /   React: 调 setCount()
+      │  Vue: Proxy set 拦截，自动触发   |   React: setter 标记组件待更新
+      ▼
+② 通知框架      "用到这个数据的组件需要更新了"
+      │  重新执行 render / 组件函数
+      ▼
+③ 新虚拟 DOM    生成一棵新的 VNode 树
+      │  和上一次的旧树逐层比对（diff，靠 key 认节点）
+      ▼
+④ 最小差异      算出"只有这几处不一样"
+      │  patch：只调用必要的 DOM API
+      ▼
+⑤ 真实 DOM      页面上对应的那一小块更新，用户看到变化
+```
+
+一句话收束：**改一个变量页面就自己变，靠的是「框架感知数据变化 → 重新生成虚拟 DOM → diff → 只更新变化的那一点点」这条链路。** 你只管描述数据，剩下的交给框架。
+
+## 单线程的 JS 怎么做到「同时」干很多事？（事件循环 / 异步）
+
+- 冲突：第 1 节说「Node 单线调用」，那 setTimeout、fetch、await 凭什么不卡死
+- 闭环：调用栈 + Web APIs + 宏/微任务队列；Promise/async-await 本质
+- 这块对后端最反直觉，建议单独成节
+
+## TypeScript 在运行时消失了，它到底约束了什么？
+
+- 呼应第 2 节伏笔（tsconfig.json vs tsconfig.node.json）
+- 类型仅编译期存在，对后端「强类型」认知是个冲突点
