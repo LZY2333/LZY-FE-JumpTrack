@@ -2,6 +2,10 @@ agent-configs/.claude/
 agent-configs/.codex/
 .DS_Store
 
+# Node
+node_modules/
+package-lock.json
+
 # Java / Maven
 target/
 *.class
