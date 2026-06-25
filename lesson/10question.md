@@ -607,6 +607,16 @@ router.beforeEach((to, from) => {
 
 ### 1. 组件的本质：一个返回「虚拟 DOM」的函数
 
+前端非常单纯，每一个组件就是一个函数，组件嵌套，就是函数嵌套。
+
+前端很多东西的原理，你去了解了，彻底吃透了，其实逻辑就非常简单，非常有意思。
+
+这里我准备了一个 playground 一个demo项目，带大家一起玩一玩。
+
+组件自不必说, 在浏览器里显示的肯定不是你的组件标签了, 那么新的问题来了, 你在组件中写的原生标签:
+
+`<div>Hello</div>`, 和最终显示在HTML中的`<div>Hello</div>` 是否是同一个?
+
 ### 2. React 组件
 
 ```jsx
@@ -661,9 +671,10 @@ function App() {
     _jsx(Hello, { name: "Tom" })
   ] })
 }
+
 // React17以前(classic)
 function App() {
-  return React.createElement("div", { className: "app" },
+  return React.createElement("div", { className: "app" }, // ← 注意Div是字符串
     React.createElement(Hello, { name: "LZY" }),   // ← 第一个参数是 Hello 函数，不是字符串
     React.createElement(Hello, { name: "Tom" })
   )
@@ -779,7 +790,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 ```
 
-仔细观察会发现一条分工规律：组件、Hooks（`useState`、`useEffect`…）、`createElement` / JSX 这些「描述 UI」的能力，都从 `'react'` 引入；而 `render`、`createRoot`、`hydrate` 这些「把 UI 真正挂到页面上」的能力，则从 `'react-dom'` 引入。
+仔细观察会发现一条分工规律：组件、Hooks（`useState`、`useEffect`…）、`createElement` / JSX 这些「描述 UI」的能力，都从 `'react'` 引入；
+
+而 `render`、`createRoot`、`hydrate` 这些「把 UI 真正挂到页面上」的能力，则从 `'react-dom'` 引入。
 
 一句话总结：
 
@@ -812,15 +825,113 @@ import ReactDOM from 'react-dom';
 ⑥ 像素 / UI     用户最终看到的画面
 ```
 
-## 为什么改一个变量，页面就自己变了？（响应式 / 数据驱动）
+## 为什么改一个变量，页面就自己变了？（响应式 / 数据驱动 / MVVM）
 
 我们了解一个框架，要知道框架整个业务流程其实是要解决两件事
 
 包括看源码，我们也是要按照两个脉络去看:
 
-初始化 和 更新
+初始化(怎么生成页面) 和 更新(数据变化怎么影响视图)
 
 上面的所有内容其实是解决了第一个问题，初始化，那么我们这节要解决下一个问题，更新:
+
+### 插播一段前端发展史
+
+请大家思考一个问题，框架的目的是什么? 或者说 JS所有的努力指向的最终结果一定是什么? JS诞生的意义是什么?
+
+#### 阶段一：原生 DOM 操作（命令式起点）
+
+JS 诞生就是为了操作 DOM。最原始的方式：手动找节点、手动改节点，数据和视图全靠人肉同步。
+
+```js
+let count = 0
+// 手动获取 DOM
+const btn = document.getElementById('btn')
+const span = document.getElementById('count')
+// 手动绑定事件 + 手动更新 DOM
+btn.addEventListener('click', () => {
+  count++
+  span.innerText = count   // 数据变了，得自己同步到视图
+})
+```
+
+痛点：节点查找繁琐、浏览器 API 不统一、数据和视图要手动同步，代码全是"找节点—改节点"的样板。
+
+#### 阶段二：jQuery（封装与抹平兼容）
+
+jQuery 没改变命令式的本质，但用 `$()` 链式调用把"选择 + 操作 + 兼容"封装得极其顺手，并抹平了 IE 等浏览器差异。
+
+```js
+let count = 0
+$('#btn').on('click', () => {
+  count++
+  $('#count').text(count)   // 选择器 + 操作一气呵成，跨浏览器一致
+})
+```
+
+进步：开发效率大幅提升。局限：依然要"手动同步数据与视图"，页面一复杂，DOM 操作就遍地开花，难以维护。
+
+#### 阶段三：模板语法（所见即所得）
+
+能不能直接"声明"视图长什么样，让模板引擎把数据填进去？于是有了 Mustache / Handlebars 这类模板。
+
+```js
+const tpl = `
+  <ul>
+    {{#each list}}
+      <li>{{name}} - {{age}}岁</li>
+    {{/each}}
+  </ul>
+`
+const data = { list: [{ name: '张三', age: 18 }, { name: '李四', age: 20 }] }
+// 数据 + 模板 => HTML 字符串，一次性渲染
+const html = Mustache.render(tpl, data)
+document.getElementById('app').innerHTML = html
+```
+
+进步：从"一步步改 DOM"转向"描述结果"，**声明式**思维出现。局限：数据变了要重新整体渲染，缺乏自动的局部更新机制。
+
+#### 阶段四：模块化规范（模块拆分、复用）
+
+让 JS 能像后端语言一样拆分、复用、按需加载
+
+```js
+// math.js —— 一个独立模块，作用域隔离
+export function add(a, b) {
+  return a + b
+}
+
+// main.js —— 显式声明依赖
+import { add } from './math.js'
+console.log(add(1, 2)) // 3
+```
+
+#### 阶段五：三大框架（数据->视图）
+
+**你只管改数据，DOM 交给我**。开发者维护状态（state），框架通过响应式 + 虚拟 DOM / Diff 自动把变化映射到真实 DOM。
+
+MVC = M + V + C
+
+MVVM = M + V + VM : 通过VM框架 将 M(model) 映射成 V(view)
+
+```jsx
+// React：再也不手动操作 DOM
+function Counter() {
+  const [count, setCount] = useState(0)
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      点赞 {count}
+    </button>
+  )
+  // 只改 count（数据），视图自动更新——彻底告别 getElementById
+}
+```
+
+JS诞生的目的就是改变UI，产生交互，框架发展 就是尽可能地 优化 这部分的 操作难度, 目前的最终答案就是 MVVM。
+
+让前端开发能专注于业务, 而不是一个个选取DOM。
+
+> 前端祖师爷, 哪三大框架, 上手困难
 
 ### 1. 先看清这件"反直觉"的事
 
@@ -952,11 +1063,12 @@ function Counter() {
 
 一句话收束：**改一个变量页面就自己变，靠的是「框架感知数据变化 → 重新生成虚拟 DOM → diff → 只更新变化的那一点点」这条链路。** 你只管描述数据，剩下的交给框架。
 
+## Promise
+
 ## 单线程的 JS 怎么做到「同时」干很多事？（事件循环 / 异步）
 
 - 冲突：第 1 节说「Node 单线调用」，那 setTimeout、fetch、await 凭什么不卡死
 - 闭环：调用栈 + Web APIs + 宏/微任务队列；Promise/async-await 本质
-- 这块对后端最反直觉，建议单独成节
 
 ## TypeScript 在运行时消失了，它到底约束了什么？
 
