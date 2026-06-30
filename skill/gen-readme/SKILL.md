@@ -81,19 +81,30 @@ Step 3–6 只引用这份笔记,不重新猜。
 
 ---
 
-## Step 4 · 写功能地图
+## Step 4 · 功能地图(只列页面级/模块级功能,每条挂代表性调用链)
 
-来源优先级:Controller 路由 > Service 公共方法 > 入口 main。翻译成业务语言,每条后面挂代码出处。写法见下方「调用链写法规范」。推断不出业务含义的,功能名留类名/方法名并标 `<!-- TODO: 业务含义需人工确认 -->`。
+**粒度铁律:层级拉高,只列「页面级」功能,不拿小功能凑数。**
+类比前端项目——只介绍页面级组件,不会把每个按钮、每个小弹窗都列出来。后端对应:
+
+- **一条功能 = 一个业务模块 / 一块完整能力**,通常对应一个 Controller(或一组紧密相关的路由),如「订单管理」「用户认证」「商品库存」。
+- **不要逐接口、逐方法列**:同一模块下的增删改查、导入导出、分页查询等下属操作,**合并进同一条功能**用一句话概述,不各自单列。
+- **宁缺毋滥**:模块少就少写几条,严禁把小操作拆出来凑数。
+
+**来源**:以 `@RestController`/`@Controller` 类(及其 `@RequestMapping` 根路径)为单位聚合,一个 Controller 归纳成一条功能;多个 Controller 同属一个业务域时可再上提合并。
+
+**每条功能**:功能名(业务语言)+ 一句话能力概述 + **一条代表性主链路调用链**(挑该模块最核心的入口方法,从 Controller 到落库/返回,不必把模块下每个接口都挂)。
+
+**写法规范见下方「调用链写法规范」。** 推断不出业务含义的,功能名留类名,并标 `<!-- TODO: 业务含义需人工确认 -->`。
 
 ```markdown
 ## 功能地图
 
-- **用户登录**:校验账号密码并签发 Token
-  - `AuthController#login` (src/main/java/com/demo/web/AuthController.java:42)
+- **用户认证**:登录签发 Token、登出、Token 刷新等账号鉴权能力
+  - 代表链路:`AuthController#login` (src/main/java/com/demo/web/AuthController.java:42)
     → `AuthService#authenticate` (src/main/java/com/demo/service/AuthService.java:30)
     → `UserMapper#selectByUsername` (src/main/java/com/demo/mapper/UserMapper.java:18)
-- **订单创建**:校验库存并落库
-  - `OrderController#create` (.../web/OrderController.java:55)
+- **订单管理**:订单的创建、查询、取消等全生命周期管理
+  - 代表链路:`OrderController#create` (.../web/OrderController.java:55)
     → `OrderService#create` (.../service/OrderService.java:40)
 ```
 
@@ -184,7 +195,7 @@ src/main/java/com/demo
 
 ## 功能地图
 
-<见 Step 4,每条挂调用链>
+<见 Step 4:只列页面级/模块级功能,一个 Controller/业务模块归纳成一条,挂一条代表性主链路;不逐接口、逐方法凑数>
 
 ## 主要工作流
 
