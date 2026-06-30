@@ -1,14 +1,14 @@
 export enum TaskStatus {
-  Pending = 'Pending',
-  PendingChecker = 'Pending Checker',
-  Return = 'Return',
-  Done = 'Done',
+  Pending = 'pending',
+  Cancelled = 'cancelled',
+  Submitted = 'submitted',
+  Returned = 'returned',
+  Approved = 'approved',
 }
 
 export enum Role {
   Maker = 'maker',
   Checker = 'checker',
-  Admin = 'admin',
 }
 
 export enum YesNo {

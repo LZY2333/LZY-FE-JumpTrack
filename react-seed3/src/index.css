@@ -9,34 +9,45 @@
   --ant-primary-color-outline: rgba(255, 45, 45, 0.2);
 }
 
-.ant-layout-sider,
-.ant-layout-sider .ant-menu {
-  background: #fff5f5 !important;
-}
-
 .ant-layout-header {
   background: #fff5f5 !important;
   border-bottom: 1px solid #ffd6d6;
 }
 
-.ant-layout-sider {
-  border-right: 1px solid #ffd6d6;
-}
-
-.ant-menu-light .ant-menu-item:hover,
-.ant-menu-light .ant-menu-item-active {
-  color: var(--ant-primary-color) !important;
-}
-
-.ant-menu-light .ant-menu-item-selected {
-  background-color: #fff0f0 !important;
-  color: var(--ant-primary-color) !important;
-}
-
-.ant-menu-light .ant-menu-item-selected::after {
-  border-right-color: var(--ant-primary-color) !important;
-}
-
 .ant-tag {
   margin-right: 0;
+}
+
+/* 表单项默认不带下边距，行距统一由父容器（space-y / gap）控制 */
+.ant-form-item {
+  margin-bottom: 0;
+}
+
+/* 固定表头（scroll.y）出现纵向滚动条时，避免 antd v4 在表体挤出多余的横向滚动条 */
+.ant-table-body {
+  overflow-x: hidden !important;
+}
+
+/* 全局取消 antd disabled 态的 not-allowed 光标，统一为默认箭头 */
+.ant-input-disabled,
+.ant-input[disabled],
+.ant-input-affix-wrapper-disabled,
+.ant-input-number-disabled,
+.ant-input-number-disabled input,
+.ant-input-number-disabled .ant-input-number-input,
+.ant-picker-disabled,
+.ant-picker-disabled input,
+.ant-select-disabled,
+.ant-select-disabled .ant-select-selector,
+.ant-cascader-picker-disabled,
+.ant-radio-disabled,
+.ant-radio-disabled .ant-radio-input,
+.ant-radio-disabled + span,
+.ant-checkbox-disabled,
+.ant-checkbox-disabled .ant-checkbox-input,
+.ant-checkbox-disabled + span,
+.ant-switch-disabled,
+.ant-btn[disabled],
+.ant-btn-disabled {
+  cursor: default !important;
 }

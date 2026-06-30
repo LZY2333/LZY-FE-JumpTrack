@@ -1,17 +1,39 @@
-import axios from 'axios';
-import type { Task, TaskDetail } from '@/types';
+import request, { ApiResult } from './request';
+import type { Attachment, Customer, Task } from '@/types';
 
-export const getTasks = () =>
-  axios.get<{ data: Task[] }>('/api/tasks').then(res => res.data.data);
+export interface TaskQuery {
+  page: number;
+  pageSize: number;
+  status?: string;
+  customerName?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export interface PagedTasks {
+  data: Task[];
+  total: number;
+}
+
+export const getTasks = (params: TaskQuery): Promise<PagedTasks> =>
+  request
+    .get<ApiResult<Task[]>, ApiResult<Task[]>>('/api/tasks', { params })
+    .then(res => ({ data: res.data, total: res.total ?? 0 }));
+
+export const getDueTasks = () =>
+  request.get<ApiResult<Task[]>, ApiResult<Task[]>>('/api/tasks/due-soon').then(res => res.data);
 
 export const getTask = (id: string) =>
-  axios.get<{ data: TaskDetail }>(`/api/task/${id}`).then(res => res.data.data);
+  request.get<ApiResult<Task>, ApiResult<Task>>(`/api/task/${id}`).then(res => res.data);
 
-export const submitTask = (id: string, task: TaskDetail) =>
-  axios.post(`/api/task/submit/${id}`, task);
+export const getCustomer = (customerId: string) =>
+  request.get<ApiResult<Customer>, ApiResult<Customer>>(`/api/customer/${customerId}`).then(res => res.data);
+
+export const submitTask = (id: string, payload: { customer: Customer; attachments: Attachment[] }) =>
+  request.post(`/api/task/submit/${id}`, payload);
 
 export const returnTask = (id: string) =>
-  axios.post(`/api/task/return/${id}`);
+  request.post(`/api/task/return/${id}`);
 
 export const approveTask = (id: string) =>
-  axios.post(`/api/task/approve/${id}`);
+  request.post(`/api/task/approve/${id}`);

@@ -1,20 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Spin, Typography, message } from 'antd';
-import { ArrowLeftOutlined, CheckOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CheckOutlined, RollbackOutlined } from '@ant-design/icons';
 import TaskForm from '@/components/TaskForm';
-import useUserStore from '@/store/useUserStore';
-import type { TaskDetail } from '@/types';
-import { getTask, returnTask, approveTask } from '@/api/tasks';
+import type { Attachment, Customer } from '@/types';
+import { approveTask, getCustomer, getTask, returnTask } from '@/api/tasks';
 
 export default function CheckerPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useUserStore();
-  const [task, setTask] = useState<TaskDetail | null>(null);
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
 
   useEffect(() => {
-    if (id) getTask(id).then(setTask);
+    if (!id) return;
+    getTask(id).then(task => {
+      setAttachments(task.attachments);
+      return getCustomer(task.customerId);
+    }).then(setCustomer);
   }, [id]);
 
   const handleReturn = () => {
@@ -22,31 +25,28 @@ export default function CheckerPage() {
   };
 
   const handleApprove = () => {
-    if (task?.makerId === user?.id) {
-      message.error('Maker 与 Checker 不能为同一人');
-      return;
-    }
     approveTask(id!).then(() => {
       message.success('审核通过');
       navigate('/');
     });
   };
 
-  if (!task) return <div className="flex justify-center pt-20"><Spin /></div>;
+  if (!customer) return <div className="flex justify-center pt-20"><Spin /></div>;
 
   return (
-    <div>
-      <div className="mb-4 flex items-center gap-3">
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')}>返回</Button>
-        <Typography.Text strong>任务 {id} – OPC AET Checker</Typography.Text>
+    <div className="animate-fade-in">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')}>返回</Button>
+          <Typography.Text strong>任务 {id} – OPC AET Checker</Typography.Text>
+        </div>
+        <div className="flex gap-3">
+          <Button icon={<RollbackOutlined />} onClick={handleReturn}>Return</Button>
+          <Button type="primary" icon={<CheckOutlined />} onClick={handleApprove}>Approve</Button>
+        </div>
       </div>
 
-      <TaskForm task={task} readonly modifiedFields={task.modifiedFields} />
-
-      <div className="mt-6 flex justify-between">
-        <Button icon={<ArrowLeftOutlined />} onClick={handleReturn}>Return</Button>
-        <Button type="primary" icon={<CheckOutlined />} onClick={handleApprove}>Approve ✓</Button>
-      </div>
+      <TaskForm key={id} customer={customer} attachments={attachments} readonly />
     </div>
   );
 }

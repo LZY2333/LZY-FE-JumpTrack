@@ -6,6 +6,11 @@ export interface User {
   roles: Role[];
 }
 
+export interface Attachment {
+  name: string;
+  uid: string;
+}
+
 export interface Task {
   id: string;
   refNo: string;
@@ -13,9 +18,13 @@ export interface Task {
   createdAt: string;
   status: TaskStatus;
   daysUntilDue: number | null;
+  /** 关联的客户 id，进入表单时据此查询客户详情 */
+  customerId: string;
+  /** 任务附件列表 */
+  attachments: Attachment[];
 }
 
-export interface TaskDetail {
+export interface Customer {
   id: string;
   /** 客户类别，如 "CIES 2.0"，由 Hold Code D98 决定，不可修改 */
   customerType: string;
@@ -44,13 +53,8 @@ export interface TaskDetail {
   ciesTerminationDate: string;
   /** 是否已转出 300 万投资额 */
   transferred3M: YesNo;
-  /** 可支取利息，按币种分类 */
-  withdrawableInterests: { HKD: number; USD: number };
-  /** 已支取利息，按币种分类 */
-  transferredInterests: { HKD: number; USD: number };
-  attachments: { name: string; uid: string }[];
-  /** Maker 修改过的字段名列表，用于在 Checker 界面高亮展示 */
-  modifiedFields: string[];
-  /** 提交该任务的 Maker 用户 id，Checker 审批时用于同人校验 */
-  makerId: string;
+  /** 可支取利息，按币种分类，币种由接口动态决定 */
+  withdrawableInterests: Record<string, number>;
+  /** 已支取利息，按币种分类，币种由接口动态决定 */
+  transferredInterests: Record<string, number>;
 }

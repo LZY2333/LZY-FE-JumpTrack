@@ -5,7 +5,6 @@ export const mockUsers: User[] = [
   { id: 'U001', name: '张三', roles: [Role.Maker] },
   { id: 'U002', name: '李四', roles: [Role.Checker] },
   { id: 'U003', name: '王五', roles: [Role.Maker, Role.Checker] },
-  { id: 'U004', name: '赵六', roles: [Role.Admin] },
 ];
 
 export default [
@@ -26,10 +25,5 @@ export default [
     url: '/api/users',
     method: 'get',
     response: () => ({ code: 0, data: mockUsers }),
-  },
-  {
-    url: '/api/users/save',
-    method: 'post',
-    response: () => ({ code: 0 }),
   },
 ];

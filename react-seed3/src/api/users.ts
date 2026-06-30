@@ -1,11 +1,10 @@
 import { User } from '@/types';
-import axios from 'axios';
+import request, { ApiResult } from './request';
 
 export const loginApi = (id: string) =>
-  axios.post<{ data: User }>('/api/auth/login', { id }).then(res => res.data.data);
+  request.post<ApiResult<User>, ApiResult<User>>('/api/auth/login', { id }).then(res => res.data);
 
-export const logoutApi = () => axios.post('/api/auth/logout');
+export const logoutApi = () => request.post('/api/auth/logout');
 
-export const getUsers = () => axios.get<{ data: User[] }>('/api/users').then(res => res.data.data);
-
-export const saveUsers = (users: User[]) => axios.post('/api/users/save', { users });
+export const getUsers = () =>
+  request.get<ApiResult<User[]>, ApiResult<User[]>>('/api/users').then(res => res.data);

@@ -1,238 +1,219 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { Button, Card, Col, DatePicker, Form, Input, InputNumber, List, Modal, Radio, Row, Upload } from 'antd';
+import { Button, Card, Col, Form, List, Modal, Row, Upload, message } from 'antd';
+import type { RcFile } from 'antd/es/upload';
 import { DeleteOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
-import type { Moment } from 'moment';
 import moment from 'moment';
-import type { TaskDetail } from '@/types';
-
-interface Attachment {
-  name: string;
-  uid: string;
-}
+import type { Attachment, Customer } from '@/types';
+import {
+  AipDate,
+  AipExpiryDate,
+  CiesTerminationDate,
+  Cif,
+  CURRENCY_FIELDS,
+  CustodianAccount,
+  CustomerName,
+  CustomerType,
+  DateOfBirth,
+  FaDate,
+  FundAccount,
+  OurRef,
+  SavingsAccount,
+  SecuritiesAccount,
+  Transferred3M,
+  YourRef,
+} from '@/components/FormItem';
 
 interface Props {
-  task: TaskDetail;
+  customer: Customer;
+  attachments: Attachment[];
   readonly?: boolean;
-  modifiedFields?: string[];
+}
+
+export interface TaskFormValues {
+  customer: Customer;
+  attachments: Attachment[];
 }
 
 export interface TaskFormRef {
-  getValues: () => TaskDetail;
+  // 先做字段校验，校验通过才返回表单值；不通过则 reject（antd 自动定位到首个错误项）
+  validate: () => Promise<TaskFormValues>;
 }
 
-const customerFields = (task: TaskDetail) => [
-  { label: 'Customer Type', value: task.customerType },
-  { label: 'Customer Name', value: task.customerName },
-  { label: 'Date of Birth', value: task.dateOfBirth },
-  { label: 'CIF', value: task.cif },
-  { label: 'Savings Account', value: task.savingsAccount },
-  { label: 'Securities Account', value: task.securitiesAccount },
-  { label: 'Fund Account', value: task.fundAccount },
-  { label: 'Custodian Account', value: task.custodianAccount },
-];
+const HIGHLIGHT = 'rounded ring-2 ring-yellow-400';
+// 附件上传限制
+const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg'];
+const MAX_SIZE_MB = 10;
 
-const TaskForm = forwardRef<TaskFormRef, Props>(({ task, readonly = false, modifiedFields = [] }, ref) => {
-  const [form] = Form.useForm();
-  const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
-  const [attachments, setAttachments] = useState<Attachment[]>(task.attachments);
+type Path = string | (string | number)[];
+const at = (obj: unknown, path: Path): unknown =>
+  (Array.isArray(path) ? path : [path]).reduce<unknown>(
+    (o, k) => (o == null ? undefined : (o as Record<string | number, unknown>)[k]),
+    obj,
+  );
 
-  useEffect(() => {
-    form.setFieldsValue({
-      ourRef: task.ourRef,
-      yourRef: task.yourRef,
-      aipDate: task.aipDate ? moment(task.aipDate) : null,
-      aipExpiryDate: task.aipExpiryDate ? moment(task.aipExpiryDate) : null,
-      faDate: task.faDate ? moment(task.faDate) : null,
-      ciesTerminationDate: task.ciesTerminationDate ? moment(task.ciesTerminationDate) : null,
-      transferred3M: task.transferred3M,
-      withdrawableHKD: task.withdrawableInterests.HKD,
-      withdrawableUSD: task.withdrawableInterests.USD,
-      transferredHKD: task.transferredInterests.HKD,
-      transferredUSD: task.transferredInterests.USD,
-    });
-    setAttachments(task.attachments);
-  }, [task, form]);
+const TaskForm = forwardRef<TaskFormRef, Props>(
+  ({ customer, attachments: initialAttachments, readonly = false }, ref) => {
+    const [form] = Form.useForm();
+    // values 跟踪当前表单值，customer 为后端下发的基线；高亮逻辑由调用方（本组件）持有，
+    // 字段组件本身保持通用、无高亮。表单存储已与 Customer 同构，可直接按路径比较。
+    const [values, setValues] = useState<Customer>(customer);
+    const [attachments, setAttachments] = useState<Attachment[]>(initialAttachments);
 
-  // 提交时把表单当前值与用户实际触碰过的字段名一并暴露给父组件，
-  // 后端按值 diff 无法还原已修改后又改回原值这类交互事实，因此 modifiedFields 必须由前端给出
-  useImperativeHandle(ref, () => ({
-    getValues: () => {
-      const values = form.getFieldsValue();
-      return {
-        ...task,
-        ourRef: values.ourRef,
-        yourRef: values.yourRef,
-        aipDate: values.aipDate ? (values.aipDate as Moment).format('YYYY-MM-DD') : '',
-        aipExpiryDate: values.aipExpiryDate ? (values.aipExpiryDate as Moment).format('YYYY-MM-DD') : '',
-        faDate: values.faDate ? (values.faDate as Moment).format('YYYY-MM-DD') : '',
-        ciesTerminationDate: values.ciesTerminationDate ? (values.ciesTerminationDate as Moment).format('YYYY-MM-DD') : '',
-        transferred3M: values.transferred3M,
-        withdrawableInterests: { HKD: values.withdrawableHKD, USD: values.withdrawableUSD },
-        transferredInterests: { HKD: values.transferredHKD, USD: values.transferredUSD },
-        attachments,
-        modifiedFields: Array.from(changedFields),
-      };
-    },
-  }), [task, form, attachments, changedFields]);
+    useEffect(() => {
+      setAttachments(initialAttachments);
+    }, [initialAttachments]);
 
-  // Maker 模式：用户手动改过的字段加黄色边框；Checker 模式：Maker 已保存的修改字段加黄色背景
-  // 两种高亮来源不同，故用不同样式区分
-  const hl = (field: string) => {
-    if (readonly) return modifiedFields.includes(field) ? 'rounded bg-yellow-100 px-2 pt-1' : '';
-    return changedFields.has(field) ? 'rounded ring-2 ring-yellow-400' : '';
-  };
+    useImperativeHandle(
+      ref,
+      () => ({
+        validate: () =>
+          form.validateFields().then(() => ({
+            customer: { ...customer, ...form.getFieldsValue(true) },
+            attachments,
+          })),
+      }),
+      [customer, form, attachments],
+    );
 
-  const handleValuesChange = (changed: Record<string, unknown>) => {
-    // aipExpiryDate 由系统自动计算，不应算作用户修改，排除在高亮范围之外
-    const manual = Object.keys(changed).filter(k => k !== 'aipExpiryDate');
-    if (manual.length) setChangedFields(prev => new Set([...prev, ...manual]));
+    // 当前输入值与基线不同即高亮，仅用于可修改字段；常驻 transition 让高亮淡入淡出
+    const hl = (path: Path) =>
+      `transition-all duration-300 ${at(values, path) !== at(customer, path) ? HIGHLIGHT : ''}`;
 
-    if ('aipDate' in changed && task.customerType === 'CIES 2.0') {
-      const d = changed.aipDate as Moment | null;
-      // setFieldsValue 在 onValuesChange 内调用是安全的：antd 只对用户交互触发 onValuesChange，
-      // 程序调用 setFieldsValue 不会再次触发，不存在无限循环风险
-      form.setFieldsValue({ aipExpiryDate: d ? d.clone().add(180, 'days') : null });
-    }
-  };
+    const handleValuesChange = (changed: Customer) => {
+      if ('aipDate' in changed && customer.customerType === 'CIES 2.0') {
+        const aip = form.getFieldValue('aipDate') as string;
+        form.setFieldsValue({ aipExpiryDate: aip ? moment(aip).add(180, 'days').format('YYYY-MM-DD') : '' });
+      }
+      setValues(form.getFieldsValue(true));
+    };
 
-  // T-17: delete attachment with confirm
-  const handleDelete = (uid: string) => {
-    Modal.confirm({
-      title: 'Confirm Delete',
-      onOk: () => setAttachments(prev => prev.filter(a => a.uid !== uid)),
-    });
-  };
+    const handleDelete = (att: Attachment) => {
+      Modal.confirm({
+        title: '确认删除附件',
+        content: `确定删除「${att.name}」吗？此操作不可撤销。`,
+        okText: '删除',
+        okButtonProps: { danger: true },
+        cancelText: '取消',
+        onOk: () => setAttachments((prev) => prev.filter((a) => a.uid !== att.uid)),
+      });
+    };
 
-  return (
-    <Row gutter={16}>
-      {/* Left: customer info + editable form */}
-      <Col span={15}>
-        {/* T-10: read-only customer info */}
-        <Card title="客户基本信息" size="small" className="mb-4">
-          <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-            {customerFields(task).map(({ label, value }) => (
-              <div key={label}>
-                <div className="mb-1 text-xs text-gray-500">{label}</div>
-                <Input disabled value={value} />
+    // 上传前校验文件类型与大小，不通过则提示并忽略
+    const beforeUpload = (file: RcFile) => {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        message.error('仅支持 PDF / PNG / JPG 格式');
+        return Upload.LIST_IGNORE;
+      }
+      if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+        message.error(`文件大小不能超过 ${MAX_SIZE_MB}MB`);
+        return Upload.LIST_IGNORE;
+      }
+      setAttachments((prev) => [...prev, { name: file.name, uid: file.uid }]);
+      return false;
+    };
+
+    const renderInterests = (group: 'withdrawableInterests' | 'transferredInterests', title: string) => {
+      const interests = customer[group];
+      return (
+        <div className='space-y-3 border-t pt-3'>
+          <div className='text-sm font-medium'>{title}</div>
+          {Object.keys(interests).map((cur) => {
+            const Field = CURRENCY_FIELDS[cur];
+            const path = [group, cur];
+            return Field ? <Field key={cur} name={path} className={hl(path)} /> : null;
+          })}
+        </div>
+      );
+    };
+
+    return (
+      <Form<Customer>
+        form={form}
+        layout='horizontal'
+        labelAlign='left'
+        labelCol={{ span: 10 }}
+        wrapperCol={{ span: 14 }}
+        disabled={readonly}
+        scrollToFirstError
+        initialValues={customer}
+        onValuesChange={handleValuesChange}>
+        {/* 客户信息 与 申报信息 并列，整表由通用字段组件拼装；初始值经 initialValues 一次性注入 */}
+        <Row gutter={16}>
+          {/* Left: 客户信息（含可修改的 Our Ref / Your Ref） */}
+          <Col span={12}>
+            <Card title='客户信息' size='small' className='h-full'>
+              <div className='space-y-3'>
+                <CustomerType />
+                <CustomerName />
+                <DateOfBirth />
+                <Cif />
+                <SavingsAccount />
+                <SecuritiesAccount />
+                <FundAccount />
+                <CustodianAccount />
+                <OurRef className={hl('ourRef')} />
+                <YourRef className={hl('yourRef')} />
               </div>
-            ))}
-          </div>
-        </Card>
+            </Card>
+          </Col>
 
-        {/* T-11 / T-12 / T-13 / T-14: editable fields */}
-        <Card title="申报信息" size="small">
-          <Form form={form} layout="vertical" disabled={readonly} onValuesChange={handleValuesChange}>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item name="ourRef" label="Our Ref" required className={hl('ourRef')}>
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="yourRef" label="Your Ref" required className={hl('yourRef')}>
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="aipDate" label="AIP Date" className={hl('aipDate')}>
-                  <DatePicker className="w-full" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="aipExpiryDate" label="AIP Expiry Date">
-                  <DatePicker className="w-full" disabled />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="faDate" label="FA Date" className={hl('faDate')}>
-                  <DatePicker className="w-full" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="ciesTerminationDate" label="CIES Termination Date" className={hl('ciesTerminationDate')}>
-                  <DatePicker className="w-full" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="transferred3M" label="Transferred 3M" required className={hl('transferred3M')}>
-                  <Radio.Group>
-                    <Radio value="Y">Y</Radio>
-                    <Radio value="N">N</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              </Col>
-            </Row>
+          {/* Right: 申报信息 */}
+          <Col span={12}>
+            <Card title='申报信息' size='small' className='h-full'>
+              <div className='space-y-3'>
+                <AipDate className={hl('aipDate')} />
+                <AipExpiryDate />
+                <FaDate className={hl('faDate')} />
+                <CiesTerminationDate className={hl('ciesTerminationDate')} />
+                <Transferred3M className={hl('transferred3M')} />
+                {renderInterests('withdrawableInterests', 'Withdrawable Interests')}
+                {renderInterests('transferredInterests', 'Transferred Interests')}
+              </div>
+            </Card>
+          </Col>
+        </Row>
 
-            {/* T-14: interest fields */}
-            <Row gutter={16} className="mt-2 border-t pt-4">
-              <Col span={12}>
-                <div className="mb-2 text-sm font-medium">Withdrawable Interests</div>
-                <Form.Item name="withdrawableHKD" label="HKD" className={hl('withdrawableHKD')}>
-                  <InputNumber className="w-full" min={0} />
-                </Form.Item>
-                <Form.Item name="withdrawableUSD" label="USD" className={hl('withdrawableUSD')}>
-                  <InputNumber className="w-full" min={0} />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <div className="mb-2 text-sm font-medium">Transferred Interests</div>
-                <Form.Item name="transferredHKD" label="HKD" className={hl('transferredHKD')}>
-                  <InputNumber className="w-full" min={0} />
-                </Form.Item>
-                <Form.Item name="transferredUSD" label="USD" className={hl('transferredUSD')}>
-                  <InputNumber className="w-full" min={0} />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-        </Card>
-      </Col>
-
-      {/* Right: T-15 / T-16 / T-17 attachment area */}
-      <Col span={9}>
-        <Card title="附件 (Attachment)" size="small">
+        {/* 附件区域放在下方，占满整行 */}
+        <Card title='附件 (Attachment)' size='small' className='mt-4'>
           <List
-            size="small"
+            size='small'
             dataSource={attachments}
-            renderItem={att => (
+            renderItem={(att) => (
               <List.Item
+                className='group rounded px-2 transition-colors hover:bg-gray-50'
                 actions={
                   readonly
                     ? []
                     : [
                         <Button
-                          key="del"
-                          type="text"
+                          key='del'
+                          type='text'
                           danger
-                          size="small"
+                          size='small'
                           icon={<DeleteOutlined />}
-                          onClick={() => handleDelete(att.uid)}
+                          onClick={() => handleDelete(att)}
                         />,
                       ]
-                }
-              >
-                <FileOutlined className="mr-2 text-gray-400" />
-                <span>{att.name}</span>
+                }>
+                {/* 图标+文件名合成一个 flex 子项，space-between 才会让名字始终靠左 */}
+                <div className='flex items-center'>
+                  <FileOutlined className='mr-2 text-gray-400' />
+                  <span>{att.name}</span>
+                </div>
               </List.Item>
             )}
           />
           {!readonly && (
-            <Upload
-              beforeUpload={file => {
-                setAttachments(prev => [...prev, { name: file.name, uid: file.uid }]);
-                return false;
-              }}
-              showUploadList={false}
-            >
-              <Button icon={<UploadOutlined />} size="small" className="mt-2">
+            <Upload beforeUpload={beforeUpload} showUploadList={false}>
+              <Button icon={<UploadOutlined />} size='small' className='mt-2'>
                 Upload
               </Button>
             </Upload>
           )}
         </Card>
-      </Col>
-    </Row>
-  );
-});
+      </Form>
+    );
+  },
+);
 
 export default TaskForm;
