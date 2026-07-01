@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge, Button, Col, DatePicker, Form, Input, Modal, Row, Select, Table, Tag } from 'antd';
+import { Badge, Button, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import type { Moment } from 'moment';
-import { debounce } from 'lodash';
 import useUserStore from '@/store/useUserStore';
 import { TaskStatus, Role } from '@/types/enums';
 import type { Task } from '@/types';
-import { getDueTasks, getTasks } from '@/api/tasks';
+import useTaskList from '@/hooks/useTaskList';
+import useTableScrollY from '@/hooks/useTableScrollY';
+import TaskFilters from '@/components/TaskFilters';
+import ExpiryAlertModal from '@/components/ExpiryAlertModal';
 
 const STATUS_COLOR: Record<TaskStatus, string> = {
   [TaskStatus.Pending]: 'blue',
@@ -17,79 +18,26 @@ const STATUS_COLOR: Record<TaskStatus, string> = {
   [TaskStatus.Approved]: 'green',
 };
 
-const ALERT_KEY = 'cies_expiry_alerted';
-// 表格底部到视窗底的留白（对应 Content 的 p-6 下内边距）。
-const TABLE_BOTTOM_GAP = 24;
-
 export default function TaskPool() {
   const navigate = useNavigate();
   const { user } = useUserStore();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [statusFilter, setStatusFilter] = useState('');
-  const [nameInput, setNameInput] = useState('');
-  const [nameQuery, setNameQuery] = useState('');
-  const [dateRange, setDateRange] = useState<[Moment, Moment] | null>(null);
-  const [alertTasks, setAlertTasks] = useState<Task[]>([]);
+  const {
+    tasks,
+    total,
+    loading,
+    page,
+    pageSize,
+    status,
+    dateRange,
+    setPage,
+    setPageSize,
+    changeStatus,
+    changeCustomerName,
+    changeDateRange,
+    reset,
+  } = useTaskList();
   const tableWrapRef = useRef<HTMLDivElement>(null);
-  const [scrollY, setScrollY] = useState(400);
-
-  // 客户名搜索防抖：输入即时回显，300ms 后才真正发起查询并回到第一页
-  const applyName = useMemo(
-    () => debounce((v: string) => { setNameQuery(v); setPage(1); }, 300),
-    [],
-  );
-  useEffect(() => () => applyName.cancel(), [applyName]);
-
-  useEffect(() => {
-    setLoading(true);
-    getTasks({
-      page,
-      pageSize,
-      status: statusFilter || undefined,
-      customerName: nameQuery.trim() || undefined,
-      dateFrom: dateRange?.[0].format('YYYY-MM-DD'),
-      dateTo: dateRange?.[1].format('YYYY-MM-DD'),
-    })
-      .then(res => {
-        setTasks(res.data);
-        setTotal(res.total);
-      })
-      .finally(() => setLoading(false));
-  }, [page, pageSize, statusFilter, nameQuery, dateRange]);
-
-  // 到期提醒独立于分页，每个会话仅弹一次
-  useEffect(() => {
-    if (sessionStorage.getItem(ALERT_KEY)) return;
-    getDueTasks().then(due => {
-      if (due.length) setAlertTasks(due);
-    });
-  }, []);
-
-  // 表体可用高度 = 视窗高 - 表格顶部 - 实测表头高 - 实测分页器高 - 底部留白（随缩放/字号自适应，比固定预留值更稳）。
-  // ResizeObserver 保证表格挂载/重新激活后再取一次准确的位置。
-  useEffect(() => {
-    const el = tableWrapRef.current;
-    if (!el) return;
-    const update = () => {
-      const top = el.getBoundingClientRect().top;
-      const headH = (el.querySelector('.ant-table-thead') as HTMLElement | null)?.offsetHeight ?? 55;
-      const pager = el.querySelector('.ant-pagination') as HTMLElement | null;
-      const pagerH = pager ? pager.offsetHeight + 32 : 64; // +32：分页器默认上下 margin
-      setScrollY(Math.max(200, window.innerHeight - top - headH - pagerH - TABLE_BOTTOM_GAP));
-    };
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    window.addEventListener('resize', update);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener('resize', update);
-    };
-  }, []);
+  const scrollY = useTableScrollY(tableWrapRef);
 
   const openDetail = (record: Task) => {
     if (!user) return;
@@ -102,11 +50,6 @@ export default function TaskPool() {
     navigate(`/task/${toChecker ? 'checker' : 'maker'}/${record.id}`);
   };
 
-  const closeAlert = () => {
-    sessionStorage.setItem(ALERT_KEY, '1');
-    setAlertTasks([]);
-  };
-
   const columns: ColumnsType<Task> = [
     { title: 'Ref No', dataIndex: 'refNo', width: 100 },
     { title: 'Customer Name', dataIndex: 'customerName' },
@@ -115,7 +58,7 @@ export default function TaskPool() {
       title: '状态',
       dataIndex: 'status',
       width: 160,
-      render: (status: TaskStatus) => <Badge color={STATUS_COLOR[status]} text={status} />,
+      render: (s: TaskStatus) => <Badge color={STATUS_COLOR[s]} text={s} />,
     },
     {
       title: '到期天数',
@@ -140,53 +83,21 @@ export default function TaskPool() {
   return (
     <div className="animate-fade-in">
       <div className="mb-2 text-xs text-gray-400">双击任意行，或点击「进入」打开任务详情</div>
-      <Form layout="horizontal" labelAlign="left" labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} className="mb-4">
-        <Row gutter={16}>
-          <Col span={8}>
-            <Form.Item label="状态" className="mb-0">
-              <Select
-                value={statusFilter}
-                onChange={v => { setStatusFilter(v); setPage(1); }}
-                className="w-full"
-                options={[
-                  { value: '', label: '全部状态' },
-                  { value: TaskStatus.Pending, label: 'Pending' },
-                  { value: TaskStatus.Cancelled, label: 'Cancelled' },
-                  { value: TaskStatus.Submitted, label: 'Submitted' },
-                  { value: TaskStatus.Returned, label: 'Returned' },
-                  { value: TaskStatus.Approved, label: 'Approved' },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="客户名称" className="mb-0">
-              <Input
-                allowClear
-                placeholder="按客户名称筛选"
-                value={nameInput}
-                onChange={e => { setNameInput(e.target.value); applyName(e.target.value); }}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="发起日期" className="mb-0">
-              <DatePicker.RangePicker
-                className="w-full"
-                value={dateRange}
-                onChange={v => { setDateRange(v?.[0] && v?.[1] ? [v[0] as Moment, v[1] as Moment] : null); setPage(1); }}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+      <TaskFilters
+        status={status}
+        dateRange={dateRange}
+        onStatusChange={changeStatus}
+        onCustomerNameChange={changeCustomerName}
+        onDateRangeChange={changeDateRange}
+        onReset={reset}
+      />
       <div ref={tableWrapRef}>
         <Table
           rowKey="id"
           columns={columns}
           dataSource={tasks}
           loading={loading}
-          onRow={record => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}
+          onRow={(record) => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}
           scroll={{ y: scrollY }}
           pagination={{
             current: page,
@@ -194,22 +105,15 @@ export default function TaskPool() {
             total,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: t => `共 ${t} 条`,
-            onChange: (p, ps) => { setPage(p); setPageSize(ps); },
+            showTotal: (t) => `共 ${t} 条`,
+            onChange: (p, ps) => {
+              setPage(p);
+              setPageSize(ps);
+            },
           }}
         />
       </div>
-      <Modal
-        title="任务即将到期"
-        open={alertTasks.length > 0}
-        onCancel={closeAlert}
-        footer={<Button type="primary" onClick={closeAlert}>确认</Button>}
-      >
-        <p>以下任务将在 2 个工作日内到期，请尽快处理：</p>
-        <ul className="mt-2 list-disc pl-5">
-          {alertTasks.map(t => <li key={t.id}>{t.refNo} – {t.customerName}</li>)}
-        </ul>
-      </Modal>
+      <ExpiryAlertModal />
     </div>
   );
 }

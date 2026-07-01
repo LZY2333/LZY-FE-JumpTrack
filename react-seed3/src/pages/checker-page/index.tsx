@@ -1,37 +1,57 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Spin, Typography, message } from 'antd';
+import { Button, Modal, Skeleton, Typography, message } from 'antd';
 import { ArrowLeftOutlined, CheckOutlined, RollbackOutlined } from '@ant-design/icons';
 import TaskForm from '@/components/TaskForm';
-import type { Attachment, Customer } from '@/types';
-import { approveTask, getCustomer, getTask, returnTask } from '@/api/tasks';
+import useTaskDetail from '@/hooks/useTaskDetail';
+import { approveTask, returnTask } from '@/api/tasks';
 
 export default function CheckerPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-
-  useEffect(() => {
-    if (!id) return;
-    getTask(id).then(task => {
-      setAttachments(task.attachments);
-      return getCustomer(task.customerId);
-    }).then(setCustomer);
-  }, [id]);
+  const { customer, attachments, loading } = useTaskDetail(id);
+  const [returning, setReturning] = useState(false);
+  const [approving, setApproving] = useState(false);
 
   const handleReturn = () => {
-    returnTask(id!).then(() => navigate('/'));
-  };
-
-  const handleApprove = () => {
-    approveTask(id!).then(() => {
-      message.success('审核通过');
-      navigate('/');
+    if (!id) return;
+    // 退回是重要动作：二次确认后再执行，与 Approve 一样给出结果提示
+    Modal.confirm({
+      title: '确认退回任务',
+      content: '退回后任务将回到 Maker 处理，确定退回吗？',
+      okText: '退回',
+      okButtonProps: { danger: true },
+      cancelText: '取消',
+      onOk: () => {
+        setReturning(true);
+        return returnTask(id)
+          .then(() => {
+            message.success('已退回');
+            navigate('/');
+          })
+          .finally(() => setReturning(false));
+      },
     });
   };
 
-  if (!customer) return <div className="flex justify-center pt-20"><Spin /></div>;
+  const handleApprove = () => {
+    if (!id) return;
+    setApproving(true);
+    approveTask(id)
+      .then(() => {
+        message.success('审核通过');
+        navigate('/');
+      })
+      .finally(() => setApproving(false));
+  };
+
+  if (loading || !customer) {
+    return (
+      <div className="animate-fade-in">
+        <Skeleton active paragraph={{ rows: 8 }} />
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in">
@@ -41,8 +61,12 @@ export default function CheckerPage() {
           <Typography.Text strong>任务 {id} – OPC AET Checker</Typography.Text>
         </div>
         <div className="flex gap-3">
-          <Button icon={<RollbackOutlined />} onClick={handleReturn}>Return</Button>
-          <Button type="primary" icon={<CheckOutlined />} onClick={handleApprove}>Approve</Button>
+          <Button icon={<RollbackOutlined />} loading={returning} onClick={handleReturn}>
+            Return
+          </Button>
+          <Button type="primary" icon={<CheckOutlined />} loading={approving} onClick={handleApprove}>
+            Approve
+          </Button>
         </div>
       </div>
 
