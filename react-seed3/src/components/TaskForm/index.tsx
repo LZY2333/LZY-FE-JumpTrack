@@ -115,7 +115,7 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
     const renderInterests = (group: 'withdrawableInterests' | 'transferredInterests', title: string) => {
       const interests = customer[group];
       return (
-        <div className='space-y-3 border-t pt-3'>
+        <div className='space-y-3'>
           <div className='text-sm font-medium'>{title}</div>
           {Object.keys(interests).map((cur) => {
             const Field = CURRENCY_FIELDS[cur];
@@ -166,8 +166,10 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
                 <FaDate className={hl('faDate')} />
                 <CiesTerminationDate className={hl('ciesTerminationDate')} />
                 <Transferred3M className={hl('transferred3M')} />
-                {renderInterests('withdrawableInterests', 'Withdrawable Interests')}
-                {renderInterests('transferredInterests', 'Transferred Interests')}
+                <div className='grid grid-cols-2 gap-x-4 border-t pt-3'>
+                  {renderInterests('withdrawableInterests', 'Withdrawable Interests')}
+                  {renderInterests('transferredInterests', 'Transferred Interests')}
+                </div>
               </div>
             </Card>
           </Col>
