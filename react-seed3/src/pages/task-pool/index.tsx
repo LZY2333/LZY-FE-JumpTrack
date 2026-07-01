@@ -18,9 +18,8 @@ const STATUS_COLOR: Record<TaskStatus, string> = {
 };
 
 const ALERT_KEY = 'cies_expiry_alerted';
-// 表头 + 分页器 + 底部留白的高度：scroll.y = 视窗高度 - 表格顶部 - 此值。
-// 表格随数据增高，最多到 scroll.y 后内部滚动，分页器始终落在视窗内。
-const TABLE_RESERVE = 140;
+// 表格底部到视窗底的留白（对应 Content 的 p-6 下内边距）。
+const TABLE_BOTTOM_GAP = 24;
 
 export default function TaskPool() {
   const navigate = useNavigate();
@@ -70,14 +69,17 @@ export default function TaskPool() {
     });
   }, []);
 
-  // 以表格相对视窗的位置计算可用高度，避免依赖父级高度链（KeepAlive 缓存下更稳）。
+  // 表体可用高度 = 视窗高 - 表格顶部 - 实测表头高 - 实测分页器高 - 底部留白（随缩放/字号自适应，比固定预留值更稳）。
   // ResizeObserver 保证表格挂载/重新激活后再取一次准确的位置。
   useEffect(() => {
     const el = tableWrapRef.current;
     if (!el) return;
     const update = () => {
       const top = el.getBoundingClientRect().top;
-      setScrollY(Math.max(200, window.innerHeight - top - TABLE_RESERVE));
+      const headH = (el.querySelector('.ant-table-thead') as HTMLElement | null)?.offsetHeight ?? 55;
+      const pager = el.querySelector('.ant-pagination') as HTMLElement | null;
+      const pagerH = pager ? pager.offsetHeight + 32 : 64; // +32：分页器默认上下 margin
+      setScrollY(Math.max(200, window.innerHeight - top - headH - pagerH - TABLE_BOTTOM_GAP));
     };
     update();
     const ro = new ResizeObserver(update);

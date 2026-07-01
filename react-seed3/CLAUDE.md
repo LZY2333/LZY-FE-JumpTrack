@@ -36,6 +36,7 @@ import type { TaskDetail } from '@/types/task';
 - 每个页面/组件文件夹的主文件统一为 `index.tsx`，import 路径无需写文件名
 - 非组件文件（hook、store、工具、类型）统一用 camelCase 单文件，不建文件夹
 - 组件函数名始终用 PascalCase，与文件夹命名风格无关
+- 事件处理函数用 `handle` 前缀命名（`handlePointerDown`），JSX 上通过 `on*` 属性绑定：`onPointerDown={handlePointerDown}`；禁止直接把处理函数命名为 `on*`
 
 ## 样式规范
 

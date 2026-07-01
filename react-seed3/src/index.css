@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --ant-primary-color: #ff2d2d;
-  --ant-primary-color-hover: #ff5c5c;
-  --ant-primary-color-active: #cc0000;
-  --ant-primary-color-outline: rgba(255, 45, 45, 0.2);
+  --ant-primary-color: #E26B66;
+  --ant-primary-color-hover: #f09892;
+  --ant-primary-color-active: #bd4b4b;
+  --ant-primary-color-outline: rgba(226, 107, 102, 0.2);
 }
 
 .ant-layout-header {

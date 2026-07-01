@@ -1,5 +1,4 @@
 import ReactDOM from 'react-dom/client';
-import 'reset-css/reset.css';
 import 'antd/dist/antd.variable.css';
 import './index.css';
 import App from './App';
