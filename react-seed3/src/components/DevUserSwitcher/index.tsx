@@ -58,7 +58,7 @@ export default function DevUserSwitcher() {
           className="w-40"
           placeholder="选择用户"
           getPopupContainer={triggerNode => triggerNode.parentElement!}
-          options={users.map(u => ({ value: u.id, label: `${u.id} · ${u.name}` }))}
+          options={users.map(item => ({ value: item.id, label: `${item.id} · ${item.name}` }))}
         />
       </div>
     </div>

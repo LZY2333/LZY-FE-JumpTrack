@@ -32,16 +32,16 @@ export default function useTaskList() {
       .finally(() => setLoading(false));
   }, [page, pageSize, status, customerName, dateRange]);
 
-  const changeStatus = useCallback((v: string) => {
-    setStatus(v);
+  const changeStatus = useCallback((value: string) => {
+    setStatus(value);
     setPage(1);
   }, []);
-  const changeCustomerName = useCallback((v: string) => {
-    setCustomerName(v);
+  const changeCustomerName = useCallback((value: string) => {
+    setCustomerName(value);
     setPage(1);
   }, []);
-  const changeDateRange = useCallback((v: [Moment, Moment] | null) => {
-    setDateRange(v);
+  const changeDateRange = useCallback((value: [Moment, Moment] | null) => {
+    setDateRange(value);
     setPage(1);
   }, []);
   const reset = useCallback(() => {

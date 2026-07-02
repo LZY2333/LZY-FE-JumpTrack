@@ -7,9 +7,9 @@ import { TaskStatus } from '@/types/enums';
 interface Props {
   status: string;
   dateRange: [Moment, Moment] | null;
-  onStatusChange: (v: string) => void;
-  onCustomerNameChange: (v: string) => void;
-  onDateRangeChange: (v: [Moment, Moment] | null) => void;
+  onStatusChange: (value: string) => void;
+  onCustomerNameChange: (value: string) => void;
+  onDateRangeChange: (value: [Moment, Moment] | null) => void;
   onReset: () => void;
 }
 
@@ -25,7 +25,7 @@ export default function TaskFilters({
   const [nameInput, setNameInput] = useState('');
 
   const applyName = useMemo(
-    () => debounce((v: string) => onCustomerNameChange(v), 300),
+    () => debounce((value: string) => onCustomerNameChange(value), 300),
     [onCustomerNameChange],
   );
   useEffect(() => () => applyName.cancel(), [applyName]);
@@ -74,7 +74,7 @@ export default function TaskFilters({
             <DatePicker.RangePicker
               className="w-full"
               value={dateRange}
-              onChange={(v) => onDateRangeChange(v?.[0] && v?.[1] ? [v[0] as Moment, v[1] as Moment] : null)}
+              onChange={(range) => onDateRangeChange(range?.[0] && range?.[1] ? [range[0] as Moment, range[1] as Moment] : null)}
             />
           </Form.Item>
         </Col>

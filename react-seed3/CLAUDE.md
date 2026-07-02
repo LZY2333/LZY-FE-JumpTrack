@@ -37,6 +37,7 @@ import type { TaskDetail } from '@/types/task';
 - 非组件文件（hook、store、工具、类型）统一用 camelCase 单文件，不建文件夹
 - 组件函数名始终用 PascalCase，与文件夹命名风格无关
 - 事件处理函数用 `handle` 前缀命名（`handlePointerDown`），JSX 上通过 `on*` 属性绑定：`onPointerDown={handlePointerDown}`；禁止直接把处理函数命名为 `on*`
+- 变量/参数禁止使用单字母命名，须使用简短的语义化单词（如 `task`、`value`、`key`）；例外：`e`（事件对象）、`x`/`y`（坐标）、`i`（循环索引）等约定俗成的单字母命名可保留
 
 ## 样式规范
 

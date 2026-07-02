@@ -1,6 +1,7 @@
-import { TaskStatus } from '@/types/enums';
+import { Role, TaskStatus } from '@/types/enums';
 import type { Attachment, Customer, Task } from '@/types';
 import { mockCustomers } from './customer';
+import { mockUsers } from './users';
 
 const attachmentsFor = (id: string): Attachment[] => [
   { name: `Cover_Letter_${id}.pdf`, uid: `${id}-1` },
@@ -24,6 +25,7 @@ export const mockTasks: Task[] = Array.from({ length: 38 }, (_, i) => {
   const id = `T${String(i + 1).padStart(4, '0')}`;
   const status = STATUSES[i % STATUSES.length];
   const closed = status === TaskStatus.Approved || status === TaskStatus.Cancelled;
+  const makerUsers = mockUsers.filter(user => user.roles.includes(Role.Maker));
   return {
     id,
     refNo: id,
@@ -33,6 +35,7 @@ export const mockTasks: Task[] = Array.from({ length: 38 }, (_, i) => {
     daysUntilDue: closed ? null : i % 7,
     customerId: 'C0001',
     attachments: attachmentsFor(id),
+    makerId: makerUsers[i % makerUsers.length].id,
   };
 });
 
@@ -55,23 +58,23 @@ interface TasksQuery {
 export default [
   {
     url: '/api/tasks',
-    method: 'get',
-    response: (opt: { query: TasksQuery }) => {
-      const { page = '1', pageSize = '10', status, customerName, dateFrom, dateTo } = opt.query || {};
+    method: 'post',
+    response: (opt: { body: TasksQuery }) => {
+      const { page = '1', pageSize = '10', status, customerName, dateFrom, dateTo } = opt.body || {};
       let list = mockTasks;
-      if (status) list = list.filter(t => t.status === status);
+      if (status) list = list.filter(task => task.status === status);
       if (customerName) {
         const kw = customerName.trim().toLowerCase();
-        list = list.filter(t => t.customerName.toLowerCase().includes(kw));
+        list = list.filter(task => task.customerName.toLowerCase().includes(kw));
       }
-      if (dateFrom) list = list.filter(t => t.createdAt >= dateFrom);
-      if (dateTo) list = list.filter(t => t.createdAt <= dateTo);
-      const p = Number(page);
+      if (dateFrom) list = list.filter(task => task.createdAt >= dateFrom);
+      if (dateTo) list = list.filter(task => task.createdAt <= dateTo);
+      const pageNum = Number(page);
       const ps = Number(pageSize);
       return {
         code: 0,
         total: list.length,
-        data: list.slice((p - 1) * ps, p * ps),
+        data: list.slice((pageNum - 1) * ps, pageNum * ps),
       };
     },
   },
@@ -81,7 +84,7 @@ export default [
     method: 'get',
     response: () => ({
       code: 0,
-      data: mockTasks.filter(t => t.daysUntilDue !== null && t.daysUntilDue <= 2),
+      data: mockTasks.filter(task => task.daysUntilDue !== null && task.daysUntilDue <= 2),
     }),
   },
   {
@@ -89,38 +92,25 @@ export default [
     method: 'get',
     response: (opt: { url: string }) => ({
       code: 0,
-      data: mockTasks.find(t => t.id === lastSeg(opt.url)),
+      data: mockTasks.find(task => task.id === lastSeg(opt.url)),
     }),
   },
   {
-    url: '/api/task/submit/:id',
+    // 统一状态变更：body { id, status, payload? }；submit 时 payload 附带客户与附件
+    url: '/api/task/status',
     method: 'post',
-    response: (opt: { url: string; body: { customer: Customer; attachments: Attachment[] } }) => {
-      const task = mockTasks.find(t => t.id === lastSeg(opt.url));
+    response: (opt: { body: { id: string; status: TaskStatus; makerId?: string; payload?: { customer: Customer; attachments: Attachment[] } } }) => {
+      const { id, status, makerId, payload } = opt.body || {};
+      const task = mockTasks.find(item => item.id === id);
       if (task) {
-        task.status = TaskStatus.Submitted;
-        task.attachments = opt.body.attachments;
-        const customer = mockCustomers.find(c => c.id === task.customerId);
-        if (customer) Object.assign(customer, opt.body.customer);
+        task.status = status;
+        if (makerId) task.makerId = makerId;
+        if (payload) {
+          task.attachments = payload.attachments;
+          const customer = mockCustomers.find(item => item.id === task.customerId);
+          if (customer) Object.assign(customer, payload.customer);
+        }
       }
-      return { code: 0 };
-    },
-  },
-  {
-    url: '/api/task/return/:id',
-    method: 'post',
-    response: (opt: { url: string }) => {
-      const task = mockTasks.find(t => t.id === lastSeg(opt.url));
-      if (task) task.status = TaskStatus.Returned;
-      return { code: 0 };
-    },
-  },
-  {
-    url: '/api/task/approve/:id',
-    method: 'post',
-    response: (opt: { url: string }) => {
-      const task = mockTasks.find(t => t.id === lastSeg(opt.url));
-      if (task) task.status = TaskStatus.Approved;
       return { code: 0 };
     },
   },

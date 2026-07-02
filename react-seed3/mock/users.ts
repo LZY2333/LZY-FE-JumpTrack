@@ -13,7 +13,7 @@ export default [
     method: 'post',
     response: ({ body }: { body: { id: string } }) => ({
       code: 0,
-      data: mockUsers.find(u => u.id === body.id),
+      data: mockUsers.find(item => item.id === body.id),
     }),
   },
   {

@@ -36,7 +36,7 @@ export default [
     method: 'get',
     response: (opt: { url: string }) => ({
       code: 0,
-      data: mockCustomers.find(c => c.id === extractId(opt.url)),
+      data: mockCustomers.find(item => item.id === extractId(opt.url)),
     }),
   },
 ];

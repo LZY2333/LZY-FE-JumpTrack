@@ -6,6 +6,14 @@ export default {
   },
   theme: {
     extend: {
+      colors: {
+        // 主题色，与 index.css 的 --ant-primary-color 保持一致
+        primary: {
+          DEFAULT: '#E26B66',
+          hover: '#f09892',
+          active: '#bd4b4b',
+        },
+      },
       keyframes: {
         'fade-in': {
           '0%': { opacity: '0', transform: 'translateY(4px)' },

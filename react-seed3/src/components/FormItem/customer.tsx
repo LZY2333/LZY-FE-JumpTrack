@@ -11,8 +11,8 @@ import { YesNo } from '@/types/enums';
 
 // 日期字段共用的转换：表单存原始 YYYY-MM-DD 字符串，展示时转 Moment，选完转回字符串
 const dateItemProps = {
-  getValueProps: (v: string) => ({ value: v ? moment(v) : null }),
-  normalize: (v: Moment | null) => (v ? v.format('YYYY-MM-DD') : ''),
+  getValueProps: (value: string) => ({ value: value ? moment(value) : null }),
+  normalize: (value: Moment | null) => (value ? value.format('YYYY-MM-DD') : ''),
 };
 
 /* ---------- 客户信息（只读，值由 Form initialValues 注入） ---------- */

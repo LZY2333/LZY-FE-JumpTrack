@@ -29,8 +29,8 @@ export default function ExpiryAlertModal() {
       footer={<Button type="primary" onClick={close}>确认</Button>}>
       <p>以下任务将在 2 个工作日内到期，请尽快处理：</p>
       <ul className="mt-2 list-disc pl-5">
-        {alertTasks.map((t) => (
-          <li key={t.id}>{t.refNo} – {t.customerName}</li>
+        {alertTasks.map((task) => (
+          <li key={task.id}>{task.refNo} – {task.customerName}</li>
         ))}
       </ul>
     </Modal>

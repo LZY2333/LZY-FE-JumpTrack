@@ -39,7 +39,7 @@ export interface TaskFormRef {
   validate: () => Promise<TaskFormValues>;
 }
 
-const HIGHLIGHT = 'rounded ring-2 ring-yellow-400';
+const HIGHLIGHT = 'rounded ring-2 ring-primary';
 // 附件上传限制
 const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg'];
 const MAX_SIZE_MB = 10;
@@ -47,7 +47,7 @@ const MAX_SIZE_MB = 10;
 type Path = string | (string | number)[];
 const at = (obj: unknown, path: Path): unknown =>
   (Array.isArray(path) ? path : [path]).reduce<unknown>(
-    (o, k) => (o == null ? undefined : (o as Record<string | number, unknown>)[k]),
+    (acc, key) => (acc == null ? undefined : (acc as Record<string | number, unknown>)[key]),
     obj,
   );
 
@@ -94,7 +94,7 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
         okText: '删除',
         okButtonProps: { danger: true },
         cancelText: '取消',
-        onOk: () => setAttachments((prev) => prev.filter((a) => a.uid !== att.uid)),
+        onOk: () => setAttachments((prev) => prev.filter((item) => item.uid !== att.uid)),
       });
     };
 

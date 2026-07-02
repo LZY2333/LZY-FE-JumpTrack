@@ -22,6 +22,8 @@ export interface Task {
   customerId: string;
   /** 任务附件列表 */
   attachments: Attachment[];
+  /** 提交该任务的 Maker 用户 id，Checker 审批时需校验与当前用户不同 */
+  makerId: string;
 }
 
 export interface Customer {

@@ -2,8 +2,7 @@ import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import useUserStore from '@/store/useUserStore';
-import { TaskStatus, Role } from '@/types/enums';
+import { TaskStatus } from '@/types/enums';
 import type { Task } from '@/types';
 import useTaskList from '@/hooks/useTaskList';
 import useTableScrollY from '@/hooks/useTableScrollY';
@@ -20,7 +19,6 @@ const STATUS_COLOR: Record<TaskStatus, string> = {
 
 export default function TaskPool() {
   const navigate = useNavigate();
-  const { user } = useUserStore();
   const {
     tasks,
     total,
@@ -39,16 +37,7 @@ export default function TaskPool() {
   const tableWrapRef = useRef<HTMLDivElement>(null);
   const scrollY = useTableScrollY(tableWrapRef);
 
-  const openDetail = (record: Task) => {
-    if (!user) return;
-    const { roles } = user;
-    // 任务状态优先于角色：双角色用户（maker+checker）在任务已提交（Pending Checker）时进入 checker 页，
-    // 否则进入 maker 页；纯 checker 用户始终进入 checker 页
-    const toChecker =
-      (record.status === TaskStatus.Submitted && roles.includes(Role.Checker)) ||
-      (!roles.includes(Role.Maker) && roles.includes(Role.Checker));
-    navigate(`/task/${toChecker ? 'checker' : 'maker'}/${record.id}`);
-  };
+  const openDetail = (record: Task) => navigate(`/task/${record.id}`);
 
   const columns: ColumnsType<Task> = [
     { title: 'Ref No', dataIndex: 'refNo', width: 100 },
@@ -58,7 +47,7 @@ export default function TaskPool() {
       title: '状态',
       dataIndex: 'status',
       width: 160,
-      render: (s: TaskStatus) => <Badge color={STATUS_COLOR[s]} text={s} />,
+      render: (taskStatus: TaskStatus) => <Badge color={STATUS_COLOR[taskStatus]} text={taskStatus} />,
     },
     {
       title: '到期天数',
@@ -105,9 +94,9 @@ export default function TaskPool() {
             total,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (t) => `共 ${t} 条`,
-            onChange: (p, ps) => {
-              setPage(p);
+            showTotal: (count) => `共 ${count} 条`,
+            onChange: (nextPage, ps) => {
+              setPage(nextPage);
               setPageSize(ps);
             },
           }}
