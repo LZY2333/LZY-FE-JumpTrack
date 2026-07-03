@@ -6,6 +6,10 @@ export enum TaskStatus {
   Approved = 'approved',
 }
 
+export enum TaskType {
+  DailyReport = '1'
+} 
+
 export enum Role {
   Maker = 'maker',
   Checker = 'checker',

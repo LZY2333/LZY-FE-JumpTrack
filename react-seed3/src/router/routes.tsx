@@ -12,6 +12,6 @@ export interface AppRoute {
 }
 
 export const routes: AppRoute[] = [
-  { path: '/', element: <KeepAlive name="task-pool"><TaskPool /></KeepAlive>, meta: { title: '任务池' } },
-  { path: '/task/:id', element: <TaskDetail />, meta: { title: '任务详情' } },
+  { path: '/', element: <KeepAlive name="task-pool"><TaskPool /></KeepAlive>, meta: { title: 'Task Pool' } },
+  { path: '/task/:id', element: <TaskDetail />, meta: { title: 'Task Detail' } },
 ];

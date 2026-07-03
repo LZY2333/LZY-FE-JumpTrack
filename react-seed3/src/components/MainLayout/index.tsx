@@ -6,7 +6,7 @@ import DevUserSwitcher from '@/components/DevUserSwitcher';
 
 const { Content } = Layout;
 
-const APP_TITLE = 'CIES 申报系统';
+const APP_TITLE = 'CIES Declaration System';
 
 export default function MainLayout() {
   const location = useLocation();

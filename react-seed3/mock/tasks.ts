@@ -1,41 +1,60 @@
-import { Role, TaskStatus } from '@/types/enums';
+import { Role, TaskStatus, TaskType } from '@/types/enums';
 import type { Attachment, Customer, Task } from '@/types';
 import { mockCustomers } from './customer';
 import { mockUsers } from './users';
 
 const attachmentsFor = (id: string): Attachment[] => [
-  { name: `Cover_Letter_${id}.pdf`, uid: `${id}-1` },
-  { name: `Statement_${id}.pdf`, uid: `${id}-2` },
-  { name: `Transaction_${id}.pdf`, uid: `${id}-3` },
-];
-
-const NAMES = [
-  'Chen Wen 陈文', 'Li Ming 李明', 'Wang Fang 王芳', 'Zhang Wei 张伟', 'Liu Yang 刘洋',
-  'Zhao Lei 赵磊', 'Sun Li 孙丽', 'Zhou Jie 周杰', 'Wu Hao 吴昊', 'Zheng Shuang 郑爽',
-  'Feng Qin 冯琴', 'Han Xue 韩雪', 'Yang Guo 杨过', 'Xu Jing 徐静', 'He Ping 何平',
+  { fileId: `${id}-1`, fileName: `Cover_Letter_${id}.pdf`, filePath: `/attachments/${id}/1`, fileSize: '102400', createTime: '2026-06-01 10:00:00', createTellerId: 'U001' },
+  { fileId: `${id}-2`, fileName: `Statement_${id}.pdf`, filePath: `/attachments/${id}/2`, fileSize: '204800', createTime: '2026-06-01 10:00:00', createTellerId: 'U001' },
+  { fileId: `${id}-3`, fileName: `Transaction_${id}.pdf`, filePath: `/attachments/${id}/3`, fileSize: '51200', createTime: '2026-06-01 10:00:00', createTellerId: 'U001' },
 ];
 
 const STATUSES = [
   TaskStatus.Pending, TaskStatus.Submitted, TaskStatus.Returned, TaskStatus.Approved, TaskStatus.Cancelled,
 ];
 
+// Returned 状态的任务演示 newValue：maker 之前保存过的草稿改动（相对 customer 接口的差异字段，不含附件），
+// 用于验证「重新进入详情页时，草稿字段高亮」的效果
+const demoNewValue = () =>
+  JSON.stringify({
+    bankCusRef: 'CIES2.0:DRAFT-001',
+  });
+
 // 模块级可变数组：Node.js 模块单例，dev server 进程存活期间状态持久，mock 接口直接修改此数组。
-// 生成 38 条用于演示分页：发起日期递减、到期天数循环，覆盖全部状态；已批准/已取消视为无到期天数。
+// 生成 38 条用于演示分页：发起日期递减，覆盖全部状态；本地 demo 数据均关联同一个 mock 客户 C0001。
+// Maker/Checker 信息按状态区分：Pending 尚未被 maker 领取，故无 maker；Submitted 已提交但未经 checker 处理，
+// 故无 checker；Returned/Approved 均已被 checker 处理过，maker/checker 均有；Cancelled 由 maker 自行撤销，只有 maker。
 export const mockTasks: Task[] = Array.from({ length: 38 }, (_, i) => {
   const id = `T${String(i + 1).padStart(4, '0')}`;
   const status = STATUSES[i % STATUSES.length];
-  const closed = status === TaskStatus.Approved || status === TaskStatus.Cancelled;
   const makerUsers = mockUsers.filter(user => user.roles.includes(Role.Maker));
+  const checkerUsers = mockUsers.filter(user => user.roles.includes(Role.Checker));
+  const maker = makerUsers[i % makerUsers.length];
+  const checker = checkerUsers[i % checkerUsers.length];
+  const createDate = `2026-06-${String(28 - (i % 28)).padStart(2, '0')}`;
+  const hasMaker = status !== TaskStatus.Pending;
+  const hasChecker = status === TaskStatus.Returned || status === TaskStatus.Approved;
   return {
-    id,
-    refNo: id,
-    customerName: NAMES[i % NAMES.length],
-    createdAt: `2026-06-${String(28 - (i % 28)).padStart(2, '0')}`,
-    status,
-    daysUntilDue: closed ? null : i % 7,
-    customerId: 'C0001',
+    taskId: id,
+    taskName: `DailyReport-${createDate.replace(/-/g, '')}`,
+    taskType: TaskType.DailyReport,
+    taskStatus: status,
+    cusId: 'C0001',
+    newValue: status === TaskStatus.Returned ? demoNewValue() : '',
+    inputId: hasMaker ? maker.id : '',
+    inputName: hasMaker ? maker.name : '',
+    inputTime: hasMaker ? createDate : '',
+    inputBrNo: hasMaker ? '001' : '',
+    inputBrName: hasMaker ? 'Central Branch' : '',
+    authoriserId: hasChecker ? checker.id : '',
+    authoriserName: hasChecker ? checker.name : '',
+    authoriserTime: hasChecker ? createDate : '',
+    authoriserBrNo: hasChecker ? '001' : '',
+    authoriserBrName: hasChecker ? 'Central Branch' : '',
+    createDate,
+    lastUpdateTime: createDate,
+    remarkMsg: '',
     attachments: attachmentsFor(id),
-    makerId: makerUsers[i % makerUsers.length].id,
   };
 });
 
@@ -46,11 +65,17 @@ function lastSeg(url: string): string {
   return parts[parts.length - 1];
 }
 
+// /api/task/:id/attachment 的 id 是倒数第二段
+function taskIdFromAttachmentUrl(url: string): string {
+  const parts = url.split('/');
+  return parts[parts.length - 2];
+}
+
 interface TasksQuery {
   page?: string;
   pageSize?: string;
   status?: string;
-  customerName?: string;
+  cusId?: string;
   dateFrom?: string;
   dateTo?: string;
 }
@@ -60,15 +85,15 @@ export default [
     url: '/api/tasks',
     method: 'post',
     response: (opt: { body: TasksQuery }) => {
-      const { page = '1', pageSize = '10', status, customerName, dateFrom, dateTo } = opt.body || {};
+      const { page = '1', pageSize = '10', status, cusId, dateFrom, dateTo } = opt.body || {};
       let list = mockTasks;
-      if (status) list = list.filter(task => task.status === status);
-      if (customerName) {
-        const kw = customerName.trim().toLowerCase();
-        list = list.filter(task => task.customerName.toLowerCase().includes(kw));
+      if (status) list = list.filter(task => task.taskStatus === status);
+      if (cusId) {
+        const kw = cusId.trim().toLowerCase();
+        list = list.filter(task => task.cusId.toLowerCase().includes(kw));
       }
-      if (dateFrom) list = list.filter(task => task.createdAt >= dateFrom);
-      if (dateTo) list = list.filter(task => task.createdAt <= dateTo);
+      if (dateFrom) list = list.filter(task => task.createDate >= dateFrom);
+      if (dateTo) list = list.filter(task => task.createDate <= dateTo);
       const pageNum = Number(page);
       const ps = Number(pageSize);
       return {
@@ -79,35 +104,44 @@ export default [
     },
   },
   {
-    // 到期提醒独立于分页，扫描全量任务返回 2 个工作日内到期的任务
-    url: '/api/tasks/due-soon',
-    method: 'get',
-    response: () => ({
-      code: 0,
-      data: mockTasks.filter(task => task.daysUntilDue !== null && task.daysUntilDue <= 2),
-    }),
-  },
-  {
     url: '/api/task/:id',
     method: 'get',
     response: (opt: { url: string }) => ({
       code: 0,
-      data: mockTasks.find(task => task.id === lastSeg(opt.url)),
+      data: mockTasks.find(task => task.taskId === lastSeg(opt.url)),
     }),
+  },
+  {
+    // 附件上传：mock 不落真实文件，仅根据前端提交的文件名/大小生成后端形态的附件记录
+    url: '/api/task/:id/attachment',
+    method: 'post',
+    response: (opt: { url: string; body: { fileName: string; fileSize: string } }) => {
+      const taskId = taskIdFromAttachmentUrl(opt.url);
+      const { fileName, fileSize } = opt.body || {};
+      const attachment: Attachment = {
+        fileId: `${taskId}-${Date.now()}`,
+        fileName: fileName || 'unnamed',
+        filePath: `/attachments/${taskId}/${Date.now()}`,
+        fileSize: fileSize || '0',
+        createTime: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        createTellerId: 'U001',
+      };
+      return { code: 0, data: attachment };
+    },
   },
   {
     // 统一状态变更：body { id, status, payload? }；submit 时 payload 附带客户与附件
     url: '/api/task/status',
     method: 'post',
-    response: (opt: { body: { id: string; status: TaskStatus; makerId?: string; payload?: { customer: Customer; attachments: Attachment[] } } }) => {
-      const { id, status, makerId, payload } = opt.body || {};
-      const task = mockTasks.find(item => item.id === id);
+    response: (opt: { body: { id: string; status: TaskStatus; inputId?: string; payload?: { customer: Customer; attachments: Attachment[] } } }) => {
+      const { id, status, inputId, payload } = opt.body || {};
+      const task = mockTasks.find(item => item.taskId === id);
       if (task) {
-        task.status = status;
-        if (makerId) task.makerId = makerId;
+        task.taskStatus = status;
+        if (inputId) task.inputId = inputId;
         if (payload) {
           task.attachments = payload.attachments;
-          const customer = mockCustomers.find(item => item.id === task.customerId);
+          const customer = mockCustomers.find(item => item.cusId === task.cusId);
           if (customer) Object.assign(customer, payload.customer);
         }
       }

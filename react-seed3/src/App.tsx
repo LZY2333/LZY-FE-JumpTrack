@@ -1,16 +1,12 @@
   import { BrowserRouter } from 'react-router-dom';
   import { AliveScope } from 'react-activation';
   import { ConfigProvider } from 'antd';
-  import zhCN from 'antd/lib/locale/zh_CN';
-  import moment from 'moment';
-  import 'moment/locale/zh-cn';
+  import enUS from 'antd/lib/locale/en_US';
   import AppRoutes from '@/router';
-
-  moment.locale('zh-cn');
 
   export default function App() {
     return (
-      <ConfigProvider locale={zhCN}>
+      <ConfigProvider locale={enUS}>
         <BrowserRouter>
           <AliveScope>
             <AppRoutes />

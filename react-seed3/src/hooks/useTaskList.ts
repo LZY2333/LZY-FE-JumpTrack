@@ -3,8 +3,8 @@ import type { Moment } from 'moment';
 import type { Task } from '@/types';
 import { getTasks } from '@/api/tasks';
 
-// 任务池的查询状态与数据：分页 + 状态/客户名/日期筛选，任一筛选变化都回到第一页。
-// 客户名的输入防抖由 TaskFilters 负责，这里只接收最终查询值。
+// 任务池的查询状态与数据：分页 + 状态/客户号/日期筛选，任一筛选变化都回到第一页。
+// 客户号的输入防抖由 TaskFilters 负责，这里只接收最终查询值。
 export default function useTaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [total, setTotal] = useState(0);
@@ -12,7 +12,7 @@ export default function useTaskList() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [status, setStatus] = useState('');
-  const [customerName, setCustomerName] = useState('');
+  const [cusId, setCusId] = useState('');
   const [dateRange, setDateRange] = useState<[Moment, Moment] | null>(null);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function useTaskList() {
       page,
       pageSize,
       status: status || undefined,
-      customerName: customerName.trim() || undefined,
+      cusId: cusId.trim() || undefined,
       dateFrom: dateRange?.[0].format('YYYY-MM-DD'),
       dateTo: dateRange?.[1].format('YYYY-MM-DD'),
     })
@@ -30,14 +30,14 @@ export default function useTaskList() {
         setTotal(res.total);
       })
       .finally(() => setLoading(false));
-  }, [page, pageSize, status, customerName, dateRange]);
+  }, [page, pageSize, status, cusId, dateRange]);
 
   const changeStatus = useCallback((value: string) => {
     setStatus(value);
     setPage(1);
   }, []);
-  const changeCustomerName = useCallback((value: string) => {
-    setCustomerName(value);
+  const changeCusId = useCallback((value: string) => {
+    setCusId(value);
     setPage(1);
   }, []);
   const changeDateRange = useCallback((value: [Moment, Moment] | null) => {
@@ -46,7 +46,7 @@ export default function useTaskList() {
   }, []);
   const reset = useCallback(() => {
     setStatus('');
-    setCustomerName('');
+    setCusId('');
     setDateRange(null);
     setPage(1);
   }, []);
@@ -62,7 +62,7 @@ export default function useTaskList() {
     setPage,
     setPageSize,
     changeStatus,
-    changeCustomerName,
+    changeCusId,
     changeDateRange,
     reset,
   };

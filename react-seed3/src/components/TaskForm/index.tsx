@@ -4,27 +4,33 @@ import type { RcFile } from 'antd/es/upload';
 import { DeleteOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import type { Attachment, Customer } from '@/types';
+import { uploadAttachment } from '@/api/tasks';
 import {
   AipDate,
   AipExpiryDate,
-  CiesTerminationDate,
-  Cif,
+  AnnualReportDate,
+  BankCusRef,
   CURRENCY_FIELDS,
-  CustodianAccount,
-  CustomerName,
+  CusId,
+  CusPrmAct,
+  CustodianAct,
+  CustomerCnName,
+  CustomerEnName,
   CustomerType,
   DateOfBirth,
   FaDate,
-  FundAccount,
-  OurRef,
-  SavingsAccount,
-  SecuritiesAccount,
+  FundAct,
+  GovCusRef,
+  SecurityAct,
+  TerminationDate,
   Transferred3M,
-  YourRef,
 } from '@/components/FormItem';
 
 interface Props {
+  taskId: string;
   customer: Customer;
+  // 接口原始值（未叠加 newValue 草稿），仅用于高亮对比，不参与表单展示
+  originalCustomer: Customer;
   attachments: Attachment[];
   readonly?: boolean;
 }
@@ -52,10 +58,10 @@ const at = (obj: unknown, path: Path): unknown =>
   );
 
 const TaskForm = forwardRef<TaskFormRef, Props>(
-  ({ customer, attachments: initialAttachments, readonly = false }, ref) => {
+  ({ taskId, customer, originalCustomer, attachments: initialAttachments, readonly = false }, ref) => {
     const [form] = Form.useForm();
-    // values 跟踪当前表单值，customer 为后端下发的基线；高亮逻辑由调用方（本组件）持有，
-    // 字段组件本身保持通用、无高亮。表单存储已与 Customer 同构，可直接按路径比较。
+    // values 跟踪当前表单值，customer 为 newValue 草稿叠加后的初始值；originalCustomer 才是
+    // 接口原始基线，高亮对比统一以它为准，这样重新进入详情页时草稿字段也会立即高亮。
     const [values, setValues] = useState<Customer>(customer);
     const [attachments, setAttachments] = useState<Attachment[]>(initialAttachments);
 
@@ -75,12 +81,18 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
       [customer, form, attachments],
     );
 
-    // 当前输入值与基线不同即高亮，仅用于可修改字段；常驻 transition 让高亮淡入淡出
+    // 当前输入值与接口原始基线不同即高亮，仅用于可修改字段；常驻 transition 让高亮淡入淡出
     const hl = (path: Path) =>
-      `transition-all duration-300 ${at(values, path) !== at(customer, path) ? HIGHLIGHT : ''}`;
+      `transition-all duration-300 ${at(values, path) !== at(originalCustomer, path) ? HIGHLIGHT : ''}`;
+
+    // Annual Report Date：originalCustomer 该字段一旦非空即永久锁定，不允许再修改
+    const annualReportDateLocked = !!originalCustomer.AnnualReportDate;
+    // AIP Date / FA Date：originalCustomer 对应字段一旦非空即永久锁定，不允许再修改
+    const aipDateLocked = !!originalCustomer.aipDate;
+    const faDateLocked = !!originalCustomer.faDate;
 
     const handleValuesChange = (changed: Customer) => {
-      if ('aipDate' in changed && customer.customerType === 'CIES 2.0') {
+      if ('aipDate' in changed && customer.cusType === 'CIES 2.0') {
         const aip = form.getFieldValue('aipDate') as string;
         form.setFieldsValue({ aipExpiryDate: aip ? moment(aip).add(180, 'days').format('YYYY-MM-DD') : '' });
       }
@@ -89,26 +101,32 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
 
     const handleDelete = (att: Attachment) => {
       Modal.confirm({
-        title: '确认删除附件',
-        content: `确定删除「${att.name}」吗？此操作不可撤销。`,
-        okText: '删除',
+        title: 'Confirm Delete Attachment',
+        content: `Delete "${att.fileName}"? This action cannot be undone.`,
+        okText: 'Delete',
         okButtonProps: { danger: true },
-        cancelText: '取消',
-        onOk: () => setAttachments((prev) => prev.filter((item) => item.uid !== att.uid)),
+        cancelText: 'Cancel',
+        onOk: () => setAttachments((prev) => prev.filter((item) => item.fileId !== att.fileId)),
       });
     };
 
-    // 上传前校验文件类型与大小，不通过则提示并忽略
+    // 上传前校验文件类型与大小，通过后调用专门的附件上传接口，由后端落库并返回真实附件信息
     const beforeUpload = (file: RcFile) => {
       if (!ALLOWED_TYPES.includes(file.type)) {
-        message.error('仅支持 PDF / PNG / JPG 格式');
+        message.error('Only PDF / PNG / JPG formats are supported');
         return Upload.LIST_IGNORE;
       }
       if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-        message.error(`文件大小不能超过 ${MAX_SIZE_MB}MB`);
+        message.error(`File size must not exceed ${MAX_SIZE_MB}MB`);
         return Upload.LIST_IGNORE;
       }
-      setAttachments((prev) => [...prev, { name: file.name, uid: file.uid }]);
+      uploadAttachment(taskId, file)
+        .then((attachment) => {
+          setAttachments((prev) => [...prev, attachment]);
+        })
+        .catch(() => {
+          message.error('Attachment upload failed');
+        });
       return false;
     };
 
@@ -139,32 +157,34 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
         onValuesChange={handleValuesChange}>
         {/* 客户信息 与 申报信息 并列，整表由通用字段组件拼装；初始值经 initialValues 一次性注入 */}
         <Row gutter={16}>
-          {/* Left: 客户信息（含可修改的 Our Ref / Your Ref） */}
+          {/* Left: 客户信息 */}
           <Col span={12}>
-            <Card title='客户信息' size='small' className='h-full'>
+            <Card title='Customer Info' size='small' className='h-full'>
               <div className='space-y-3'>
                 <CustomerType />
-                <CustomerName />
+                <CustomerCnName />
+                <CustomerEnName />
                 <DateOfBirth />
-                <Cif />
-                <SavingsAccount />
-                <SecuritiesAccount />
-                <FundAccount />
-                <CustodianAccount />
-                <OurRef className={hl('ourRef')} />
-                <YourRef className={hl('yourRef')} />
+                <CusId />
+                <CusPrmAct />
+                <SecurityAct />
+                <FundAct />
+                <CustodianAct />
               </div>
             </Card>
           </Col>
 
-          {/* Right: 申报信息 */}
+          {/* Right: 申报信息（Our Ref / Your Ref 放最上面） */}
           <Col span={12}>
-            <Card title='申报信息' size='small' className='h-full'>
+            <Card title='Declaration Info' size='small' className='h-full'>
               <div className='space-y-3'>
-                <AipDate className={hl('aipDate')} />
+                <BankCusRef className={hl('bankCusRef')} />
+                <GovCusRef className={hl('govCusRef')} />
+                <AipDate disabled={readonly || aipDateLocked} className={hl('aipDate')} />
                 <AipExpiryDate />
-                <FaDate className={hl('faDate')} />
-                <CiesTerminationDate className={hl('ciesTerminationDate')} />
+                <FaDate disabled={readonly || faDateLocked} className={hl('faDate')} />
+                <AnnualReportDate disabled={readonly || annualReportDateLocked} className={hl('AnnualReportDate')} />
+                <TerminationDate className={hl('terminationDate')} />
                 <Transferred3M className={hl('transferred3M')} />
                 <div className='grid grid-cols-2 gap-x-4 border-t pt-3'>
                   {renderInterests('withdrawableInterests', 'Withdrawable Interests')}
@@ -176,7 +196,7 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
         </Row>
 
         {/* 附件区域放在下方，占满整行 */}
-        <Card title='附件 (Attachment)' size='small' className='mt-4'>
+        <Card title='Attachments' size='small' className='mt-4'>
           <List
             size='small'
             dataSource={attachments}
@@ -200,7 +220,7 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
                 {/* 图标+文件名合成一个 flex 子项，space-between 才会让名字始终靠左 */}
                 <div className='flex items-center'>
                   <FileOutlined className='mr-2 text-gray-400' />
-                  <span>{att.name}</span>
+                  <span>{att.fileName}</span>
                 </div>
               </List.Item>
             )}

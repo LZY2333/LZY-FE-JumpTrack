@@ -8,7 +8,7 @@ interface Props {
   status: string;
   dateRange: [Moment, Moment] | null;
   onStatusChange: (value: string) => void;
-  onCustomerNameChange: (value: string) => void;
+  onCusIdChange: (value: string) => void;
   onDateRangeChange: (value: [Moment, Moment] | null) => void;
   onReset: () => void;
 }
@@ -17,22 +17,22 @@ export default function TaskFilters({
   status,
   dateRange,
   onStatusChange,
-  onCustomerNameChange,
+  onCusIdChange,
   onDateRangeChange,
   onReset,
 }: Props) {
-  // 客户名即时回显（本地态），300ms 后才把最终值抛给上层发起查询
-  const [nameInput, setNameInput] = useState('');
+  // 客户号即时回显（本地态），300ms 后才把最终值抛给上层发起查询
+  const [cusIdInput, setCusIdInput] = useState('');
 
-  const applyName = useMemo(
-    () => debounce((value: string) => onCustomerNameChange(value), 300),
-    [onCustomerNameChange],
+  const applyCusId = useMemo(
+    () => debounce((value: string) => onCusIdChange(value), 300),
+    [onCusIdChange],
   );
-  useEffect(() => () => applyName.cancel(), [applyName]);
+  useEffect(() => () => applyCusId.cancel(), [applyCusId]);
 
   const handleReset = () => {
-    applyName.cancel();
-    setNameInput('');
+    applyCusId.cancel();
+    setCusIdInput('');
     onReset();
   };
 
@@ -40,13 +40,13 @@ export default function TaskFilters({
     <Form layout="horizontal" labelAlign="left" labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} className="mb-4">
       <Row gutter={16}>
         <Col span={7}>
-          <Form.Item label="状态" className="mb-0">
+          <Form.Item label="Status" className="mb-0">
             <Select
               value={status}
               onChange={onStatusChange}
               className="w-full"
               options={[
-                { value: '', label: '全部状态' },
+                { value: '', label: 'All Statuses' },
                 { value: TaskStatus.Pending, label: 'Pending' },
                 { value: TaskStatus.Cancelled, label: 'Cancelled' },
                 { value: TaskStatus.Submitted, label: 'Submitted' },
@@ -57,20 +57,20 @@ export default function TaskFilters({
           </Form.Item>
         </Col>
         <Col span={7}>
-          <Form.Item label="客户名称" className="mb-0">
+          <Form.Item label="Customer ID" className="mb-0">
             <Input
               allowClear
-              placeholder="按客户名称筛选"
-              value={nameInput}
+              placeholder="Filter by Customer ID (CIF)"
+              value={cusIdInput}
               onChange={(e) => {
-                setNameInput(e.target.value);
-                applyName(e.target.value);
+                setCusIdInput(e.target.value);
+                applyCusId(e.target.value);
               }}
             />
           </Form.Item>
         </Col>
         <Col span={7}>
-          <Form.Item label="发起日期" className="mb-0">
+          <Form.Item label="Created Date" className="mb-0">
             <DatePicker.RangePicker
               className="w-full"
               value={dateRange}
@@ -79,7 +79,7 @@ export default function TaskFilters({
           </Form.Item>
         </Col>
         <Col span={3} className="flex items-center justify-end">
-          <Button onClick={handleReset}>重置</Button>
+          <Button onClick={handleReset}>Reset</Button>
         </Col>
       </Row>
     </Form>

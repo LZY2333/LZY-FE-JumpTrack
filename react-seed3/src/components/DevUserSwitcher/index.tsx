@@ -56,7 +56,7 @@ export default function DevUserSwitcher() {
           onChange={(id) => login(id)}
           size="small"
           className="w-40"
-          placeholder="选择用户"
+          placeholder="Select user"
           getPopupContainer={triggerNode => triggerNode.parentElement!}
           options={users.map(item => ({ value: item.id, label: `${item.id} · ${item.name}` }))}
         />
