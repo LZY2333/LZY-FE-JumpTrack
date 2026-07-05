@@ -1,12 +1,21 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge, Button, Table } from 'antd';
+import { Badge, Button, Col, Form, Row } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import type { Moment } from 'moment';
+import { useDebounceFn } from 'ahooks';
 import { TaskStatus } from '@/types/enums';
 import type { Task } from '@/types';
 import useTaskList from '@/hooks/useTaskList';
 import useTableScrollY from '@/hooks/useTableScrollY';
-import TaskFilters from '@/components/TaskFilters';
+import ResizableTable from '@/components/ResizableTable';
+import { TaskStatusFilter, TaskCusIdFilter, TaskDateRangeFilter } from '@/components/FormItem';
+
+interface FilterValues {
+  status: string;
+  cusId: string;
+  dateRange: [Moment, Moment] | null;
+}
 
 const STATUS_COLOR: Record<TaskStatus, string> = {
   [TaskStatus.Pending]: 'blue',
@@ -24,8 +33,6 @@ export default function TaskPool() {
     loading,
     page,
     pageSize,
-    status,
-    dateRange,
     setPage,
     setPageSize,
     changeStatus,
@@ -33,8 +40,31 @@ export default function TaskPool() {
     changeDateRange,
     reset,
   } = useTaskList();
+  const [form] = Form.useForm();
   const tableWrapRef = useRef<HTMLDivElement>(null);
   const scrollY = useTableScrollY(tableWrapRef);
+
+  // 客户号防抖：输入即时回显由 Form 受控管理，300ms 后才把值推给查询
+  const { run: applyCusId, cancel: cancelApplyCusId } = useDebounceFn(
+    (value: string) => changeCusId(value),
+    { wait: 300 },
+  );
+
+  // 状态/日期即时查询，客户号走防抖；字段变更由 Form 统一分发
+  const handleValuesChange = (changed: Partial<FilterValues>) => {
+    if ('status' in changed) changeStatus(changed.status ?? '');
+    if ('dateRange' in changed) {
+      const range = changed.dateRange;
+      changeDateRange(range?.[0] && range?.[1] ? range : null);
+    }
+    if ('cusId' in changed) applyCusId(changed.cusId ?? '');
+  };
+
+  const handleReset = () => {
+    cancelApplyCusId();
+    form.resetFields();
+    reset();
+  };
 
   const openDetail = (record: Task) => navigate(`/task/${record.taskId}`);
 
@@ -66,18 +96,36 @@ export default function TaskPool() {
   return (
     <div className="animate-fade-in">
       <div className="mb-2 text-xs text-gray-400">Double-click a row, or click "View" to open task details</div>
-      <TaskFilters
-        status={status}
-        dateRange={dateRange}
-        onStatusChange={changeStatus}
-        onCusIdChange={changeCusId}
-        onDateRangeChange={changeDateRange}
-        onReset={reset}
-      />
+      <Form
+        form={form}
+        layout="horizontal"
+        labelAlign="left"
+        labelCol={{ span: 7 }}
+        wrapperCol={{ span: 17 }}
+        className="mb-4"
+        initialValues={{ status: '' }}
+        onValuesChange={handleValuesChange}
+      >
+        <Row gutter={16}>
+          <Col span={7}>
+            <TaskStatusFilter />
+          </Col>
+          <Col span={7}>
+            <TaskCusIdFilter />
+          </Col>
+          <Col span={7}>
+            <TaskDateRangeFilter />
+          </Col>
+          <Col span={3} className="flex items-center justify-end">
+            <Button onClick={handleReset}>Reset</Button>
+          </Col>
+        </Row>
+      </Form>
       <div ref={tableWrapRef}>
-        <Table
+        <ResizableTable<Task>
           rowKey="taskId"
           columns={columns}
+          storageKey="task-pool"
           dataSource={tasks}
           loading={loading}
           onRow={(record) => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}

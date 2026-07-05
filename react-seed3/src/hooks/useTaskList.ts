@@ -4,7 +4,7 @@ import type { Task } from '@/types';
 import { getTasks } from '@/api/tasks';
 
 // 任务池的查询状态与数据：分页 + 状态/客户号/日期筛选，任一筛选变化都回到第一页。
-// 客户号的输入防抖由 TaskFilters 负责，这里只接收最终查询值。
+// 客户号的输入防抖由 task-pool 页面负责，这里只接收最终查询值。
 export default function useTaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [total, setTotal] = useState(0);

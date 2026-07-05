@@ -17,7 +17,9 @@ export default function useTableScrollY(
     const el = ref.current;
     if (!el) return;
     const update = () => {
-      const top = el.getBoundingClientRect().top;
+      // 以真正的表格（.ant-table）顶部为基准，wrap 内表格上方的工具栏高度会被自动计入
+      const table = el.querySelector('.ant-table') as HTMLElement | null;
+      const top = (table ?? el).getBoundingClientRect().top;
       const headH = (el.querySelector('.ant-table-thead') as HTMLElement | null)?.offsetHeight ?? 55;
       const pager = el.querySelector('.ant-pagination') as HTMLElement | null;
       const pagerH = pager ? pager.offsetHeight + 32 : 64; // +32：分页器默认上下 margin
