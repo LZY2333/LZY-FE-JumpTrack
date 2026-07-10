@@ -105,7 +105,7 @@ export default function ResizableTitle(props: ResizableTitleProps) {
       onDrop={movable ? handleDrop : undefined}
       {...restProps}
     >
-      <span ref={titleRef} className="cursor-text select-text">
+      <span ref={titleRef} className='cursor-text select-text'>
         {children}
       </span>
       {resizable ? (
@@ -114,7 +114,7 @@ export default function ResizableTitle(props: ResizableTitleProps) {
           draggable={false}
           onPointerDown={handlePointerDown}
           onDragStart={(e) => e.preventDefault()}
-          className="absolute top-0 right-0 h-full w-1 cursor-col-resize select-none"
+          className='absolute top-0 right-0 h-full w-1 cursor-col-resize select-none'
         />
       ) : null}
     </th>

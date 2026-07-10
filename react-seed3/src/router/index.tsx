@@ -8,16 +8,10 @@ export default function AppRoutes() {
     <Routes>
       <Route element={<MainLayout />}>
         {routes.map(({ path, element, role }) => (
-          <Route
-            key={path}
-            path={path}
-            element={role ? <PrivateRoute role={role}>{element}</PrivateRoute> : element}
-          />
+          <Route key={path} path={path} element={role ? <PrivateRoute role={role}>{element}</PrivateRoute> : element} />
         ))}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path='*' element={<Navigate to='/' replace />} />
       </Route>
     </Routes>
   );
 }
-
-

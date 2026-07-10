@@ -34,7 +34,7 @@ const readLayout = (storageKey?: string): TableLayout => {
  * 优先用列的 key/dataIndex 作持久化标识，列顺序调整或增删后仍能对上。
  * 无 key/dataIndex 时只能回退到 index，此时增删列会导致布局错位，开发环境告警提醒补 key。
  */
-const getColId = <T,>(col: ColumnType<T>, index: number) => {
+const getColId = <T>(col: ColumnType<T>, index: number) => {
   if (col.key != null) return String(col.key);
   if (typeof col.dataIndex === 'string' || typeof col.dataIndex === 'number') {
     return String(col.dataIndex);
@@ -84,10 +84,7 @@ export default function useTableLayout<T>(source: ColumnsType<T>, storageKey?: s
 
   // 按已存顺序（失效 id 过滤）+ 新增列追加到末尾，得到最终列序
   const resolveOrder = useCallback(
-    (order: string[]) => [
-      ...order.filter((id) => colMap.has(id)),
-      ...sourceIds.filter((id) => !order.includes(id)),
-    ],
+    (order: string[]) => [...order.filter((id) => colMap.has(id)), ...sourceIds.filter((id) => !order.includes(id))],
     [colMap, sourceIds],
   );
   const orderedIds = useMemo(() => resolveOrder(layout.order), [resolveOrder, layout.order]);
@@ -121,9 +118,7 @@ export default function useTableLayout<T>(source: ColumnsType<T>, storageKey?: s
         const validHidden = prev.hidden.filter((id) => colMap.has(id));
         const isHidden = validHidden.includes(colId);
         if (!isHidden && validHidden.length >= sourceIds.length - 1) return prev;
-        const hidden = isHidden
-          ? validHidden.filter((id) => id !== colId)
-          : [...validHidden, colId];
+        const hidden = isHidden ? validHidden.filter((id) => id !== colId) : [...validHidden, colId];
         return { ...prev, hidden };
       });
     },
@@ -137,7 +132,7 @@ export default function useTableLayout<T>(source: ColumnsType<T>, storageKey?: s
   }, [storageKey]);
 
   // 列设置面板数据：按当前列序列出每列的显隐状态
-  const columnMetas: ColumnMeta[] = useMemo(
+  const columnMetaList: ColumnMeta[] = useMemo(
     () =>
       orderedIds.map((colId) => {
         const col = colMap.get(colId)!;
@@ -176,5 +171,5 @@ export default function useTableLayout<T>(source: ColumnsType<T>, storageKey?: s
     [orderedIds, colMap, layout.hidden, layout.widths, resizeColumn, reorderColumn],
   );
 
-  return { columns, columnMetas, toggleColumn, reset };
+  return { columns, columnMetaList, toggleColumn, reset };
 }

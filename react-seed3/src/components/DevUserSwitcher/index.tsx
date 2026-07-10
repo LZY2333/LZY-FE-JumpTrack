@@ -13,8 +13,8 @@ export default function DevUserSwitcher() {
 
   useEffect(() => {
     getUsers().then((res) => {
-      login(res[0].id)
-      setUsers(res)
+      login(res[0].id);
+      setUsers(res);
     });
   }, []);
 
@@ -46,19 +46,19 @@ export default function DevUserSwitcher() {
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        className="flex h-10 w-10 cursor-move touch-none items-center justify-center rounded-full bg-red-700 text-white shadow-lg"
+        className='flex h-10 w-10 cursor-move touch-none items-center justify-center rounded-full bg-red-700 text-white shadow-lg'
       >
         <UserSwitchOutlined />
       </div>
-      <div className="hidden group-hover:block">
+      <div className='hidden group-hover:block'>
         <Select
           value={user?.id}
           onChange={(id) => login(id)}
-          size="small"
-          className="w-40"
-          placeholder="Select user"
-          getPopupContainer={triggerNode => triggerNode.parentElement!}
-          options={users.map(item => ({ value: item.id, label: `${item.id} · ${item.name}` }))}
+          size='small'
+          className='w-40'
+          placeholder='Select user'
+          getPopupContainer={(triggerNode) => triggerNode.parentElement!}
+          options={users.map((item) => ({ value: item.id, label: `${item.id} · ${item.name}` }))}
         />
       </div>
     </div>

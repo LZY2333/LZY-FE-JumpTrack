@@ -1,16 +1,41 @@
-import { Role, TaskStatus, TaskType } from '@/types/enums';
+import { ResCode, Role, TaskStatus, TaskType } from '@/types/enums';
 import type { Attachment, Customer, Task } from '@/types';
 import { mockCustomers } from './customer';
 import { mockUsers } from './users';
 
 const attachmentsFor = (id: string): Attachment[] => [
-  { fileId: `${id}-1`, fileName: `Cover_Letter_${id}.pdf`, filePath: `/attachments/${id}/1`, fileSize: '102400', createTime: '2026-06-01 10:00:00', createTellerId: 'U001' },
-  { fileId: `${id}-2`, fileName: `Statement_${id}.pdf`, filePath: `/attachments/${id}/2`, fileSize: '204800', createTime: '2026-06-01 10:00:00', createTellerId: 'U001' },
-  { fileId: `${id}-3`, fileName: `Transaction_${id}.pdf`, filePath: `/attachments/${id}/3`, fileSize: '51200', createTime: '2026-06-01 10:00:00', createTellerId: 'U001' },
+  {
+    fileId: `${id}-1`,
+    fileName: `Cover_Letter_${id}.pdf`,
+    filePath: `/attachments/${id}/1`,
+    fileSize: '102400',
+    createTime: '2026-06-01 10:00:00',
+    createTellerId: 'U001',
+  },
+  {
+    fileId: `${id}-2`,
+    fileName: `Statement_${id}.pdf`,
+    filePath: `/attachments/${id}/2`,
+    fileSize: '204800',
+    createTime: '2026-06-01 10:00:00',
+    createTellerId: 'U001',
+  },
+  {
+    fileId: `${id}-3`,
+    fileName: `Transaction_${id}.pdf`,
+    filePath: `/attachments/${id}/3`,
+    fileSize: '51200',
+    createTime: '2026-06-01 10:00:00',
+    createTellerId: 'U001',
+  },
 ];
 
 const STATUSES = [
-  TaskStatus.Pending, TaskStatus.Submitted, TaskStatus.Returned, TaskStatus.Approved, TaskStatus.Cancelled,
+  TaskStatus.Pending,
+  TaskStatus.Submitted,
+  TaskStatus.Returned,
+  TaskStatus.Approved,
+  TaskStatus.Cancelled,
 ];
 
 // Returned 状态的任务演示 newValue：maker 之前保存过的草稿改动（相对 customer 接口的差异字段，不含附件），
@@ -27,8 +52,8 @@ const demoNewValue = () =>
 export const mockTasks: Task[] = Array.from({ length: 38 }, (_, i) => {
   const id = `T${String(i + 1).padStart(4, '0')}`;
   const status = STATUSES[i % STATUSES.length];
-  const makerUsers = mockUsers.filter(user => user.roles.includes(Role.Maker));
-  const checkerUsers = mockUsers.filter(user => user.roles.includes(Role.Checker));
+  const makerUsers = mockUsers.filter((user) => user.roles.includes(Role.Maker));
+  const checkerUsers = mockUsers.filter((user) => user.roles.includes(Role.Checker));
   const maker = makerUsers[i % makerUsers.length];
   const checker = checkerUsers[i % checkerUsers.length];
   const createDate = `2026-06-${String(28 - (i % 28)).padStart(2, '0')}`;
@@ -72,7 +97,7 @@ function taskIdFromAttachmentUrl(url: string): string {
 }
 
 interface TasksQuery {
-  page?: string;
+  current?: string;
   pageSize?: string;
   status?: string;
   cusId?: string;
@@ -85,21 +110,25 @@ export default [
     url: '/api/tasks',
     method: 'post',
     response: (opt: { body: TasksQuery }) => {
-      const { page = '1', pageSize = '10', status, cusId, dateFrom, dateTo } = opt.body || {};
+      const { current = '1', pageSize = '10', status, cusId, dateFrom, dateTo } = opt.body || {};
       let list = mockTasks;
-      if (status) list = list.filter(task => task.taskStatus === status);
+      if (status) list = list.filter((task) => task.taskStatus === status);
       if (cusId) {
         const kw = cusId.trim().toLowerCase();
-        list = list.filter(task => task.cusId.toLowerCase().includes(kw));
+        list = list.filter((task) => task.cusId.toLowerCase().includes(kw));
       }
-      if (dateFrom) list = list.filter(task => task.createDate >= dateFrom);
-      if (dateTo) list = list.filter(task => task.createDate <= dateTo);
-      const pageNum = Number(page);
+      if (dateFrom) list = list.filter((task) => task.createDate >= dateFrom);
+      if (dateTo) list = list.filter((task) => task.createDate <= dateTo);
+      const currentPage = Number(current);
       const ps = Number(pageSize);
       return {
-        code: 0,
-        total: list.length,
-        data: list.slice((pageNum - 1) * ps, pageNum * ps),
+        returnCode: ResCode.Success,
+        body: {
+          list: list.slice((currentPage - 1) * ps, currentPage * ps),
+          current: currentPage,
+          pageSize: ps,
+          total: list.length,
+        },
       };
     },
   },
@@ -107,8 +136,8 @@ export default [
     url: '/api/task/:id',
     method: 'get',
     response: (opt: { url: string }) => ({
-      code: 0,
-      data: mockTasks.find(task => task.taskId === lastSeg(opt.url)),
+      returnCode: ResCode.Success,
+      body: mockTasks.find((task) => task.taskId === lastSeg(opt.url)),
     }),
   },
   {
@@ -126,26 +155,41 @@ export default [
         createTime: new Date().toISOString().slice(0, 19).replace('T', ' '),
         createTellerId: 'U001',
       };
-      return { code: 0, data: attachment };
+      return { returnCode: ResCode.Success, body: attachment };
     },
   },
   {
-    // 统一状态变更：body { id, status, payload? }；submit 时 payload 附带客户与附件
+    // 统一状态变更：body { id, status, inputId?, authoriserId?, payload? }。
+    // submit 时 payload 携带 newValue（表单相对 Customer 的差异 JSON）与 attachments，先存作任务草稿；
+    // 只有 approve 时才把 newValue 合并进客户主数据；return 时 newValue 原样保留，供 maker 下次继续编辑。
     url: '/api/task/status',
     method: 'post',
-    response: (opt: { body: { id: string; status: TaskStatus; inputId?: string; payload?: { customer: Customer; attachments: Attachment[] } } }) => {
-      const { id, status, inputId, payload } = opt.body || {};
-      const task = mockTasks.find(item => item.taskId === id);
+    response: (opt: {
+      body: {
+        id: string;
+        status: TaskStatus;
+        inputId?: string;
+        authoriserId?: string;
+        payload?: { newValue: string; attachments: Attachment[] };
+      };
+    }) => {
+      const { id, status, inputId, authoriserId, payload } = opt.body || {};
+      const task = mockTasks.find((item) => item.taskId === id);
       if (task) {
         task.taskStatus = status;
         if (inputId) task.inputId = inputId;
+        if (authoriserId) task.authoriserId = authoriserId;
         if (payload) {
+          task.newValue = payload.newValue;
           task.attachments = payload.attachments;
-          const customer = mockCustomers.find(item => item.cusId === task.cusId);
-          if (customer) Object.assign(customer, payload.customer);
+        }
+        if (status === TaskStatus.Approved) {
+          const customer = mockCustomers.find((item) => item.cusId === task.cusId);
+          const diff = task.newValue ? (JSON.parse(task.newValue) as Partial<Customer>) : {};
+          if (customer) Object.assign(customer, diff);
         }
       }
-      return { code: 0 };
+      return { returnCode: ResCode.Success };
     },
   },
 ];

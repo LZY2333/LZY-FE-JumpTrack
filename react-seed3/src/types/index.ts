@@ -119,7 +119,6 @@ export interface Customer {
   transferredInterests: Record<string, number>;
 }
 
-
 // 用户字段规则表
 
 // 字段: cusId

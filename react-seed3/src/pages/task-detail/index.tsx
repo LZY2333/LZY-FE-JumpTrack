@@ -3,10 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Modal, Skeleton, Tooltip, Typography, message } from 'antd';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, RollbackOutlined, SendOutlined } from '@ant-design/icons';
 import TaskForm, { TaskFormRef } from '@/components/TaskForm';
-import useTaskDetail from '@/hooks/useTaskDetail';
+import useTaskDetail, { buildNewValue } from '@/hooks/useTaskDetail';
 import useUserStore from '@/store/useUserStore';
 import { Role, TaskStatus } from '@/types/enums';
 import { approveTask, cancelTask, returnTask, submitTask } from '@/api/tasks';
+import type { TaskStatusPayload } from '@/api/tasks';
 
 const EDITABLE_STATUSES = [TaskStatus.Pending, TaskStatus.Returned];
 
@@ -31,7 +32,7 @@ export default function TaskDetail() {
 
   const handleSubmit = () => {
     const formApi = formRef.current;
-    if (!id || !formApi) return;
+    if (!id || !formApi || !originalCustomer) return;
     formApi
       .validate()
       .then((updated) => {
@@ -43,7 +44,11 @@ export default function TaskDetail() {
           onOk: () => {
             if (!user) return;
             setSubmitting(true);
-            return submitTask(id, updated, user.id)
+            const payload: TaskStatusPayload = {
+              newValue: buildNewValue(updated.customer, originalCustomer),
+              attachments: updated.attachments,
+            };
+            return submitTask(id, payload, user.id)
               .then(() => {
                 message.success('Submitted successfully');
                 navigate('/');
@@ -56,7 +61,7 @@ export default function TaskDetail() {
   };
 
   const handleCancel = () => {
-    if (!id) return;
+    if (!id || !user) return;
     Modal.confirm({
       title: 'Confirm Cancel',
       content: 'The task will become Cancelled and cannot be recovered. Continue?',
@@ -65,7 +70,7 @@ export default function TaskDetail() {
       cancelText: 'Cancel',
       onOk: () => {
         setCancelling(true);
-        return cancelTask(id)
+        return cancelTask(id, user.id)
           .then(() => {
             message.success('Cancelled successfully');
             navigate('/');
@@ -76,7 +81,7 @@ export default function TaskDetail() {
   };
 
   const handleReturn = () => {
-    if (!id) return;
+    if (!id || !user) return;
     Modal.confirm({
       title: 'Confirm Return',
       content: 'The task will be sent back to the Maker. Continue?',
@@ -85,7 +90,7 @@ export default function TaskDetail() {
       cancelText: 'Cancel',
       onOk: () => {
         setReturning(true);
-        return returnTask(id)
+        return returnTask(id, user.id)
           .then(() => {
             message.success('Returned successfully');
             navigate('/');
@@ -96,7 +101,7 @@ export default function TaskDetail() {
   };
 
   const handleApprove = () => {
-    if (!id) return;
+    if (!id || !user) return;
     Modal.confirm({
       title: 'Confirm Approve',
       content: 'The task will become Approved. Continue?',
@@ -104,7 +109,7 @@ export default function TaskDetail() {
       cancelText: 'Cancel',
       onOk: () => {
         setApproving(true);
-        return approveTask(id)
+        return approveTask(id, user.id)
           .then(() => {
             message.success('Approved successfully');
             navigate('/');
@@ -116,32 +121,46 @@ export default function TaskDetail() {
 
   if (loading || !customer || !originalCustomer || !task) {
     return (
-      <div className="animate-fade-in">
+      <div className='animate-fade-in'>
         <Skeleton active paragraph={{ rows: 8 }} />
       </div>
     );
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')}>Back</Button>
+    <div className='animate-fade-in'>
+      <div className='mb-4 flex items-center justify-between'>
+        <div className='flex items-center gap-3'>
+          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')}>
+            Back
+          </Button>
           <Typography.Text strong>Task {id} – OPC AET</Typography.Text>
         </div>
-        <div className="flex gap-3">
+        <div className='flex gap-3'>
           {isEditableStage && (
             <>
               <Tooltip title={isMaker ? '' : 'Maker only'}>
                 <span className={isMaker ? undefined : 'cursor-default'}>
-                  <Button danger icon={<CloseOutlined />} loading={cancelling} disabled={!isMaker} onClick={handleCancel}>
+                  <Button
+                    danger
+                    icon={<CloseOutlined />}
+                    loading={cancelling}
+                    disabled={!isMaker}
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </Button>
                 </span>
               </Tooltip>
               <Tooltip title={isMaker ? '' : 'Maker only'}>
                 <span className={isMaker ? undefined : 'cursor-default'}>
-                  <Button type="primary" icon={<SendOutlined />} loading={submitting} disabled={!isMaker} onClick={handleSubmit}>
+                  <Button
+                    type='primary'
+                    icon={<SendOutlined />}
+                    loading={submitting}
+                    disabled={!isMaker}
+                    onClick={handleSubmit}
+                  >
                     Submit
                   </Button>
                 </span>
@@ -157,9 +176,17 @@ export default function TaskDetail() {
                   </Button>
                 </span>
               </Tooltip>
-              <Tooltip title={canApprove ? '' : isSelfApproval ? 'You cannot approve your own submission' : 'Checker only'}>
+              <Tooltip
+                title={canApprove ? '' : isSelfApproval ? 'You cannot approve your own submission' : 'Checker only'}
+              >
                 <span className={canApprove ? undefined : 'cursor-default'}>
-                  <Button type="primary" icon={<CheckOutlined />} loading={approving} disabled={!canApprove} onClick={handleApprove}>
+                  <Button
+                    type='primary'
+                    icon={<CheckOutlined />}
+                    loading={approving}
+                    disabled={!canApprove}
+                    onClick={handleApprove}
+                  >
                     Approve
                   </Button>
                 </span>

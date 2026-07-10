@@ -2,16 +2,16 @@
 
 ## 技术栈
 
-| 层级 | 技术 |
-|---|---|
-| 框架 | React 18 + TypeScript |
-| 构建 | Vite 4 |
-| UI 组件 | Ant Design 4 |
-| 样式 | Tailwind CSS |
-| 状态管理 | Zustand |
-| 路由 | React Router v6 |
-| HTTP | Axios |
-| Mock | vite-plugin-mock（仅 dev server） |
+| 层级     | 技术                              |
+| -------- | --------------------------------- |
+| 框架     | React 18 + TypeScript             |
+| 构建     | Vite 4                            |
+| UI 组件  | Ant Design 4                      |
+| 样式     | Tailwind CSS                      |
+| 状态管理 | Zustand                           |
+| 路由     | React Router v6                   |
+| HTTP     | Axios                             |
+| Mock     | vite-plugin-mock（仅 dev server） |
 
 ## 路径别名
 
@@ -24,13 +24,13 @@ import type { TaskDetail } from '@/types/task';
 
 ## 命名规范
 
-| 目录 | 文件夹命名 | 文件命名 |
-|---|---|---|
-| `src/pages/` | kebab-case（`task-pool/`） | `index.tsx` |
-| `src/components/` | PascalCase（`TaskForm/`） | `index.tsx` |
-| `src/store/` | — | camelCase（`useUserStore.ts`） |
-| `src/types/` | — | camelCase（`task.ts`、`enums.ts`） |
-| `src/mock/` | — | camelCase（`tasks.ts`） |
+| 目录              | 文件夹命名                 | 文件命名                           |
+| ----------------- | -------------------------- | ---------------------------------- |
+| `src/pages/`      | kebab-case（`task-pool/`） | `index.tsx`                        |
+| `src/components/` | PascalCase（`TaskForm/`）  | `index.tsx`                        |
+| `src/store/`      | —                          | camelCase（`useUserStore.ts`）     |
+| `src/types/`      | —                          | camelCase（`task.ts`、`enums.ts`） |
+| `src/mock/`       | —                          | camelCase（`tasks.ts`）            |
 
 - `pages/` 用 kebab-case，与 URL 路径对应；`components/` 用 PascalCase，与组件名对应
 - 每个页面/组件文件夹的主文件统一为 `index.tsx`，import 路径无需写文件名
@@ -38,6 +38,7 @@ import type { TaskDetail } from '@/types/task';
 - 组件函数名始终用 PascalCase，与文件夹命名风格无关
 - 事件处理函数用 `handle` 前缀命名（`handlePointerDown`），JSX 上通过 `on*` 属性绑定：`onPointerDown={handlePointerDown}`；禁止直接把处理函数命名为 `on*`
 - 变量/参数禁止使用单字母命名，须使用简短的语义化单词（如 `task`、`value`、`key`）；例外：`e`（事件对象）、`x`/`y`（坐标）、`i`（循环索引）等约定俗成的单字母命名可保留
+- 函数一律使用函数表达式声明（`const fn = (...) => { ... }`），禁止使用函数声明（`function fn() {}`），包括组件、hook、普通工具函数
 
 ## 样式规范
 
@@ -56,10 +57,10 @@ import type { TaskDetail } from '@/types/task';
 ```ts
 // 正确
 import { TaskStatus, Role } from '@/types/enums';
-task.status === TaskStatus.PendingChecker
+task.status === TaskStatus.PendingChecker;
 
 // 禁止
-task.status === 'Pending Checker'
+task.status === 'Pending Checker';
 ```
 
 当前已定义：`TaskStatus`、`Role`、`YesNo`

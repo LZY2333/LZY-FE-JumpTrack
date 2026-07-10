@@ -1,9 +1,9 @@
-import request, { ApiResult } from './request';
+import { get, post, Pagination } from './request';
 import type { Attachment, Customer, Task } from '@/types';
 import { TaskStatus } from '@/types/enums';
 
 export interface TaskQuery {
-  page: number;
+  current: number;
   pageSize: number;
   status?: string;
   cusId?: string;
@@ -11,33 +11,26 @@ export interface TaskQuery {
   dateTo?: string;
 }
 
-export interface PagedTasks {
-  data: Task[];
-  total: number;
+export interface PagedTasks extends Pagination {
+  list: Task[];
 }
 
-export const getTasks = (params: TaskQuery): Promise<PagedTasks> =>
-  request
-    .post<ApiResult<Task[]>, ApiResult<Task[]>>('/api/tasks', params)
-    .then(res => ({ data: res.data, total: res.total ?? 0 }));
+export const getTasks = (params: TaskQuery) => post<PagedTasks>('/api/tasks', params);
 
-export const getTask = (id: string) =>
-  request.get<ApiResult<Task>, ApiResult<Task>>(`/api/task/${id}`).then(res => res.data);
+export const getTask = (id: string) => get<Task>(`/api/task/${id}`);
 
-export const getCustomer = (cusId: string) =>
-  request.get<ApiResult<Customer>, ApiResult<Customer>>(`/api/customer/${cusId}`).then(res => res.data);
+export const getCustomer = (cusId: string) => get<Customer>(`/api/customer/${cusId}`);
 
 // 附件上传走专门的接口，成功后由后端直接返回落库的附件信息（fileId/filePath 等）
 export const uploadAttachment = (taskId: string, file: File) =>
-  request
-    .post<ApiResult<Attachment>, ApiResult<Attachment>>(`/api/task/${taskId}/attachment`, {
-      fileName: file.name,
-      fileSize: String(file.size),
-    })
-    .then(res => res.data);
+  post<Attachment>(`/api/task/${taskId}/attachment`, {
+    fileName: file.name,
+    fileSize: String(file.size),
+  });
 
 export interface TaskStatusPayload {
-  customer: Customer;
+  // 表单值与接口原始 Customer 的差异字段（即高亮字段），JSON 字符串
+  newValue: string;
   attachments: Attachment[];
 }
 
@@ -45,20 +38,21 @@ export interface TaskStatusChange {
   id: string;
   status: TaskStatus;
   inputId?: string;
+  authoriserId?: string;
   payload?: TaskStatusPayload;
 }
 
 // 统一的任务状态变更入口：submit/return/approve/cancel 均走 /api/task/status（POST body）
-const changeTaskStatus = (body: TaskStatusChange) => request.post('/api/task/status', body);
+const changeTaskStatus = (body: TaskStatusChange) => post('/api/task/status', body);
 
 export const submitTask = (id: string, payload: TaskStatusPayload, inputId: string) =>
   changeTaskStatus({ id, status: TaskStatus.Submitted, inputId, payload });
 
-export const returnTask = (id: string) =>
-  changeTaskStatus({ id, status: TaskStatus.Returned });
+export const returnTask = (id: string, authoriserId: string) =>
+  changeTaskStatus({ id, status: TaskStatus.Returned, authoriserId });
 
-export const approveTask = (id: string) =>
-  changeTaskStatus({ id, status: TaskStatus.Approved });
+export const approveTask = (id: string, authoriserId: string) =>
+  changeTaskStatus({ id, status: TaskStatus.Approved, authoriserId });
 
-export const cancelTask = (id: string) =>
-  changeTaskStatus({ id, status: TaskStatus.Cancelled });
+export const cancelTask = (id: string, inputId: string) =>
+  changeTaskStatus({ id, status: TaskStatus.Cancelled, inputId });

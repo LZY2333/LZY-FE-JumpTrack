@@ -1,5 +1,5 @@
 import { User } from '@/types';
-import { Role } from '@/types/enums';
+import { ResCode, Role } from '@/types/enums';
 
 export const mockUsers: User[] = [
   { id: 'U001', name: '张三', roles: [Role.Maker] },
@@ -12,18 +12,18 @@ export default [
     url: '/api/auth/login',
     method: 'post',
     response: ({ body }: { body: { id: string } }) => ({
-      code: 0,
-      data: mockUsers.find(item => item.id === body.id),
+      returnCode: ResCode.Success,
+      body: mockUsers.find((item) => item.id === body.id),
     }),
   },
   {
     url: '/api/auth/logout',
     method: 'post',
-    response: () => ({ code: 0 }),
+    response: () => ({ returnCode: ResCode.Success }),
   },
   {
     url: '/api/users',
     method: 'get',
-    response: () => ({ code: 0, data: mockUsers }),
+    response: () => ({ returnCode: ResCode.Success, body: mockUsers }),
   },
 ];

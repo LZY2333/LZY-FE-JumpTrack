@@ -7,8 +7,8 @@ export enum TaskStatus {
 }
 
 export enum TaskType {
-  DailyReport = '1'
-} 
+  DailyReport = '1',
+}
 
 export enum Role {
   Maker = 'maker',
@@ -18,4 +18,8 @@ export enum Role {
 export enum YesNo {
   Yes = 'Y',
   No = 'N',
+}
+
+export enum ResCode {
+  Success = 'SUC0000',
 }

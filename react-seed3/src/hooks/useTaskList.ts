@@ -9,7 +9,7 @@ export default function useTaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
+  const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [status, setStatus] = useState('');
   const [cusId, setCusId] = useState('');
@@ -18,7 +18,7 @@ export default function useTaskList() {
   useEffect(() => {
     setLoading(true);
     getTasks({
-      page,
+      current,
       pageSize,
       status: status || undefined,
       cusId: cusId.trim() || undefined,
@@ -26,40 +26,40 @@ export default function useTaskList() {
       dateTo: dateRange?.[1].format('YYYY-MM-DD'),
     })
       .then((res) => {
-        setTasks(res.data);
+        setTasks(res.list);
         setTotal(res.total);
       })
       .finally(() => setLoading(false));
-  }, [page, pageSize, status, cusId, dateRange]);
+  }, [current, pageSize, status, cusId, dateRange]);
 
   const changeStatus = useCallback((value: string) => {
     setStatus(value);
-    setPage(1);
+    setCurrent(1);
   }, []);
   const changeCusId = useCallback((value: string) => {
     setCusId(value);
-    setPage(1);
+    setCurrent(1);
   }, []);
   const changeDateRange = useCallback((value: [Moment, Moment] | null) => {
     setDateRange(value);
-    setPage(1);
+    setCurrent(1);
   }, []);
   const reset = useCallback(() => {
     setStatus('');
     setCusId('');
     setDateRange(null);
-    setPage(1);
+    setCurrent(1);
   }, []);
 
   return {
     tasks,
     total,
     loading,
-    page,
+    current,
     pageSize,
     status,
     dateRange,
-    setPage,
+    setCurrent,
     setPageSize,
     changeStatus,
     changeCusId,

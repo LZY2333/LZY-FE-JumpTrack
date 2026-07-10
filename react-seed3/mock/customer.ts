@@ -1,5 +1,5 @@
 import type { Customer } from '@/types';
-import { YesNo } from '@/types/enums';
+import { ResCode, YesNo } from '@/types/enums';
 
 // 模块级可变数组：dev server 进程存活期间状态持久，submit 时直接 Object.assign 更新
 export const mockCustomers: Customer[] = [
@@ -36,8 +36,8 @@ export default [
     url: '/api/customer/:id',
     method: 'get',
     response: (opt: { url: string }) => ({
-      code: 0,
-      data: mockCustomers.find(item => item.cusId === extractId(opt.url)),
+      returnCode: ResCode.Success,
+      body: mockCustomers.find((item) => item.cusId === extractId(opt.url)),
     }),
   },
 ];

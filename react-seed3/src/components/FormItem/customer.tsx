@@ -105,7 +105,12 @@ export function CustodianAct(props: FormItemProps) {
 
 export function BankCusRef(props: FormItemProps) {
   return (
-    <Form.Item name='bankCusRef' label='Our Ref' rules={[{ required: true, message: 'Please enter Our Ref' }]} {...props}>
+    <Form.Item
+      name='bankCusRef'
+      label='Our Ref'
+      rules={[{ required: true, message: 'Please enter Our Ref' }]}
+      {...props}
+    >
       <Input />
     </Form.Item>
   );
@@ -113,7 +118,12 @@ export function BankCusRef(props: FormItemProps) {
 
 export function GovCusRef(props: FormItemProps) {
   return (
-    <Form.Item name='govCusRef' label='Your Ref' rules={[{ required: true, message: 'Please enter Your Ref' }]} {...props}>
+    <Form.Item
+      name='govCusRef'
+      label='Your Ref'
+      rules={[{ required: true, message: 'Please enter Your Ref' }]}
+      {...props}
+    >
       <Input />
     </Form.Item>
   );
@@ -154,7 +164,8 @@ export function AnnualReportDate({ disabled, ...props }: FormItemProps & { disab
       label='Annual Report Date'
       rules={[{ required: true, message: 'Please select Annual Report Date' }]}
       {...dateItemProps}
-      {...props}>
+      {...props}
+    >
       <DatePicker className='w-full' disabled={disabled} />
     </Form.Item>
   );
@@ -162,12 +173,7 @@ export function AnnualReportDate({ disabled, ...props }: FormItemProps & { disab
 
 export function TerminationDate(props: FormItemProps) {
   return (
-    <Form.Item
-      name='terminationDate'
-      label='CIES Termination Date'
-      rules={[{ required: true, message: 'Please select CIES Termination Date' }]}
-      {...dateItemProps}
-      {...props}>
+    <Form.Item name='terminationDate' label='CIES Termination Date' {...dateItemProps} {...props}>
       <DatePicker className='w-full' />
     </Form.Item>
   );
@@ -175,7 +181,12 @@ export function TerminationDate(props: FormItemProps) {
 
 export function Transferred3M(props: FormItemProps) {
   return (
-    <Form.Item name='transferred3M' label='Transferred 3M' rules={[{ required: true, message: 'Please select Transferred 3M' }]} {...props}>
+    <Form.Item
+      name='transferred3M'
+      label='Transferred 3M'
+      rules={[{ required: true, message: 'Please select Transferred 3M' }]}
+      {...props}
+    >
       <Radio.Group>
         <Radio value={YesNo.Yes}>Y</Radio>
         <Radio value={YesNo.No}>N</Radio>

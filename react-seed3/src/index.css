@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --ant-primary-color: #E26B66;
+  --ant-primary-color: #e26b66;
   --ant-primary-color-hover: #f09892;
   --ant-primary-color-active: #bd4b4b;
   --ant-primary-color-outline: rgba(226, 107, 102, 0.2);
@@ -26,6 +26,11 @@
 /* 固定表头（scroll.y）出现纵向滚动条时，避免 antd v4 在表体挤出多余的横向滚动条 */
 .ant-table-body {
   overflow-x: hidden !important;
+}
+
+/* 全局去除表格分页器底部间距（上间距保留），贴紧页面容器底部，减少空白 */
+.ant-table-pagination.ant-pagination {
+  margin-bottom: 0;
 }
 
 /* 全局取消 antd disabled 态的 not-allowed 光标，统一为默认箭头 */

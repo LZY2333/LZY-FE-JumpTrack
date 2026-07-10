@@ -154,7 +154,8 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
         disabled={readonly}
         scrollToFirstError
         initialValues={customer}
-        onValuesChange={handleValuesChange}>
+        onValuesChange={handleValuesChange}
+      >
         {/* 客户信息 与 申报信息 并列，整表由通用字段组件拼装；初始值经 initialValues 一次性注入 */}
         <Row gutter={16}>
           {/* Left: 客户信息 */}
@@ -216,7 +217,8 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
                           onClick={() => handleDelete(att)}
                         />,
                       ]
-                }>
+                }
+              >
                 {/* 图标+文件名合成一个 flex 子项，space-between 才会让名字始终靠左 */}
                 <div className='flex items-center'>
                   <FileOutlined className='mr-2 text-gray-400' />
@@ -237,5 +239,7 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
     );
   },
 );
+
+TaskForm.displayName = 'TaskForm';
 
 export default TaskForm;
