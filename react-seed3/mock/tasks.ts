@@ -78,7 +78,7 @@ export const mockTasks: Task[] = Array.from({ length: 38 }, (_, i) => {
     authoriserBrName: hasChecker ? 'Central Branch' : '',
     createDate,
     lastUpdateTime: createDate,
-    remarkMsg: '',
+    remarkMsg: status === TaskStatus.Returned ? 'Please verify the updated customer information.' : '',
     attachments: attachmentsFor(id),
   };
 });
@@ -159,7 +159,7 @@ export default [
     },
   },
   {
-    // 统一状态变更：body { id, status, inputId?, authoriserId?, payload? }。
+    // 统一状态变更：body { id, status, inputId?, authoriserId?, remarkMsg?, payload? }。
     // submit 时 payload 携带 newValue（表单相对 Customer 的差异 JSON）与 attachments，先存作任务草稿；
     // 只有 approve 时才把 newValue 合并进客户主数据；return 时 newValue 原样保留，供 maker 下次继续编辑。
     url: '/api/task/status',
@@ -170,15 +170,17 @@ export default [
         status: TaskStatus;
         inputId?: string;
         authoriserId?: string;
+        remarkMsg?: string;
         payload?: { newValue: string; attachments: Attachment[] };
       };
     }) => {
-      const { id, status, inputId, authoriserId, payload } = opt.body || {};
+      const { id, status, inputId, authoriserId, remarkMsg, payload } = opt.body || {};
       const task = mockTasks.find((item) => item.taskId === id);
       if (task) {
         task.taskStatus = status;
         if (inputId) task.inputId = inputId;
         if (authoriserId) task.authoriserId = authoriserId;
+        if (status === TaskStatus.Returned) task.remarkMsg = remarkMsg || '';
         if (payload) {
           task.newValue = payload.newValue;
           task.attachments = payload.attachments;

@@ -1,13 +1,13 @@
 export enum TaskStatus {
-  Pending = 'pending',
-  Cancelled = 'cancelled',
-  Submitted = 'submitted',
-  Returned = 'returned',
-  Approved = 'approved',
+  Pending = 'S01',
+  Cancelled = 'S05',
+  Submitted = 'S02',
+  Returned = 'S04',
+  Approved = 'S03',
 }
 
 export enum TaskType {
-  DailyReport = '1',
+  DailyReport = 'T01',
 }
 
 export enum Role {

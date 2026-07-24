@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Button, Card, Col, Form, List, Modal, Row, Upload, message } from 'antd';
 import type { RcFile } from 'antd/es/upload';
-import { DeleteOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import type { Attachment, Customer } from '@/types';
 import { uploadAttachment } from '@/api/tasks';
@@ -145,58 +145,60 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
     };
 
     return (
-      <Form<Customer>
-        form={form}
-        layout='horizontal'
-        labelAlign='left'
-        labelCol={{ span: 10 }}
-        wrapperCol={{ span: 14 }}
-        disabled={readonly}
-        scrollToFirstError
-        initialValues={customer}
-        onValuesChange={handleValuesChange}
-      >
-        {/* 客户信息 与 申报信息 并列，整表由通用字段组件拼装；初始值经 initialValues 一次性注入 */}
-        <Row gutter={16}>
-          {/* Left: 客户信息 */}
-          <Col span={12}>
-            <Card title='Customer Info' size='small' className='h-full'>
-              <div className='space-y-3'>
-                <CustomerType />
-                <CustomerCnName />
-                <CustomerEnName />
-                <DateOfBirth />
-                <CusId />
-                <CusPrmAct />
-                <SecurityAct />
-                <FundAct />
-                <CustodianAct />
-              </div>
-            </Card>
-          </Col>
-
-          {/* Right: 申报信息（Our Ref / Your Ref 放最上面） */}
-          <Col span={12}>
-            <Card title='Declaration Info' size='small' className='h-full'>
-              <div className='space-y-3'>
-                <BankCusRef className={hl('bankCusRef')} />
-                <GovCusRef className={hl('govCusRef')} />
-                <AipDate disabled={readonly || aipDateLocked} className={hl('aipDate')} />
-                <AipExpiryDate />
-                <FaDate disabled={readonly || faDateLocked} className={hl('faDate')} />
-                <AnnualReportDate disabled={readonly || annualReportDateLocked} className={hl('AnnualReportDate')} />
-                <TerminationDate className={hl('terminationDate')} />
-                <Transferred3M className={hl('transferred3M')} />
-                <div className='grid grid-cols-2 gap-x-4 border-t pt-3'>
-                  {renderInterests('withdrawableInterests', 'Withdrawable Interests')}
-                  {renderInterests('transferredInterests', 'Transferred Interests')}
+      <>
+        <Form<Customer>
+          form={form}
+          layout='horizontal'
+          labelAlign='left'
+          labelCol={{ span: 10 }}
+          wrapperCol={{ span: 14 }}
+          disabled={readonly}
+          scrollToFirstError
+          initialValues={customer}
+          onValuesChange={handleValuesChange}
+        >
+          {/* 客户信息 与 申报信息 并列，整表由通用字段组件拼装；初始值经 initialValues 一次性注入 */}
+          <Row gutter={16}>
+            {/* Left: 客户信息 */}
+            <Col span={12}>
+              <Card title='Customer Info' size='small' className='h-full'>
+                <div className='space-y-3'>
+                  <CustomerType />
+                  <CustomerCnName />
+                  <CustomerEnName />
+                  <DateOfBirth />
+                  <CusId />
+                  <CusPrmAct />
+                  <SecurityAct />
+                  <FundAct />
+                  <CustodianAct />
                 </div>
-              </div>
-            </Card>
-          </Col>
-        </Row>
+              </Card>
+            </Col>
 
-        {/* 附件区域放在下方，占满整行 */}
+            {/* Right: 申报信息（Our Ref / Your Ref 放最上面） */}
+            <Col span={12}>
+              <Card title='Declaration Info' size='small' className='h-full'>
+                <div className='space-y-3'>
+                  <BankCusRef className={hl('bankCusRef')} />
+                  <GovCusRef className={hl('govCusRef')} />
+                  <AipDate disabled={readonly || aipDateLocked} className={hl('aipDate')} />
+                  <AipExpiryDate />
+                  <FaDate disabled={readonly || faDateLocked} className={hl('faDate')} />
+                  <AnnualReportDate disabled={readonly || annualReportDateLocked} className={hl('AnnualReportDate')} />
+                  <TerminationDate className={hl('terminationDate')} />
+                  <Transferred3M className={hl('transferred3M')} />
+                  <div className='grid grid-cols-2 gap-x-4 border-t pt-3'>
+                    {renderInterests('withdrawableInterests', 'Withdrawable Interests')}
+                    {renderInterests('transferredInterests', 'Transferred Interests')}
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+        </Form>
+
+        {/* 附件区域独立于 Form，避免 readonly 禁用下载操作 */}
         <Card title='Attachments' size='small' className='mt-4'>
           <List
             size='small'
@@ -204,20 +206,27 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
             renderItem={(att) => (
               <List.Item
                 className='group rounded px-2 transition-colors hover:bg-gray-50'
-                actions={
-                  readonly
-                    ? []
-                    : [
-                        <Button
-                          key='del'
-                          type='text'
-                          danger
-                          size='small'
-                          icon={<DeleteOutlined />}
-                          onClick={() => handleDelete(att)}
-                        />,
-                      ]
-                }
+                actions={[
+                  <Button
+                    key='download'
+                    type='text'
+                    size='small'
+                    danger
+                    icon={<DownloadOutlined />}
+                    href={att.filePath}
+                    download={att.fileName}
+                  />,
+                  !readonly && (
+                    <Button
+                      key='del'
+                      type='text'
+                      size='small'
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDelete(att)}
+                    />
+                  ),
+                ].filter(Boolean)}
               >
                 {/* 图标+文件名合成一个 flex 子项，space-between 才会让名字始终靠左 */}
                 <div className='flex items-center'>
@@ -235,7 +244,7 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
             </Upload>
           )}
         </Card>
-      </Form>
+      </>
     );
   },
 );

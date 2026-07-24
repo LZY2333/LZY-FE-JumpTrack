@@ -2,16 +2,17 @@
 
 ## 技术栈
 
-| 层级     | 技术                              |
-| -------- | --------------------------------- |
-| 框架     | React 18 + TypeScript             |
-| 构建     | Vite 4                            |
-| UI 组件  | Ant Design 4                      |
-| 样式     | Tailwind CSS                      |
-| 状态管理 | Zustand                           |
-| 路由     | React Router v6                   |
-| HTTP     | Axios                             |
-| Mock     | vite-plugin-mock（仅 dev server） |
+| 层级       | 技术                              |
+| ---------- | --------------------------------- |
+| 框架       | React 18 + TypeScript             |
+| 构建       | Vite 4                            |
+| UI 组件    | Ant Design 4                      |
+| 样式       | Tailwind CSS                      |
+| 状态管理   | Zustand                           |
+| 路由       | React Router v6                   |
+| Keep Alive | react-activation                  |
+| HTTP       | Axios                             |
+| Mock       | vite-plugin-mock（仅 dev server） |
 
 ## 路径别名
 
@@ -70,6 +71,14 @@ task.status === 'Pending Checker';
 - 接口/类型定义放 `src/types/`
 - 枚举放 `src/types/enums.ts`
 - Mock 数据的接口（如 `Task`）定义在对应 mock 文件中并 export，页面直接 `import type`
+
+## FormItem 与 TableColumn 复用规范
+
+- 新增表单字段时，必须创建可复用的 `FormItem` 字段组件，并按业务类型放在 `src/components/FormItem/` 下；页面不得直接重复编写对应的 `<Form.Item>`。
+- 新增表格字段时，必须创建可复用的 `TableColumn` 列配置，并按业务类型放在 `src/components/TableColumn/` 下；页面不得直接重复编写对应的列定义。
+- 一个组件或列配置只对应一个业务字段。`FormItem` 组件名使用字段名的 PascalCase，`TableColumn` 导出名及 `dataIndex` 使用字段名。例如字段 `taskStatus` 对应组件 `TaskStatus` 和列配置 `taskStatus`。
+- 字段自身的业务规则、校验、数据转换、展示逻辑以及下拉可选项必须内聚在对应的 `FormItem` 或 `TableColumn` 中；页面只负责组合、布局和传入上下文参数。
+- 实现方式参考 `src/components/FormItem/` 与 `src/components/TableColumn/` 下的现有组件。
 
 ## 状态管理
 

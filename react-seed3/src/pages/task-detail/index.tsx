@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Modal, Skeleton, Tooltip, Typography, message } from 'antd';
+import { Alert, Button, Input, Modal, Skeleton, Tooltip, Typography, message } from 'antd';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, RollbackOutlined, SendOutlined } from '@ant-design/icons';
 import TaskForm, { TaskFormRef } from '@/components/TaskForm';
 import useTaskDetail, { buildNewValue } from '@/hooks/useTaskDetail';
@@ -33,31 +33,28 @@ export default function TaskDetail() {
   const handleSubmit = () => {
     const formApi = formRef.current;
     if (!id || !formApi || !originalCustomer) return;
-    formApi
-      .validate()
-      .then((updated) => {
-        Modal.confirm({
-          title: 'Confirm Submit',
-          content: 'The task will move to Checker review after submission. Continue?',
-          okText: 'Submit',
-          cancelText: 'Cancel',
-          onOk: () => {
-            if (!user) return;
-            setSubmitting(true);
-            const payload: TaskStatusPayload = {
-              newValue: buildNewValue(updated.customer, originalCustomer),
-              attachments: updated.attachments,
-            };
-            return submitTask(id, payload, user.id)
-              .then(() => {
-                message.success('Submitted successfully');
-                navigate('/');
-              })
-              .finally(() => setSubmitting(false));
-          },
-        });
-      })
-      .catch(() => {});
+    formApi.validate().then((updated) => {
+      Modal.confirm({
+        title: 'Confirm Submit',
+        content: 'The task will move to Checker review after submission. Continue?',
+        okText: 'Submit',
+        cancelText: 'Cancel',
+        onOk: () => {
+          if (!user) return;
+          setSubmitting(true);
+          const payload: TaskStatusPayload = {
+            newValue: buildNewValue(updated.customer, originalCustomer),
+            attachments: updated.attachments,
+          };
+          return submitTask(id, payload, user.id)
+            .then(() => {
+              message.success('Submitted successfully');
+              navigate('/');
+            })
+            .finally(() => setSubmitting(false));
+        },
+      });
+    });
   };
 
   const handleCancel = () => {
@@ -82,15 +79,28 @@ export default function TaskDetail() {
 
   const handleReturn = () => {
     if (!id || !user) return;
+    let remarkMsg = '';
     Modal.confirm({
       title: 'Confirm Return',
-      content: 'The task will be sent back to the Maker. Continue?',
+      content: (
+        <div>
+          <Typography.Paragraph>The task will be sent back to the Maker. Continue?</Typography.Paragraph>
+          <Input
+            placeholder='Enter return reason'
+            maxLength={50}
+            showCount
+            onChange={(event) => {
+              remarkMsg = event.target.value;
+            }}
+          />
+        </div>
+      ),
       okText: 'Return',
       okButtonProps: { danger: true },
       cancelText: 'Cancel',
       onOk: () => {
         setReturning(true);
-        return returnTask(id, user.id)
+        return returnTask(id, user.id, remarkMsg.trim())
           .then(() => {
             message.success('Returned successfully');
             navigate('/');
@@ -195,6 +205,10 @@ export default function TaskDetail() {
           )}
         </div>
       </div>
+
+      {task.taskStatus === TaskStatus.Returned && (
+        <Alert className='mb-4' message='Return reason' description={task.remarkMsg || 'N/A'} type='warning' showIcon />
+      )}
 
       <TaskForm
         key={id}

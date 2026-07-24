@@ -15,6 +15,9 @@ const dateItemProps = {
   normalize: (value: Moment | null) => (value ? value.format('YYYY-MM-DD') : ''),
 };
 
+const removeChineseCharacters = (value: string) => value.replace(/[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/g, '');
+const disableFutureDate = (current: Moment) => current.isAfter(moment(), 'day');
+
 // 账户号可能为空数组或多个号码，逐行只读展示，无值时显示 '-'
 function AccountListInput({ value }: { value?: string[] }) {
   const accounts = value && value.length > 0 ? value : ['-'];
@@ -110,8 +113,9 @@ export function BankCusRef(props: FormItemProps) {
       label='Our Ref'
       rules={[{ required: true, message: 'Please enter Our Ref' }]}
       {...props}
+      normalize={removeChineseCharacters}
     >
-      <Input />
+      <Input maxLength={30} showCount />
     </Form.Item>
   );
 }
@@ -123,8 +127,9 @@ export function GovCusRef(props: FormItemProps) {
       label='Your Ref'
       rules={[{ required: true, message: 'Please enter Your Ref' }]}
       {...props}
+      normalize={removeChineseCharacters}
     >
-      <Input />
+      <Input maxLength={30} showCount />
     </Form.Item>
   );
 }
@@ -133,7 +138,7 @@ export function GovCusRef(props: FormItemProps) {
 export function AipDate({ disabled, ...props }: FormItemProps & { disabled?: boolean }) {
   return (
     <Form.Item name='aipDate' label='AIP Date' {...dateItemProps} {...props}>
-      <DatePicker className='w-full' disabled={disabled} />
+      <DatePicker className='w-full' disabled={disabled} disabledDate={disableFutureDate} />
     </Form.Item>
   );
 }
@@ -151,7 +156,7 @@ export function AipExpiryDate(props: FormItemProps) {
 export function FaDate({ disabled, ...props }: FormItemProps & { disabled?: boolean }) {
   return (
     <Form.Item name='faDate' label='FA Date' {...dateItemProps} {...props}>
-      <DatePicker className='w-full' disabled={disabled} />
+      <DatePicker className='w-full' disabled={disabled} disabledDate={disableFutureDate} />
     </Form.Item>
   );
 }

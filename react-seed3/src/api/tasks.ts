@@ -39,6 +39,7 @@ export interface TaskStatusChange {
   status: TaskStatus;
   inputId?: string;
   authoriserId?: string;
+  remarkMsg?: string;
   payload?: TaskStatusPayload;
 }
 
@@ -48,8 +49,8 @@ const changeTaskStatus = (body: TaskStatusChange) => post('/api/task/status', bo
 export const submitTask = (id: string, payload: TaskStatusPayload, inputId: string) =>
   changeTaskStatus({ id, status: TaskStatus.Submitted, inputId, payload });
 
-export const returnTask = (id: string, authoriserId: string) =>
-  changeTaskStatus({ id, status: TaskStatus.Returned, authoriserId });
+export const returnTask = (id: string, authoriserId: string, remarkMsg: string) =>
+  changeTaskStatus({ id, status: TaskStatus.Returned, authoriserId, remarkMsg });
 
 export const approveTask = (id: string, authoriserId: string) =>
   changeTaskStatus({ id, status: TaskStatus.Approved, authoriserId });
