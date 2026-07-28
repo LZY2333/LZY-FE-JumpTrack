@@ -6,8 +6,8 @@ import type { Moment } from 'moment';
 import { useDebounceFn } from 'ahooks';
 import type { Task } from '@/types';
 import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
-import useTaskList from '@/hooks/useTaskList';
-import useTableScrollY from '@/hooks/useTableScrollY';
+import useTaskList from '@/pages/task-pool/useTaskList';
+import useTableScrollY from '@/pages/task-pool/useTableScrollY';
 import ResizableTable from '@/components/ResizableTable';
 import {
   TaskStatusFilter,

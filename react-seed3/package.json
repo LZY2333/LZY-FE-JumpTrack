@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "export:src": "node scripts/export-recent-src.mjs",
+    "import:src": "node scripts/import-src-txt.mjs"
   },
   "dependencies": {
     "@ant-design/icons": "^4.8.0",

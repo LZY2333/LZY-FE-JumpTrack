@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Button, Input, Modal, Skeleton, Tooltip, Typography, message } from 'antd';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, RollbackOutlined, SendOutlined } from '@ant-design/icons';
 import TaskForm, { type TaskFormRef } from '@/components/TaskForm';
-import useTaskDetail from '@/hooks/useTaskDetail';
+import useTaskDetail from '@/pages/task-detail/useTaskDetail';
 import useUserStore from '@/store/useUserStore';
 import { Role, TaskStatus } from '@/types/enums';
 import { approveTask, cancelTask, returnTask, submitTask } from '@/api/tasks';
