@@ -21,5 +21,5 @@ export const routes: AppRoute[] = [
     ),
     meta: { title: 'Task Pool' },
   },
-  { path: '/task/:id', element: <TaskDetail />, meta: { title: 'Task Detail' } },
+  { path: '/task/:taskId', element: <TaskDetail />, meta: { title: 'Task Detail' } },
 ];

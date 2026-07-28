@@ -2,14 +2,20 @@ import { DatePicker, Form, Input, InputNumber, Radio } from 'antd';
 import type { FormItemProps } from 'antd';
 import type { Moment } from 'moment';
 import moment from 'moment';
-import { YesNo } from '@/types/enums';
+import type { InvestmentAccount } from '@/types';
+import { InvestType, YesNo } from '@/types/enums';
 
-// customer 业务字段：每个后端字段对应一个独立、通用的 Form.Item 包装组件。
-// 组件只固定自己的 name / label / 录入控件 / 数据转换，其余（className、layout、
-// 高亮、校验规则等）一律由调用方经 {...props} 注入，组件之间互不耦合。
-// 类型统一用 antd 的 FormItemProps，可直接当作 <Form.Item> 透传任意属性。
+/**
+ * Customer DTO 字段组件：
+ * - 导出组件名是后端 lowerCamelCase 字段名的 PascalCase 形式；
+ * - Form.Item name 与后端字段名完全一致；
+ * - 展示标签沿用现有界面文案。
+ */
 
-// 日期字段共用的转换：表单存原始 YYYY-MM-DD 字符串，展示时转 Moment，选完转回字符串
+type CustomerFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
+type CustomerDateProps = CustomerFormItemProps & { disabled?: boolean };
+
+// 日期字段共用转换：表单保存 YYYY-MM-DD 字符串，DatePicker 使用 Moment。
 const dateItemProps = {
   getValueProps: (value: string) => ({ value: value ? moment(value) : null }),
   normalize: (value: Moment | null) => (value ? value.format('YYYY-MM-DD') : ''),
@@ -18,7 +24,7 @@ const dateItemProps = {
 const removeChineseCharacters = (value: string) => value.replace(/[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/g, '');
 const disableFutureDate = (current: Moment) => current.isAfter(moment(), 'day');
 
-// 账户号可能为空数组或多个号码，逐行只读展示，无值时显示 '-'
+// 账户号可能为空数组或包含多个号码；逐行只读展示，无值时显示“-”。
 function AccountListInput({ value }: { value?: string[] }) {
   const accounts = value && value.length > 0 ? value : ['-'];
   return (
@@ -32,87 +38,114 @@ function AccountListInput({ value }: { value?: string[] }) {
 
 /* ---------- 客户信息（只读，值由 Form initialValues 注入） ---------- */
 
-export function CustomerType(props: FormItemProps) {
+export function CiesFlag(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='cusType' label='Customer Type' {...props}>
+    <Form.Item {...props} name='ciesFlag' label='Customer Type'>
       <Input disabled />
     </Form.Item>
   );
 }
 
-export function CustomerCnName(props: FormItemProps) {
+export function CusCnName(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='cusCnName' label='Customer Name (CN)' {...props}>
+    <Form.Item {...props} name='cusCnName' label='Customer Name (CN)'>
       <Input disabled />
     </Form.Item>
   );
 }
 
-export function CustomerEnName(props: FormItemProps) {
+export function CusEnName(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='cusEnName' label='Customer Name (EN)' {...props}>
+    <Form.Item {...props} name='cusEnName' label='Customer Name (EN)'>
       <Input disabled />
     </Form.Item>
   );
 }
 
-export function DateOfBirth(props: FormItemProps) {
+export function CusBirthDate(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='cusBirthDate' label='Date of Birth' {...props}>
+    <Form.Item {...props} name='cusBirthDate' label='Date of Birth'>
       <Input disabled />
     </Form.Item>
   );
 }
 
-export function CusId(props: FormItemProps) {
+export function CusId(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='cusId' label='CIF' {...props}>
+    <Form.Item {...props} name='cusId' label='CIF'>
       <Input disabled />
     </Form.Item>
   );
 }
 
-export function CusPrmAct(props: FormItemProps) {
+export function CusPrmAct(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='cusPrmAct' label='CIES Account' {...props}>
+    <Form.Item {...props} name='cusPrmAct' label='CIES Account'>
       <AccountListInput />
     </Form.Item>
   );
 }
 
-export function SecurityAct(props: FormItemProps) {
+type InvestmentAccountsProps = Omit<CustomerFormItemProps, 'children'>;
+
+interface InvestmentAccountGroupsProps {
+  value?: InvestmentAccount[];
+  formItemProps: InvestmentAccountsProps;
+}
+
+interface InvestmentAccountDisplayGroups {
+  securityAct: string[];
+  fundAct: string[];
+  custodianAct: string[];
+}
+
+/**
+ * investmentAccounts 只在 FormItem 展示层按 investType 分为三组。
+ * securityAct / fundAct / custodianAct 是局部展示变量，不进入 DTO 或 Form 字段。
+ */
+function InvestmentAccountGroups({ value = [], formItemProps }: InvestmentAccountGroupsProps) {
+  const { securityAct, fundAct, custodianAct } = value.reduce<InvestmentAccountDisplayGroups>(
+    (groups, account) => {
+      if (account.investType === InvestType.Securities) groups.securityAct.push(account.investAct);
+      if (account.investType === InvestType.Funds) groups.fundAct.push(account.investAct);
+      if (account.investType === InvestType.Custody) groups.custodianAct.push(account.investAct);
+      return groups;
+    },
+    { securityAct: [], fundAct: [], custodianAct: [] },
+  );
+
   return (
-    <Form.Item name='securityAct' label='Securities Account' {...props}>
-      <AccountListInput />
-    </Form.Item>
+    <>
+      <Form.Item {...formItemProps} label='Securities Account'>
+        <AccountListInput value={securityAct} />
+      </Form.Item>
+      <Form.Item {...formItemProps} label='Fund Account'>
+        <AccountListInput value={fundAct} />
+      </Form.Item>
+      <Form.Item {...formItemProps} label='Custodian Account'>
+        <AccountListInput value={custodianAct} />
+      </Form.Item>
+    </>
   );
 }
 
-export function FundAct(props: FormItemProps) {
+export function InvestmentAccounts(props: InvestmentAccountsProps) {
   return (
-    <Form.Item name='fundAct' label='Fund Account' {...props}>
-      <AccountListInput />
-    </Form.Item>
-  );
-}
-
-export function CustodianAct(props: FormItemProps) {
-  return (
-    <Form.Item name='custodianAct' label='Custodian Account' {...props}>
-      <AccountListInput />
+    <Form.Item name='investmentAccounts' noStyle>
+      <InvestmentAccountGroups formItemProps={props} />
     </Form.Item>
   );
 }
 
 /* ---------- 可修改字段 ---------- */
 
-export function BankCusRef(props: FormItemProps) {
+export function BankCusRef(props: CustomerFormItemProps) {
   return (
     <Form.Item
+      {...props}
       name='bankCusRef'
       label='Our Ref'
       rules={[{ required: true, message: 'Please enter Our Ref' }]}
-      {...props}
       normalize={removeChineseCharacters}
     >
       <Input maxLength={30} showCount />
@@ -120,13 +153,13 @@ export function BankCusRef(props: FormItemProps) {
   );
 }
 
-export function GovCusRef(props: FormItemProps) {
+export function GovCusRef(props: CustomerFormItemProps) {
   return (
     <Form.Item
+      {...props}
       name='govCusRef'
       label='Your Ref'
       rules={[{ required: true, message: 'Please enter Your Ref' }]}
-      {...props}
       normalize={removeChineseCharacters}
     >
       <Input maxLength={30} showCount />
@@ -134,63 +167,63 @@ export function GovCusRef(props: FormItemProps) {
   );
 }
 
-// AIP Date：非必填，originalCustomer 该字段非空时不可再修改，disabled 由调用方结合 originalCustomer 计算传入
-export function AipDate({ disabled, ...props }: FormItemProps & { disabled?: boolean }) {
+// AIP Date：原始 principleAppDate 非空时不可修改，disabled 由调用方计算。
+export function PrincipleAppDate({ disabled, ...props }: CustomerDateProps) {
   return (
-    <Form.Item name='aipDate' label='AIP Date' {...dateItemProps} {...props}>
+    <Form.Item {...dateItemProps} {...props} name='principleAppDate' label='AIP Date'>
       <DatePicker className='w-full' disabled={disabled} disabledDate={disableFutureDate} />
     </Form.Item>
   );
 }
 
-// AIP 到期日只读，其派生（CIES 2.0 = AIP Date + 180 天）由调用方在 onValuesChange 中处理
-export function AipExpiryDate(props: FormItemProps) {
+// AIP Expiry Date：只读；派生规则由 TaskForm 的 onValuesChange 处理。
+export function PrincipleExpDate(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='aipExpiryDate' label='AIP Expiry Date' {...dateItemProps} {...props}>
+    <Form.Item {...dateItemProps} {...props} name='principleExpDate' label='AIP Expiry Date'>
       <DatePicker className='w-full' disabled />
     </Form.Item>
   );
 }
 
-// FA Date：非必填，originalCustomer 该字段非空时不可再修改，disabled 由调用方结合 originalCustomer 计算传入
-export function FaDate({ disabled, ...props }: FormItemProps & { disabled?: boolean }) {
+// FA Date：原始 formalAppDate 非空时不可修改，disabled 由调用方计算。
+export function FormalAppDate({ disabled, ...props }: CustomerDateProps) {
   return (
-    <Form.Item name='faDate' label='FA Date' {...dateItemProps} {...props}>
+    <Form.Item {...dateItemProps} {...props} name='formalAppDate' label='FA Date'>
       <DatePicker className='w-full' disabled={disabled} disabledDate={disableFutureDate} />
     </Form.Item>
   );
 }
 
-// 年度报告日期：originalCustomer 该字段非空时不可再修改，由调用方结合 originalCustomer 计算 disabled 传入
-export function AnnualReportDate({ disabled, ...props }: FormItemProps & { disabled?: boolean }) {
+// Annual Report Date：原始 annualReportDate 非空时不可修改，disabled 由调用方计算。
+export function AnnualReportDate({ disabled, ...props }: CustomerDateProps) {
   return (
     <Form.Item
-      name='AnnualReportDate'
-      label='Annual Report Date'
-      rules={[{ required: true, message: 'Please select Annual Report Date' }]}
       {...dateItemProps}
       {...props}
+      name='annualReportDate'
+      label='Annual Report Date'
+      rules={[{ required: true, message: 'Please select Annual Report Date' }]}
     >
       <DatePicker className='w-full' disabled={disabled} />
     </Form.Item>
   );
 }
 
-export function TerminationDate(props: FormItemProps) {
+export function TerminationDate(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='terminationDate' label='CIES Termination Date' {...dateItemProps} {...props}>
+    <Form.Item {...dateItemProps} {...props} name='terminationDate' label='CIES Termination Date'>
       <DatePicker className='w-full' />
     </Form.Item>
   );
 }
 
-export function Transferred3M(props: FormItemProps) {
+export function CapitalInvestFlag(props: CustomerFormItemProps) {
   return (
     <Form.Item
-      name='transferred3M'
+      {...props}
+      name='capitalInvestFlag'
       label='Transferred 3M'
       rules={[{ required: true, message: 'Please select Transferred 3M' }]}
-      {...props}
     >
       <Radio.Group>
         <Radio value={YesNo.Yes}>Y</Radio>
@@ -200,26 +233,46 @@ export function Transferred3M(props: FormItemProps) {
   );
 }
 
-/* ---------- 币种金额：name（嵌套路径）由调用方注入，组件只固定币种与控件 ---------- */
+/* ---------- 按币种动态渲染的利息字段 ---------- */
 
-export function Hkd(props: FormItemProps) {
+type InterestFieldName = 'withdrawnIntr' | 'transferIntr';
+// 当前 DTO 保持 number；按两位小数限制到“金额 × 100”仍不超过 JS 安全整数的范围。
+const MAX_SAFE_INTEREST_AMOUNT = Number.MAX_SAFE_INTEGER / 100;
+
+interface InterestFieldsProps extends Omit<CustomerFormItemProps, 'children' | 'className'> {
+  currencies: string[];
+  getFieldClassName?: (currency: string) => string;
+}
+
+interface InterestFieldsInternalProps extends InterestFieldsProps {
+  fieldName: InterestFieldName;
+  title: string;
+}
+
+function InterestFields({ fieldName, title, currencies, getFieldClassName, ...props }: InterestFieldsInternalProps) {
   return (
-    <Form.Item label='HKD' {...props}>
-      <InputNumber className='w-full' min={0} />
-    </Form.Item>
+    <div className='space-y-3'>
+      <div className='text-sm font-medium'>{title}</div>
+      {currencies.map((currency) => (
+        <Form.Item
+          {...props}
+          key={currency}
+          name={[fieldName, currency]}
+          label={currency}
+          className={getFieldClassName?.(currency)}
+          normalize={(value: number | null) => value ?? 0}
+        >
+          <InputNumber className='w-full' min={0} max={MAX_SAFE_INTEREST_AMOUNT} precision={2} step={0.01} />
+        </Form.Item>
+      ))}
+    </div>
   );
 }
 
-export function Usd(props: FormItemProps) {
-  return (
-    <Form.Item label='USD' {...props}>
-      <InputNumber className='w-full' min={0} />
-    </Form.Item>
-  );
+export function WithdrawnIntr(props: InterestFieldsProps) {
+  return <InterestFields {...props} fieldName='withdrawnIntr' title='Withdrawable Interests' />;
 }
 
-// 币种 → 组件 映射表：接口返回哪些币种就渲染哪些，未登记的币种忽略
-export const CURRENCY_FIELDS: Record<string, (props: FormItemProps) => JSX.Element> = {
-  HKD: Hkd,
-  USD: Usd,
-};
+export function TransferIntr(props: InterestFieldsProps) {
+  return <InterestFields {...props} fieldName='transferIntr' title='Transferred Interests' />;
+}

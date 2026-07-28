@@ -1,10 +1,13 @@
-import { useRef, useState } from 'react';
+import { Children, cloneElement, isValidElement, useRef, useState } from 'react';
 import type {
   DragEvent,
+  KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
   HTMLAttributes,
+  ReactNode,
 } from 'react';
+import { Tooltip } from 'antd';
 import cn from 'classnames';
 
 interface ResizableTitleProps extends Omit<HTMLAttributes<HTMLTableCellElement>, 'onResize'> {
@@ -23,11 +26,51 @@ interface ResizableTitleProps extends Omit<HTMLAttributes<HTMLTableCellElement>,
 const MIN_WIDTH = 50;
 // 自定义拖拽标识，避免与页面其它拖拽源混淆
 const DRAG_MIME = 'application/x-resizable-col';
+const SORTER_CLASS = 'ant-table-column-sorter';
+
+interface SorterNodeProps {
+  className?: string;
+  children?: ReactNode;
+  role?: string;
+  tabIndex?: number;
+  'aria-label'?: string;
+}
+
+const isSorterTarget = (target: EventTarget | null) =>
+  target instanceof Element && Boolean(target.closest(`.${SORTER_CLASS}`));
+
+/** 找到 antd 注入的排序图标，仅为图标补充 Tooltip 与键盘焦点。 */
+const decorateSorter = (node: ReactNode, tooltip: string): ReactNode => {
+  if (!isValidElement<SorterNodeProps>(node)) return node;
+
+  const classNames = node.props.className?.split(/\s+/) ?? [];
+  if (classNames.includes(SORTER_CLASS)) {
+    const trigger = cloneElement(node, {
+      role: 'button',
+      tabIndex: 0,
+      'aria-label': tooltip,
+    });
+    return <Tooltip title={tooltip}>{trigger}</Tooltip>;
+  }
+
+  if (node.props.children == null) return node;
+  return cloneElement(node, undefined, Children.map(node.props.children, (child) => decorateSorter(child, tooltip)));
+};
 
 export default function ResizableTitle(props: ResizableTitleProps) {
-  const { colId, width, onResize, onResizeStop, onReorder, className, children, ...restProps } = props;
+  const {
+    colId,
+    width,
+    onResize,
+    onResizeStop,
+    onReorder,
+    className,
+    children,
+    onClick: triggerSort,
+    onKeyDown: triggerSortByKeyboard,
+    ...restProps
+  } = props;
   const thRef = useRef<HTMLTableCellElement>(null);
-  const titleRef = useRef<HTMLSpanElement>(null);
   const handleRef = useRef<HTMLSpanElement>(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -63,14 +106,21 @@ export default function ResizableTitle(props: ResizableTitleProps) {
     document.addEventListener('pointerup', handlePointerUp);
   };
 
-  // 按下点若落在「标题文字」或「调宽手柄」上，则关闭表头拖拽（放行选中/调宽）；
-  // 落在标题以外的表头区域才把表头识别为排序拖拽源。
+  // 排序图标和调宽手柄各自处理交互，其余整个表头区域均可拖拽列顺序。
   const handleMouseDown = (e: ReactMouseEvent<HTMLTableCellElement>) => {
     if (!thRef.current) return;
     const target = e.target as Node;
-    const onTitle = titleRef.current?.contains(target);
     const onHandle = handleRef.current?.contains(target);
-    thRef.current.draggable = !onTitle && !onHandle;
+    thRef.current.draggable = !isSorterTarget(e.target) && !onHandle;
+  };
+
+  // antd 把排序回调注入 th；这里只在实际点击排序图标时转发。
+  const handleClick = (e: ReactMouseEvent<HTMLTableCellElement>) => {
+    if (isSorterTarget(e.target)) triggerSort?.(e);
+  };
+
+  const handleKeyDown = (e: ReactKeyboardEvent<HTMLTableCellElement>) => {
+    if (isSorterTarget(e.target)) triggerSortByKeyboard?.(e);
   };
 
   // ==== 列排序拖拽 ====
@@ -93,21 +143,30 @@ export default function ResizableTitle(props: ResizableTitleProps) {
     if (sourceId && colId) onReorder?.(sourceId, colId);
   };
 
+  const sortTooltip =
+    restProps['aria-sort'] === 'ascending'
+      ? 'Click to sort descending'
+      : restProps['aria-sort'] === 'descending'
+        ? 'Click to cancel sorting'
+        : 'Click to sort ascending';
+  const title = triggerSort ? decorateSorter(children, sortTooltip) : children;
+
   return (
     <th
+      {...restProps}
       ref={thRef}
-      className={cn('relative', movable && 'cursor-move', isOver && 'bg-black/5', className)}
+      className={cn('relative', movable && '!cursor-move', isOver && 'bg-black/5', className)}
       draggable={movable}
+      tabIndex={triggerSort ? undefined : restProps.tabIndex}
       onMouseDown={movable ? handleMouseDown : undefined}
+      onClick={triggerSort ? handleClick : undefined}
+      onKeyDown={triggerSortByKeyboard ? handleKeyDown : undefined}
       onDragStart={movable ? handleDragStart : undefined}
       onDragOver={movable ? handleDragOver : undefined}
       onDragLeave={movable ? () => setIsOver(false) : undefined}
       onDrop={movable ? handleDrop : undefined}
-      {...restProps}
     >
-      <span ref={titleRef} className='cursor-text select-text'>
-        {children}
-      </span>
+      <span className='block'>{title}</span>
       {resizable ? (
         <span
           ref={handleRef}

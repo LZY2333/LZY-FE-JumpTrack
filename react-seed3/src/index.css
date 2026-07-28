@@ -33,6 +33,25 @@
   margin-bottom: 0;
 }
 
+/* ResizableTable 的排序交互仅由三角形触发，避免 antd 的全表头覆盖层阻断列拖拽 */
+.ant-table-column-sorters::after {
+  pointer-events: none;
+}
+
+.ant-table-column-sorter {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.ant-table-column-sorters:hover .ant-table-column-sorter {
+  color: #bfbfbf;
+}
+
+.ant-table-column-sorter:hover {
+  color: #a6a6a6 !important;
+}
+
 /* 全局取消 antd disabled 态的 not-allowed 光标，统一为默认箭头 */
 .ant-input-disabled,
 .ant-input[disabled],

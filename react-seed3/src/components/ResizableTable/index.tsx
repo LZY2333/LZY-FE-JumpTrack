@@ -28,7 +28,13 @@ export default function ResizableTable<T extends object>(props: ResizableTablePr
       <div className='absolute top-2 right-2 z-10'>
         <ColumnSettings columns={columnMetaList} onToggle={toggleColumn} onReset={reset} />
       </div>
-      <Table<T> columns={layoutColumns} components={components} pagination={mergedPagination} {...restProps} />
+      <Table<T>
+        columns={layoutColumns}
+        components={components}
+        pagination={mergedPagination}
+        {...restProps}
+        showSorterTooltip={false}
+      />
     </div>
   );
 }

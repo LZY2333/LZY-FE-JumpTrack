@@ -1,32 +1,40 @@
-import { ResCode, Role, TaskStatus, TaskType } from '@/types/enums';
+import type { TaskPageData, TaskSortField, TaskSortOrder, TaskStatusChange } from '@/api/tasks';
 import type { Attachment, Customer, Task } from '@/types';
+import { ResCode, Role, TaskStatus, TranType } from '@/types/enums';
 import { mockCustomers } from './customer';
 import { mockUsers } from './users';
 
-const attachmentsFor = (id: string): Attachment[] => [
+const cloneAttachment = (attachment: Attachment): Attachment => ({ ...attachment });
+
+const cloneCustomer = (customer: Customer): Customer => ({
+  ...customer,
+  cusPrmAct: [...customer.cusPrmAct],
+  investmentAccounts: customer.investmentAccounts.map((account) => ({ ...account })),
+  withdrawnIntr: { ...customer.withdrawnIntr },
+  transferIntr: { ...customer.transferIntr },
+});
+
+const attachmentsFor = (taskId: string): Attachment[] => [
   {
-    fileId: `${id}-1`,
-    fileName: `Cover_Letter_${id}.pdf`,
-    filePath: `/attachments/${id}/1`,
+    fileId: `${taskId}-1`,
+    fileName: `Cover_Letter_${taskId}.pdf`,
     fileSize: '102400',
     createTime: '2026-06-01 10:00:00',
-    createTellerId: 'U001',
+    createUser: 'U001',
   },
   {
-    fileId: `${id}-2`,
-    fileName: `Statement_${id}.pdf`,
-    filePath: `/attachments/${id}/2`,
+    fileId: `${taskId}-2`,
+    fileName: `Statement_${taskId}.pdf`,
     fileSize: '204800',
     createTime: '2026-06-01 10:00:00',
-    createTellerId: 'U001',
+    createUser: 'U001',
   },
   {
-    fileId: `${id}-3`,
-    fileName: `Transaction_${id}.pdf`,
-    filePath: `/attachments/${id}/3`,
+    fileId: `${taskId}-3`,
+    fileName: `Transaction_${taskId}.pdf`,
     fileSize: '51200',
     createTime: '2026-06-01 10:00:00',
-    createTellerId: 'U001',
+    createUser: 'U001',
   },
 ];
 
@@ -38,71 +46,112 @@ const STATUSES = [
   TaskStatus.Cancelled,
 ];
 
-// Returned 状态的任务演示 newValue：maker 之前保存过的草稿改动（相对 customer 接口的差异字段，不含附件），
-// 用于验证「重新进入详情页时，草稿字段高亮」的效果
-const demoNewValue = () =>
-  JSON.stringify({
-    bankCusRef: 'CIES2.0:DRAFT-001',
-  });
+let attachmentSequence = 0;
 
-// 模块级可变数组：Node.js 模块单例，dev server 进程存活期间状态持久，mock 接口直接修改此数组。
-// 生成 38 条用于演示分页：发起日期递减，覆盖全部状态；本地 demo 数据均关联同一个 mock 客户 C0001。
-// Maker/Checker 信息按状态区分：Pending 尚未被 maker 领取，故无 maker；Submitted 已提交但未经 checker 处理，
-// 故无 checker；Returned/Approved 均已被 checker 处理过，maker/checker 均有；Cancelled 由 maker 自行撤销，只有 maker。
-export const mockTasks: Task[] = Array.from({ length: 38 }, (_, i) => {
-  const id = `T${String(i + 1).padStart(4, '0')}`;
-  const status = STATUSES[i % STATUSES.length];
+/**
+ * 模块级可变数据在 dev server 进程存活期间持久：
+ * - Task 保存任务表、申报交易表与客户信息联查后的列表字段；
+ * - 客户变更快照及附件分别保存在任务关联集合中。
+ */
+export const mockTasks: Task[] = Array.from({ length: 38 }, (_, index) => {
+  const taskId = `T${String(index + 1).padStart(4, '0')}`;
+  const taskStatus = STATUSES[index % STATUSES.length];
   const makerUsers = mockUsers.filter((user) => user.roles.includes(Role.Maker));
   const checkerUsers = mockUsers.filter((user) => user.roles.includes(Role.Checker));
-  const maker = makerUsers[i % makerUsers.length];
-  const checker = checkerUsers[i % checkerUsers.length];
-  const createDate = `2026-06-${String(28 - (i % 28)).padStart(2, '0')}`;
-  const hasMaker = status !== TaskStatus.Pending;
-  const hasChecker = status === TaskStatus.Returned || status === TaskStatus.Approved;
+  const maker = makerUsers[index % makerUsers.length];
+  const checker = checkerUsers[index % checkerUsers.length];
+  const createTime = `2026-06-${String(28 - (index % 28)).padStart(2, '0')} 09:00:00`;
+  const updateTime = `2026-07-${String(27 - (index % 27)).padStart(2, '0')} ${String(8 + (index % 10)).padStart(
+    2,
+    '0',
+  )}:30:00`;
+  const customer = mockCustomers[index % mockCustomers.length];
+  const hasMaker = taskStatus !== TaskStatus.Pending;
+  const hasChecker = taskStatus === TaskStatus.Returned || taskStatus === TaskStatus.Approved;
+
   return {
-    taskId: id,
-    taskName: `DailyReport-${createDate.replace(/-/g, '')}`,
-    taskType: TaskType.DailyReport,
-    taskStatus: status,
-    cusId: 'C0001',
-    newValue: status === TaskStatus.Returned ? demoNewValue() : '',
-    inputId: hasMaker ? maker.id : '',
-    inputName: hasMaker ? maker.name : '',
-    inputTime: hasMaker ? createDate : '',
-    inputBrNo: hasMaker ? '001' : '',
-    inputBrName: hasMaker ? 'Central Branch' : '',
-    authoriserId: hasChecker ? checker.id : '',
-    authoriserName: hasChecker ? checker.name : '',
-    authoriserTime: hasChecker ? createDate : '',
-    authoriserBrNo: hasChecker ? '001' : '',
-    authoriserBrName: hasChecker ? 'Central Branch' : '',
-    createDate,
-    lastUpdateTime: createDate,
-    remarkMsg: status === TaskStatus.Returned ? 'Please verify the updated customer information.' : '',
-    attachments: attachmentsFor(id),
+    taskId,
+    tranType: TranType.DailyReport,
+    taskStatus,
+    cusId: customer.cusId,
+    cusEnName: customer.cusEnName,
+    cusCnName: customer.cusCnName,
+    makerId: hasMaker ? maker.id : '',
+    checkerId: hasChecker ? checker.id : '',
+    createTime,
+    updateTime,
+    taskRemark: taskStatus === TaskStatus.Returned ? 'Please verify the updated customer information.' : '',
   };
 });
 
-// vite-plugin-mock v2 不在 response 回调中暴露路径参数，只能从 URL 字符串手动解析；
-// /api/task/:id 与 /api/task/{submit,return,approve}/:id 的 id 均为最后一段
-function lastSeg(url: string): string {
-  const parts = url.split('/');
-  return parts[parts.length - 1];
-}
+/** 每个任务的附件元数据；附件二进制内容由下载接口单独返回。 */
+export const mockAttachmentsByTaskId = new Map<string, Attachment[]>(
+  mockTasks.map((task) => [task.taskId, attachmentsFor(task.taskId)]),
+);
 
-// /api/task/:id/attachment 的 id 是倒数第二段
-function taskIdFromAttachmentUrl(url: string): string {
-  const parts = url.split('/');
-  return parts[parts.length - 2];
-}
+/**
+ * 客户变更接口返回完整 Customer，而不是差异 JSON。
+ * Returned 示例修改 bankCusRef，用于后续验证重新进入明细页后的字段高亮。
+ */
+export const mockCustomerChangesByTaskId = new Map<string, Customer>(
+  mockTasks.flatMap((task) => {
+    const hasSavedChange =
+      task.taskStatus === TaskStatus.Submitted ||
+      task.taskStatus === TaskStatus.Returned ||
+      task.taskStatus === TaskStatus.Approved;
+    if (!hasSavedChange) return [];
+
+    const customer = mockCustomers.find((item) => item.cusId === task.cusId);
+    if (!customer) return [];
+
+    const customerChange = cloneCustomer(customer);
+    if (task.taskStatus === TaskStatus.Returned) {
+      customerChange.bankCusRef = `CIES2.0:DRAFT-${task.taskId}`;
+    }
+    return [[task.taskId, customerChange] as const];
+  }),
+);
+
+const pathSegments = (url: string): string[] =>
+  url
+    .split('?')[0]
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => decodeURIComponent(segment));
+
+// 所有 /api/task/:taskId[/...] 路径的 taskId 均位于第三段。
+const taskIdFromUrl = (url: string): string => pathSegments(url)[2] || '';
+
+// /api/attachment/:fileId/download 的 fileId 位于第三段。
+const fileIdFromUrl = (url: string): string => pathSegments(url)[2] || '';
+
+const findTask = (taskId: string) => mockTasks.find((task) => task.taskId === taskId);
+
+const findAttachment = (fileId: string) => {
+  for (const attachments of mockAttachmentsByTaskId.values()) {
+    const attachment = attachments.find((item) => item.fileId === fileId);
+    if (attachment) return attachment;
+  }
+  return undefined;
+};
+
+const notFound = (resource: string, id: string) => ({
+  returnCode: 'ERR0404',
+  errorMsg: `${resource} ${id} not found`,
+});
 
 interface TasksQuery {
-  current?: string;
-  pageSize?: string;
+  current?: number | string;
+  pageSize?: number | string;
   status?: string;
+  taskId?: string;
   cusId?: string;
   dateFrom?: string;
   dateTo?: string;
+  updateDateFrom?: string;
+  updateDateTo?: string;
+  sortField?: TaskSortField;
+  sortOrder?: TaskSortOrder;
 }
 
 export default [
@@ -110,88 +159,214 @@ export default [
     url: '/api/tasks',
     method: 'post',
     response: (opt: { body: TasksQuery }) => {
-      const { current = '1', pageSize = '10', status, cusId, dateFrom, dateTo } = opt.body || {};
-      let list = mockTasks;
+      const {
+        current = 1,
+        pageSize = 10,
+        status,
+        taskId,
+        cusId,
+        dateFrom,
+        dateTo,
+        updateDateFrom,
+        updateDateTo,
+        sortField,
+        sortOrder,
+      } = opt.body || {};
+      let list = [...mockTasks];
       if (status) list = list.filter((task) => task.taskStatus === status);
-      if (cusId) {
-        const kw = cusId.trim().toLowerCase();
-        list = list.filter((task) => task.cusId.toLowerCase().includes(kw));
+      if (taskId) {
+        const keyword = taskId.trim().toLowerCase();
+        list = list.filter((task) => task.taskId.toLowerCase().includes(keyword));
       }
-      if (dateFrom) list = list.filter((task) => task.createDate >= dateFrom);
-      if (dateTo) list = list.filter((task) => task.createDate <= dateTo);
+      if (cusId) {
+        const keyword = cusId.trim().toLowerCase();
+        list = list.filter((task) => task.cusId.toLowerCase().includes(keyword));
+      }
+      if (dateFrom) list = list.filter((task) => task.createTime.slice(0, 10) >= dateFrom);
+      if (dateTo) list = list.filter((task) => task.createTime.slice(0, 10) <= dateTo);
+      if (updateDateFrom) list = list.filter((task) => task.updateTime.slice(0, 10) >= updateDateFrom);
+      if (updateDateTo) list = list.filter((task) => task.updateTime.slice(0, 10) <= updateDateTo);
+      if (sortField && sortOrder) {
+        const direction = sortOrder === 'asc' ? 1 : -1;
+        list.sort((left, right) => left[sortField].localeCompare(right[sortField]) * direction);
+      }
+
       const currentPage = Number(current);
-      const ps = Number(pageSize);
+      const size = Number(pageSize);
       return {
         returnCode: ResCode.Success,
         body: {
-          list: list.slice((currentPage - 1) * ps, currentPage * ps),
+          list: list.slice((currentPage - 1) * size, currentPage * size),
           current: currentPage,
-          pageSize: ps,
+          pageSize: size,
           total: list.length,
         },
       };
     },
   },
   {
-    url: '/api/task/:id',
+    // 明细页聚合查询：任务、原始客户、完整客户变更快照和附件元数据一次返回。
+    url: '/api/task/:taskId/detail',
     method: 'get',
-    response: (opt: { url: string }) => ({
-      returnCode: ResCode.Success,
-      body: mockTasks.find((task) => task.taskId === lastSeg(opt.url)),
-    }),
-  },
-  {
-    // 附件上传：mock 不落真实文件，仅根据前端提交的文件名/大小生成后端形态的附件记录
-    url: '/api/task/:id/attachment',
-    method: 'post',
-    response: (opt: { url: string; body: { fileName: string; fileSize: string } }) => {
-      const taskId = taskIdFromAttachmentUrl(opt.url);
-      const { fileName, fileSize } = opt.body || {};
-      const attachment: Attachment = {
-        fileId: `${taskId}-${Date.now()}`,
-        fileName: fileName || 'unnamed',
-        filePath: `/attachments/${taskId}/${Date.now()}`,
-        fileSize: fileSize || '0',
-        createTime: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        createTellerId: 'U001',
+    response: (opt: { url: string }) => {
+      const taskId = taskIdFromUrl(opt.url);
+      const task = findTask(taskId);
+      if (!task) return notFound('Task', taskId);
+
+      const customer = mockCustomers.find((item) => item.cusId === task.cusId);
+      if (!customer) return notFound('Customer', task.cusId);
+
+      const customerChange = mockCustomerChangesByTaskId.get(taskId);
+      const body: TaskPageData = {
+        task: { ...task },
+        customer: cloneCustomer(customer),
+        customerChange: customerChange ? cloneCustomer(customerChange) : null,
+        attachments: (mockAttachmentsByTaskId.get(taskId) || []).map(cloneAttachment),
       };
-      return { returnCode: ResCode.Success, body: attachment };
+      return { returnCode: ResCode.Success, body };
     },
   },
   {
-    // 统一状态变更：body { id, status, inputId?, authoriserId?, remarkMsg?, payload? }。
-    // submit 时 payload 携带 newValue（表单相对 Customer 的差异 JSON）与 attachments，先存作任务草稿；
-    // 只有 approve 时才把 newValue 合并进客户主数据；return 时 newValue 原样保留，供 maker 下次继续编辑。
+    url: '/api/task/:taskId/customer-change',
+    method: 'get',
+    response: (opt: { url: string }) => {
+      const taskId = taskIdFromUrl(opt.url);
+      const customerChange = mockCustomerChangesByTaskId.get(taskId);
+      if (!findTask(taskId)) return notFound('Task', taskId);
+
+      return {
+        returnCode: ResCode.Success,
+        body: customerChange ? cloneCustomer(customerChange) : null,
+      };
+    },
+  },
+  {
+    url: '/api/task/:taskId/attachments',
+    method: 'get',
+    response: (opt: { url: string }) => {
+      const taskId = taskIdFromUrl(opt.url);
+      if (!findTask(taskId)) return notFound('Task', taskId);
+
+      return {
+        returnCode: ResCode.Success,
+        body: (mockAttachmentsByTaskId.get(taskId) || []).map(cloneAttachment),
+      };
+    },
+  },
+  {
+    url: '/api/task/:taskId',
+    method: 'get',
+    response: (opt: { url: string }) => {
+      const taskId = taskIdFromUrl(opt.url);
+      const task = findTask(taskId);
+      return task ? { returnCode: ResCode.Success, body: { ...task } } : notFound('Task', taskId);
+    },
+  },
+  {
+    // Mock 不存真实上传文件，只保存前端提交的文件名和大小，并生成附件 ID。
+    url: '/api/task/:taskId/attachment',
+    method: 'post',
+    response: (opt: { url: string; body: { fileName: string; fileSize: string } }) => {
+      const taskId = taskIdFromUrl(opt.url);
+      if (!findTask(taskId)) return notFound('Task', taskId);
+
+      const { fileName, fileSize } = opt.body || {};
+      const timestamp = Date.now();
+      attachmentSequence += 1;
+      const attachment: Attachment = {
+        fileId: `${taskId}-${timestamp}-${attachmentSequence}`,
+        fileName: fileName || 'unnamed',
+        fileSize: fileSize || '0',
+        createTime: new Date(timestamp).toISOString().slice(0, 19).replace('T', ' '),
+        createUser: 'U001',
+      };
+      const attachments = mockAttachmentsByTaskId.get(taskId) || [];
+      mockAttachmentsByTaskId.set(taskId, [...attachments, attachment]);
+      return { returnCode: ResCode.Success, body: cloneAttachment(attachment) };
+    },
+  },
+  {
+    // 下载接口返回原始二进制响应，不使用 ApiResult 包装。
+    url: '/api/attachment/:fileId/download',
+    method: 'get',
+    rawResponse: (request: import('node:http').IncomingMessage, response: import('node:http').ServerResponse) => {
+      const fileId = fileIdFromUrl(request.url || '');
+      const attachment = findAttachment(fileId);
+      if (!attachment) {
+        response.statusCode = 404;
+        response.end('Attachment not found');
+        return;
+      }
+
+      response.statusCode = 200;
+      response.setHeader('Content-Type', 'application/octet-stream');
+      response.setHeader(
+        'Content-Disposition',
+        `attachment; filename*=UTF-8''${encodeURIComponent(attachment.fileName)}`,
+      );
+      response.end(Buffer.from(`Mock file content for ${attachment.fileName}\n`, 'utf8'));
+    },
+  },
+  {
+    /**
+     * 统一状态变更：
+     * - submit 保存完整 customerChange 与附件列表；
+     * - return 保留变更快照并记录退回原因；
+     * - approve 将任务变更快照覆盖到客户主数据。
+     */
     url: '/api/task/status',
     method: 'post',
-    response: (opt: {
-      body: {
-        id: string;
-        status: TaskStatus;
-        inputId?: string;
-        authoriserId?: string;
-        remarkMsg?: string;
-        payload?: { newValue: string; attachments: Attachment[] };
-      };
-    }) => {
-      const { id, status, inputId, authoriserId, remarkMsg, payload } = opt.body || {};
-      const task = mockTasks.find((item) => item.taskId === id);
-      if (task) {
-        task.taskStatus = status;
-        if (inputId) task.inputId = inputId;
-        if (authoriserId) task.authoriserId = authoriserId;
-        if (status === TaskStatus.Returned) task.remarkMsg = remarkMsg || '';
-        if (payload) {
-          task.newValue = payload.newValue;
-          task.attachments = payload.attachments;
-        }
-        if (status === TaskStatus.Approved) {
-          const customer = mockCustomers.find((item) => item.cusId === task.cusId);
-          const diff = task.newValue ? (JSON.parse(task.newValue) as Partial<Customer>) : {};
-          if (customer) Object.assign(customer, diff);
+    response: (opt: { body: TaskStatusChange }) => {
+      const { taskId, taskStatus, makerId, checkerId, taskRemark, payload } = opt.body || {};
+      const task = findTask(taskId);
+      if (!task) return notFound('Task', taskId);
+      if (taskStatus === TaskStatus.Submitted && !payload) {
+        return { returnCode: 'ERR0400', errorMsg: 'Submitting a task requires payload' };
+      }
+      if (
+        (taskStatus === TaskStatus.Submitted || taskStatus === TaskStatus.Cancelled) &&
+        task.taskStatus === TaskStatus.Returned &&
+        task.makerId &&
+        task.makerId !== makerId
+      ) {
+        return { returnCode: 'ERR0403', errorMsg: 'Returned task must be handled by its assigned Maker' };
+      }
+      if (
+        (taskStatus === TaskStatus.Returned || taskStatus === TaskStatus.Approved) &&
+        task.makerId &&
+        task.makerId === checkerId
+      ) {
+        return { returnCode: 'ERR0403', errorMsg: 'Maker and Checker must be different users' };
+      }
+      if (taskStatus === TaskStatus.Approved && !mockCustomerChangesByTaskId.has(taskId)) {
+        return { returnCode: 'ERR0409', errorMsg: 'Task has no saved customer change to approve' };
+      }
+
+      task.taskStatus = taskStatus;
+      task.updateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      if (makerId) task.makerId = makerId;
+      if (checkerId) task.checkerId = checkerId;
+      if (taskStatus === TaskStatus.Returned) {
+        task.taskRemark = taskRemark || '';
+      } else if (taskStatus === TaskStatus.Submitted) {
+        task.checkerId = '';
+        task.taskRemark = '';
+      }
+
+      if (payload) {
+        mockCustomerChangesByTaskId.set(taskId, cloneCustomer(payload.customerChange));
+        mockAttachmentsByTaskId.set(taskId, payload.attachments.map(cloneAttachment));
+      }
+
+      if (taskStatus === TaskStatus.Approved) {
+        const customer = mockCustomers.find((item) => item.cusId === task.cusId);
+        const customerChange = mockCustomerChangesByTaskId.get(taskId);
+        if (customer && customerChange) {
+          Object.assign(customer, cloneCustomer(customerChange));
         }
       }
-      return { returnCode: ResCode.Success };
+
+      return { returnCode: ResCode.Success, body: null };
     },
   },
 ];

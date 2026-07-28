@@ -27,10 +27,14 @@ const request = axios.create({
   timeout: 10000,
 });
 
-// 统一响应拦截器：对返回值做一遍过滤——剥离 HTTP 外壳、做业务 returnCode 判定，
-// 调用方拿到的直接是业务体（{ returnCode, body, errorMsg }）。
+// 统一响应拦截器：JSON 接口做业务 returnCode 判定并透传 ApiResult；
+// 文件下载接口返回原始 Blob，不使用统一响应体。
 request.interceptors.response.use(
   (response) => {
+    if (response.config.responseType === 'blob') {
+      return response;
+    }
+
     const apiResult = response.data as ApiResult;
     // 约定：非 SUC0000 即业务错误，统一提示并中断 Promise 链
     if (apiResult && apiResult.returnCode !== ResCode.Success) {
@@ -51,10 +55,14 @@ request.interceptors.response.use(
   },
 );
 
-// 统一封装 get/post：ApiResult.body 为必需字段，直接透传即可，
+// 统一封装 JSON get/post：ApiResult.body 为必需字段，直接透传即可。
 export const get = <T>(url: string) => request.get<ApiResult<T>, ApiResult<T>>(url).then((res) => res.body);
 
 export const post = <T>(url: string, data?: unknown) =>
   request.post<ApiResult<T>, ApiResult<T>>(url, data).then((res) => res.body);
+
+/** 获取不使用 ApiResult 包装的二进制文件。 */
+export const getBlob = (url: string) =>
+  request.get<Blob, AxiosResponse<Blob>>(url, { responseType: 'blob' }).then((response) => response.data);
 
 export default request;

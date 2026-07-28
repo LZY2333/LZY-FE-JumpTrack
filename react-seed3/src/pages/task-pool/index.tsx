@@ -1,20 +1,39 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Col, Form, Row } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType, TableProps } from 'antd/es/table';
 import type { Moment } from 'moment';
 import { useDebounceFn } from 'ahooks';
 import type { Task } from '@/types';
+import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
 import useTaskList from '@/hooks/useTaskList';
 import useTableScrollY from '@/hooks/useTableScrollY';
 import ResizableTable from '@/components/ResizableTable';
-import { TaskStatusFilter, TaskCusIdFilter, TaskDateRangeFilter } from '@/components/FormItem';
-import { taskId, taskName, cusId, inputId, authoriserId, createDate, taskStatus } from '@/components/TableColumn/task';
+import {
+  TaskStatusFilter,
+  TaskCusIdFilter,
+  TaskIdFilter,
+  TaskDateRangeFilter,
+  TaskUpdateDateRangeFilter,
+} from '@/components/FormItem';
+import {
+  taskId,
+  tranType,
+  cusId,
+  customerName,
+  makerId,
+  checkerId,
+  createTime,
+  updateTime,
+  taskStatus,
+} from '@/components/TableColumn/task';
 
 interface FilterValues {
   status: string;
+  taskId: string;
   cusId: string;
   dateRange: [Moment, Moment] | null;
+  updateDateRange: [Moment, Moment] | null;
 }
 
 export default function TaskPool() {
@@ -28,44 +47,68 @@ export default function TaskPool() {
     setCurrent,
     setPageSize,
     changeStatus,
+    changeTaskId,
     changeCusId,
     changeDateRange,
+    changeUpdateDateRange,
+    changeSort,
     reset,
   } = useTaskList();
   const [form] = Form.useForm();
   const tableWrapRef = useRef<HTMLDivElement>(null);
   const scrollY = useTableScrollY(tableWrapRef);
 
-  // 客户号防抖：输入即时回显由 Form 受控管理，300ms 后才把值推给查询
+  // 文本筛选防抖：输入即时回显由 Form 受控管理，300ms 后才把值推给查询
   const { run: applyCusId, cancel: cancelApplyCusId } = useDebounceFn((value: string) => changeCusId(value), {
     wait: 300,
   });
+  const { run: applyTaskId, cancel: cancelApplyTaskId } = useDebounceFn((value: string) => changeTaskId(value), {
+    wait: 300,
+  });
 
-  // 状态/日期即时查询，客户号走防抖；字段变更由 Form 统一分发
+  // 状态/日期即时查询，文本输入走防抖；字段变更由 Form 统一分发
   const handleValuesChange = (changed: Partial<FilterValues>) => {
     if ('status' in changed) changeStatus(changed.status ?? '');
     if ('dateRange' in changed) {
       const range = changed.dateRange;
       changeDateRange(range?.[0] && range?.[1] ? range : null);
     }
+    if ('updateDateRange' in changed) {
+      const range = changed.updateDateRange;
+      changeUpdateDateRange(range?.[0] && range?.[1] ? range : null);
+    }
+    if ('taskId' in changed) applyTaskId(changed.taskId ?? '');
     if ('cusId' in changed) applyCusId(changed.cusId ?? '');
   };
 
   const handleReset = () => {
     cancelApplyCusId();
+    cancelApplyTaskId();
     form.resetFields();
     reset();
+  };
+
+  const handleTableChange: NonNullable<TableProps<Task>['onChange']> = (_, __, sorter, extra) => {
+    if (extra.action !== 'sort') return;
+    const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+    const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
+    const isSortableField = field === 'taskId' || field === 'createTime' || field === 'updateTime';
+    const order: TaskSortOrder | undefined =
+      activeSorter.order === 'ascend' ? 'asc' : activeSorter.order === 'descend' ? 'desc' : undefined;
+    changeSort(isSortableField ? (field as TaskSortField) : undefined, order);
   };
 
   const openDetail = (record: Task) => navigate(`/task/${record.taskId}`);
 
   const columns: ColumnsType<Task> = [
     taskId,
-    taskName,
+    tranType,
     cusId,
-    inputId,
-    authoriserId,
-    createDate,
+    customerName,
+    makerId,
+    checkerId,
+    createTime,
+    updateTime,
     taskStatus,
     {
       title: 'Action',
@@ -88,23 +131,29 @@ export default function TaskPool() {
         form={form}
         layout='horizontal'
         labelAlign='left'
-        labelCol={{ span: 7 }}
-        wrapperCol={{ span: 17 }}
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
         className='mb-4'
         initialValues={{ status: '' }}
         onValuesChange={handleValuesChange}
       >
         <Row gutter={16}>
-          <Col span={7}>
-            <TaskStatusFilter />
+          <Col span={8} className='mb-2'>
+            <TaskIdFilter />
           </Col>
-          <Col span={7}>
+          <Col span={8} className='mb-2'>
             <TaskCusIdFilter />
           </Col>
-          <Col span={7}>
+          <Col span={8} className='mb-2'>
+            <TaskStatusFilter />
+          </Col>
+          <Col span={8}>
             <TaskDateRangeFilter />
           </Col>
-          <Col span={3} className='flex items-center justify-end'>
+          <Col span={8}>
+            <TaskUpdateDateRangeFilter />
+          </Col>
+          <Col span={8} className='flex items-center justify-end'>
             <Button onClick={handleReset}>Reset</Button>
           </Col>
         </Row>
@@ -116,6 +165,7 @@ export default function TaskPool() {
           storageKey='task-pool'
           dataSource={tasks}
           loading={loading}
+          onChange={handleTableChange}
           onRow={(record) => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}
           scroll={{ y: scrollY }}
           pagination={{

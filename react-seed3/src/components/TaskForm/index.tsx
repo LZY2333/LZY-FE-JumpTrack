@@ -4,39 +4,40 @@ import type { RcFile } from 'antd/es/upload';
 import { DeleteOutlined, DownloadOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import type { Attachment, Customer } from '@/types';
-import { uploadAttachment } from '@/api/tasks';
+import { downloadAttachment, uploadAttachment } from '@/api/tasks';
+import { CiesFlag as CiesFlagValue } from '@/types/enums';
 import {
-  AipDate,
-  AipExpiryDate,
   AnnualReportDate,
   BankCusRef,
-  CURRENCY_FIELDS,
+  CapitalInvestFlag,
+  CiesFlag,
+  CusBirthDate,
+  CusCnName,
+  CusEnName,
   CusId,
   CusPrmAct,
-  CustodianAct,
-  CustomerCnName,
-  CustomerEnName,
-  CustomerType,
-  DateOfBirth,
-  FaDate,
-  FundAct,
+  FormalAppDate,
   GovCusRef,
-  SecurityAct,
+  InvestmentAccounts,
+  PrincipleAppDate,
+  PrincipleExpDate,
   TerminationDate,
-  Transferred3M,
+  TransferIntr,
+  WithdrawnIntr,
 } from '@/components/FormItem';
 
 interface Props {
   taskId: string;
+  /** 数据仓中的原始客户信息，作为字段高亮与锁定规则的比较基线。 */
   customer: Customer;
-  // 接口原始值（未叠加 newValue 草稿），仅用于高亮对比，不参与表单展示
-  originalCustomer: Customer;
+  /** 任务保存的完整客户变更；尚未保存时为 null。 */
+  customerChange: Customer | null;
   attachments: Attachment[];
   readonly?: boolean;
 }
 
 export interface TaskFormValues {
-  customer: Customer;
+  customerChange: Customer;
   attachments: Attachment[];
 }
 
@@ -58,12 +59,17 @@ const at = (obj: unknown, path: Path): unknown =>
   );
 
 const TaskForm = forwardRef<TaskFormRef, Props>(
-  ({ taskId, customer, originalCustomer, attachments: initialAttachments, readonly = false }, ref) => {
+  ({ taskId, customer, customerChange, attachments: initialAttachments, readonly = false }, ref) => {
     const [form] = Form.useForm();
-    // values 跟踪当前表单值，customer 为 newValue 草稿叠加后的初始值；originalCustomer 才是
-    // 接口原始基线，高亮对比统一以它为准，这样重新进入详情页时草稿字段也会立即高亮。
-    const [values, setValues] = useState<Customer>(customer);
+    // 已保存变更优先作为表单初始值；无变更时回退到原始客户信息。
+    const initialCustomer = customerChange ?? customer;
+    const [currentCustomer, setCurrentCustomer] = useState<Customer>(initialCustomer);
     const [attachments, setAttachments] = useState<Attachment[]>(initialAttachments);
+
+    useEffect(() => {
+      form.setFieldsValue(initialCustomer);
+      setCurrentCustomer(initialCustomer);
+    }, [form, initialCustomer]);
 
     useEffect(() => {
       setAttachments(initialAttachments);
@@ -74,29 +80,37 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
       () => ({
         validate: () =>
           form.validateFields().then(() => ({
-            customer: { ...customer, ...form.getFieldsValue(true) },
+            customerChange: { ...initialCustomer, ...form.getFieldsValue(true) },
             attachments,
           })),
       }),
-      [customer, form, attachments],
+      [attachments, form, initialCustomer],
     );
 
-    // 当前输入值与接口原始基线不同即高亮，仅用于可修改字段；常驻 transition 让高亮淡入淡出
+    // 当前表单值与原始客户信息不同即高亮；已保存的变更在重新进入页面时也会立即高亮。
     const hl = (path: Path) =>
-      `transition-all duration-300 ${at(values, path) !== at(originalCustomer, path) ? HIGHLIGHT : ''}`;
+      `transition-all duration-300 ${at(currentCustomer, path) !== at(customer, path) ? HIGHLIGHT : ''}`;
 
-    // Annual Report Date：originalCustomer 该字段一旦非空即永久锁定，不允许再修改
-    const annualReportDateLocked = !!originalCustomer.AnnualReportDate;
-    // AIP Date / FA Date：originalCustomer 对应字段一旦非空即永久锁定，不允许再修改
-    const aipDateLocked = !!originalCustomer.aipDate;
-    const faDateLocked = !!originalCustomer.faDate;
+    // 锁定规则只取原始客户信息，任务变更值不会把原本可编辑的字段错误锁死。
+    const annualReportDateLocked = !!customer.annualReportDate;
+    const principleAppDateLocked = !!customer.principleAppDate;
+    const formalAppDateLocked = !!customer.formalAppDate;
 
-    const handleValuesChange = (changed: Customer) => {
-      if ('aipDate' in changed && customer.cusType === 'CIES 2.0') {
-        const aip = form.getFieldValue('aipDate') as string;
-        form.setFieldsValue({ aipExpiryDate: aip ? moment(aip).add(180, 'days').format('YYYY-MM-DD') : '' });
+    const handleValuesChange = (changed: Partial<Customer>) => {
+      if ('principleAppDate' in changed) {
+        const principleAppDate = form.getFieldValue('principleAppDate') as string;
+        let principleExpDate = '';
+        if (principleAppDate && customer.ciesFlag === CiesFlagValue.Cies10) {
+          principleExpDate = moment(principleAppDate).add(6, 'months').format('YYYY-MM-DD');
+        }
+        if (principleAppDate && customer.ciesFlag === CiesFlagValue.Cies20) {
+          principleExpDate = moment(principleAppDate).add(180, 'days').format('YYYY-MM-DD');
+        }
+        form.setFieldsValue({
+          principleExpDate,
+        });
       }
-      setValues(form.getFieldsValue(true));
+      setCurrentCustomer(form.getFieldsValue(true) as Customer);
     };
 
     const handleDelete = (att: Attachment) => {
@@ -130,18 +144,24 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
       return false;
     };
 
-    const renderInterests = (group: 'withdrawableInterests' | 'transferredInterests', title: string) => {
-      const interests = customer[group];
-      return (
-        <div className='space-y-3'>
-          <div className='text-sm font-medium'>{title}</div>
-          {Object.keys(interests).map((cur) => {
-            const Field = CURRENCY_FIELDS[cur];
-            const path = [group, cur];
-            return Field ? <Field key={cur} name={path} className={hl(path)} /> : null;
-          })}
-        </div>
-      );
+    const handleDownload = (fileId: string, fileName: string) => {
+      downloadAttachment(fileId)
+        .then((blob) => {
+          const objectUrl = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = objectUrl;
+          anchor.download = fileName;
+          try {
+            document.body.appendChild(anchor);
+            anchor.click();
+          } finally {
+            anchor.remove();
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+          }
+        })
+        .catch(() => {
+          message.error('Attachment download failed');
+        });
     };
 
     return (
@@ -154,24 +174,22 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
           wrapperCol={{ span: 14 }}
           disabled={readonly}
           scrollToFirstError
-          initialValues={customer}
+          initialValues={initialCustomer}
           onValuesChange={handleValuesChange}
         >
-          {/* 客户信息 与 申报信息 并列，整表由通用字段组件拼装；初始值经 initialValues 一次性注入 */}
+          {/* 客户信息与申报信息并列；initialValues 初始化，聚合响应变化时由 setFieldsValue 同步。 */}
           <Row gutter={16}>
             {/* Left: 客户信息 */}
             <Col span={12}>
               <Card title='Customer Info' size='small' className='h-full'>
                 <div className='space-y-3'>
-                  <CustomerType />
-                  <CustomerCnName />
-                  <CustomerEnName />
-                  <DateOfBirth />
+                  <CiesFlag />
+                  <CusCnName />
+                  <CusEnName />
+                  <CusBirthDate />
                   <CusId />
                   <CusPrmAct />
-                  <SecurityAct />
-                  <FundAct />
-                  <CustodianAct />
+                  <InvestmentAccounts />
                 </div>
               </Card>
             </Col>
@@ -182,15 +200,21 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
                 <div className='space-y-3'>
                   <BankCusRef className={hl('bankCusRef')} />
                   <GovCusRef className={hl('govCusRef')} />
-                  <AipDate disabled={readonly || aipDateLocked} className={hl('aipDate')} />
-                  <AipExpiryDate />
-                  <FaDate disabled={readonly || faDateLocked} className={hl('faDate')} />
-                  <AnnualReportDate disabled={readonly || annualReportDateLocked} className={hl('AnnualReportDate')} />
+                  <PrincipleAppDate disabled={readonly || principleAppDateLocked} className={hl('principleAppDate')} />
+                  <PrincipleExpDate className={hl('principleExpDate')} />
+                  <FormalAppDate disabled={readonly || formalAppDateLocked} className={hl('formalAppDate')} />
+                  <AnnualReportDate disabled={readonly || annualReportDateLocked} className={hl('annualReportDate')} />
                   <TerminationDate className={hl('terminationDate')} />
-                  <Transferred3M className={hl('transferred3M')} />
+                  <CapitalInvestFlag className={hl('capitalInvestFlag')} />
                   <div className='grid grid-cols-2 gap-x-4 border-t pt-3'>
-                    {renderInterests('withdrawableInterests', 'Withdrawable Interests')}
-                    {renderInterests('transferredInterests', 'Transferred Interests')}
+                    <WithdrawnIntr
+                      currencies={Object.keys(initialCustomer.withdrawnIntr)}
+                      getFieldClassName={(currency) => hl(['withdrawnIntr', currency])}
+                    />
+                    <TransferIntr
+                      currencies={Object.keys(initialCustomer.transferIntr)}
+                      getFieldClassName={(currency) => hl(['transferIntr', currency])}
+                    />
                   </div>
                 </div>
               </Card>
@@ -213,8 +237,7 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
                     size='small'
                     danger
                     icon={<DownloadOutlined />}
-                    href={att.filePath}
-                    download={att.fileName}
+                    onClick={() => handleDownload(att.fileId, att.fileName)}
                   />,
                   !readonly && (
                     <Button
