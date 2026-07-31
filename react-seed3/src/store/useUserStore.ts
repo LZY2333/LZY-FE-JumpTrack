@@ -14,6 +14,7 @@ const useUserStore = create<AuthStore>((set) => ({
   setUser: (user) => set({ user }),
   login: async (id) => {
     const user = await loginApi(id);
+    if (!user) return;
     set({ user });
   },
   logout: async () => {

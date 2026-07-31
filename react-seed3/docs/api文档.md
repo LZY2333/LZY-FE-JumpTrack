@@ -28,23 +28,23 @@
 
 ## 接口列表
 
-| \#  | 方法 | 路径                                 | 说明                                | 前端方法                                                   |
-| --- | ---- | ------------------------------------ | ----------------------------------- | ---------------------------------------------------------- |
-| 1   | POST | `/api/tasks`                         | 分页查询任务列表                    | `getTasks`                                                 |
-| 2   | GET  | `/api/task/{taskId}`                 | 查询任务信息                        | `getTask`                                                  |
-| 3   | GET  | `/api/task/{taskId}/detail`          | 查询明细页聚合数据                  | `getTaskPageData`                                          |
-| 4   | GET  | `/api/customer/{cusId}`              | 查询客户信息                        | `getCustomer`                                              |
-| 5   | GET  | `/api/task/{taskId}/customer-change` | 查询任务保存的客户变更信息          | `getCustomerChange`                                        |
-| 6   | GET  | `/api/task/{taskId}/attachments`     | 查询任务附件列表                    | `getAttachments`                                           |
-| 7   | POST | `/api/task/{taskId}/attachment`      | 上传任务附件                        | `uploadAttachment`                                         |
-| 8   | GET  | `/api/attachment/{fileId}/download`  | 下载附件                            | `downloadAttachment`                                       |
-| 9   | POST | `/api/task/status`                   | 变更任务状态（提交/退回/批准/撤销） | `submitTask` / `returnTask` / `approveTask` / `cancelTask` |
+| \# | 方法 | 路径 | 说明 | 前端方法 |
+|---|----|--------------------|--------------|----------------------|
+| 1 | POST | `/api/cies/v1/task/getTasks` | 分页查询任务列表 | `getTasks` |
+| 2 | GET | `/api/cies/v1/task/{taskId}` | 查询任务信息 | `getTask` |
+| 3 | GET | `/api/cies/v1/task/detail/{taskId}` | 查询明细页聚合数据 | `getTaskPageData` |
+| 4 | GET | `/api/cies/v1/customer/{cusId}` | 查询客户信息 | `getCustomer` |
+| 5 | GET | `/api/cies/v1/task/customer-change/{taskId}` | 查询任务保存的客户变更信息 | `getCustomerChange` |
+| 6 | GET | `/api/cies/v1/task/attachments/{taskId}` | 查询任务附件列表 | `getAttachments` |
+| 7 | POST | `/api/cies/v1/task/attachment/{taskId}` | 上传任务附件 | `uploadAttachment` |
+| 8 | GET | `/api/cies/v1/task/attachment/download/{fileId}` | 下载附件 | `downloadAttachment` |
+| 9 | POST | `/api/cies/v1/task/status` | 变更任务状态（提交/退回/批准/撤销） | `submitTask` / `returnTask` / `approveTask` / `cancelTask` |
 
 ---
 
 ## 1\. 分页查询任务列表
 
-- **方法与路径**：`POST /api/tasks`
+- **方法与路径**：`POST /api/cies/v1/task/getTasks`
 - **说明**：按条件分页查询任务列表。
 
 ### 请求体
@@ -56,11 +56,13 @@
 | `status`         | string | 否   | 任务状态过滤，见 [TaskStatus](#taskstatus)                         |
 | `taskId`         | string | 否   | 任务 ID 模糊过滤                                                   |
 | `cusId`          | string | 否   | 客户号 CIF 模糊过滤                                                |
-| `dateFrom`       | string | 否   | `createTime` 过滤起始日期，YYYY-MM-DD                              |
-| `dateTo`         | string | 否   | `createTime` 过滤结束日期，YYYY-MM-DD                              |
-| `updateDateFrom` | string | 否   | `updateTime` 过滤起始日期，YYYY-MM-DD                              |
-| `updateDateTo`   | string | 否   | `updateTime` 过滤结束日期，YYYY-MM-DD                              |
-| `sortField`      | string | 否   | 排序字段：`taskId`、`createTime` 或 `updateTime`                   |
+| `createTimeFrom` | string | 否   | `createTime` 过滤起始日期，YYYY-MM-DD                              |
+| `createTimeTo`   | string | 否   | `createTime` 过滤结束日期，YYYY-MM-DD                              |
+| `transactionTimeFrom` | string | 否   | `transactionTime` 过滤起始日期，YYYY-MM-DD                    |
+| `transactionTimeTo`   | string | 否   | `transactionTime` 过滤结束日期，YYYY-MM-DD                    |
+| `updateTimeFrom` | string | 否   | `updateTime` 过滤起始日期，YYYY-MM-DD                              |
+| `updateTimeTo`   | string | 否   | `updateTime` 过滤结束日期，YYYY-MM-DD                              |
+| `sortField`      | string | 否   | 排序字段：`taskId`、`createTime`、`transactionTime` 或 `updateTime` |
 | `sortOrder`      | string | 否   | 排序方向：`asc` 或 `desc`；仅在同时传入 `sortField` 时执行服务端排序 |
 
 ### 响应参数
@@ -83,8 +85,9 @@
         "cusCnName": "陈文",
         "makerId": "",
         "checkerId": "",
-        "createTime": "2026-06-28 09:00:00",
-        "updateTime": "2026-07-27 08:30:00",
+        "createTime": "2026-06-28",
+        "transactionTime": "2026-05-28",
+        "updateTime": "2026-07-27",
         "taskRemark": ""
       }
     ],
@@ -108,7 +111,7 @@
 
 ## 2\. 查询任务信息
 
-- **方法与路径**：`GET /api/task/{taskId}`
+- **方法与路径**：`GET /api/cies/v1/task/{taskId}`
 - **说明**：根据任务 ID 查询两张任务相关表联查后的精简任务信息。
 
 **路径参数**
@@ -123,7 +126,7 @@
 
 ## 3\. 查询明细页聚合数据
 
-- **方法与路径**：`GET /api/task/{taskId}/detail`
+- **方法与路径**：`GET /api/cies/v1/task/detail/{taskId}`
 - **说明**：一次返回明细页初始化需要的任务信息、原始客户信息、客户变更信息和附件元数据。该接口是页面查询模型，不扩充基础 [Task](#task) DTO。
 
 **路径参数**
@@ -140,7 +143,7 @@
 
 ## 4\. 查询客户信息
 
-- **方法与路径**：`GET /api/customer/{cusId}`
+- **方法与路径**：`GET /api/cies/v1/customer/{cusId}`
 - **说明**：根据客户号 CIF 查询客户信息。
 
 **路径参数**
@@ -155,7 +158,7 @@
 
 ## 5\. 查询客户变更信息
 
-- **方法与路径**：`GET /api/task/{taskId}/customer-change`
+- **方法与路径**：`GET /api/cies/v1/task/customer-change/{taskId}`
 - **说明**：查询任务保存的完整客户变更信息。有变更时返回结构与客户信息一致，明细页以此作为表单初始值，并与原始客户信息比较生成高亮。
 
 **路径参数**
@@ -170,7 +173,7 @@
 
 ## 6\. 查询任务附件列表
 
-- **方法与路径**：`GET /api/task/{taskId}/attachments`
+- **方法与路径**：`GET /api/cies/v1/task/attachments/{taskId}`
 - **说明**：查询任务关联的附件；[Task](#task) 本身不携带附件。
 
 **路径参数**
@@ -185,7 +188,7 @@
 
 ## 7\. 上传任务附件
 
-- **方法与路径**：`POST /api/task/{taskId}/attachment`
+- **方法与路径**：`POST /api/cies/v1/task/attachment/{taskId}`
 - **说明**：上传任务附件并返回落库后的附件信息。
 
 **路径参数**
@@ -207,7 +210,7 @@
 
 ## 8\. 下载附件
 
-- **方法与路径**：`GET /api/attachment/{fileId}/download`
+- **方法与路径**：`GET /api/cies/v1/task/attachment/download/{fileId}`
 - **说明**：根据附件 ID 下载原始文件。
 
 **路径参数**
@@ -222,7 +225,7 @@
 
 ## 9\. 变更任务状态
 
-- **方法与路径**：`POST /api/task/status`
+- **方法与路径**：`POST /api/cies/v1/task/status`
 - **说明**：任务状态变更统一入口，提交 / 退回 / 批准 / 撤销均走此接口，通过 `taskStatus` 区分动作。
 
 **请求体（TaskStatusChange）**
@@ -283,11 +286,12 @@
 | `cusCnName`  | string                    | 客户中文名               |
 | `makerId`    | string                    | 操作柜员号（Maker）      |
 | `checkerId`  | string                    | 授权柜员号（Checker）    |
-| `createTime` | string                    | 任务创建时间             |
-| `updateTime` | string                    | 任务最后更新时间         |
+| `createTime` | string                    | Task Date，格式 `YYYY-MM-DD` |
+| `transactionTime` | string               | Transaction Date，格式 `YYYY-MM-DD` |
+| `updateTime` | string                    | Update Date，格式 `YYYY-MM-DD` |
 | `taskRemark` | string                    | 任务备注（退回原因）     |
 
-> `Task` 由任务信息表、申报交易表与客户信息联表查询返回；任务与交易通过 `REF_ID = TRAN_ID` 关联，客户信息通过 `CUS_ID` 关联。当前页面不使用的数据库字段不返回；数据库可空字段统一由接口转换为空字符串。
+> `Task` 由任务信息表、申报交易表与客户信息联表查询返回；任务与交易通过 `REF_ID = TRAN_ID` 关联，客户信息通过 `CUS_ID` 关联。`createTime`、`transactionTime`、`updateTime` 由后端统一转换为 `YYYY-MM-DD`，前端直接展示。当前页面不使用的数据库字段不返回；数据库可空字段统一由接口转换为空字符串。
 
 ### Customer
 

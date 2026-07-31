@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import type { CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Col, Form, Row } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
@@ -13,8 +14,9 @@ import {
   TaskStatusFilter,
   TaskCusIdFilter,
   TaskIdFilter,
-  TaskDateRangeFilter,
-  TaskUpdateDateRangeFilter,
+  TaskCreateTimeRangeFilter,
+  TaskTransactionTimeRangeFilter,
+  TaskUpdateTimeRangeFilter,
 } from '@/components/FormItem';
 import {
   taskId,
@@ -24,6 +26,7 @@ import {
   makerId,
   checkerId,
   createTime,
+  transactionTime,
   updateTime,
   taskStatus,
 } from '@/components/TableColumn/task';
@@ -32,8 +35,9 @@ interface FilterValues {
   status: string;
   taskId: string;
   cusId: string;
-  dateRange: [Moment, Moment] | null;
-  updateDateRange: [Moment, Moment] | null;
+  createTimeRange: [Moment, Moment] | null;
+  transactionTimeRange: [Moment, Moment] | null;
+  updateTimeRange: [Moment, Moment] | null;
 }
 
 export default function TaskPool() {
@@ -49,8 +53,9 @@ export default function TaskPool() {
     changeStatus,
     changeTaskId,
     changeCusId,
-    changeDateRange,
-    changeUpdateDateRange,
+    changeCreateTimeRange,
+    changeTransactionTimeRange,
+    changeUpdateTimeRange,
     changeSort,
     reset,
   } = useTaskList();
@@ -69,13 +74,17 @@ export default function TaskPool() {
   // 状态/日期即时查询，文本输入走防抖；字段变更由 Form 统一分发
   const handleValuesChange = (changed: Partial<FilterValues>) => {
     if ('status' in changed) changeStatus(changed.status ?? '');
-    if ('dateRange' in changed) {
-      const range = changed.dateRange;
-      changeDateRange(range?.[0] && range?.[1] ? range : null);
+    if ('createTimeRange' in changed) {
+      const range = changed.createTimeRange;
+      changeCreateTimeRange(range?.[0] && range?.[1] ? range : null);
     }
-    if ('updateDateRange' in changed) {
-      const range = changed.updateDateRange;
-      changeUpdateDateRange(range?.[0] && range?.[1] ? range : null);
+    if ('transactionTimeRange' in changed) {
+      const range = changed.transactionTimeRange;
+      changeTransactionTimeRange(range?.[0] && range?.[1] ? range : null);
+    }
+    if ('updateTimeRange' in changed) {
+      const range = changed.updateTimeRange;
+      changeUpdateTimeRange(range?.[0] && range?.[1] ? range : null);
     }
     if ('taskId' in changed) applyTaskId(changed.taskId ?? '');
     if ('cusId' in changed) applyCusId(changed.cusId ?? '');
@@ -92,7 +101,8 @@ export default function TaskPool() {
     if (extra.action !== 'sort') return;
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
     const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
-    const isSortableField = field === 'taskId' || field === 'createTime' || field === 'updateTime';
+    const isSortableField =
+      field === 'taskId' || field === 'createTime' || field === 'transactionTime' || field === 'updateTime';
     const order: TaskSortOrder | undefined =
       activeSorter.order === 'ascend' ? 'asc' : activeSorter.order === 'descend' ? 'desc' : undefined;
     changeSort(isSortableField ? (field as TaskSortField) : undefined, order);
@@ -108,6 +118,7 @@ export default function TaskPool() {
     makerId,
     checkerId,
     createTime,
+    transactionTime,
     updateTime,
     taskStatus,
     {
@@ -148,17 +159,24 @@ export default function TaskPool() {
             <TaskStatusFilter />
           </Col>
           <Col span={8}>
-            <TaskDateRangeFilter />
+            <TaskCreateTimeRangeFilter />
           </Col>
           <Col span={8}>
-            <TaskUpdateDateRangeFilter />
+            <TaskTransactionTimeRangeFilter />
           </Col>
-          <Col span={8} className='flex items-center justify-end'>
+          <Col span={8}>
+            <TaskUpdateTimeRangeFilter />
+          </Col>
+          <Col span={24} className='mt-2 flex items-center justify-end'>
             <Button onClick={handleReset}>Reset</Button>
           </Col>
         </Row>
       </Form>
-      <div ref={tableWrapRef}>
+      <div
+        ref={tableWrapRef}
+        className='task-pool-table'
+        style={{ '--task-pool-table-body-height': `${scrollY}px` } as CSSProperties}
+      >
         <ResizableTable<Task>
           rowKey='taskId'
           columns={columns}

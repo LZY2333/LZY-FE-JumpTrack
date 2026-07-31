@@ -19,7 +19,7 @@ export default function useTableScrollY(ref: RefObject<HTMLElement>, bottomGap: 
       const top = (table ?? el).getBoundingClientRect().top;
       const headH = (el.querySelector('.ant-table-thead') as HTMLElement | null)?.offsetHeight ?? 55;
       const pager = el.querySelector('.ant-pagination') as HTMLElement | null;
-      let pagerH = 64;
+      let pagerH = 0;
       if (pager) {
         // 实测上下 margin 而非硬编码，随全局分页器样式覆盖（如去除底部间距）自动生效
         const { marginTop, marginBottom } = window.getComputedStyle(pager);

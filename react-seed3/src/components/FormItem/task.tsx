@@ -1,5 +1,7 @@
 import { DatePicker, Form, Input, Select } from 'antd';
 import type { FormItemProps } from 'antd';
+import type { Moment } from 'moment';
+import moment from 'moment';
 import { TaskStatus } from '@/types/enums';
 
 // 任务查询表单的 UI 辅助组件；日期范围是前端组合值，提交时拆为起止日期，
@@ -15,6 +17,15 @@ const STATUS_OPTIONS = [
   { value: TaskStatus.Returned, label: 'Returned' },
   { value: TaskStatus.Cancelled, label: 'Cancelled' },
 ];
+
+const disableFutureDate = (current: Moment) => current.isAfter(moment(), 'day');
+const RECENT_DATE_RANGES: Record<string, () => [Moment, Moment]> = {
+  'Past Week': () => [moment().subtract(1, 'week').startOf('day'), moment().endOf('day')],
+  'Past Month': () => [moment().subtract(1, 'month').startOf('day'), moment().endOf('day')],
+  'Past 3 Months': () => [moment().subtract(3, 'months').startOf('day'), moment().endOf('day')],
+  'Past 6 Months': () => [moment().subtract(6, 'months').startOf('day'), moment().endOf('day')],
+  'Past Year': () => [moment().subtract(1, 'year').startOf('day'), moment().endOf('day')],
+};
 
 export function TaskStatusFilter(props: TaskFilterFormItemProps) {
   return (
@@ -40,18 +51,26 @@ export function TaskIdFilter(props: TaskFilterFormItemProps) {
   );
 }
 
-export function TaskDateRangeFilter(props: TaskFilterFormItemProps) {
+export function TaskCreateTimeRangeFilter(props: TaskFilterFormItemProps) {
   return (
-    <Form.Item {...props} name='dateRange' label='Created Date'>
-      <DatePicker.RangePicker className='w-full' />
+    <Form.Item {...props} name='createTimeRange' label='Task Date'>
+      <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} ranges={RECENT_DATE_RANGES} />
     </Form.Item>
   );
 }
 
-export function TaskUpdateDateRangeFilter(props: TaskFilterFormItemProps) {
+export function TaskTransactionTimeRangeFilter(props: TaskFilterFormItemProps) {
   return (
-    <Form.Item {...props} name='updateDateRange' label='Update Date'>
-      <DatePicker.RangePicker className='w-full' />
+    <Form.Item {...props} name='transactionTimeRange' label='Transaction Date'>
+      <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} ranges={RECENT_DATE_RANGES} />
+    </Form.Item>
+  );
+}
+
+export function TaskUpdateTimeRangeFilter(props: TaskFilterFormItemProps) {
+  return (
+    <Form.Item {...props} name='updateTimeRange' label='Update Date'>
+      <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} ranges={RECENT_DATE_RANGES} />
     </Form.Item>
   );
 }

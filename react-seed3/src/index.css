@@ -2,16 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --ant-primary-color: #e26b66;
-  --ant-primary-color-hover: #f09892;
-  --ant-primary-color-active: #bd4b4b;
-  --ant-primary-color-outline: rgba(226, 107, 102, 0.2);
-}
-
 .ant-layout-header {
   background: #fff5f5 !important;
   border-bottom: 1px solid #ffd6d6;
+}
+
+/* 页面滚动收敛到 Content，并预留纵向滚动槽位，避免弹层/表格重排时滚动条闪现导致抖动 */
+.ant-layout-content {
+  scrollbar-gutter: stable;
 }
 
 .ant-tag {
@@ -28,9 +26,35 @@
   overflow-x: hidden !important;
 }
 
+/* scroll.y is a max-height by default; keep the task table filled to the available page height. */
+.task-pool-table .ant-table-body {
+  height: var(--task-pool-table-body-height);
+}
+
+.task-pool-table .ant-table-placeholder {
+  height: var(--task-pool-table-body-height);
+}
+
 /* 全局去除表格分页器底部间距（上间距保留），贴紧页面容器底部，减少空白 */
 .ant-table-pagination.ant-pagination {
   margin-bottom: 0;
+}
+
+/* 日期范围面板的 Past 快捷选项使用项目主题色 */
+.ant-picker-ranges .ant-picker-preset > .ant-tag-blue {
+  color: var(--ant-primary-color);
+  background: var(--ant-primary-color-outline);
+  border-color: var(--ant-primary-color);
+}
+
+.ant-picker-ranges .ant-picker-preset > .ant-tag-blue:hover {
+  color: #fff;
+  background: var(--ant-primary-color-hover);
+  border-color: var(--ant-primary-color-hover);
+}
+
+.ant-picker-ranges .ant-picker-preset + .ant-picker-preset {
+  margin-left: 8px;
 }
 
 /* ResizableTable 的排序交互仅由三角形触发，避免 antd 的全表头覆盖层阻断列拖拽 */

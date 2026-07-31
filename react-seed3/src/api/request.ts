@@ -7,8 +7,8 @@ import { ResCode } from '@/types/enums';
 export interface ApiResult<T = unknown> {
   /** 状态码,SUC0000为成功,其他为失败 */
   returnCode: string;
-  /** 返回数据，含分页信息(如果有)；成功响应约定 body 必有值，无 body 的接口不走 get/post 泛型 */
-  body: T;
+  /** 返回数据，含分页信息(如果有)；无响应数据时可能缺省或为 null */
+  body?: T;
   /** 异常信息 */
   errorMsg?: string;
 }
@@ -55,7 +55,7 @@ request.interceptors.response.use(
   },
 );
 
-// 统一封装 JSON get/post：ApiResult.body 为必需字段，直接透传即可。
+// 统一封装 JSON get/post：body 可能缺省或为 null，由具体接口调用方处理。
 export const get = <T>(url: string) => request.get<ApiResult<T>, ApiResult<T>>(url).then((res) => res.body);
 
 export const post = <T>(url: string, data?: unknown) =>

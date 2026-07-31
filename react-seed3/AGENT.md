@@ -1,4 +1,4 @@
-# 技术规范
+# 全局规范
 
 ## 技术栈
 
@@ -23,6 +23,11 @@ import useUserStore from '@/store/useUserStore';
 import type { TaskDetail } from '@/types/task';
 ```
 
+## 环境变量
+
+- 环境变量统一在 Vite 配置或 Node 脚本中通过 `process.env` 获取，禁止使用 `loadEnv` 或自定义 `import.meta.env` 变量
+- 浏览器端需要环境配置时，由 Vite 配置读取并通过 `define` 注入类型明确的常量
+
 ## 命名规范
 
 | 目录              | 文件夹命名                 | 文件命名                           |
@@ -40,6 +45,7 @@ import type { TaskDetail } from '@/types/task';
 - 事件处理函数用 `handle` 前缀命名（`handlePointerDown`），JSX 上通过 `on*` 属性绑定：`onPointerDown={handlePointerDown}`；禁止直接把处理函数命名为 `on*`
 - 变量/参数禁止使用单字母命名，须使用简短的语义化单词（如 `task`、`value`、`key`）；例外：`e`（事件对象）、`x`/`y`（坐标）、`i`（循环索引）等约定俗成的单字母命名可保留
 - 函数一律使用函数表达式声明（`const fn = (...) => { ... }`），禁止使用函数声明（`function fn() {}`），包括组件、hook、普通工具函数
+- 使用 error-first 编码模式，优先处理错误、空值及非法状态并提前返回，再执行正常业务逻辑
 
 ## 样式规范
 
@@ -92,6 +98,11 @@ task.status === 'Pending Checker';
 
 ## Mock
 
-- Mock 文件放 `src/mock/`，`vite.config.ts` 中配置 `localEnabled: command === 'serve'`
+- Mock 文件放 `mock/`；`npm run dev` 默认将 `/api` 代理到本地后端，`npm run dev:mock` 通过 `VITE_USE_MOCK=true` 启用 Mock
 - build 产物不包含 mock 逻辑
 - Mock 数组为模块单例，dev server 进程存活期间状态持久（适合模拟增删改）
+
+## 后端代码生成规范
+
+- 后端代码全部在 `react-seed3/spring-boot-src-generator/src` 下
+- 生成或修改当前项目的后端代码前，必须先完整阅读 `react-seed3/spring-boot-src-generator/` 目录下的所有文档，并遵循其中的项目结构与编码规范。

@@ -7,16 +7,23 @@ import type { User } from '@/types';
 
 export default function DevUserSwitcher() {
   const { user, login } = useUserStore();
+  const mockEnabled = __MOCK_ENABLED__;
   const [users, setUsers] = useState<User[]>([]);
   const [pos, setPos] = useState<{ y: number; side: 'left' | 'right' }>({ y: 80, side: 'right' });
   const dragging = useRef(false);
 
   useEffect(() => {
+    if (!mockEnabled) return;
+
     getUsers().then((res) => {
+      if (!res?.length) {
+        setUsers([]);
+        return;
+      }
       login(res[0].id);
       setUsers(res);
     });
-  }, []);
+  }, [mockEnabled]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     dragging.current = true;
@@ -35,8 +42,8 @@ export default function DevUserSwitcher() {
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
 
-  // 仅本地 dev server 展示，生产构建不渲染
-  if (!import.meta.env.DEV) return null;
+  // 仅本地 Mock 模式展示，代理真实后端或生产构建时不渲染
+  if (!mockEnabled) return null;
 
   const sideClass = pos.side === 'right' ? 'right-0 flex-row-reverse' : 'left-0 flex-row';
 

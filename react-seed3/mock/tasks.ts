@@ -60,11 +60,9 @@ export const mockTasks: Task[] = Array.from({ length: 38 }, (_, index) => {
   const checkerUsers = mockUsers.filter((user) => user.roles.includes(Role.Checker));
   const maker = makerUsers[index % makerUsers.length];
   const checker = checkerUsers[index % checkerUsers.length];
-  const createTime = `2026-06-${String(28 - (index % 28)).padStart(2, '0')} 09:00:00`;
-  const updateTime = `2026-07-${String(27 - (index % 27)).padStart(2, '0')} ${String(8 + (index % 10)).padStart(
-    2,
-    '0',
-  )}:30:00`;
+  const createTime = `2026-06-${String(28 - (index % 28)).padStart(2, '0')}`;
+  const transactionTime = `2026-05-${String(28 - (index % 28)).padStart(2, '0')}`;
+  const updateTime = `2026-07-${String(27 - (index % 27)).padStart(2, '0')}`;
   const customer = mockCustomers[index % mockCustomers.length];
   const hasMaker = taskStatus !== TaskStatus.Pending;
   const hasChecker = taskStatus === TaskStatus.Returned || taskStatus === TaskStatus.Approved;
@@ -79,6 +77,7 @@ export const mockTasks: Task[] = Array.from({ length: 38 }, (_, index) => {
     makerId: hasMaker ? maker.id : '',
     checkerId: hasChecker ? checker.id : '',
     createTime,
+    transactionTime,
     updateTime,
     taskRemark: taskStatus === TaskStatus.Returned ? 'Please verify the updated customer information.' : '',
   };
@@ -119,11 +118,15 @@ const pathSegments = (url: string): string[] =>
     .filter(Boolean)
     .map((segment) => decodeURIComponent(segment));
 
-// 所有 /api/task/:taskId[/...] 路径的 taskId 均位于第三段。
-const taskIdFromUrl = (url: string): string => pathSegments(url)[2] || '';
+const lastPathSegment = (url: string): string => {
+  const segments = pathSegments(url);
+  return segments[segments.length - 1] || '';
+};
 
-// /api/attachment/:fileId/download 的 fileId 位于第三段。
-const fileIdFromUrl = (url: string): string => pathSegments(url)[2] || '';
+// 新接口中的 taskId 和 fileId 均位于路径末段。
+const taskIdFromUrl = (url: string): string => lastPathSegment(url);
+
+const fileIdFromUrl = (url: string): string => lastPathSegment(url);
 
 const findTask = (taskId: string) => mockTasks.find((task) => task.taskId === taskId);
 
@@ -146,17 +149,19 @@ interface TasksQuery {
   status?: string;
   taskId?: string;
   cusId?: string;
-  dateFrom?: string;
-  dateTo?: string;
-  updateDateFrom?: string;
-  updateDateTo?: string;
+  createTimeFrom?: string;
+  createTimeTo?: string;
+  transactionTimeFrom?: string;
+  transactionTimeTo?: string;
+  updateTimeFrom?: string;
+  updateTimeTo?: string;
   sortField?: TaskSortField;
   sortOrder?: TaskSortOrder;
 }
 
 export default [
   {
-    url: '/api/tasks',
+    url: '/api/cies/v1/task/getTasks',
     method: 'post',
     response: (opt: { body: TasksQuery }) => {
       const {
@@ -165,10 +170,12 @@ export default [
         status,
         taskId,
         cusId,
-        dateFrom,
-        dateTo,
-        updateDateFrom,
-        updateDateTo,
+        createTimeFrom,
+        createTimeTo,
+        transactionTimeFrom,
+        transactionTimeTo,
+        updateTimeFrom,
+        updateTimeTo,
         sortField,
         sortOrder,
       } = opt.body || {};
@@ -182,10 +189,12 @@ export default [
         const keyword = cusId.trim().toLowerCase();
         list = list.filter((task) => task.cusId.toLowerCase().includes(keyword));
       }
-      if (dateFrom) list = list.filter((task) => task.createTime.slice(0, 10) >= dateFrom);
-      if (dateTo) list = list.filter((task) => task.createTime.slice(0, 10) <= dateTo);
-      if (updateDateFrom) list = list.filter((task) => task.updateTime.slice(0, 10) >= updateDateFrom);
-      if (updateDateTo) list = list.filter((task) => task.updateTime.slice(0, 10) <= updateDateTo);
+      if (createTimeFrom) list = list.filter((task) => task.createTime.slice(0, 10) >= createTimeFrom);
+      if (createTimeTo) list = list.filter((task) => task.createTime.slice(0, 10) <= createTimeTo);
+      if (transactionTimeFrom) list = list.filter((task) => task.transactionTime >= transactionTimeFrom);
+      if (transactionTimeTo) list = list.filter((task) => task.transactionTime <= transactionTimeTo);
+      if (updateTimeFrom) list = list.filter((task) => task.updateTime.slice(0, 10) >= updateTimeFrom);
+      if (updateTimeTo) list = list.filter((task) => task.updateTime.slice(0, 10) <= updateTimeTo);
       if (sortField && sortOrder) {
         const direction = sortOrder === 'asc' ? 1 : -1;
         list.sort((left, right) => left[sortField].localeCompare(right[sortField]) * direction);
@@ -206,7 +215,7 @@ export default [
   },
   {
     // 明细页聚合查询：任务、原始客户、完整客户变更快照和附件元数据一次返回。
-    url: '/api/task/:taskId/detail',
+    url: '/api/cies/v1/task/detail/:taskId',
     method: 'get',
     response: (opt: { url: string }) => {
       const taskId = taskIdFromUrl(opt.url);
@@ -227,7 +236,7 @@ export default [
     },
   },
   {
-    url: '/api/task/:taskId/customer-change',
+    url: '/api/cies/v1/task/customer-change/:taskId',
     method: 'get',
     response: (opt: { url: string }) => {
       const taskId = taskIdFromUrl(opt.url);
@@ -241,7 +250,7 @@ export default [
     },
   },
   {
-    url: '/api/task/:taskId/attachments',
+    url: '/api/cies/v1/task/attachments/:taskId',
     method: 'get',
     response: (opt: { url: string }) => {
       const taskId = taskIdFromUrl(opt.url);
@@ -254,7 +263,7 @@ export default [
     },
   },
   {
-    url: '/api/task/:taskId',
+    url: '/api/cies/v1/task/:taskId',
     method: 'get',
     response: (opt: { url: string }) => {
       const taskId = taskIdFromUrl(opt.url);
@@ -264,7 +273,7 @@ export default [
   },
   {
     // Mock 不存真实上传文件，只保存前端提交的文件名和大小，并生成附件 ID。
-    url: '/api/task/:taskId/attachment',
+    url: '/api/cies/v1/task/attachment/:taskId',
     method: 'post',
     response: (opt: { url: string; body: { fileName: string; fileSize: string } }) => {
       const taskId = taskIdFromUrl(opt.url);
@@ -287,7 +296,7 @@ export default [
   },
   {
     // 下载接口返回原始二进制响应，不使用 ApiResult 包装。
-    url: '/api/attachment/:fileId/download',
+    url: '/api/cies/v1/task/attachment/download/:fileId',
     method: 'get',
     rawResponse: (request: import('node:http').IncomingMessage, response: import('node:http').ServerResponse) => {
       const fileId = fileIdFromUrl(request.url || '');
@@ -314,7 +323,7 @@ export default [
      * - return 保留变更快照并记录退回原因；
      * - approve 将任务变更快照覆盖到客户主数据。
      */
-    url: '/api/task/status',
+    url: '/api/cies/v1/task/status',
     method: 'post',
     response: (opt: { body: TaskStatusChange }) => {
       const { taskId, taskStatus, makerId, checkerId, taskRemark, payload } = opt.body || {};
@@ -343,7 +352,7 @@ export default [
       }
 
       task.taskStatus = taskStatus;
-      task.updateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      task.updateTime = new Date().toISOString().slice(0, 10);
       if (makerId) task.makerId = makerId;
       if (checkerId) task.checkerId = checkerId;
       if (taskStatus === TaskStatus.Returned) {

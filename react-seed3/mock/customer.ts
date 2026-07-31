@@ -31,14 +31,14 @@ export const mockCustomers: Customer[] = [
   },
 ];
 
-// '/api/customer/C0001' → split → ['', 'api', 'customer', 'C0001'] → [3]
-function extractId(url: string): string {
-  return decodeURIComponent(url.split('?')[0].split('/')[3]);
-}
+const extractId = (url: string): string => {
+  const segments = url.split('?')[0].split('/').filter(Boolean);
+  return decodeURIComponent(segments[segments.length - 1] || '');
+};
 
 export default [
   {
-    url: '/api/customer/:id',
+    url: '/api/cies/v1/customer/:id',
     method: 'get',
     response: (opt: { url: string }) => {
       const cusId = extractId(opt.url);

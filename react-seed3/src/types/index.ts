@@ -50,9 +50,11 @@ export interface Task {
   makerId: string;
   /** 授权任务的柜员ID，尚未复核时为空字符串 -Checker */
   checkerId: string;
-  /** 任务创建时间 -Created Date */
+  /** 任务日期，格式 YYYY-MM-DD -Task Date */
   createTime: string;
-  /** 任务最后更新时间 -Update Date */
+  /** 申报交易日期，格式 YYYY-MM-DD -Transaction Date */
+  transactionTime: string;
+  /** 任务最后更新日期，格式 YYYY-MM-DD -Update Date */
   updateTime: string;
   /** 任务备注（退回原因），无备注时为空字符串 */
   taskRemark: string;

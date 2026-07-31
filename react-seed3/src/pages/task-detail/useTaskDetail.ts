@@ -27,8 +27,8 @@ export default function useTaskDetail(taskId?: string) {
     getTaskPageData(taskId)
       .then((data) => {
         if (active) {
-          setTaskPageData(data);
-          setError(false);
+          setTaskPageData(data ?? null);
+          setError(!data);
         }
       })
       .catch(() => {

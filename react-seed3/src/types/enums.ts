@@ -56,6 +56,6 @@ export enum ResCode {
   Success = 'SUC0000',
 }
 
-export type TaskSortField = 'taskId' | 'createTime' | 'updateTime';
+export type TaskSortField = 'taskId' | 'createTime' | 'transactionTime' | 'updateTime';
 
 export type TaskSortOrder = 'asc' | 'desc';

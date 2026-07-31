@@ -59,16 +59,23 @@ export const checkerId: ColumnType<Task> = {
 };
 
 export const createTime: ColumnType<Task> = {
-  title: 'Created Date',
+  title: 'Task Date',
   dataIndex: 'createTime',
-  width: 160,
+  width: 130,
+  sorter: true,
+};
+
+export const transactionTime: ColumnType<Task> = {
+  title: 'Transaction Date',
+  dataIndex: 'transactionTime',
+  width: 130,
   sorter: true,
 };
 
 export const updateTime: ColumnType<Task> = {
   title: 'Update Date',
   dataIndex: 'updateTime',
-  width: 160,
+  width: 130,
   sorter: true,
 };
 

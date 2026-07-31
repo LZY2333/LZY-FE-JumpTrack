@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 
 /** 单个表格持久化的布局：列宽、列顺序、隐藏列，均以列 id 为键 */
-interface TableLayout {
+export interface TableLayout {
   widths: Record<string, number>;
   order: string[];
   hidden: string[];
@@ -17,6 +17,56 @@ export interface ColumnMeta {
 }
 
 const EMPTY_LAYOUT: TableLayout = { widths: {}, order: [], hidden: [] };
+
+/**
+ * 保留已有列的用户顺序；缓存中没有的新列按源码默认相邻位置插入。
+ * 依次处理 sourceIds 可确保同时新增多列时仍保持它们之间的默认顺序。
+ */
+export const resolveColumnOrder = (order: string[], sourceIds: string[]) => {
+  const sourceIdSet = new Set(sourceIds);
+  const resolved = Array.from(new Set(order.filter((id) => sourceIdSet.has(id))));
+
+  sourceIds.forEach((sourceId, sourceIndex) => {
+    if (resolved.includes(sourceId)) return;
+
+    const previousId = sourceIds
+      .slice(0, sourceIndex)
+      .reverse()
+      .find((id) => resolved.includes(id));
+    if (previousId) {
+      resolved.splice(resolved.indexOf(previousId) + 1, 0, sourceId);
+      return;
+    }
+
+    const nextId = sourceIds.slice(sourceIndex + 1).find((id) => resolved.includes(id));
+    if (nextId) {
+      resolved.splice(resolved.indexOf(nextId), 0, sourceId);
+      return;
+    }
+
+    resolved.push(sourceId);
+  });
+
+  return resolved;
+};
+
+/** 清除失效列配置；新增列不进入 hidden，因此默认展示。 */
+export const migrateTableLayout = (layout: TableLayout, sourceIds: string[]): TableLayout => {
+  const sourceIdSet = new Set(sourceIds);
+  const widths = Object.fromEntries(
+    Object.entries(layout.widths).filter(
+      ([id, width]) => sourceIdSet.has(id) && typeof width === 'number' && Number.isFinite(width),
+    ),
+  );
+
+  return {
+    widths,
+    order: resolveColumnOrder(layout.order, sourceIds),
+    hidden: Array.from(new Set(layout.hidden.filter((id) => sourceIdSet.has(id)))),
+  };
+};
+
+const isSameLayout = (left: TableLayout, right: TableLayout) => JSON.stringify(left) === JSON.stringify(right);
 
 /** 读取持久化布局，storageKey 缺省或解析失败时退化为空布局 */
 const readLayout = (storageKey?: string): TableLayout => {
@@ -81,11 +131,20 @@ export default function useTableLayout<T>(source: ColumnsType<T>, storageKey?: s
     });
     return { colMap: map, sourceIds: Array.from(map.keys()) };
   }, [source]);
+  const sourceIdSignature = JSON.stringify(sourceIds);
 
-  // 按已存顺序（失效 id 过滤）+ 新增列追加到末尾，得到最终列序
+  // 列集合变化时自动迁移并回写缓存，后续新增/删除列无需更换 storageKey。
+  useEffect(() => {
+    const next = migrateTableLayout(layout, sourceIds);
+    if (isSameLayout(layout, next)) return;
+    persist(next);
+    setLayout(next);
+  }, [layout, persist, sourceIdSignature]);
+
+  // 首次渲染也按迁移规则解析，避免 useEffect 回写缓存前出现一次错误列序。
   const resolveOrder = useCallback(
-    (order: string[]) => [...order.filter((id) => colMap.has(id)), ...sourceIds.filter((id) => !order.includes(id))],
-    [colMap, sourceIds],
+    (order: string[]) => resolveColumnOrder(order, sourceIds),
+    [sourceIdSignature],
   );
   const orderedIds = useMemo(() => resolveOrder(layout.order), [resolveOrder, layout.order]);
 

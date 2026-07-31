@@ -136,6 +136,10 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
       }
       uploadAttachment(taskId, file)
         .then((attachment) => {
+          if (!attachment) {
+            message.error('Attachment upload returned no data');
+            return;
+          }
           setAttachments((prev) => [...prev, attachment]);
         })
         .catch(() => {
