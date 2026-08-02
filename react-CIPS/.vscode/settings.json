@@ -1,0 +1,31 @@
+{
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  // 保存文件时自动格式化
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    // 保存时自动修复 ESLint 可修复的问题
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // 统一换行符为 LF，避免跨平台（Windows/Mac）提交时出现换行符差异
+  "files.eol": "\n",
+  // 使用项目本地安装的 TypeScript 版本，而非 VS Code 内置版本
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  // === Tailwind CSS IntelliSense（需安装 bradlc.vscode-tailwindcss 插件）===
+  // 在这些属性/函数调用中提供 Tailwind 类名的智能提示
+  "tailwindCSS.classAttributes": ["class", "className", "classnames"],
+  // 让插件识别 classnames() 函数调用中字符串里的类名，提供提示与校验
+  "tailwindCSS.experimental.classRegex": [["classnames\\(([^)]*)\\)", "'([^']*)'"]],
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, .npmrc, .nvmrc, .node-version",
+    "tsconfig.json": "tsconfig.*.json",
+    "vite.config.*": ".env, .env.*, postcss.config.*, tailwind.config.*",
+    "README.md": "README.en.md",
+    ".eslintrc.json": ".prettierrc.json, .prettierignore"
+  }
+}
