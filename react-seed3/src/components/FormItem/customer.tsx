@@ -103,8 +103,8 @@ interface InvestmentAccountDisplayGroups {
  * investmentAccounts 只在 FormItem 展示层按 investType 分为三组。
  * securityAct / fundAct / custodianAct 是局部展示变量，不进入 DTO 或 Form 字段。
  */
-function InvestmentAccountGroups({ value = [], formItemProps }: InvestmentAccountGroupsProps) {
-  const { securityAct, fundAct, custodianAct } = value.reduce<InvestmentAccountDisplayGroups>(
+function InvestmentAccountGroups({ value, formItemProps }: InvestmentAccountGroupsProps) {
+  const { securityAct, fundAct, custodianAct } = (value ?? []).reduce<InvestmentAccountDisplayGroups>(
     (groups, account) => {
       if (account.investType === InvestType.Securities) groups.securityAct.push(account.investAct);
       if (account.investType === InvestType.Funds) groups.fundAct.push(account.investAct);

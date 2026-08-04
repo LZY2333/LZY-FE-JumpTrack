@@ -79,7 +79,7 @@ export interface Customer {
   bankCusRef: string;
 
   /** 投资账户列表，界面按 investType 分组展示 */
-  investmentAccounts: InvestmentAccount[];
+  investmentAccounts?: InvestmentAccount[];
 
   /** 净资产审核通过日期，格式 YYYY-MM-DD -AIP Date */
   principleAppDate: string;
@@ -96,9 +96,9 @@ export interface Customer {
   capitalInvestFlag: YesNo;
 
   /** 可支取利息，按币种分类，币种由接口动态决定 -Withdrawable Interests */
-  withdrawnIntr: Record<string, number>;
+  withdrawnIntr?: Record<string, number>;
   /** 已转出利息，按币种分类，币种由接口动态决定 -Transferred Interests */
-  transferIntr: Record<string, number>;
+  transferIntr?: Record<string, number>;
 }
 
 /**

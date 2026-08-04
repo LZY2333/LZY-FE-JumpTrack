@@ -62,8 +62,8 @@ export const uploadAttachment = (taskId: string, file: File) =>
   });
 
 /** 下载附件原始文件；文件名由调用方根据 Attachment.fileName 处理。 */
-export const downloadAttachment = (fileId: string) =>
-  getBlob(`/api/cies/v1/task/attachment/download/${encodeURIComponent(fileId)}`);
+export const downloadAttachment = (fileName: string) =>
+  getBlob(`/api/cies/v1/task/attachment/download/${encodeURIComponent(fileName)}`);
 
 export interface TaskStatusPayload {
   /** 完整的客户变更信息。 */

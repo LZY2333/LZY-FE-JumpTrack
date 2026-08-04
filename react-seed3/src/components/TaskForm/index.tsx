@@ -95,6 +95,8 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
     const annualReportDateLocked = !!customer.annualReportDate;
     const principleAppDateLocked = !!customer.principleAppDate;
     const formalAppDateLocked = !!customer.formalAppDate;
+    const withdrawnIntrCurrencies = Object.keys(initialCustomer.withdrawnIntr ?? {});
+    const transferIntrCurrencies = Object.keys(initialCustomer.transferIntr ?? {});
 
     const handleValuesChange = (changed: Partial<Customer>) => {
       if ('principleAppDate' in changed) {
@@ -148,8 +150,8 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
       return false;
     };
 
-    const handleDownload = (fileId: string, fileName: string) => {
-      downloadAttachment(fileId)
+    const handleDownload = (fileName: string) => {
+      downloadAttachment(fileName)
         .then((blob) => {
           const objectUrl = URL.createObjectURL(blob);
           const anchor = document.createElement('a');
@@ -212,11 +214,11 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
                   <CapitalInvestFlag className={hl('capitalInvestFlag')} />
                   <div className='grid grid-cols-2 gap-x-4 border-t pt-3'>
                     <WithdrawnIntr
-                      currencies={Object.keys(initialCustomer.withdrawnIntr)}
+                      currencies={withdrawnIntrCurrencies}
                       getFieldClassName={(currency) => hl(['withdrawnIntr', currency])}
                     />
                     <TransferIntr
-                      currencies={Object.keys(initialCustomer.transferIntr)}
+                      currencies={transferIntrCurrencies}
                       getFieldClassName={(currency) => hl(['transferIntr', currency])}
                     />
                   </div>
@@ -241,7 +243,7 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
                     size='small'
                     danger
                     icon={<DownloadOutlined />}
-                    onClick={() => handleDownload(att.fileId, att.fileName)}
+                    onClick={() => handleDownload(att.fileName)}
                   />,
                   !readonly && (
                     <Button

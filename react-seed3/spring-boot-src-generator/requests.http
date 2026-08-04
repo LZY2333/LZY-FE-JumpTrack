@@ -1,0 +1,22 @@
+### 默认分页查询
+POST http://localhost:8080/api/cies/v1/task/getTasks
+Content-Type: application/json
+
+{
+  "current": 1,
+  "pageSize": 3
+}
+
+### 按状态、日期和交易时间排序
+POST http://localhost:8080/api/cies/v1/task/getTasks
+Content-Type: application/json
+
+{
+  "current": 1,
+  "pageSize": 10,
+  "status": "S01",
+  "createTimeFrom": "2026-08-01",
+  "createTimeTo": "2026-08-03",
+  "sortField": "transactionTime",
+  "sortOrder": "asc"
+}

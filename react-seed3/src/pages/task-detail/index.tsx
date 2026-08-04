@@ -33,6 +33,9 @@ export default function TaskDetail() {
   const canReview = isChecker && !isSelfReview;
   const makerTooltip = !isMaker ? 'Maker only' : !isAssignedMaker ? 'Assigned Maker only' : '';
   const checkerTooltip = !isChecker ? 'Checker only' : isSelfReview ? 'You cannot review your own submission' : '';
+  const loadErrorMessage = [error, !customer && 'Customer data is missing', !task && 'Task data is missing']
+    .filter(Boolean)
+    .join('; ');
 
   const handleSubmit = () => {
     const formApi = formRef.current;
@@ -140,31 +143,16 @@ export default function TaskDetail() {
     );
   }
 
-  if (error || !customer || !task) {
-    return (
-      <div className='animate-fade-in'>
-        <Alert
-          type='error'
-          showIcon
-          message='Unable to load task details'
-          action={
-            <Button size='small' onClick={() => navigate('/')}>
-              Back
-            </Button>
-          }
-        />
-      </div>
-    );
-  }
-
   return (
     <div className='animate-fade-in'>
+      {loadErrorMessage && <Alert className='mb-4' type='error' showIcon message={loadErrorMessage} />}
+
       <div className='mb-4 flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')}>
             Back
           </Button>
-          <Typography.Text strong>Task {task.taskId} – OPC AET</Typography.Text>
+          <Typography.Text strong>Task {task?.taskId ?? taskId ?? '-'} – OPC AET</Typography.Text>
         </div>
         <div className='flex gap-3'>
           {isEditableStage && (
@@ -197,7 +185,7 @@ export default function TaskDetail() {
               </Tooltip>
             </>
           )}
-          {task.taskStatus === TaskStatus.Submitted && (
+          {task?.taskStatus === TaskStatus.Submitted && (
             <>
               <Tooltip title={checkerTooltip}>
                 <span className={canReview ? undefined : 'cursor-default'}>
@@ -229,7 +217,7 @@ export default function TaskDetail() {
         </div>
       </div>
 
-      {task.taskStatus === TaskStatus.Returned && (
+      {task?.taskStatus === TaskStatus.Returned && (
         <Alert
           className='mb-4'
           message='Return reason'
@@ -239,15 +227,17 @@ export default function TaskDetail() {
         />
       )}
 
-      <TaskForm
-        key={task.taskId}
-        ref={formRef}
-        taskId={task.taskId}
-        customer={customer}
-        customerChange={customerChange}
-        attachments={attachments}
-        readonly={!canEdit}
-      />
+      {task && customer && (
+        <TaskForm
+          key={task.taskId}
+          ref={formRef}
+          taskId={task.taskId}
+          customer={customer}
+          customerChange={customerChange}
+          attachments={attachments}
+          readonly={!canEdit}
+        />
+      )}
     </div>
   );
 }

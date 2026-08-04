@@ -6,7 +6,7 @@ import path from 'node:path';
 
 export default defineConfig(({ command }) => {
   const mockEnabled = command === 'serve' && process.env.VITE_USE_MOCK === 'true';
-  const apiProxyTarget = process.env.API_PROXY_TARGET || 'http://localhost:8080';
+  const apiProxyTarget = 'http://localhost:8080';
 
   return {
     define: {

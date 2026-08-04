@@ -9,33 +9,33 @@ import type { TaskPageData } from '@/api/tasks';
 export default function useTaskDetail(taskId?: string) {
   const [taskPageData, setTaskPageData] = useState<TaskPageData | null>(null);
   const [loading, setLoading] = useState(Boolean(taskId));
-  const [error, setError] = useState(!taskId);
+  const [error, setError] = useState<string | null>(taskId ? null : 'Task ID is missing');
 
   useEffect(() => {
     if (!taskId) {
       setTaskPageData(null);
       setLoading(false);
-      setError(true);
+      setError('Task ID is missing');
       return;
     }
 
     let active = true;
     setTaskPageData(null);
     setLoading(true);
-    setError(false);
+    setError(null);
 
     getTaskPageData(taskId)
       .then((data) => {
         if (active) {
           setTaskPageData(data ?? null);
-          setError(!data);
+          setError(data ? null : 'Task detail API returned no data');
         }
       })
-      .catch(() => {
-        // 请求层已统一显示具体错误；Hook 仅暴露失败状态供页面结束加载态。
+      .catch((requestError: unknown) => {
+        // 保留具体错误原因，供详情页内联展示；请求层仍负责全局提示。
         if (active) {
           setTaskPageData(null);
-          setError(true);
+          setError(requestError instanceof Error ? requestError.message : 'Unable to load task details');
         }
       })
       .finally(() => {

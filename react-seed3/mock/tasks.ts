@@ -9,9 +9,12 @@ const cloneAttachment = (attachment: Attachment): Attachment => ({ ...attachment
 const cloneCustomer = (customer: Customer): Customer => ({
   ...customer,
   cusPrmAct: [...customer.cusPrmAct],
-  investmentAccounts: customer.investmentAccounts.map((account) => ({ ...account })),
-  withdrawnIntr: { ...customer.withdrawnIntr },
-  transferIntr: { ...customer.transferIntr },
+  investmentAccounts:
+    customer.investmentAccounts == null
+      ? customer.investmentAccounts
+      : customer.investmentAccounts.map((account) => ({ ...account })),
+  withdrawnIntr: !customer.withdrawnIntr ? customer.withdrawnIntr : { ...customer.withdrawnIntr },
+  transferIntr: !customer.transferIntr ? customer.transferIntr : { ...customer.transferIntr },
 });
 
 const attachmentsFor = (taskId: string): Attachment[] => [
@@ -123,16 +126,16 @@ const lastPathSegment = (url: string): string => {
   return segments[segments.length - 1] || '';
 };
 
-// 新接口中的 taskId 和 fileId 均位于路径末段。
+// 新接口中的 taskId 和 fileName 均位于路径末段。
 const taskIdFromUrl = (url: string): string => lastPathSegment(url);
 
-const fileIdFromUrl = (url: string): string => lastPathSegment(url);
+const fileNameFromUrl = (url: string): string => lastPathSegment(url);
 
 const findTask = (taskId: string) => mockTasks.find((task) => task.taskId === taskId);
 
-const findAttachment = (fileId: string) => {
+const findAttachment = (fileName: string) => {
   for (const attachments of mockAttachmentsByTaskId.values()) {
-    const attachment = attachments.find((item) => item.fileId === fileId);
+    const attachment = attachments.find((item) => item.fileName === fileName);
     if (attachment) return attachment;
   }
   return undefined;
@@ -296,11 +299,11 @@ export default [
   },
   {
     // 下载接口返回原始二进制响应，不使用 ApiResult 包装。
-    url: '/api/cies/v1/task/attachment/download/:fileId',
+    url: '/api/cies/v1/task/attachment/download/:fileName',
     method: 'get',
     rawResponse: (request: import('node:http').IncomingMessage, response: import('node:http').ServerResponse) => {
-      const fileId = fileIdFromUrl(request.url || '');
-      const attachment = findAttachment(fileId);
+      const fileName = fileNameFromUrl(request.url || '');
+      const attachment = findAttachment(fileName);
       if (!attachment) {
         response.statusCode = 404;
         response.end('Attachment not found');
