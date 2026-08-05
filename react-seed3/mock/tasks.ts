@@ -322,7 +322,7 @@ export default [
   {
     /**
      * 统一状态变更：
-     * - submit 保存完整 customerChange 与附件列表；
+     * - submit 有客户字段变化时保存完整 customerChange，无变化时清除变更快照；
      * - return 保留变更快照并记录退回原因；
      * - approve 将任务变更快照覆盖到客户主数据。
      */
@@ -350,10 +350,6 @@ export default [
       ) {
         return { returnCode: 'ERR0403', errorMsg: 'Maker and Checker must be different users' };
       }
-      if (taskStatus === TaskStatus.Approved && !mockCustomerChangesByTaskId.has(taskId)) {
-        return { returnCode: 'ERR0409', errorMsg: 'Task has no saved customer change to approve' };
-      }
-
       task.taskStatus = taskStatus;
       task.updateTime = new Date().toISOString().slice(0, 10);
       if (makerId) task.makerId = makerId;
@@ -366,7 +362,11 @@ export default [
       }
 
       if (payload) {
-        mockCustomerChangesByTaskId.set(taskId, cloneCustomer(payload.customerChange));
+        if (payload.customerChange) {
+          mockCustomerChangesByTaskId.set(taskId, cloneCustomer(payload.customerChange));
+        } else {
+          mockCustomerChangesByTaskId.delete(taskId);
+        }
         mockAttachmentsByTaskId.set(taskId, payload.attachments.map(cloneAttachment));
       }
 

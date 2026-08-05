@@ -66,8 +66,8 @@ export const downloadAttachment = (fileName: string) =>
   getBlob(`/api/cies/v1/task/attachment/download/${encodeURIComponent(fileName)}`);
 
 export interface TaskStatusPayload {
-  /** 完整的客户变更信息。 */
-  customerChange: Customer;
+  /** 完整的客户变更信息；没有任何客户字段变化时不传。 */
+  customerChange?: Customer;
   /** 当前附件列表，每次提交时全量携带。 */
   attachments: Attachment[];
 }

@@ -6,6 +6,7 @@ import moment from 'moment';
 import type { Attachment, Customer } from '@/types';
 import { downloadAttachment, uploadAttachment } from '@/api/tasks';
 import { CiesFlag as CiesFlagValue } from '@/types/enums';
+import { getCustomerChange } from '@/components/TaskForm/customerChange';
 import {
   AnnualReportDate,
   BankCusRef,
@@ -37,7 +38,7 @@ interface Props {
 }
 
 export interface TaskFormValues {
-  customerChange: Customer;
+  customerChange?: Customer;
   attachments: Attachment[];
 }
 
@@ -79,12 +80,16 @@ const TaskForm = forwardRef<TaskFormRef, Props>(
       ref,
       () => ({
         validate: () =>
-          form.validateFields().then(() => ({
-            customerChange: { ...initialCustomer, ...form.getFieldsValue(true) },
-            attachments,
-          })),
+          form.validateFields().then(() => {
+            const currentValues = { ...initialCustomer, ...form.getFieldsValue(true) } as Customer;
+            const currentCustomerChange = getCustomerChange(customer, currentValues);
+
+            return currentCustomerChange
+              ? { customerChange: currentCustomerChange, attachments }
+              : { attachments };
+          }),
       }),
-      [attachments, form, initialCustomer],
+      [attachments, customer, form, initialCustomer],
     );
 
     // 当前表单值与原始客户信息不同即高亮；已保存的变更在重新进入页面时也会立即高亮。

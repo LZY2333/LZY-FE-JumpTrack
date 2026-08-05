@@ -243,7 +243,7 @@
 
 | 字段             | 类型                          | 说明                       |
 | ---------------- | ----------------------------- | -------------------------- |
-| `customerChange` | [Customer](#customer)         | 完整客户变更信息           |
+| `customerChange` | [Customer](#customer)         | 有客户字段变化时携带完整客户变更信息；无变化时省略 |
 | `attachments`    | [Attachment](#attachment)\[\] | 当前附件列表，每次全量提交 |
 
 **前端派生方法**

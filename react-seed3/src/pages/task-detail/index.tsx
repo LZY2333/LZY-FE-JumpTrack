@@ -48,10 +48,7 @@ export default function TaskDetail() {
         cancelText: 'Cancel',
         onOk: () => {
           setSubmitting(true);
-          const payload: TaskStatusPayload = {
-            customerChange: updated.customerChange,
-            attachments: updated.attachments,
-          };
+          const payload: TaskStatusPayload = { ...updated };
           return submitTask(taskId, payload, user.id)
             .then(() => {
               message.success('Submitted successfully');
