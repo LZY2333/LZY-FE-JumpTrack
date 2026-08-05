@@ -15,10 +15,14 @@ import { InvestType, YesNo } from '@/types/enums';
 type CustomerFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
 type CustomerDateProps = CustomerFormItemProps & { disabled?: boolean };
 
-// 日期字段共用转换：表单保存 YYYY-MM-DD 字符串，DatePicker 使用 Moment。
+const CUSTOMER_DATE_FORMAT = 'YYYY-MM-DD';
+
+// 日期字段共用转换：DatePicker 使用 Moment，Form 内始终保存 YYYY-MM-DD 字符串。
 const dateItemProps = {
-  getValueProps: (value: string) => ({ value: value ? moment(value) : null }),
-  normalize: (value: Moment | null) => (value ? value.format('YYYY-MM-DD') : ''),
+  getValueProps: (value?: string) => ({
+    value: value ? moment(value, CUSTOMER_DATE_FORMAT, true) : null,
+  }),
+  getValueFromEvent: (value: Moment | null) => (value ? value.format(CUSTOMER_DATE_FORMAT) : ''),
 };
 
 const removeChineseCharacters = (value: string) => value.replace(/[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/g, '');
@@ -171,7 +175,12 @@ export function GovCusRef(props: CustomerFormItemProps) {
 export function PrincipleAppDate({ disabled, ...props }: CustomerDateProps) {
   return (
     <Form.Item {...dateItemProps} {...props} name='principleAppDate' label='AIP Date'>
-      <DatePicker className='w-full' disabled={disabled} disabledDate={disableFutureDate} />
+      <DatePicker
+        className='w-full'
+        format={CUSTOMER_DATE_FORMAT}
+        disabled={disabled}
+        disabledDate={disableFutureDate}
+      />
     </Form.Item>
   );
 }
@@ -180,7 +189,7 @@ export function PrincipleAppDate({ disabled, ...props }: CustomerDateProps) {
 export function PrincipleExpDate(props: CustomerFormItemProps) {
   return (
     <Form.Item {...dateItemProps} {...props} name='principleExpDate' label='AIP Expiry Date'>
-      <DatePicker className='w-full' disabled />
+      <DatePicker className='w-full' format={CUSTOMER_DATE_FORMAT} disabled />
     </Form.Item>
   );
 }
@@ -189,7 +198,12 @@ export function PrincipleExpDate(props: CustomerFormItemProps) {
 export function FormalAppDate({ disabled, ...props }: CustomerDateProps) {
   return (
     <Form.Item {...dateItemProps} {...props} name='formalAppDate' label='FA Date'>
-      <DatePicker className='w-full' disabled={disabled} disabledDate={disableFutureDate} />
+      <DatePicker
+        className='w-full'
+        format={CUSTOMER_DATE_FORMAT}
+        disabled={disabled}
+        disabledDate={disableFutureDate}
+      />
     </Form.Item>
   );
 }
@@ -204,7 +218,7 @@ export function AnnualReportDate({ disabled, ...props }: CustomerDateProps) {
       label='Annual Report Date'
       rules={[{ required: true, message: 'Please select Annual Report Date' }]}
     >
-      <DatePicker className='w-full' disabled={disabled} />
+      <DatePicker className='w-full' format={CUSTOMER_DATE_FORMAT} disabled={disabled} />
     </Form.Item>
   );
 }
@@ -212,7 +226,7 @@ export function AnnualReportDate({ disabled, ...props }: CustomerDateProps) {
 export function TerminationDate(props: CustomerFormItemProps) {
   return (
     <Form.Item {...dateItemProps} {...props} name='terminationDate' label='CIES Termination Date'>
-      <DatePicker className='w-full' />
+      <DatePicker className='w-full' format={CUSTOMER_DATE_FORMAT} />
     </Form.Item>
   );
 }
