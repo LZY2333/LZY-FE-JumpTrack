@@ -27,6 +27,12 @@ export interface InvestmentAccount {
   investAct: string;
   /** 投资类型 */
   investType: InvestType;
+  /** 可支取利息,按币种分类 */
+  withdrawnIntr: number;
+  /** 已转出利息,按币种分类 */
+  TransferIntr: number;
+  /** 币种 */
+  currency: string;
 }
 
 /**
@@ -94,11 +100,6 @@ export interface Customer {
 
   /** 是否已转出 300 万投资额 -Transferred 3M */
   capitalInvestFlag: YesNo;
-
-  /** 可支取利息，按币种分类，币种由接口动态决定 -Withdrawable Interests */
-  withdrawnIntr?: Record<string, number>;
-  /** 已转出利息，按币种分类，币种由接口动态决定 -Transferred Interests */
-  transferIntr?: Record<string, number>;
 }
 
 /**
@@ -121,6 +122,6 @@ export interface Customer {
  * | annualReportDate | Annual Report Date | 原始值为空时可改 | 是 |
  * | terminationDate | CIES Termination Date | 是 | 否 |
  * | capitalInvestFlag | Transferred 3M | 是 | 是 |
- * | withdrawnIntr | Withdrawable Interests | 是 | 否 |
- * | transferIntr | Transferred Interests | 是 | 否 |
+ * | investmentAccounts.withdrawnIntr | Withdrawable Interests | 是 | 否 |
+ * | investmentAccounts.TransferIntr | Transferred Interests | 是 | 否 |
  */

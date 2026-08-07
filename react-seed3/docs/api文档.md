@@ -312,15 +312,16 @@
 | `annualReportDate`   | string                                      | 条件允许 | 是   | 年度报告日期；原始值为空时可修改           |
 | `terminationDate`    | string                                      | 是       | 否   | 终止委托日期                               |
 | `capitalInvestFlag`  | [YesNo](#yesno)                             | 是       | 是   | 资本投资要求是否已满足                     |
-| `withdrawnIntr`      | Record&lt;string, number&gt;                | 是       | 否   | 可支取利息，键为币种                       |
-| `transferIntr`       | Record&lt;string, number&gt;                | 是       | 否   | 已转出利息，键为币种                       |
 
 ### InvestmentAccount
 
-| 字段         | 类型                      | 说明         |
-| ------------ | ------------------------- | ------------ |
-| `investAct`  | string                    | 投资账户号   |
-| `investType` | [InvestType](#investtype) | 投资账户类型 |
+| 字段            | 类型                      | 说明                 |
+| --------------- | ------------------------- | -------------------- |
+| `investAct`     | string                    | 投资账户号           |
+| `investType`    | [InvestType](#investtype) | 投资账户类型         |
+| `withdrawnIntr` | number                    | 当前币种的可支取利息 |
+| `TransferIntr`  | number                    | 当前币种的已转出利息 |
+| `currency`      | string                    | 币种                 |
 
 ### Attachment
 

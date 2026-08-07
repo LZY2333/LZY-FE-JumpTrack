@@ -1,9 +1,9 @@
+import { Fragment } from 'react';
 import { DatePicker, Form, Input, InputNumber, Radio } from 'antd';
 import type { FormItemProps } from 'antd';
 import type { Moment } from 'moment';
 import moment from 'moment';
-import type { InvestmentAccount } from '@/types';
-import { InvestType, YesNo } from '@/types/enums';
+import { YesNo } from '@/types/enums';
 
 /**
  * Customer DTO 字段组件：
@@ -90,53 +90,26 @@ export function CusPrmAct(props: CustomerFormItemProps) {
   );
 }
 
-type InvestmentAccountsProps = Omit<CustomerFormItemProps, 'children'>;
-
-interface InvestmentAccountGroupsProps {
-  value?: InvestmentAccount[];
-  formItemProps: InvestmentAccountsProps;
-}
-
-interface InvestmentAccountDisplayGroups {
-  securityAct: string[];
-  fundAct: string[];
-  custodianAct: string[];
-}
-
-/**
- * investmentAccounts 只在 FormItem 展示层按 investType 分为三组。
- * securityAct / fundAct / custodianAct 是局部展示变量，不进入 DTO 或 Form 字段。
- */
-function InvestmentAccountGroups({ value, formItemProps }: InvestmentAccountGroupsProps) {
-  const { securityAct, fundAct, custodianAct } = (value ?? []).reduce<InvestmentAccountDisplayGroups>(
-    (groups, account) => {
-      if (account.investType === InvestType.Securities) groups.securityAct.push(account.investAct);
-      if (account.investType === InvestType.Funds) groups.fundAct.push(account.investAct);
-      if (account.investType === InvestType.Custody) groups.custodianAct.push(account.investAct);
-      return groups;
-    },
-    { securityAct: [], fundAct: [], custodianAct: [] },
-  );
-
+export function SecurityAct(props: CustomerFormItemProps) {
   return (
-    <>
-      <Form.Item {...formItemProps} label='Securities Account'>
-        <AccountListInput value={securityAct} />
-      </Form.Item>
-      <Form.Item {...formItemProps} label='Fund Account'>
-        <AccountListInput value={fundAct} />
-      </Form.Item>
-      <Form.Item {...formItemProps} label='Custodian Account'>
-        <AccountListInput value={custodianAct} />
-      </Form.Item>
-    </>
+    <Form.Item {...props} name='securityAct' label='Securities Account'>
+      <AccountListInput />
+    </Form.Item>
   );
 }
 
-export function InvestmentAccounts(props: InvestmentAccountsProps) {
+export function FundAct(props: CustomerFormItemProps) {
   return (
-    <Form.Item name='investmentAccounts' noStyle>
-      <InvestmentAccountGroups formItemProps={props} />
+    <Form.Item {...props} name='fundAct' label='Fund Account'>
+      <AccountListInput />
+    </Form.Item>
+  );
+}
+
+export function CustodianAct(props: CustomerFormItemProps) {
+  return (
+    <Form.Item {...props} name='custodianAct' label='Custodian Account'>
+      <AccountListInput />
     </Form.Item>
   );
 }
@@ -249,44 +222,43 @@ export function CapitalInvestFlag(props: CustomerFormItemProps) {
 
 /* ---------- 按币种动态渲染的利息字段 ---------- */
 
-type InterestFieldName = 'withdrawnIntr' | 'transferIntr';
+export type InterestFieldName = 'withdrawnIntr' | 'transferIntr';
 // 当前 DTO 保持 number；按两位小数限制到“金额 × 100”仍不超过 JS 安全整数的范围。
 const MAX_SAFE_INTEREST_AMOUNT = Number.MAX_SAFE_INTEGER / 100;
 
-interface InterestFieldsProps extends Omit<CustomerFormItemProps, 'children' | 'className'> {
+interface InvestmentInterestsProps extends Omit<CustomerFormItemProps, 'children' | 'className'> {
   currencies: string[];
-  getFieldClassName?: (currency: string) => string;
+  getFieldClassName?: (fieldName: InterestFieldName, currency: string) => string;
 }
 
-interface InterestFieldsInternalProps extends InterestFieldsProps {
-  fieldName: InterestFieldName;
-  title: string;
-}
-
-function InterestFields({ fieldName, title, currencies, getFieldClassName, ...props }: InterestFieldsInternalProps) {
+export function InvestmentInterests({ currencies, getFieldClassName, ...props }: InvestmentInterestsProps) {
   return (
-    <div className='space-y-3'>
-      <div className='text-sm font-medium'>{title}</div>
+    <div className='grid grid-cols-3 items-start gap-x-4 gap-y-3 border-t pt-3'>
+      <div className='text-sm font-medium'>Currency</div>
+      <div className='text-sm font-medium'>Withdrawable Interests</div>
+      <div className='text-sm font-medium'>Transferred Interests</div>
+
       {currencies.map((currency) => (
-        <Form.Item
-          {...props}
-          key={currency}
-          name={[fieldName, currency]}
-          label={currency}
-          className={getFieldClassName?.(currency)}
-          normalize={(value: number | null) => value ?? 0}
-        >
-          <InputNumber className='w-full' min={0} max={MAX_SAFE_INTEREST_AMOUNT} precision={2} step={0.01} />
-        </Form.Item>
+        <Fragment key={currency}>
+          <div className='pt-1.5 text-sm'>{currency}</div>
+          <Form.Item
+            {...props}
+            name={['withdrawnIntr', currency]}
+            className={`mb-0 ${getFieldClassName?.('withdrawnIntr', currency) ?? ''}`}
+            normalize={(value: number | null) => value ?? undefined}
+          >
+            <InputNumber className='w-full' min={0} max={MAX_SAFE_INTEREST_AMOUNT} precision={2} step={0.01} />
+          </Form.Item>
+          <Form.Item
+            {...props}
+            name={['transferIntr', currency]}
+            className={`mb-0 ${getFieldClassName?.('transferIntr', currency) ?? ''}`}
+            normalize={(value: number | null) => value ?? undefined}
+          >
+            <InputNumber className='w-full' min={0} max={MAX_SAFE_INTEREST_AMOUNT} precision={2} step={0.01} />
+          </Form.Item>
+        </Fragment>
       ))}
     </div>
   );
-}
-
-export function WithdrawnIntr(props: InterestFieldsProps) {
-  return <InterestFields {...props} fieldName='withdrawnIntr' title='Withdrawable Interests' />;
-}
-
-export function TransferIntr(props: InterestFieldsProps) {
-  return <InterestFields {...props} fieldName='transferIntr' title='Transferred Interests' />;
 }

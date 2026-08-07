@@ -14,6 +14,10 @@
 | HTTP       | Axios                             |
 | Mock       | vite-plugin-mock（仅 dev server） |
 
+## 工具类函数规范
+
+工具类或工具模块统一以 Util 结尾，核心函数前置，内部辅助函数按调用顺序集中后置。
+
 ## 路径别名
 
 `@/` 指向 `src/`，所有跨目录引用使用别名，禁止使用 `../../` 相对路径。
@@ -90,6 +94,8 @@ task.status === 'Pending Checker';
 ## 状态管理
 
 使用 Zustand，store 文件放 `src/store/`，命名 `use[Name]Store.ts`。
+新增 Table 时，若其他页面的操作需要触发该 Table 刷新，必须使用 Zustand 管理跨页面刷新状态。
+实现方式参考 `src/pages/task-pool/` 和 `src/store/useTaskPoolStore.ts`。
 
 ## 路由与权限
 
@@ -102,8 +108,3 @@ task.status === 'Pending Checker';
 - Mock 文件放 `mock/`；`npm run dev` 默认将 `/api` 代理到本地后端，`npm run dev:mock` 通过 `VITE_USE_MOCK=true` 启用 Mock
 - build 产物不包含 mock 逻辑
 - Mock 数组为模块单例，dev server 进程存活期间状态持久（适合模拟增删改）
-
-## 后端代码生成规范
-
-- 后端代码全部在 `react-seed3/spring-boot-src-generator/src` 下
-- 生成或修改当前项目的后端代码前，必须先完整阅读 `react-seed3/spring-boot-src-generator/` 目录下的所有文档，并遵循其中的项目结构与编码规范。

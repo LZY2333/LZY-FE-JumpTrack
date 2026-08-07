@@ -24,7 +24,7 @@ export interface Pagination {
 
 const request = axios.create({
   baseURL: __API_BASE_URL__,
-  timeout: 10000,
+  timeout: import.meta.env.DEV ? 0 : 20000,
 });
 
 // 统一响应拦截器：JSON 接口做业务 returnCode 判定并透传 ApiResult；

@@ -13,8 +13,6 @@ const cloneCustomer = (customer: Customer): Customer => ({
     customer.investmentAccounts == null
       ? customer.investmentAccounts
       : customer.investmentAccounts.map((account) => ({ ...account })),
-  withdrawnIntr: !customer.withdrawnIntr ? customer.withdrawnIntr : { ...customer.withdrawnIntr },
-  transferIntr: !customer.transferIntr ? customer.transferIntr : { ...customer.transferIntr },
 });
 
 const attachmentsFor = (taskId: string): Attachment[] => [
