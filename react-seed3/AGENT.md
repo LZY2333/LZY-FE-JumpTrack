@@ -25,8 +25,9 @@ import type { TaskDetail } from '@/types/task';
 
 ## 环境变量
 
-- 环境变量统一在 Vite 配置或 Node 脚本中通过 `process.env` 获取，禁止使用 `loadEnv` 或自定义 `import.meta.env` 变量
+- Vite 配置读取 `.env.[mode]` 时统一使用 `loadEnv`；操作系统、启动命令或 CI 注入的变量通过 `process.env` 获取
 - 浏览器端需要环境配置时，由 Vite 配置读取并通过 `define` 注入类型明确的常量
+- `SERVER_` 前缀变量仅限 Vite 配置或 Node 脚本使用，禁止通过 `define` 注入浏览器
 
 ## 命名规范
 

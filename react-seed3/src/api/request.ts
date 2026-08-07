@@ -23,7 +23,7 @@ export interface Pagination {
 }
 
 const request = axios.create({
-  baseURL: '',
+  baseURL: __API_BASE_URL__,
   timeout: 10000,
 });
 

@@ -1,15 +1,27 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import { viteMockServe } from 'vite-plugin-mock';
 import path from 'node:path';
 
-export default defineConfig(({ command }) => {
-  const mockEnabled = command === 'serve' && process.env.VITE_USE_MOCK === 'true';
-  const apiProxyTarget = 'http://localhost:8080';
+// 仅【本地运行时】生效,【反向代理】配置
+const proxyTargetByMode: Record<string, string> = {
+  development: 'http://localhost:8080',
+  dev: 'https://dev-api.example.com',
+  st: 'https://st-api.example.com',
+  uat: 'https://uat-api.example.com',
+};
+
+export default defineConfig(({ command, mode }) => {
+  const env = loadEnv(mode, process.cwd(), ['APP_']);
+  const mockEnabled = command === 'serve' && process.env.MOCK_ENABLED === 'true';
 
   return {
+    // 该配置会注入浏览，用于SRC内代码读取，不要暴露token
+    // 新增define，需要同步修改vite-env.d.ts
     define: {
+      __APP_ENV__: JSON.stringify(env.APP_ENV || mode),
+      __API_BASE_URL__: JSON.stringify(env.APP_API_BASE_URL || ''),
       __MOCK_ENABLED__: JSON.stringify(mockEnabled),
     },
     plugins: [
@@ -38,7 +50,7 @@ export default defineConfig(({ command }) => {
         ? undefined
         : {
             '/api': {
-              target: apiProxyTarget,
+              target: proxyTargetByMode[mode] || proxyTargetByMode.development,
               changeOrigin: true,
             },
           },
