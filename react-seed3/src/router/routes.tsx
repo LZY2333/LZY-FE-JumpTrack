@@ -4,6 +4,11 @@ import TaskPool from '@/pages/task-pool';
 import TaskDetail from '@/pages/task-detail';
 import { Role } from '@/types/enums';
 
+export enum RoutePath {
+  TaskPool = '/',
+  TaskDetail = '/task/:taskId',
+}
+
 export interface AppRoute {
   path: string;
   element: ReactElement;
@@ -13,7 +18,7 @@ export interface AppRoute {
 
 export const routes: AppRoute[] = [
   {
-    path: '/',
+    path: RoutePath.TaskPool,
     element: (
       <KeepAlive name='task-pool'>
         <TaskPool />
@@ -21,5 +26,5 @@ export const routes: AppRoute[] = [
     ),
     meta: { title: 'Task Pool' },
   },
-  { path: '/task/:taskId', element: <TaskDetail />, meta: { title: 'Task Detail' } },
+  { path: RoutePath.TaskDetail, element: <TaskDetail />, meta: { title: 'Task Detail' } },
 ];

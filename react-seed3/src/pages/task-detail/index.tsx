@@ -4,6 +4,8 @@ import { Alert, Button, Input, Modal, Skeleton, Tooltip, Typography, message } f
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, RollbackOutlined, SendOutlined } from '@ant-design/icons';
 import TaskForm, { type TaskFormRef } from '@/components/TaskForm';
 import useTaskDetail from '@/pages/task-detail/useTaskDetail';
+import { RoutePath } from '@/router/routes';
+import useTaskPoolStore from '@/store/useTaskPoolStore';
 import useUserStore from '@/store/useUserStore';
 import { Role, TaskStatus } from '@/types/enums';
 import { approveTask, cancelTask, returnTask, submitTask } from '@/api/tasks';
@@ -15,6 +17,7 @@ export default function TaskDetail() {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
   const { user } = useUserStore();
+  const requestTaskPoolRefresh = useTaskPoolStore((state) => state.requestRefresh);
   const { task, customer, customerChange, attachments, loading, error } = useTaskDetail(taskId);
   const [submitting, setSubmitting] = useState(false);
   const [cancelling, setCancelling] = useState(false);
@@ -37,6 +40,12 @@ export default function TaskDetail() {
     .filter(Boolean)
     .join('; ');
 
+  const handleActionSuccess = (successMessage: string) => {
+    message.success(successMessage);
+    requestTaskPoolRefresh();
+    navigate(RoutePath.TaskPool);
+  };
+
   const handleSubmit = () => {
     const formApi = formRef.current;
     if (!taskId || !formApi || !user || !canEdit || isMutating) return;
@@ -51,8 +60,7 @@ export default function TaskDetail() {
           const payload: TaskStatusPayload = { ...updated };
           return submitTask(taskId, payload, user.id)
             .then(() => {
-              message.success('Submitted successfully');
-              navigate('/');
+              handleActionSuccess('Submitted successfully');
             })
             .finally(() => setSubmitting(false));
         },
@@ -72,8 +80,7 @@ export default function TaskDetail() {
         setCancelling(true);
         return cancelTask(taskId, user.id)
           .then(() => {
-            message.success('Cancelled successfully');
-            navigate('/');
+            handleActionSuccess('Cancelled successfully');
           })
           .finally(() => setCancelling(false));
       },
@@ -105,8 +112,7 @@ export default function TaskDetail() {
         setReturning(true);
         return returnTask(taskId, user.id, taskRemark.trim())
           .then(() => {
-            message.success('Returned successfully');
-            navigate('/');
+            handleActionSuccess('Returned successfully');
           })
           .finally(() => setReturning(false));
       },
@@ -124,8 +130,7 @@ export default function TaskDetail() {
         setApproving(true);
         return approveTask(taskId, user.id)
           .then(() => {
-            message.success('Approved successfully');
-            navigate('/');
+            handleActionSuccess('Approved successfully');
           })
           .finally(() => setApproving(false));
       },
@@ -146,7 +151,7 @@ export default function TaskDetail() {
 
       <div className='mb-4 flex items-center justify-between'>
         <div className='flex items-center gap-3'>
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')}>
+          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(RoutePath.TaskPool)}>
             Back
           </Button>
           <Typography.Text strong>Task {task?.taskId ?? taskId ?? '-'} – OPC AET</Typography.Text>

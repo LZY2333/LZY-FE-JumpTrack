@@ -1,12 +1,13 @@
 import { useRef } from 'react';
 import type { CSSProperties } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { Button, Col, Form, Row } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import type { Moment } from 'moment';
 import { useDebounceFn } from 'ahooks';
 import type { Task } from '@/types';
 import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
+import { RoutePath } from '@/router/routes';
 import useTaskList from '@/pages/task-pool/useTaskList';
 import useTableScrollY from '@/pages/task-pool/useTableScrollY';
 import ResizableTable from '@/components/ResizableTable';
@@ -108,7 +109,8 @@ export default function TaskPool() {
     changeSort(isSortableField ? (field as TaskSortField) : undefined, order);
   };
 
-  const openDetail = (record: Task) => navigate(`/task/${record.taskId}`);
+  const openDetail = (record: Task) =>
+    navigate(generatePath(RoutePath.TaskDetail, { taskId: encodeURIComponent(record.taskId) }));
 
   const columns: ColumnsType<Task> = [
     taskId,
