@@ -5,7 +5,11 @@ import { DeleteOutlined, DownloadOutlined, FileOutlined, UploadOutlined } from '
 import moment from 'moment';
 import type { Attachment } from '@/types';
 import { downloadAttachment, uploadAttachment } from '@/api/tasks';
-import { getInterestCurrencies, isSemanticallyEqual, type CustomerFormModel } from '@/pages/task-detail/customerFormUtil';
+import {
+  getInterestCurrencies,
+  isSemanticallyEqual,
+  type CustomerFormModel,
+} from '@/pages/task-detail/customerFormUtil';
 import { CiesFlag as CiesFlagValue } from '@/types/enums';
 import {
   AnnualReportDate,

@@ -27,10 +27,16 @@ export interface InvestmentAccount {
   investAct: string;
   /** 投资类型 */
   investType: InvestType;
+}
+
+/** 子账户(币种)利息 */
+export interface SubActIntr {
+  /** 投资移民子账户 */
+  subAct: string;
   /** 可支取利息,按币种分类 */
   withdrawnIntr: number;
   /** 已转出利息,按币种分类 */
-  TransferIntr: number;
+  transferIntr: number;
   /** 币种 */
   currency: string;
 }
@@ -100,6 +106,8 @@ export interface Customer {
 
   /** 是否已转出 300 万投资额 -Transferred 3M */
   capitalInvestFlag: YesNo;
+  /** 子账户利息 */
+  subActIntrs?: SubActIntr[];
 }
 
 /**

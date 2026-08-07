@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { DatePicker, Form, Input, InputNumber, Radio } from 'antd';
 import type { FormItemProps } from 'antd';
 import type { Moment } from 'moment';
@@ -85,7 +84,7 @@ export function CusId(props: CustomerFormItemProps) {
 export function CusPrmAct(props: CustomerFormItemProps) {
   return (
     <Form.Item {...props} name='cusPrmAct' label='CIES Account'>
-      <AccountListInput />
+      <Input disabled />
     </Form.Item>
   );
 }
@@ -233,31 +232,37 @@ interface InvestmentInterestsProps extends Omit<CustomerFormItemProps, 'children
 
 export function InvestmentInterests({ currencies, getFieldClassName, ...props }: InvestmentInterestsProps) {
   return (
-    <div className='grid grid-cols-3 items-start gap-x-4 gap-y-3 border-t pt-3'>
-      <div className='text-sm font-medium'>Currency</div>
-      <div className='text-sm font-medium'>Withdrawable Interests</div>
-      <div className='text-sm font-medium'>Transferred Interests</div>
+    <div className='flex flex-col gap-2 text-sm'>
+      <div className='flex items-center gap-8 text-center'>
+        <div className='w-12 font-medium'>Currency</div>
+        <div className='flex-1 font-medium'>Withdrawable Interests</div>
+        <div className='flex-1 font-medium'>Transferred Interests</div>
+      </div>
 
       {currencies.map((currency) => (
-        <Fragment key={currency}>
-          <div className='pt-1.5 text-sm'>{currency}</div>
+        <div key={currency} className='flex items-center gap-8'>
+          <div className='w-12 pt-1.5'>{currency}</div>
+
           <Form.Item
             {...props}
             name={['withdrawnIntr', currency]}
-            className={`mb-0 ${getFieldClassName?.('withdrawnIntr', currency) ?? ''}`}
+            className={`mb-0 flex-1 ${getFieldClassName?.('withdrawnIntr', currency) ?? ''}`}
+            wrapperCol={{ span: 24 }}
             normalize={(value: number | null) => value ?? undefined}
           >
             <InputNumber className='w-full' min={0} max={MAX_SAFE_INTEREST_AMOUNT} precision={2} step={0.01} />
           </Form.Item>
+
           <Form.Item
             {...props}
             name={['transferIntr', currency]}
-            className={`mb-0 ${getFieldClassName?.('transferIntr', currency) ?? ''}`}
+            className={`mb-0 flex-1 ${getFieldClassName?.('transferIntr', currency) ?? ''}`}
+            wrapperCol={{ span: 24 }}
             normalize={(value: number | null) => value ?? undefined}
           >
             <InputNumber className='w-full' min={0} max={MAX_SAFE_INTEREST_AMOUNT} precision={2} step={0.01} />
           </Form.Item>
-        </Fragment>
+        </div>
       ))}
     </div>
   );

@@ -1,8 +1,105 @@
-import type { TaskPageData, TaskSortField, TaskSortOrder, TaskStatusChange } from '@/api/tasks';
+import type { TaskSortField, TaskSortOrder, TaskStatusChange } from '@/api/tasks';
 import type { Attachment, Customer, Task } from '@/types';
-import { ResCode, Role, TaskStatus, TranType } from '@/types/enums';
+import { InvestType, ResCode, Role, TaskStatus, TranType } from '@/types/enums';
 import { mockCustomers } from './customer';
 import { mockUsers } from './users';
+
+const temporaryTaskDetailResponse = {
+  returnCode: 'SUC0000',
+  errorMsg: null,
+  body: {
+    task: {
+      taskId: 'T26080316514785174',
+      taskStatus: 'S03',
+      taskRemark: 'change',
+      makerId: 'U003',
+      checkerId: 'U004',
+      createTime: '2026-08-03',
+      updateTime: '2026-08-06',
+      transactionTime: null,
+      tranType: 'T01',
+      cusId: '******',
+      cusEnName: 'Test Customer 03',
+      cusCnName: '测试客户03',
+    },
+    customer: {
+      cusId: '******',
+      cusPrmAct: '60150277936',
+      ciesFlag: 'CIES1.0',
+      cusEnName: 'Test Customer 03',
+      cusCnName: '测试客户03',
+      cusBirthDate: '1978-05-08',
+      govCusRef: '444444',
+      bankCusRef: '11111',
+      investmentAccounts: [
+        {
+          investAct: '60175326063',
+          investType: InvestType.Custody,
+        },
+        {
+          investAct: '60175326064',
+          investType: InvestType.Funds,
+        },
+        {
+          investAct: '60175326065',
+          investType: InvestType.Securities,
+        },
+        {
+          investAct: '60175326066',
+          investType: null,
+        },
+      ],
+      subActIntrs: [
+        {
+          sub: '60175326063',
+          withdrawnIntr: 0,
+          transferIntr: 0,
+          currency: 'HKD',
+        },
+        {
+          sub: '60175326064',
+          withdrawnIntr: 0,
+          transferIntr: 0,
+          currency: 'USD',
+        },
+        {
+          sub: '60175326065',
+          withdrawnIntr: 0,
+          transferIntr: 0,
+          currency: 'CNY',
+        },
+        {
+          sub: '60175326066',
+          withdrawnIntr: 0,
+          transferIntr: 0,
+          currency: 'AUD',
+        },
+      ],
+      principleAppDate: '2023-03-12',
+      principleExpDate: '2023-09-12',
+      formalAppDate: '2023-10-01',
+      annualReportDate: '2024-10-01',
+      terminationDate: '2026-01-09',
+      capitalInvestFlag: 'Y',
+    },
+    attachments: [
+      {
+        fileId: 'CIES2026080301001',
+        fileName: 'CIES2026080301001_WATERMARK.pdf',
+        fileSize: '0.15',
+        createTime: '2026-08-03T16:51:47',
+        createUser: 'SYSTEM',
+      },
+      {
+        fileId: 'CIES2026080301002',
+        fileName: 'CIES2026080301002_WATERMARK.pdf',
+        fileSize: '0.15',
+        createTime: '2026-08-03T16:51:47',
+        createUser: 'SYSTEM',
+      },
+    ],
+  },
+};
 
 const cloneAttachment = (attachment: Attachment): Attachment => ({ ...attachment });
 
@@ -218,23 +315,7 @@ export default [
     // 明细页聚合查询：任务、原始客户、完整客户变更快照和附件元数据一次返回。
     url: '/api/cies/v1/task/detail/:taskId',
     method: 'get',
-    response: (opt: { url: string }) => {
-      const taskId = taskIdFromUrl(opt.url);
-      const task = findTask(taskId);
-      if (!task) return notFound('Task', taskId);
-
-      const customer = mockCustomers.find((item) => item.cusId === task.cusId);
-      if (!customer) return notFound('Customer', task.cusId);
-
-      const customerChange = mockCustomerChangesByTaskId.get(taskId);
-      const body: TaskPageData = {
-        task: { ...task },
-        customer: cloneCustomer(customer),
-        customerChange: customerChange ? cloneCustomer(customerChange) : null,
-        attachments: (mockAttachmentsByTaskId.get(taskId) || []).map(cloneAttachment),
-      };
-      return { returnCode: ResCode.Success, body };
-    },
+    response: () => temporaryTaskDetailResponse,
   },
   {
     url: '/api/cies/v1/task/customer-change/:taskId',
