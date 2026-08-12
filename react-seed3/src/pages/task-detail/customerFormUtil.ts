@@ -47,7 +47,6 @@ export const toCustomerFormModel = (customer: Customer): CustomerFormModel => {
     if (account.investType === InvestType.Funds) addUniqueAccount(fundAct, account.investAct);
     if (account.investType === InvestType.Custody) addUniqueAccount(custodianAct, account.investAct);
   });
-  console.log('subActIntrs', subActIntrs);
   subActIntrs?.forEach((intr) => {
     assignAmount(withdrawnIntr, intr.currency, intr.withdrawnIntr);
     assignAmount(transferIntr, intr.currency, intr.transferIntr);
@@ -148,8 +147,8 @@ const assignAmount = (amounts: InterestAmountsByCurrency, currency: unknown, amo
 
 const cloneCustomer = (customer: Customer): Customer => ({
   ...customer,
-  cusPrmAct: [...customer.cusPrmAct],
   investmentAccounts: customer.investmentAccounts?.map((account) => ({ ...account })),
+  subActIntrs: customer.subActIntrs?.map((intr) => ({ ...intr })),
 });
 
 const isEmpty = (value: unknown): boolean => value === '' || value === null || value === undefined;

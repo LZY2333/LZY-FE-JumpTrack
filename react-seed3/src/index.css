@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 页面滚动统一由 Layout Content 承担，避免挂载到 body 的浮层撑大根滚动区域。 */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .ant-layout-header {
   background: #fff5f5 !important;
   border-bottom: 1px solid #ffd6d6;
@@ -19,11 +28,6 @@
 /* 表单项默认不带下边距，行距统一由父容器（space-y / gap）控制 */
 .ant-form-item {
   margin-bottom: 0;
-}
-
-/* 固定表头（scroll.y）出现纵向滚动条时，避免 antd v4 在表体挤出多余的横向滚动条 */
-.ant-table-body {
-  overflow-x: hidden !important;
 }
 
 /* scroll.y is a max-height by default; keep the task table filled to the available page height. */

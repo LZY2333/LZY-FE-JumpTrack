@@ -76,7 +76,7 @@ export interface Customer {
   /** 客户号CIF -CIF */
   cusId: string;
   /** 投资移民主账户列表 -CIES Account */
-  cusPrmAct: string[];
+  cusPrmAct: string;
   /** CIES 客户标记，不可修改 -Customer Type */
   ciesFlag: CiesFlag;
   /** 客户姓名（英文） -Customer Name  */

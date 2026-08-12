@@ -1,115 +1,18 @@
-import type { TaskSortField, TaskSortOrder, TaskStatusChange } from '@/api/tasks';
+import type { TaskPageData, TaskSortField, TaskSortOrder, TaskStatusChange } from '@/api/tasks';
 import type { Attachment, Customer, Task } from '@/types';
-import { InvestType, ResCode, Role, TaskStatus, TranType } from '@/types/enums';
-import { mockCustomers } from './customer';
+import { ResCode, Role, TaskStatus, TranType } from '@/types/enums';
+import { mockCustomers, mockCustomerWithEmptyDates } from './customer';
 import { mockUsers } from './users';
-
-const temporaryTaskDetailResponse = {
-  returnCode: 'SUC0000',
-  errorMsg: null,
-  body: {
-    task: {
-      taskId: 'T26080316514785174',
-      taskStatus: 'S03',
-      taskRemark: 'change',
-      makerId: 'U003',
-      checkerId: 'U004',
-      createTime: '2026-08-03',
-      updateTime: '2026-08-06',
-      transactionTime: null,
-      tranType: 'T01',
-      cusId: '******',
-      cusEnName: 'Test Customer 03',
-      cusCnName: '测试客户03',
-    },
-    customer: {
-      cusId: '******',
-      cusPrmAct: '60150277936',
-      ciesFlag: 'CIES1.0',
-      cusEnName: 'Test Customer 03',
-      cusCnName: '测试客户03',
-      cusBirthDate: '1978-05-08',
-      govCusRef: '444444',
-      bankCusRef: '11111',
-      investmentAccounts: [
-        {
-          investAct: '60175326063',
-          investType: InvestType.Custody,
-        },
-        {
-          investAct: '60175326064',
-          investType: InvestType.Funds,
-        },
-        {
-          investAct: '60175326065',
-          investType: InvestType.Securities,
-        },
-        {
-          investAct: '60175326066',
-          investType: null,
-        },
-      ],
-      subActIntrs: [
-        {
-          sub: '60175326063',
-          withdrawnIntr: 0,
-          transferIntr: 0,
-          currency: 'HKD',
-        },
-        {
-          sub: '60175326064',
-          withdrawnIntr: 0,
-          transferIntr: 0,
-          currency: 'USD',
-        },
-        {
-          sub: '60175326065',
-          withdrawnIntr: 0,
-          transferIntr: 0,
-          currency: 'CNY',
-        },
-        {
-          sub: '60175326066',
-          withdrawnIntr: 0,
-          transferIntr: 0,
-          currency: 'AUD',
-        },
-      ],
-      principleAppDate: '2023-03-12',
-      principleExpDate: '2023-09-12',
-      formalAppDate: '2023-10-01',
-      annualReportDate: '2024-10-01',
-      terminationDate: '2026-01-09',
-      capitalInvestFlag: 'Y',
-    },
-    attachments: [
-      {
-        fileId: 'CIES2026080301001',
-        fileName: 'CIES2026080301001_WATERMARK.pdf',
-        fileSize: '0.15',
-        createTime: '2026-08-03T16:51:47',
-        createUser: 'SYSTEM',
-      },
-      {
-        fileId: 'CIES2026080301002',
-        fileName: 'CIES2026080301002_WATERMARK.pdf',
-        fileSize: '0.15',
-        createTime: '2026-08-03T16:51:47',
-        createUser: 'SYSTEM',
-      },
-    ],
-  },
-};
 
 const cloneAttachment = (attachment: Attachment): Attachment => ({ ...attachment });
 
 const cloneCustomer = (customer: Customer): Customer => ({
   ...customer,
-  cusPrmAct: [...customer.cusPrmAct],
   investmentAccounts:
-    customer.investmentAccounts == null
+    customer.investmentAccounts === null
       ? customer.investmentAccounts
-      : customer.investmentAccounts.map((account) => ({ ...account })),
+      : customer.investmentAccounts?.map((account) => ({ ...account })),
+  subActIntrs: customer.subActIntrs?.map((intr) => ({ ...intr })),
 });
 
 const attachmentsFor = (taskId: string): Attachment[] => [
@@ -144,6 +47,8 @@ const STATUSES = [
   TaskStatus.Cancelled,
 ];
 
+const EMPTY_OPTIONAL_TASK_COUNT = STATUSES.length * 2;
+
 let attachmentSequence = 0;
 
 /**
@@ -161,7 +66,8 @@ export const mockTasks: Task[] = Array.from({ length: 38 }, (_, index) => {
   const createTime = `2026-06-${String(28 - (index % 28)).padStart(2, '0')}`;
   const transactionTime = `2026-05-${String(28 - (index % 28)).padStart(2, '0')}`;
   const updateTime = `2026-07-${String(27 - (index % 27)).padStart(2, '0')}`;
-  const customer = mockCustomers[index % mockCustomers.length];
+  const hasEmptyOptionalFields = index < EMPTY_OPTIONAL_TASK_COUNT;
+  const customer = hasEmptyOptionalFields ? mockCustomerWithEmptyDates : mockCustomers[0];
   const hasMaker = taskStatus !== TaskStatus.Pending;
   const hasChecker = taskStatus === TaskStatus.Returned || taskStatus === TaskStatus.Approved;
 
@@ -172,12 +78,15 @@ export const mockTasks: Task[] = Array.from({ length: 38 }, (_, index) => {
     cusId: customer.cusId,
     cusEnName: customer.cusEnName,
     cusCnName: customer.cusCnName,
-    makerId: hasMaker ? maker.id : '',
-    checkerId: hasChecker ? checker.id : '',
+    makerId: !hasEmptyOptionalFields && hasMaker ? maker.id : '',
+    checkerId: !hasEmptyOptionalFields && hasChecker ? checker.id : '',
     createTime,
-    transactionTime,
+    transactionTime: hasEmptyOptionalFields ? '' : transactionTime,
     updateTime,
-    taskRemark: taskStatus === TaskStatus.Returned ? 'Please verify the updated customer information.' : '',
+    taskRemark:
+      !hasEmptyOptionalFields && taskStatus === TaskStatus.Returned
+        ? 'Please verify the updated customer information.'
+        : '',
   };
 });
 
@@ -289,8 +198,12 @@ export default [
       }
       if (createTimeFrom) list = list.filter((task) => task.createTime.slice(0, 10) >= createTimeFrom);
       if (createTimeTo) list = list.filter((task) => task.createTime.slice(0, 10) <= createTimeTo);
-      if (transactionTimeFrom) list = list.filter((task) => task.transactionTime >= transactionTimeFrom);
-      if (transactionTimeTo) list = list.filter((task) => task.transactionTime <= transactionTimeTo);
+      if (transactionTimeFrom) {
+        list = list.filter((task) => !!task.transactionTime && task.transactionTime >= transactionTimeFrom);
+      }
+      if (transactionTimeTo) {
+        list = list.filter((task) => !!task.transactionTime && task.transactionTime <= transactionTimeTo);
+      }
       if (updateTimeFrom) list = list.filter((task) => task.updateTime.slice(0, 10) >= updateTimeFrom);
       if (updateTimeTo) list = list.filter((task) => task.updateTime.slice(0, 10) <= updateTimeTo);
       if (sortField && sortOrder) {
@@ -315,7 +228,23 @@ export default [
     // 明细页聚合查询：任务、原始客户、完整客户变更快照和附件元数据一次返回。
     url: '/api/cies/v1/task/detail/:taskId',
     method: 'get',
-    response: () => temporaryTaskDetailResponse,
+    response: (opt: { url: string }) => {
+      const taskId = taskIdFromUrl(opt.url);
+      const task = findTask(taskId);
+      if (!task) return notFound('Task', taskId);
+
+      const customer = mockCustomers.find((item) => item.cusId === task.cusId);
+      if (!customer) return notFound('Customer', task.cusId);
+
+      const customerChange = mockCustomerChangesByTaskId.get(taskId);
+      const body: TaskPageData = {
+        task: { ...task },
+        customer: cloneCustomer(customer),
+        customerChange: customerChange ? cloneCustomer(customerChange) : null,
+        attachments: (mockAttachmentsByTaskId.get(taskId) || []).map(cloneAttachment),
+      };
+      return { returnCode: ResCode.Success, body };
+    },
   },
   {
     url: '/api/cies/v1/task/customer-change/:taskId',
@@ -413,14 +342,6 @@ export default [
       if (!task) return notFound('Task', taskId);
       if (taskStatus === TaskStatus.Submitted && !payload) {
         return { returnCode: 'ERR0400', errorMsg: 'Submitting a task requires payload' };
-      }
-      if (
-        (taskStatus === TaskStatus.Submitted || taskStatus === TaskStatus.Cancelled) &&
-        task.taskStatus === TaskStatus.Returned &&
-        task.makerId &&
-        task.makerId !== makerId
-      ) {
-        return { returnCode: 'ERR0403', errorMsg: 'Returned task must be handled by its assigned Maker' };
       }
       if (
         (taskStatus === TaskStatus.Returned || taskStatus === TaskStatus.Approved) &&

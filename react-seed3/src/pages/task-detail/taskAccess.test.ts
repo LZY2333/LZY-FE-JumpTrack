@@ -35,11 +35,11 @@ describe('getTaskAccess', () => {
     expect(access.canEdit).toBe(true);
   });
 
-  it('prevents another Maker from editing an assigned task', () => {
+  it('allows any Maker to edit an assigned task', () => {
     const access = getTaskAccess(createTask(TaskStatus.Returned, 'maker-1'), createUser('maker-2', [Role.Maker]));
 
-    expect(access.canEdit).toBe(false);
-    expect(access.editDisabledReason).toBe('Assigned Maker only');
+    expect(access.canEdit).toBe(true);
+    expect(access.editDisabledReason).toBe('');
   });
 
   it('allows a Checker to review only a submitted task made by someone else', () => {

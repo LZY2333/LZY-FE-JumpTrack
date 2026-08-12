@@ -111,7 +111,7 @@ export default function TaskDetail() {
     Modal.confirm({
       title: 'Confirm Cancel',
       content: 'The task will become Cancelled and cannot be recovered. Continue?',
-      okText: 'Cancel Task',
+      okText: 'Confirm',
       okButtonProps: { danger: true },
       cancelText: 'Cancel',
       onOk: () => runAction(TaskAction.Cancel, () => cancelTask(task.taskId, access.userId), 'Cancelled successfully'),
@@ -215,7 +215,7 @@ export default function TaskDetail() {
                   </Button>
                 </span>
               </Tooltip>
-              <Tooltip title={access.reviewDisabledReason}>
+              <Tooltip title={access.reviewDisabledReason} placement='bottomRight' autoAdjustOverflow>
                 <span className={access.canReview ? undefined : 'cursor-default'}>
                   <Button
                     type='primary'

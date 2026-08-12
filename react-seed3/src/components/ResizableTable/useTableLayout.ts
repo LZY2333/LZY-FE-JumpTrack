@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
+import { clearTableStorage } from './resizableTableUtil';
 
 /** 单个表格持久化的布局：列宽、列顺序、隐藏列，均以列 id 为键 */
 export interface TableLayout {
@@ -186,7 +187,7 @@ export default function useTableLayout<T>(source: ColumnsType<T>, storageKey?: s
 
   // 重置整个表格布局：清内存态并清除持久化
   const reset = useCallback(() => {
-    if (storageKey) localStorage.removeItem(storageKey);
+    clearTableStorage(storageKey);
     setLayout(EMPTY_LAYOUT);
   }, [storageKey]);
 

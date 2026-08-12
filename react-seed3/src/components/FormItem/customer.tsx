@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { DatePicker, Form, Input, InputNumber, Radio } from 'antd';
 import type { FormItemProps } from 'antd';
 import type { Moment } from 'moment';
 import moment from 'moment';
-import { YesNo } from '@/types/enums';
+import { CiesFlag as CiesFlagValue, YesNo } from '@/types/enums';
 
 /**
  * Customer DTO 字段组件：
@@ -157,8 +158,25 @@ export function PrincipleAppDate({ disabled, ...props }: CustomerDateProps) {
   );
 }
 
-// AIP Expiry Date：只读；派生规则由 TaskForm 的 onValuesChange 处理。
+// AIP Expiry Date：只读；监听 AIP Date 变化并自动计算到期日。
 export function PrincipleExpDate(props: CustomerFormItemProps) {
+  const form = Form.useFormInstance();
+  const principleAppDate = Form.useWatch('principleAppDate', form) as string | undefined;
+  const ciesFlag = Form.useWatch('ciesFlag', form) as CiesFlagValue | undefined;
+
+  useEffect(() => {
+    let principleExpDate = '';
+
+    if (principleAppDate && ciesFlag === CiesFlagValue.Cies10) {
+      principleExpDate = moment(principleAppDate).add(6, 'months').format(CUSTOMER_DATE_FORMAT);
+    }
+    if (principleAppDate && ciesFlag === CiesFlagValue.Cies20) {
+      principleExpDate = moment(principleAppDate).add(180, 'days').format(CUSTOMER_DATE_FORMAT);
+    }
+
+    form.setFieldsValue({ principleExpDate });
+  }, [ciesFlag, form, principleAppDate]);
+
   return (
     <Form.Item {...dateItemProps} {...props} name='principleExpDate' label='AIP Expiry Date'>
       <DatePicker className='w-full' format={CUSTOMER_DATE_FORMAT} disabled />

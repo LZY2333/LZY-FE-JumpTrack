@@ -2,7 +2,6 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Button, Card, Col, Form, List, Modal, Row, Upload, message } from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import { DeleteOutlined, DownloadOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
-import moment from 'moment';
 import type { Attachment } from '@/types';
 import { downloadAttachment, uploadAttachment } from '@/api/tasks';
 import {
@@ -10,7 +9,6 @@ import {
   isSemanticallyEqual,
   type CustomerFormModel,
 } from '@/pages/task-detail/customerFormUtil';
-import { CiesFlag as CiesFlagValue } from '@/types/enums';
 import {
   AnnualReportDate,
   BankCusRef,
@@ -67,7 +65,7 @@ const MAX_SIZE_MB = 10;
 const EMPTY_ATTACHMENTS: Attachment[] = [];
 const EMPTY_CUSTOMER_FORM_MODEL: CustomerFormModel = {
   cusId: '',
-  cusPrmAct: [],
+  cusPrmAct: '',
   ciesFlag: '' as CustomerFormModel['ciesFlag'],
   cusEnName: '',
   cusCnName: '',
@@ -90,7 +88,7 @@ const EMPTY_CUSTOMER_FORM_MODEL: CustomerFormModel = {
 type Path = string | (string | number)[];
 const at = (obj: unknown, path: Path): unknown =>
   (Array.isArray(path) ? path : [path]).reduce<unknown>(
-    (acc, key) => (acc == null ? undefined : (acc as Record<string | number, unknown>)[key]),
+    (acc, key) => (acc === null ? undefined : (acc as Record<string | number, unknown>)[key]),
     obj,
   );
 
@@ -101,12 +99,11 @@ const TaskForm = forwardRef<TaskFormRef, Props>((props, ref) => {
   const initialAttachments = props.empty ? EMPTY_ATTACHMENTS : props.attachments;
   const readonly = props.empty || (props.readonly ?? false);
   const [form] = Form.useForm();
-  const [currentForm, setCurrentForm] = useState<CustomerFormModel>(initialForm);
   const [attachments, setAttachments] = useState<Attachment[]>(initialAttachments);
+  Form.useWatch([], form);
 
   useEffect(() => {
     form.setFieldsValue(initialForm);
-    setCurrentForm(initialForm);
   }, [form, initialForm]);
 
   useEffect(() => {
@@ -131,25 +128,8 @@ const TaskForm = forwardRef<TaskFormRef, Props>((props, ref) => {
   // 当前表单值与原始客户表单模型不同即高亮；已保存的变更也会立即高亮。
   const hl = (path: Path) =>
     `transition-all duration-300 ${
-      isSemanticallyEqual(at(currentForm, path), at(customerForm, path)) ? '' : HIGHLIGHT
+      isSemanticallyEqual(form.getFieldValue(path), at(customerForm, path)) ? '' : HIGHLIGHT
     }`;
-
-  const handleValuesChange = (changed: Partial<CustomerFormModel>) => {
-    if ('principleAppDate' in changed) {
-      const principleAppDate = form.getFieldValue('principleAppDate') as string;
-      let principleExpDate = '';
-      if (principleAppDate && customerForm.ciesFlag === CiesFlagValue.Cies10) {
-        principleExpDate = moment(principleAppDate).add(6, 'months').format('YYYY-MM-DD');
-      }
-      if (principleAppDate && customerForm.ciesFlag === CiesFlagValue.Cies20) {
-        principleExpDate = moment(principleAppDate).add(180, 'days').format('YYYY-MM-DD');
-      }
-      form.setFieldsValue({
-        principleExpDate,
-      });
-    }
-    setCurrentForm(form.getFieldsValue(true) as CustomerFormModel);
-  };
 
   const handleDelete = (att: Attachment) => {
     Modal.confirm({
@@ -217,7 +197,6 @@ const TaskForm = forwardRef<TaskFormRef, Props>((props, ref) => {
         disabled={readonly}
         scrollToFirstError
         initialValues={initialForm}
-        onValuesChange={handleValuesChange}
       >
         {/* 客户信息与申报信息并列；initialValues 初始化，聚合响应变化时由 setFieldsValue 同步。 */}
         <Row gutter={16}>

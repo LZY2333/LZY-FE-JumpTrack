@@ -127,6 +127,7 @@ export default function TaskPool() {
       title: 'Action',
       key: 'action',
       width: 90,
+      fixed: 'right',
       render: (_, record) => (
         <Button type='link' size='small' className='px-0' onClick={() => openDetail(record)}>
           View

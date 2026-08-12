@@ -16,14 +16,19 @@ export const getTaskAccess = (task: Task, user?: User) => {
 
   const isMaker = user.roles.includes(Role.Maker);
   const isChecker = user.roles.includes(Role.Checker);
-  const isAssignedMaker = !task.makerId || task.makerId === user.id;
   const isSelfReview = !!task.makerId && task.makerId === user.id;
+  let reviewDisabledReason = '';
+  if (!isChecker) {
+    reviewDisabledReason = 'Checker only';
+  } else if (isSelfReview) {
+    reviewDisabledReason = 'You cannot review your own submission';
+  }
 
   return {
     userId: user.id,
-    canEdit: EDITABLE_STATUSES.includes(task.taskStatus) && isMaker && isAssignedMaker,
+    canEdit: EDITABLE_STATUSES.includes(task.taskStatus) && isMaker,
     canReview: task.taskStatus === TaskStatus.Submitted && isChecker && !isSelfReview,
-    editDisabledReason: !isMaker ? 'Maker only' : !isAssignedMaker ? 'Assigned Maker only' : '',
-    reviewDisabledReason: !isChecker ? 'Checker only' : isSelfReview ? 'You cannot review your own submission' : '',
+    editDisabledReason: !isMaker ? 'Maker only' : '',
+    reviewDisabledReason,
   };
 };
