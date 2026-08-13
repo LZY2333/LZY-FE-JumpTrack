@@ -54,7 +54,7 @@ export default function useTaskList() {
       sortOrder,
     })
       .then((res) => {
-        setTasks([]);
+        setTasks(res?.list ?? []);
         setTotal(res?.total ?? 0);
       })
       .finally(() => setLoading(false));

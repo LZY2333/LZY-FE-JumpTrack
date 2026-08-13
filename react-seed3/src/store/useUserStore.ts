@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { getOt4UserApi } from '@/api/users';
 import type { User } from '@/types';
+import { Role } from '@/types/enums';
+
+const CIES_ROLES = Object.values(Role);
 
 interface AuthStore {
   user?: User;
@@ -16,11 +19,12 @@ const useUserStore = create<AuthStore>((set) => ({
     if (!otfUserToken) return;
 
     const res = await getOt4UserApi(otfUserToken);
-    if (!res) return;
+    if (!res?.user) return;
+
     set({
       user: {
         ...res.user,
-        roles: res.pageRoles.CiesTasks,
+        roles: CIES_ROLES.filter((role) => res.roles.includes(role)),
       },
     });
   },

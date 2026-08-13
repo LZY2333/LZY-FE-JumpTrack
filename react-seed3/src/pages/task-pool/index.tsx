@@ -98,14 +98,19 @@ export default function TaskPool() {
     reset();
   };
 
-  const handleTableChange: NonNullable<TableProps<Task>['onChange']> = (_, __, sorter, extra) => {
+  const handleTableChange: NonNullable<TableProps<Task>['onChange']> = (...args) => {
+    const [, , sorter, extra] = args;
     if (extra.action !== 'sort') return;
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
     const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
     const isSortableField =
       field === 'taskId' || field === 'createTime' || field === 'transactionTime' || field === 'updateTime';
-    const order: TaskSortOrder | undefined =
-      activeSorter.order === 'ascend' ? 'asc' : activeSorter.order === 'descend' ? 'desc' : undefined;
+    let order: TaskSortOrder | undefined;
+    if (activeSorter.order === 'ascend') {
+      order = 'asc';
+    } else if (activeSorter.order === 'descend') {
+      order = 'desc';
+    }
     changeSort(isSortableField ? (field as TaskSortField) : undefined, order);
   };
 
@@ -129,7 +134,7 @@ export default function TaskPool() {
       width: 90,
       fixed: 'right',
       render: (_, record) => (
-        <Button type='link' size='small' className='px-0' onClick={() => openDetail(record)}>
+        <Button type='text' size='small' className='app-text-button' onClick={() => openDetail(record)}>
           View
         </Button>
       ),
@@ -138,9 +143,6 @@ export default function TaskPool() {
 
   return (
     <div className='animate-fade-in'>
-      <div className='mb-2 text-xs text-gray-400'>
-        Double-click a row, or click &quot;View&quot; to open task details
-      </div>
       <Form
         form={form}
         layout='horizontal'

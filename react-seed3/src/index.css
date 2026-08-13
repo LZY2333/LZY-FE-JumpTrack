@@ -25,6 +25,39 @@ body,
   margin-right: 0;
 }
 
+/* All buttons use the filled theme color consistently. */
+.ant-btn:not([disabled]):not(.ant-btn-disabled):not(.app-text-button) {
+  color: #fff;
+  background: var(--ant-primary-color);
+  border-color: var(--ant-primary-color);
+}
+
+.ant-btn:not([disabled]):not(.ant-btn-disabled):not(.app-text-button):hover,
+.ant-btn:not([disabled]):not(.ant-btn-disabled):not(.app-text-button):focus {
+  color: #fff;
+  background: var(--ant-primary-color-hover);
+  border-color: var(--ant-primary-color-hover);
+}
+
+.ant-btn:not([disabled]):not(.ant-btn-disabled):not(.app-text-button):active {
+  color: #fff;
+  background: var(--ant-primary-color-active);
+  border-color: var(--ant-primary-color-active);
+}
+
+.ant-btn.app-text-button:not([disabled]):not(.ant-btn-disabled) {
+  color: var(--ant-primary-color);
+}
+
+.ant-btn.app-text-button:not([disabled]):not(.ant-btn-disabled):hover,
+.ant-btn.app-text-button:not([disabled]):not(.ant-btn-disabled):focus {
+  color: var(--ant-primary-color-hover);
+}
+
+.ant-btn.app-text-button:not([disabled]):not(.ant-btn-disabled):active {
+  color: var(--ant-primary-color-active);
+}
+
 /* 表单项默认不带下边距，行距统一由父容器（space-y / gap）控制 */
 .ant-form-item {
   margin-bottom: 0;

@@ -1,13 +1,15 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useState } from 'react';
 import { Button, Card, Col, Form, List, Modal, Row, Upload, message } from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import { DeleteOutlined, DownloadOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
 import type { Attachment } from '@/types';
 import { downloadAttachment, uploadAttachment } from '@/api/tasks';
 import {
+  getValueAtPath,
   getInterestCurrencies,
   isSemanticallyEqual,
   type CustomerFormModel,
+  type ValuePath,
 } from '@/pages/task-detail/customerFormUtil';
 import {
   AnnualReportDate,
@@ -30,23 +32,15 @@ import {
   TerminationDate,
 } from '@/components/FormItem';
 
-interface TaskFormDataProps {
-  empty?: false;
-  taskId: string;
+interface TaskFormProps {
+  taskId?: string;
   /** 表单初始值：已保存的变更优先，否则使用原始客户表单模型。 */
-  initialForm: CustomerFormModel;
+  initialForm?: CustomerFormModel;
   /** 原始客户表单模型，始终作为字段高亮和锁定规则的比较基线。 */
-  customerForm: CustomerFormModel;
-  attachments: Attachment[];
+  customerForm?: CustomerFormModel;
+  attachments?: Attachment[];
   readonly?: boolean;
 }
-
-interface EmptyTaskFormProps {
-  /** 加载中或详情数据异常时，渲染无数据、无操作入口的只读表单。 */
-  empty: true;
-}
-
-type Props = TaskFormDataProps | EmptyTaskFormProps;
 
 export interface TaskFormValues {
   customerFormNew: CustomerFormModel;
@@ -85,26 +79,20 @@ const EMPTY_CUSTOMER_FORM_MODEL: CustomerFormModel = {
   transferIntr: {},
 };
 
-type Path = string | (string | number)[];
-const at = (obj: unknown, path: Path): unknown =>
-  (Array.isArray(path) ? path : [path]).reduce<unknown>(
-    (acc, key) => (acc === null ? undefined : (acc as Record<string | number, unknown>)[key]),
-    obj,
-  );
-
-const TaskForm = forwardRef<TaskFormRef, Props>((props, ref) => {
-  const taskId = props.empty ? '' : props.taskId;
-  const initialForm = props.empty ? EMPTY_CUSTOMER_FORM_MODEL : props.initialForm;
-  const customerForm = props.empty ? EMPTY_CUSTOMER_FORM_MODEL : props.customerForm;
-  const initialAttachments = props.empty ? EMPTY_ATTACHMENTS : props.attachments;
-  const readonly = props.empty || (props.readonly ?? false);
+const TaskForm = forwardRef<TaskFormRef, TaskFormProps>((props, ref) => {
+  const taskId = props.taskId ?? '';
+  const initialForm = props.initialForm ?? EMPTY_CUSTOMER_FORM_MODEL;
+  const customerForm = props.customerForm ?? EMPTY_CUSTOMER_FORM_MODEL;
+  const initialAttachments = props.attachments ?? EMPTY_ATTACHMENTS;
+  const readonly = !props.initialForm || !props.customerForm || (props.readonly ?? false);
+  const principleAppDateDisabled = readonly || !!customerForm.principleAppDate;
   const [form] = Form.useForm();
   const [attachments, setAttachments] = useState<Attachment[]>(initialAttachments);
   // 订阅整张表单，使字段变化时重新渲染并实时更新高亮；Form 字段注册完成前 useWatch 返回 undefined，
   // 此时回退到 initialForm，避免首次渲染将“原值”和 undefined 比较而错误高亮全部字段。
   const currentForm = (Form.useWatch([], form) as CustomerFormModel | undefined) ?? initialForm;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     form.setFieldsValue(initialForm);
   }, [form, initialForm]);
 
@@ -128,10 +116,10 @@ const TaskForm = forwardRef<TaskFormRef, Props>((props, ref) => {
   );
 
   // 当前表单值与原始客户表单模型不同即高亮；已保存的变更也会立即高亮。
-  const hl = (path: Path) => {
+  const hl = (path: ValuePath) => {
     const fieldName = Array.isArray(path) ? path.join('.') : path;
-    const value = at(customerForm, path);
-    const valueChange = at(currentForm, path);
+    const value = getValueAtPath(customerForm, path);
+    const valueChange = getValueAtPath(currentForm, path);
     const result = isSemanticallyEqual(value, valueChange);
     console.log('高亮字段对比', { fieldName, value, valueChange, result });
 
@@ -230,11 +218,8 @@ const TaskForm = forwardRef<TaskFormRef, Props>((props, ref) => {
               <div className='space-y-3'>
                 <BankCusRef className={hl('bankCusRef')} />
                 <GovCusRef className={hl('govCusRef')} />
-                <PrincipleAppDate
-                  disabled={readonly || !!customerForm.principleAppDate}
-                  className={hl('principleAppDate')}
-                />
-                <PrincipleExpDate className={hl('principleExpDate')} />
+                <PrincipleAppDate disabled={principleAppDateDisabled} className={hl('principleAppDate')} />
+                <PrincipleExpDate disableAutoCalculate={principleAppDateDisabled} className={hl('principleExpDate')} />
                 <FormalAppDate disabled={readonly || !!customerForm.formalAppDate} className={hl('formalAppDate')} />
                 <AnnualReportDate
                   disabled={readonly || !!customerForm.annualReportDate}

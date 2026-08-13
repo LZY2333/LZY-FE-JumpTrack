@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Button, Input, Modal, Skeleton, Tooltip, Typography, message } from 'antd';
+import { Alert, Button, Input, Modal, Tooltip, Typography, message } from 'antd';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, RollbackOutlined, SendOutlined } from '@ant-design/icons';
 import TaskForm, { type TaskFormRef } from '@/components/TaskForm';
 import useTaskDetail from '@/pages/task-detail/useTaskDetail';
@@ -25,7 +25,7 @@ export default function TaskDetail() {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const requestTaskPoolRefresh = useTaskPoolStore((state) => state.requestRefresh);
-  const { task, customer, customerChange, attachments, loading, error } = useTaskDetail(taskId);
+  const { task, customer, customerChange, attachments } = useTaskDetail(taskId);
   const taskFormData = useMemo(() => {
     if (!customer) return null;
 
@@ -39,34 +39,7 @@ export default function TaskDetail() {
   const [activeAction, setActiveAction] = useState<TaskAction | null>(null);
   const formRef = useRef<TaskFormRef>(null);
 
-  if (loading) {
-    return (
-      <div className='animate-fade-in'>
-        <Skeleton active paragraph={{ rows: 8 }} />
-        <TaskForm empty />
-      </div>
-    );
-  }
-
-  if (error || !task || !taskFormData) {
-    const loadErrorMessage = [error, !customer && 'Customer data is missing', !task && 'Task data is missing']
-      .filter(Boolean)
-      .join('; ');
-
-    return (
-      <div className='animate-fade-in'>
-        <Alert className='mb-4' type='error' showIcon message={loadErrorMessage || 'Task form data is missing'} />
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(RoutePath.TaskPool)}>
-          Back
-        </Button>
-        <div className='mt-4'>
-          <TaskForm empty />
-        </div>
-      </div>
-    );
-  }
-
-  const access = getTaskAccess(task, user);
+  const access = getTaskAccess(task && taskFormData ? task : null, user);
 
   const runAction = (action: TaskAction, request: () => Promise<unknown>, successMessage: string) => {
     setActiveAction(action);
@@ -80,13 +53,12 @@ export default function TaskDetail() {
   };
 
   const handleSubmit = () => {
-    const formApi = formRef.current;
-    if (!formApi || !access.canEdit || activeAction !== null) return;
+    if (!access.canEdit || activeAction !== null) return;
 
-    formApi.validate().then((updated) => {
+    formRef.current!.validate().then((updated) => {
       const customerChangeNew = buildCustomerChange(
-        taskFormData.customer,
-        taskFormData.customerForm,
+        taskFormData!.customer,
+        taskFormData!.customerForm,
         updated.customerFormNew,
       );
       const payload: TaskStatusPayload = {
@@ -100,7 +72,11 @@ export default function TaskDetail() {
         okText: 'Submit',
         cancelText: 'Cancel',
         onOk: () =>
-          runAction(TaskAction.Submit, () => submitTask(task.taskId, payload, access.userId), 'Submitted successfully'),
+          runAction(
+            TaskAction.Submit,
+            () => submitTask(task!.taskId, payload, access.userId),
+            'Submitted successfully',
+          ),
       });
     });
   };
@@ -114,7 +90,7 @@ export default function TaskDetail() {
       okText: 'Confirm',
       okButtonProps: { danger: true },
       cancelText: 'Cancel',
-      onOk: () => runAction(TaskAction.Cancel, () => cancelTask(task.taskId, access.userId), 'Cancelled successfully'),
+      onOk: () => runAction(TaskAction.Cancel, () => cancelTask(task!.taskId, access.userId), 'Cancelled successfully'),
     });
   };
 
@@ -143,7 +119,7 @@ export default function TaskDetail() {
       onOk: () =>
         runAction(
           TaskAction.Return,
-          () => returnTask(task.taskId, access.userId, taskRemark.trim()),
+          () => returnTask(task!.taskId, access.userId, taskRemark.trim()),
           'Returned successfully',
         ),
     });
@@ -157,7 +133,8 @@ export default function TaskDetail() {
       content: 'The task will become Approved. Continue?',
       okText: 'Approve',
       cancelText: 'Cancel',
-      onOk: () => runAction(TaskAction.Approve, () => approveTask(task.taskId, access.userId), 'Approved successfully'),
+      onOk: () =>
+        runAction(TaskAction.Approve, () => approveTask(task!.taskId, access.userId), 'Approved successfully'),
     });
   };
 
@@ -168,10 +145,10 @@ export default function TaskDetail() {
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(RoutePath.TaskPool)}>
             Back
           </Button>
-          <Typography.Text strong>Task {task.taskId} – OPC AET</Typography.Text>
+          <Typography.Text strong>Task {task?.taskId ?? taskId} – OPC AET</Typography.Text>
         </div>
         <div className='flex gap-3'>
-          {(task.taskStatus === TaskStatus.Pending || task.taskStatus === TaskStatus.Returned) && (
+          {(task?.taskStatus === TaskStatus.Pending || task?.taskStatus === TaskStatus.Returned) && (
             <>
               <Tooltip title={access.editDisabledReason}>
                 <span className={access.canEdit ? undefined : 'cursor-default'}>
@@ -201,7 +178,7 @@ export default function TaskDetail() {
               </Tooltip>
             </>
           )}
-          {task.taskStatus === TaskStatus.Submitted && (
+          {task?.taskStatus === TaskStatus.Submitted && (
             <>
               <Tooltip title={access.reviewDisabledReason}>
                 <span className={access.canReview ? undefined : 'cursor-default'}>
@@ -233,7 +210,7 @@ export default function TaskDetail() {
         </div>
       </div>
 
-      {task.taskStatus === TaskStatus.Returned && (
+      {task?.taskStatus === TaskStatus.Returned && (
         <Alert
           className='mb-4'
           message='Return reason'
@@ -244,11 +221,11 @@ export default function TaskDetail() {
       )}
 
       <TaskForm
-        key={task.taskId}
+        key={task?.taskId ?? taskId}
         ref={formRef}
-        taskId={task.taskId}
-        initialForm={taskFormData.initialForm}
-        customerForm={taskFormData.customerForm}
+        taskId={task?.taskId ?? taskId}
+        initialForm={taskFormData?.initialForm}
+        customerForm={taskFormData?.customerForm}
         attachments={attachments}
         readonly={!access.canEdit}
       />

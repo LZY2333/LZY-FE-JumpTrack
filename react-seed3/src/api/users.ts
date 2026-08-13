@@ -1,13 +1,10 @@
 import type { UserIdentity } from '@/types';
-import type { Role } from '@/types/enums';
 import { get } from './request';
 
 export interface GetOt4UserBody {
   user: UserIdentity;
   roles: string[];
-  pageRoles: {
-    CiesTasks: Role[];
-  };
+  pageRoles: Record<string, string[]>;
 }
 
 export const getOt4UserApi = (otfUserToken: string) =>

@@ -3,14 +3,14 @@ import { Role, TaskStatus } from '@/types/enums';
 
 const EDITABLE_STATUSES = [TaskStatus.Pending, TaskStatus.Returned];
 
-export const getTaskAccess = (task: Task, user?: User) => {
-  if (!user) {
+export const getTaskAccess = (task?: Task | null, user?: User) => {
+  if (!task || !user) {
     return {
-      userId: null,
+      userId: user?.userId ?? null,
       canEdit: false as const,
       canReview: false as const,
-      editDisabledReason: 'Maker only',
-      reviewDisabledReason: 'Checker only',
+      editDisabledReason: task ? 'Maker only' : 'Task data is unavailable',
+      reviewDisabledReason: task ? 'Checker only' : 'Task data is unavailable',
     };
   }
 

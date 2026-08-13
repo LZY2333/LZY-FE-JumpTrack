@@ -1,7 +1,12 @@
 import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 import type { Customer, InvestmentAccount, SubActIntr } from '@/types';
 import { CiesFlag, InvestType, YesNo } from '@/types/enums';
-import { buildCustomerChange, getInterestCurrencies, toCustomerFormModel } from '@/pages/task-detail/customerFormUtil';
+import {
+  buildCustomerChange,
+  getInterestCurrencies,
+  getValueAtPath,
+  toCustomerFormModel,
+} from '@/pages/task-detail/customerFormUtil';
 
 const createCustomer = (investmentAccounts: InvestmentAccount[], subActIntrs: SubActIntr[]): Customer => ({
   cusId: 'C0001',
@@ -54,6 +59,11 @@ afterAll(() => {
 });
 
 describe('task detail customer form', () => {
+  it('safely reads an incomplete nested form value', () => {
+    expect(getValueAtPath({}, ['withdrawnIntr', 'USD'])).toBeUndefined();
+    expect(getValueAtPath({ withdrawnIntr: { USD: 100 } }, ['withdrawnIntr', 'USD'])).toBe(100);
+  });
+
   it('converts Customer into account groups and currency interests', () => {
     const customer = createCustomer(accounts, subActIntrs);
     const form = toCustomerFormModel(customer);

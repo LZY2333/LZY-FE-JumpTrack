@@ -14,6 +14,9 @@ import { CiesFlag as CiesFlagValue, YesNo } from '@/types/enums';
 
 type CustomerFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
 type CustomerDateProps = CustomerFormItemProps & { disabled?: boolean };
+type PrincipleExpDateProps = CustomerFormItemProps & {
+  disableAutoCalculate?: boolean;
+};
 
 const CUSTOMER_DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -158,8 +161,19 @@ export function PrincipleAppDate({ disabled, ...props }: CustomerDateProps) {
   );
 }
 
-// AIP Expiry Date：只读；监听 AIP Date 变化并自动计算到期日。
-export function PrincipleExpDate(props: CustomerFormItemProps) {
+// AIP Expiry Date：只读；AIP Date 可编辑时监听其变化并自动计算到期日。
+export function PrincipleExpDate({ disableAutoCalculate = false, ...props }: PrincipleExpDateProps) {
+  return (
+    <>
+      {!disableAutoCalculate && <PrincipleExpDateAutoCalculator />}
+      <Form.Item {...dateItemProps} {...props} name='principleExpDate' label='AIP Expiry Date'>
+        <DatePicker className='w-full' format={CUSTOMER_DATE_FORMAT} disabled />
+      </Form.Item>
+    </>
+  );
+}
+
+function PrincipleExpDateAutoCalculator() {
   const form = Form.useFormInstance();
   const principleAppDate = Form.useWatch('principleAppDate', form) as string | undefined;
   const ciesFlag = Form.useWatch('ciesFlag', form) as CiesFlagValue | undefined;
@@ -177,11 +191,7 @@ export function PrincipleExpDate(props: CustomerFormItemProps) {
     form.setFieldsValue({ principleExpDate });
   }, [ciesFlag, form, principleAppDate]);
 
-  return (
-    <Form.Item {...dateItemProps} {...props} name='principleExpDate' label='AIP Expiry Date'>
-      <DatePicker className='w-full' format={CUSTOMER_DATE_FORMAT} disabled />
-    </Form.Item>
-  );
+  return null;
 }
 
 // FA Date：原始 formalAppDate 非空时不可修改，disabled 由调用方计算。

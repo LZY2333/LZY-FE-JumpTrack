@@ -21,9 +21,7 @@ export default function MainLayout() {
     <Layout className='h-screen overflow-hidden'>
       <DevUserSwitcher />
       <Content className='min-h-0 overflow-x-hidden overflow-y-auto p-6'>
-        <div className='mx-auto max-w-7xl'>
-          <Outlet />
-        </div>
+        <Outlet />
       </Content>
     </Layout>
   );

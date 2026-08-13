@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getTaskPageData } from '@/api/tasks';
 import type { TaskPageData } from '@/api/tasks';
+import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 
 /**
  * 明细页通过聚合接口一次获取 Task、原始 Customer、完整 customerChange 与附件元数据。
@@ -8,42 +9,35 @@ import type { TaskPageData } from '@/api/tasks';
  */
 export default function useTaskDetail(taskId?: string) {
   const [taskPageData, setTaskPageData] = useState<TaskPageData | null>(null);
-  const [loading, setLoading] = useState(Boolean(taskId));
-  const [error, setError] = useState<string | null>(taskId ? null : 'Task ID is missing');
 
   useEffect(() => {
     if (!taskId) {
       setTaskPageData(null);
-      setLoading(false);
-      setError('Task ID is missing');
       return;
     }
 
     let active = true;
+    const stopGlobalLoading = startGlobalLoading();
+
     setTaskPageData(null);
-    setLoading(true);
-    setError(null);
 
     getTaskPageData(taskId)
       .then((data) => {
         if (active) {
           setTaskPageData(data ?? null);
-          setError(data ? null : 'Task detail API returned no data');
         }
       })
-      .catch((requestError: unknown) => {
-        // 保留具体错误原因，供详情页内联展示；请求层仍负责全局提示。
-        if (active) {
-          setTaskPageData(null);
-          setError(requestError instanceof Error ? requestError.message : 'Unable to load task details');
-        }
+      .catch(() => {
+        // 请求层负责全局错误提示，详情页保持无数据的只读表单。
+        if (active) setTaskPageData(null);
       })
       .finally(() => {
-        if (active) setLoading(false);
+        stopGlobalLoading();
       });
 
     return () => {
       active = false;
+      stopGlobalLoading();
     };
   }, [taskId]);
 
@@ -52,7 +46,5 @@ export default function useTaskDetail(taskId?: string) {
     customer: taskPageData?.customer ?? null,
     customerChange: taskPageData?.customerChange ?? null,
     attachments: taskPageData?.attachments ?? [],
-    loading,
-    error,
   };
 }

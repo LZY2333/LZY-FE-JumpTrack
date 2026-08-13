@@ -2,6 +2,14 @@ import type { Customer } from '@/types';
 import { InvestType } from '@/types/enums';
 
 export type InterestAmountsByCurrency = Record<string, number | undefined>;
+export type ValuePath = string | (string | number)[];
+
+/** 安全读取嵌套字段；路径中任一层为空时返回 undefined。 */
+export const getValueAtPath = (value: unknown, path: ValuePath): unknown =>
+  (Array.isArray(path) ? path : [path]).reduce<unknown>((current, key) => {
+    if (current === null || current === undefined) return undefined;
+    return (current as Record<string | number, unknown>)[key];
+  }, value);
 
 /** 详情页表单模型，不暴露后端 investmentAccounts 的行结构。 */
 export type CustomerFormModel = Omit<Customer, 'investmentAccounts' | 'subActIntrs'> & {
