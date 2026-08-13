@@ -74,7 +74,7 @@ export const buildCustomerChange = (
   let changed = false;
 
   const applyScalarChange = <K extends MutableCustomerField>(field: K): void => {
-    if (isSemanticallyEqual(customerForm[field], customerFormNew[field])) return;
+    if (consoleCompareField(field, customerForm[field], customerFormNew[field])) return;
     customerChange[field] = customerFormNew[field];
     changed = true;
   };
@@ -88,7 +88,7 @@ export const buildCustomerChange = (
     getInterestCurrencies(customerForm, customerFormNew).forEach((currency) => {
       const baselineAmount = customerForm[formField][currency];
       const currentAmount = customerFormNew[formField][currency];
-      if (isSemanticallyEqual(baselineAmount, currentAmount)) return;
+      if (consoleCompareField(`${formField}.${currency}`, baselineAmount, currentAmount)) return;
 
       customerChange.subActIntrs?.forEach((intr) => {
         if (intr.currency !== currency) return;
@@ -150,6 +150,13 @@ const cloneCustomer = (customer: Customer): Customer => ({
   investmentAccounts: customer.investmentAccounts?.map((account) => ({ ...account })),
   subActIntrs: customer.subActIntrs?.map((intr) => ({ ...intr })),
 });
+
+/** 对比字段console */
+const consoleCompareField = (fieldName: string, value: unknown, valueChange: unknown): boolean => {
+  const result = isSemanticallyEqual(value, valueChange);
+  console.log('字段对比', { fieldName, value, valueChange, result });
+  return result;
+};
 
 const isEmpty = (value: unknown): boolean => value === '' || value === null || value === undefined;
 

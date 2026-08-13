@@ -1,8 +1,7 @@
 import type { TaskPageData, TaskSortField, TaskSortOrder, TaskStatusChange } from '@/api/tasks';
 import type { Attachment, Customer, Task } from '@/types';
-import { ResCode, Role, TaskStatus, TranType } from '@/types/enums';
+import { ResCode, TaskStatus, TranType } from '@/types/enums';
 import { mockCustomers, mockCustomerWithEmptyDates } from './customer';
-import { mockUsers } from './users';
 
 const cloneAttachment = (attachment: Attachment): Attachment => ({ ...attachment });
 
@@ -48,6 +47,8 @@ const STATUSES = [
 ];
 
 const EMPTY_OPTIONAL_TASK_COUNT = STATUSES.length * 2;
+const MAKER_USER_IDS = ['U001', 'U003'];
+const CHECKER_USER_IDS = ['U002', 'U003'];
 
 let attachmentSequence = 0;
 
@@ -59,10 +60,8 @@ let attachmentSequence = 0;
 export const mockTasks: Task[] = Array.from({ length: 38 }, (_, index) => {
   const taskId = `T${String(index + 1).padStart(4, '0')}`;
   const taskStatus = STATUSES[index % STATUSES.length];
-  const makerUsers = mockUsers.filter((user) => user.roles.includes(Role.Maker));
-  const checkerUsers = mockUsers.filter((user) => user.roles.includes(Role.Checker));
-  const maker = makerUsers[index % makerUsers.length];
-  const checker = checkerUsers[index % checkerUsers.length];
+  const makerId = MAKER_USER_IDS[index % MAKER_USER_IDS.length];
+  const checkerId = CHECKER_USER_IDS[index % CHECKER_USER_IDS.length];
   const createTime = `2026-06-${String(28 - (index % 28)).padStart(2, '0')}`;
   const transactionTime = `2026-05-${String(28 - (index % 28)).padStart(2, '0')}`;
   const updateTime = `2026-07-${String(27 - (index % 27)).padStart(2, '0')}`;
@@ -78,8 +77,8 @@ export const mockTasks: Task[] = Array.from({ length: 38 }, (_, index) => {
     cusId: customer.cusId,
     cusEnName: customer.cusEnName,
     cusCnName: customer.cusCnName,
-    makerId: !hasEmptyOptionalFields && hasMaker ? maker.id : '',
-    checkerId: !hasEmptyOptionalFields && hasChecker ? checker.id : '',
+    makerId: !hasEmptyOptionalFields && hasMaker ? makerId : '',
+    checkerId: !hasEmptyOptionalFields && hasChecker ? checkerId : '',
     createTime,
     transactionTime: hasEmptyOptionalFields ? '' : transactionTime,
     updateTime,

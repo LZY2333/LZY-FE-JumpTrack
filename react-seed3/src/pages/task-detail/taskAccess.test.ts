@@ -18,7 +18,12 @@ const createTask = (taskStatus: TaskStatus, makerId = ''): Task => ({
   taskRemark: '',
 });
 
-const createUser = (id: string, roles: Role[]): User => ({ id, roles, name: id });
+const createUser = (userId: string, roles: Role[]): User => ({
+  userId,
+  orgId: 'ORG001',
+  userName: userId,
+  roles,
+});
 
 describe('getTaskAccess', () => {
   it('denies all actions when the user is missing', () => {

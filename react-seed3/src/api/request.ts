@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AxiosResponse } from 'axios';
+import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import { ResCode } from '@/types/enums';
 
@@ -55,7 +55,8 @@ request.interceptors.response.use(
 );
 
 // 统一封装 JSON get/post：body 可能缺省或为 null，由具体接口调用方处理。
-export const get = <T>(url: string) => request.get<ApiResult<T>, ApiResult<T>>(url).then((res) => res.body);
+export const get = <T>(url: string, config?: AxiosRequestConfig) =>
+  request.get<ApiResult<T>, ApiResult<T>>(url, config).then((res) => res.body);
 
 export const post = <T>(url: string, data?: unknown) =>
   request.post<ApiResult<T>, ApiResult<T>>(url, data).then((res) => res.body);

@@ -1,10 +1,15 @@
 import { CiesFlag, InvestType, Role, TaskStatus, TranType, YesNo } from './enums';
 
-export interface User {
-  /** 用户ID */
-  id: string;
-  /** 用户姓名 */
-  name: string;
+export interface UserIdentity {
+  /** 用户 ID */
+  userId: string;
+  /** 机构 ID */
+  orgId: string;
+  /** 用户名 */
+  userName: string;
+}
+
+export interface User extends UserIdentity {
   /** 用户角色列表 */
   roles: Role[];
 }

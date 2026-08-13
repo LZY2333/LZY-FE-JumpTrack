@@ -16,7 +16,7 @@ export const getTaskAccess = (task: Task, user?: User) => {
 
   const isMaker = user.roles.includes(Role.Maker);
   const isChecker = user.roles.includes(Role.Checker);
-  const isSelfReview = !!task.makerId && task.makerId === user.id;
+  const isSelfReview = !!task.makerId && task.makerId === user.userId;
   let reviewDisabledReason = '';
   if (!isChecker) {
     reviewDisabledReason = 'Checker only';
@@ -25,7 +25,7 @@ export const getTaskAccess = (task: Task, user?: User) => {
   }
 
   return {
-    userId: user.id,
+    userId: user.userId,
     canEdit: EDITABLE_STATUSES.includes(task.taskStatus) && isMaker,
     canReview: task.taskStatus === TaskStatus.Submitted && isChecker && !isSelfReview,
     editDisabledReason: !isMaker ? 'Maker only' : '',

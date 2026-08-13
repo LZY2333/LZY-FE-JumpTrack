@@ -1,25 +1,28 @@
 import { create } from 'zustand';
-import { loginApi, logoutApi } from '@/api/users';
-import { User } from '@/types';
+import { getOt4UserApi } from '@/api/users';
+import type { User } from '@/types';
 
 interface AuthStore {
   user?: User;
   setUser: (user: User) => void;
-  login: (id: string) => Promise<void>;
-  logout: () => Promise<void>;
+  login: () => Promise<void>;
 }
 
 const useUserStore = create<AuthStore>((set) => ({
   user: undefined,
   setUser: (user) => set({ user }),
-  login: async (id) => {
-    const user = await loginApi(id);
-    if (!user) return;
-    set({ user });
-  },
-  logout: async () => {
-    await logoutApi();
-    set({ user: undefined });
+  login: async () => {
+    const otfUserToken = new URLSearchParams(window.location.search).get('otfUserToken')?.trim();
+    if (!otfUserToken) return;
+
+    const res = await getOt4UserApi(otfUserToken);
+    if (!res) return;
+    set({
+      user: {
+        ...res.user,
+        roles: res.pageRoles.CiesTasks,
+      },
+    });
   },
 }));
 

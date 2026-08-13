@@ -43,8 +43,8 @@ export enum InvestType {
 }
 
 export enum Role {
-  Maker = 'maker',
-  Checker = 'checker',
+  Maker = 'CIESMaker',
+  Checker = 'CIESChecker',
 }
 
 export enum YesNo {

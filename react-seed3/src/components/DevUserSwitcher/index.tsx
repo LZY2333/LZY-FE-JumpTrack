@@ -2,28 +2,30 @@ import { useEffect, useRef, useState } from 'react';
 import { Select } from 'antd';
 import { UserSwitchOutlined } from '@ant-design/icons';
 import useUserStore from '@/store/useUserStore';
-import { getUsers } from '@/api/users';
 import type { User } from '@/types';
+import { Role } from '@/types/enums';
+
+const MOCK_USERS: User[] = [
+  { userId: 'U001', orgId: 'ORG001', userName: '张三', roles: [Role.Maker] },
+  { userId: 'U002', orgId: 'ORG001', userName: '李四', roles: [Role.Checker] },
+  { userId: 'U003', orgId: 'ORG001', userName: '王五', roles: [Role.Maker, Role.Checker] },
+];
 
 export default function DevUserSwitcher() {
-  const { user, login } = useUserStore();
-  const mockEnabled = __MOCK_ENABLED__;
-  const [users, setUsers] = useState<User[]>([]);
+  const { user, setUser } = useUserStore();
   const [pos, setPos] = useState<{ y: number; side: 'left' | 'right' }>({ y: 80, side: 'right' });
   const dragging = useRef(false);
 
   useEffect(() => {
-    if (!mockEnabled) return;
+    if (!__MOCK_ENABLED__ || user) return;
+    setUser(MOCK_USERS[0]);
+  }, [setUser, user]);
 
-    getUsers().then((res) => {
-      if (!res?.length) {
-        setUsers([]);
-        return;
-      }
-      login(res[0].id);
-      setUsers(res);
-    });
-  }, [mockEnabled]);
+  const handleUserChange = (userId: string) => {
+    const selectedUser = MOCK_USERS.find((item) => item.userId === userId);
+    if (!selectedUser) return;
+    setUser(selectedUser);
+  };
 
   const handlePointerDown = (e: React.PointerEvent) => {
     dragging.current = true;
@@ -42,8 +44,10 @@ export default function DevUserSwitcher() {
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
 
-  // 仅本地 Mock 模式展示，代理真实后端或生产构建时不渲染
-  if (!mockEnabled) return null;
+  // 仅本地 Mock 模式展示，代理真实后端或生产构建时不渲染。
+  if (!__MOCK_ENABLED__) {
+    return null;
+  }
 
   const sideClass = pos.side === 'right' ? 'right-0 flex-row-reverse' : 'left-0 flex-row';
 
@@ -59,13 +63,16 @@ export default function DevUserSwitcher() {
       </div>
       <div className='hidden group-hover:block'>
         <Select
-          value={user?.id}
-          onChange={(id) => login(id)}
+          value={user?.userId}
+          onChange={handleUserChange}
           size='small'
-          className='w-40'
+          className='w-56'
           placeholder='Select user'
-          getPopupContainer={(triggerNode) => triggerNode.parentElement!}
-          options={users.map((item) => ({ value: item.id, label: `${item.id} · ${item.name}` }))}
+          getPopupContainer={(triggerNode) => triggerNode.parentElement || triggerNode}
+          options={MOCK_USERS.map((item) => ({
+            value: item.userId,
+            label: `${item.userId} · ${item.userName}`,
+          }))}
         />
       </div>
     </div>

@@ -1,8 +1,16 @@
-import { User } from '@/types';
-import { get, post } from './request';
+import type { UserIdentity } from '@/types';
+import type { Role } from '@/types/enums';
+import { get } from './request';
 
-export const loginApi = (id: string) => post<User>('/api/auth/login', { id });
+export interface GetOt4UserBody {
+  user: UserIdentity;
+  roles: string[];
+  pageRoles: {
+    CiesTasks: Role[];
+  };
+}
 
-export const logoutApi = () => post('/api/auth/logout');
-
-export const getUsers = () => get<User[]>('/api/users');
+export const getOt4UserApi = (otfUserToken: string) =>
+  get<GetOt4UserBody>('/api/cies/v1/ot4/getOt4User', {
+    params: { otfUserToken },
+  });

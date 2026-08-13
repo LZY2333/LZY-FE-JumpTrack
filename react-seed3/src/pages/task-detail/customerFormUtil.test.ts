@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 import type { Customer, InvestmentAccount, SubActIntr } from '@/types';
 import { CiesFlag, InvestType, YesNo } from '@/types/enums';
 import { buildCustomerChange, getInterestCurrencies, toCustomerFormModel } from '@/pages/task-detail/customerFormUtil';
@@ -43,6 +43,16 @@ const subActIntrs: SubActIntr[] = [
   { subAct: 'C1', withdrawnIntr: 100, transferIntr: 20, currency: 'HKD' },
 ];
 
+const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+afterEach(() => {
+  consoleLogSpy.mockClear();
+});
+
+afterAll(() => {
+  consoleLogSpy.mockRestore();
+});
+
 describe('task detail customer form', () => {
   it('converts Customer into account groups and currency interests', () => {
     const customer = createCustomer(accounts, subActIntrs);
@@ -76,6 +86,31 @@ describe('task detail customer form', () => {
     expect(customer.bankCusRef).toBe('BANK');
     expect(customer.investmentAccounts).toEqual(accounts);
     expect(customer.subActIntrs).toEqual(subActIntrs);
+  });
+
+  it('logs each compared field, values and boolean result', () => {
+    const customer = createCustomer(accounts, subActIntrs);
+    const baseline = toCustomerFormModel(customer);
+    const current = {
+      ...baseline,
+      bankCusRef: 'BANK-NEW',
+      withdrawnIntr: { ...baseline.withdrawnIntr, HKD: 120 },
+    };
+
+    buildCustomerChange(customer, baseline, current);
+
+    expect(consoleLogSpy).toHaveBeenCalledWith('字段对比', {
+      fieldName: 'bankCusRef',
+      value: 'BANK',
+      valueChange: 'BANK-NEW',
+      result: false,
+    });
+    expect(consoleLogSpy).toHaveBeenCalledWith('字段对比', {
+      fieldName: 'withdrawnIntr.HKD',
+      value: 100,
+      valueChange: 120,
+      result: false,
+    });
   });
 
   it('treats null, undefined and empty string as the same empty value', () => {

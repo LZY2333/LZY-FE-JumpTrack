@@ -100,7 +100,9 @@ const TaskForm = forwardRef<TaskFormRef, Props>((props, ref) => {
   const readonly = props.empty || (props.readonly ?? false);
   const [form] = Form.useForm();
   const [attachments, setAttachments] = useState<Attachment[]>(initialAttachments);
-  Form.useWatch([], form);
+  // 订阅整张表单，使字段变化时重新渲染并实时更新高亮；Form 字段注册完成前 useWatch 返回 undefined，
+  // 此时回退到 initialForm，避免首次渲染将“原值”和 undefined 比较而错误高亮全部字段。
+  const currentForm = (Form.useWatch([], form) as CustomerFormModel | undefined) ?? initialForm;
 
   useEffect(() => {
     form.setFieldsValue(initialForm);
@@ -126,10 +128,15 @@ const TaskForm = forwardRef<TaskFormRef, Props>((props, ref) => {
   );
 
   // 当前表单值与原始客户表单模型不同即高亮；已保存的变更也会立即高亮。
-  const hl = (path: Path) =>
-    `transition-all duration-300 ${
-      isSemanticallyEqual(form.getFieldValue(path), at(customerForm, path)) ? '' : HIGHLIGHT
-    }`;
+  const hl = (path: Path) => {
+    const fieldName = Array.isArray(path) ? path.join('.') : path;
+    const value = at(customerForm, path);
+    const valueChange = at(currentForm, path);
+    const result = isSemanticallyEqual(value, valueChange);
+    console.log('高亮字段对比', { fieldName, value, valueChange, result });
+
+    return `transition-all duration-300 ${result ? '' : HIGHLIGHT}`;
+  };
 
   const handleDelete = (att: Attachment) => {
     Modal.confirm({
