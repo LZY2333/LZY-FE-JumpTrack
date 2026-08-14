@@ -15,7 +15,8 @@ const useUserStore = create<AuthStore>((set) => ({
   user: undefined,
   setUser: (user) => set({ user }),
   login: async () => {
-    const otfUserToken = new URLSearchParams(window.location.search).get('otfUserToken')?.trim();
+    const searchParams = new URLSearchParams(window.location.search);
+    const otfUserToken = searchParams.get('otfUserToken')?.trim();
     if (!otfUserToken) return;
 
     const res = await getOt4UserApi(otfUserToken);
@@ -24,7 +25,10 @@ const useUserStore = create<AuthStore>((set) => ({
     set({
       user: {
         ...res.user,
-        roles: CIES_ROLES.filter((role) => res.roles.includes(role)),
+        roles: CIES_ROLES.filter((role) => {
+          const rolePattern = new RegExp(`cies.*${role}`, 'i');
+          return res.roles.some((item) => rolePattern.test(item));
+        }),
       },
     });
   },

@@ -20,6 +20,7 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
+    "react/jsx-no-useless-fragment": "error",
     "no-nested-ternary": "error",
     "max-params": ["error", 3],
     "eqeqeq": ["error", "always"],

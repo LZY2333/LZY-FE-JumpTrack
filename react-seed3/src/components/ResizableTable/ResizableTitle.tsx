@@ -53,7 +53,7 @@ const decorateSorter = (node: ReactNode, tooltip: string): ReactNode => {
     return <Tooltip title={tooltip}>{trigger}</Tooltip>;
   }
 
-  if (node.props.children == null) return node;
+  if (node.props.children === null || node.props.children === undefined) return node;
   return cloneElement(node, undefined, Children.map(node.props.children, (child) => decorateSorter(child, tooltip)));
 };
 
@@ -72,9 +72,9 @@ export default function ResizableTitle(props: ResizableTitleProps) {
   } = props;
   const thRef = useRef<HTMLTableCellElement>(null);
   const handleRef = useRef<HTMLSpanElement>(null);
-  const startX = useRef(0);
-  const startWidth = useRef(0);
-  const latestWidth = useRef(0);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(0);
+  const latestWidthRef = useRef(0);
   const [isOver, setIsOver] = useState(false);
 
   const movable = Boolean(colId && onReorder); // 可拖拽排序
@@ -82,8 +82,8 @@ export default function ResizableTitle(props: ResizableTitleProps) {
 
   // ==== 列宽拖拽：右侧手柄，用 pointer 事件监听全局移动/抬起 ====
   const handlePointerMove = (e: PointerEvent) => {
-    const next = Math.max(MIN_WIDTH, startWidth.current + (e.clientX - startX.current));
-    latestWidth.current = next;
+    const next = Math.max(MIN_WIDTH, startWidthRef.current + (e.clientX - startXRef.current));
+    latestWidthRef.current = next;
     onResize?.(next);
   };
 
@@ -91,16 +91,16 @@ export default function ResizableTitle(props: ResizableTitleProps) {
     document.removeEventListener('pointermove', handlePointerMove);
     document.removeEventListener('pointerup', handlePointerUp);
     document.body.classList.remove('select-none');
-    onResizeStop?.(latestWidth.current);
+    onResizeStop?.(latestWidthRef.current);
   };
 
   const handlePointerDown = (e: ReactPointerEvent<HTMLSpanElement>) => {
     e.preventDefault();
     // 弹性列（未显式设 width）以当前实际渲染宽度为起点
     const base = width ?? thRef.current?.offsetWidth ?? MIN_WIDTH;
-    startX.current = e.clientX;
-    startWidth.current = base;
-    latestWidth.current = base;
+    startXRef.current = e.clientX;
+    startWidthRef.current = base;
+    latestWidthRef.current = base;
     document.body.classList.add('select-none');
     document.addEventListener('pointermove', handlePointerMove);
     document.addEventListener('pointerup', handlePointerUp);
@@ -143,12 +143,12 @@ export default function ResizableTitle(props: ResizableTitleProps) {
     if (sourceId && colId) onReorder?.(sourceId, colId);
   };
 
-  const sortTooltip =
-    restProps['aria-sort'] === 'ascending'
-      ? 'Click to sort descending'
-      : restProps['aria-sort'] === 'descending'
-        ? 'Click to cancel sorting'
-        : 'Click to sort ascending';
+  let sortTooltip = 'Click to sort ascending';
+  if (restProps['aria-sort'] === 'ascending') {
+    sortTooltip = 'Click to sort descending';
+  } else if (restProps['aria-sort'] === 'descending') {
+    sortTooltip = 'Click to cancel sorting';
+  }
   const title = triggerSort ? decorateSorter(children, sortTooltip) : children;
 
   return (

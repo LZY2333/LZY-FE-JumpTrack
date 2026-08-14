@@ -14,7 +14,7 @@ const MOCK_USERS: User[] = [
 export default function DevUserSwitcher() {
   const { user, setUser } = useUserStore();
   const [pos, setPos] = useState<{ y: number; side: 'left' | 'right' }>({ y: 80, side: 'right' });
-  const dragging = useRef(false);
+  const draggingRef = useRef(false);
 
   useEffect(() => {
     if (!__MOCK_ENABLED__ || user) return;
@@ -28,19 +28,19 @@ export default function DevUserSwitcher() {
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    dragging.current = true;
+    draggingRef.current = true;
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current) return;
+    if (!draggingRef.current) return;
     const y = Math.min(Math.max(e.clientY, 8), window.innerHeight - 48);
     const side = e.clientX < window.innerWidth / 2 ? 'left' : 'right';
     setPos({ y, side });
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
-    dragging.current = false;
+    draggingRef.current = false;
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
 

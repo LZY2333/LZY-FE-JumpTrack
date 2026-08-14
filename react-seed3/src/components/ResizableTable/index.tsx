@@ -22,8 +22,11 @@ export default function ResizableTable<T extends object>(props: ResizableTablePr
   const { columns: layoutColumns, columnMetaList, toggleColumn, reset } = useTableLayout(columns, storageKey);
   // 分页器默认用 small 尺寸，更紧凑；调用方传入 pagination.size 时可覆盖
   const mergedPagination = pagination === false ? false : { size: 'small' as const, ...pagination };
-  // 可调宽表格默认按列实际宽度扩展，避免拖动右边界时挤压其他列；调用方可覆盖 x。
-  const mergedScroll = { x: 'max-content' as const, ...scroll };
+  // 有数据时按列实际宽度扩展；空表关闭横向滚动，调用方仍可显式覆盖 x。
+  const mergedScroll = {
+    x: restProps.dataSource?.length ? ('max-content' as const) : undefined,
+    ...scroll,
+  };
   const handleSettingsReset = () => {
     if (pagination) {
       pagination.onChange?.(1, resolveResetPageSize(pagination));
