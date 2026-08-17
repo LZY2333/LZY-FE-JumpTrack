@@ -1,51 +1,43 @@
 import { Table } from 'antd';
-import type { TableProps, ColumnsType } from 'antd/es/table';
-import useTableLayout from './useTableLayout';
-import ResizableTitle from './ResizableTitle';
+import type { ColumnsType, TableProps } from 'antd/es/table';
 import ColumnSettings from './ColumnSettings';
-import { resolveResetPageSize } from './resizableTableUtil';
+import ResizableTitle from './ResizableTitle';
+import useTableLayout from './useTableLayout';
 
-// 自定义表头单元格：承载列宽拖拽与列排序拖拽
-const components = {
-  header: { cell: ResizableTitle },
-};
+// 通过 antd Table 原生 components 扩展点替换表头单元格，不改写表体行为。
+const components = { header: { cell: ResizableTitle } };
 
 interface ResizableTableProps<T> extends Omit<TableProps<T>, 'columns' | 'components'> {
+  /** 调用方提供的原始列定义，布局层不会修改其对象。 */
   columns: ColumnsType<T>;
-  /** 传入后按此 key 持久化列宽/顺序/显隐到 localStorage；不传则仅内存态 */
+  /** 配置后持久化列宽、顺序和显隐；缺省时只保存于内存。 */
   storageKey?: string;
 }
 
-// Table 二次封装：列宽拖拽 + 列排序 + 列显隐 + 布局重置，可选持久化
+/** 在 antd Table 之上组合列布局管理和列设置入口。 */
 export default function ResizableTable<T extends object>(props: ResizableTableProps<T>) {
-  const { columns, storageKey, pagination, scroll, ...restProps } = props;
-  const { columns: layoutColumns, columnMetaList, toggleColumn, reset } = useTableLayout(columns, storageKey);
-  // 分页器默认用 small 尺寸，更紧凑；调用方传入 pagination.size 时可覆盖
-  const mergedPagination = pagination === false ? false : { size: 'small' as const, ...pagination };
-  // 有数据时按列实际宽度扩展；空表关闭横向滚动，调用方仍可显式覆盖 x。
-  const mergedScroll = {
-    x: restProps.dataSource?.length ? ('max-content' as const) : undefined,
-    ...scroll,
-  };
-  const handleSettingsReset = () => {
-    if (pagination) {
-      pagination.onChange?.(1, resolveResetPageSize(pagination));
-    }
-    reset();
-  };
+  // tableLayout 默认 fixed，确保数值列宽不参与内容自适应计算。
+  const { columns, storageKey, pagination, scroll, tableLayout = 'fixed', ...tableProps } = props;
+  // layout 是列布局的唯一来源，封装最终列、总宽度和设置操作。
+  const layout = useTableLayout(columns, storageKey);
 
   return (
-    <div className='relative'>
-      {/* 列设置贴在表格右上角（表头行内），不单独占行，避免挤压表格可用高度 */}
-      <div className='absolute top-2 right-2 z-10'>
-        <ColumnSettings columns={columnMetaList} onToggle={toggleColumn} onReset={handleSettingsReset} />
+    <div>
+      <div className='mb-2 flex justify-end'>
+        <ColumnSettings
+          columns={layout.columnMetaList}
+          onToggle={layout.toggleColumn}
+          onReset={layout.reset}
+        />
       </div>
+      {/* false 关闭分页；调用方仍可覆盖分页细节和布局层计算的 scroll.x。 */}
       <Table<T>
-        columns={layoutColumns}
+        {...tableProps}
+        columns={layout.columns}
         components={components}
-        pagination={mergedPagination}
-        scroll={mergedScroll}
-        {...restProps}
+        pagination={pagination === false ? false : { size: 'small', ...pagination }}
+        scroll={{ x: layout.tableWidth, ...scroll }}
+        tableLayout={tableLayout}
         showSorterTooltip={false}
       />
     </div>

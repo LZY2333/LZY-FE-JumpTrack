@@ -113,6 +113,8 @@ export default function useTaskList() {
     setCreateTimeRange(null);
     setTransactionTimeRange(null);
     setUpdateTimeRange(null);
+    setSortField(undefined);
+    setSortOrder(undefined);
     setCurrent(1);
   }, []);
 

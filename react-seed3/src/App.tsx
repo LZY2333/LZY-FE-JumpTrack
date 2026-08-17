@@ -11,11 +11,11 @@ export default function App() {
     <ConfigProvider locale={enUS}>
       <GlobalLoading />
       <BrowserRouter>
-        <TokenGuard>
-          <AliveScope>
+        <AliveScope>
+          <TokenGuard>
             <AppRoutes />
-          </AliveScope>
-        </TokenGuard>
+          </TokenGuard>
+        </AliveScope>
       </BrowserRouter>
     </ConfigProvider>
   );

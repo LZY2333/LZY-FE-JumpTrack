@@ -1,36 +1,15 @@
-interface TablePaginationOptions {
-  defaultPageSize?: number;
-  pageSizeOptions?: Array<string | number>;
-}
+// 防止调宽后列内容和手柄完全不可用。
+const MIN_COLUMN_WIDTH = 50;
 
-type TableStorage = Pick<Storage, 'key' | 'length' | 'removeItem'>;
-
-const ANTD_DEFAULT_PAGE_SIZE = 10;
-
-/** 解析设置面板重置时应恢复的有效分页大小。 */
-export const resolveResetPageSize = (pagination: TablePaginationOptions): number => {
-  const pageSizeOptions = (pagination.pageSizeOptions ?? [])
-    .map(Number)
-    .filter((pageSize) => Number.isInteger(pageSize) && pageSize > 0);
-  const defaultPageSize = pagination.defaultPageSize;
-
-  if (
-    defaultPageSize &&
-    Number.isInteger(defaultPageSize) &&
-    (pageSizeOptions.length === 0 || pageSizeOptions.includes(defaultPageSize))
-  ) {
-    return defaultPageSize;
-  }
-  return pageSizeOptions[0] ?? ANTD_DEFAULT_PAGE_SIZE;
+/** 根据实际渲染结果确定拖拽起始宽度，声明宽度只在无法测量 DOM 时兜底。 */
+export const resolveResizeStartWidth = (renderedWidth?: number, declaredWidth?: number): number => {
+  // DOM 宽度反映浏览器最终布局，优先于源码声明值。
+  if (renderedWidth && renderedWidth > 0) return renderedWidth;
+  // 无法测量 DOM 时回退到声明值，二者都缺失则使用最小宽度。
+  return declaredWidth ?? MIN_COLUMN_WIDTH;
 };
 
-/** 清除指定表格命名空间下的全部本地缓存。 */
-export const clearTableStorage = (storageKey?: string, storage: TableStorage = localStorage): void => {
-  if (!storageKey) return;
-
-  const cachePrefix = `${storageKey}-`;
-  const cacheKeys = Array.from({ length: storage.length }, (_, index) => storage.key(index)).filter(
-    (key): key is string => key === storageKey || Boolean(key?.startsWith(cachePrefix)),
-  );
-  cacheKeys.forEach((key) => storage.removeItem(key));
+/** 根据右边界的拖拽距离计算列宽。 */
+export const resolveResizedWidth = (startWidth: number, pointerDelta: number): number => {
+  return Math.max(MIN_COLUMN_WIDTH, startWidth + pointerDelta);
 };
