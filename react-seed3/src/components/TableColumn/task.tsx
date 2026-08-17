@@ -1,12 +1,12 @@
-import { Badge } from 'antd';
+import { Tag } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import { TaskStatus, TranType } from '@/types/enums';
 import type { Task } from '@/types';
 
 const STATUS_COLOR: Record<TaskStatus, string> = {
-  [TaskStatus.Pending]: 'blue',
-  [TaskStatus.Submitted]: 'purple',
-  [TaskStatus.Approved]: 'green',
+  [TaskStatus.Pending]: 'green',
+  [TaskStatus.Submitted]: 'blue',
+  [TaskStatus.Approved]: 'purple',
   [TaskStatus.Returned]: 'orange',
   [TaskStatus.Cancelled]: 'default',
 };
@@ -84,6 +84,6 @@ export const taskStatus: ColumnType<Task> = {
   dataIndex: 'taskStatus',
   width: 110,
   render: (taskStatus: TaskStatus) => (
-    <Badge color={STATUS_COLOR[taskStatus]} text={STATUS_LABEL[taskStatus] || taskStatus} />
+    <Tag color={STATUS_COLOR[taskStatus]}>{STATUS_LABEL[taskStatus] || taskStatus}</Tag>
   ),
 };

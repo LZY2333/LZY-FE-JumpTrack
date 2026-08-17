@@ -55,8 +55,7 @@ const SORTER_CLASS = 'ant-table-column-sorter';
 const SORTABLE_CELL_CLASS = 'ant-table-column-has-sorters';
 
 /** 精确匹配 class token，避免 includes 误命中相似类名。 */
-const hasClass = (className: string | undefined, target: string) =>
-  className?.split(/\s+/).includes(target) ?? false;
+const hasClass = (className: string | undefined, target: string) => className?.split(/\s+/).includes(target) ?? false;
 
 // antd 4 将 Title 和 sorter 注入到 children 中：Title 负责原生列拖拽，排序回调只下放给三角形。
 const renderHeaderContent = (children: ReactNode, actions: HeaderActions): ReactNode =>
@@ -68,11 +67,7 @@ const renderHeaderContent = (children: ReactNode, actions: HeaderActions): React
     if (hasClass(child.props.className, TITLE_CLASS)) {
       return cloneElement(child, {
         draggable: actions.draggable || undefined,
-        className: cn(
-          child.props.className,
-          'select-text',
-          actions.draggable ? 'cursor-move' : 'cursor-default',
-        ),
+        className: cn(child.props.className, 'select-text', actions.draggable ? 'cursor-move' : 'cursor-default'),
         onDoubleClick: (event: ReactMouseEvent<HTMLElement>) => {
           child.props.onDoubleClick?.(event);
           actions.onSelectTitle(event.currentTarget);
@@ -133,7 +128,7 @@ export default function ResizableTitle(props: ResizableHeaderCellProps) {
     onDrop,
     ...cellProps
   } = props;
-  // DOM 实测宽度是调宽起点；声明宽度可能经过浏览器布局后发生变化。
+  // 确定列宽是拖拽计算的唯一坐标系；DOM 宽度只用于兼容无声明宽度的表头。
   const cellRef = useRef<HTMLTableCellElement>(null);
   // 调宽过程保存在 Ref 中，避免 pointermove 高频触发表头自身状态更新。
   const resizeStateRef = useRef<ResizeState>();
@@ -145,7 +140,7 @@ export default function ResizableTitle(props: ResizableHeaderCellProps) {
     event.preventDefault();
     event.stopPropagation();
 
-    const startWidth = resolveResizeStartWidth(cellRef.current?.getBoundingClientRect().width, width);
+    const startWidth = resolveResizeStartWidth(width, cellRef.current?.getBoundingClientRect().width);
     resizeStateRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -241,9 +236,7 @@ export default function ResizableTitle(props: ResizableHeaderCellProps) {
     sortTooltip,
     onDragStart: handleDragStart,
     onSelectTitle: handleSelectTitle,
-    onSort: triggerSort
-      ? (event) => triggerSort(event as unknown as ReactMouseEvent<HTMLTableCellElement>)
-      : undefined,
+    onSort: triggerSort ? (event) => triggerSort(event as unknown as ReactMouseEvent<HTMLTableCellElement>) : undefined,
     onSortByKeyboard: triggerSortByKeyboard
       ? (event) => triggerSortByKeyboard(event as unknown as ReactKeyboardEvent<HTMLTableCellElement>)
       : undefined,
@@ -253,7 +246,7 @@ export default function ResizableTitle(props: ResizableHeaderCellProps) {
   // 排序列复用 antd 生成的 Title/sorter，只重新分配各自的事件职责。
   if (sortableColumn) {
     title = renderHeaderContent(children, actions);
-  // 非排序普通列将整个标题作为拖拽区。
+    // 非排序普通列将整个标题作为拖拽区。
   } else if (draggableColumn) {
     title = (
       <div

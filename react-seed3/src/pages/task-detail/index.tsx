@@ -71,6 +71,7 @@ export default function TaskDetail() {
         content: 'The task will move to Checker review after submission. Continue?',
         okText: 'Submit',
         cancelText: 'Cancel',
+        autoFocusButton: null,
         onOk: () =>
           runAction(
             TaskAction.Submit,
@@ -88,8 +89,8 @@ export default function TaskDetail() {
       title: 'Confirm Cancel',
       content: 'The task will become Cancelled and cannot be recovered. Continue?',
       okText: 'Confirm',
-      okButtonProps: { danger: true },
       cancelText: 'Cancel',
+      autoFocusButton: null,
       onOk: () => runAction(TaskAction.Cancel, () => cancelTask(task!.taskId, access.userId), 'Cancelled successfully'),
     });
   };
@@ -103,6 +104,9 @@ export default function TaskDetail() {
       content: (
         <div>
           <Typography.Paragraph>The task will be sent back to the Maker. Continue?</Typography.Paragraph>
+          <Typography.Text className='mb-1 block'>
+            Return reason <Typography.Text type='danger'>*</Typography.Text>
+          </Typography.Text>
           <Input
             placeholder='Enter return reason'
             maxLength={50}
@@ -114,14 +118,21 @@ export default function TaskDetail() {
         </div>
       ),
       okText: 'Return',
-      okButtonProps: { danger: true },
       cancelText: 'Cancel',
-      onOk: () =>
-        runAction(
+      autoFocusButton: null,
+      onOk: (_close) => {
+        const trimmedTaskRemark = taskRemark.trim();
+        if (!trimmedTaskRemark) {
+          message.error('Please enter return reason');
+          return;
+        }
+
+        return runAction(
           TaskAction.Return,
-          () => returnTask(task!.taskId, access.userId, taskRemark.trim()),
+          () => returnTask(task!.taskId, access.userId, trimmedTaskRemark),
           'Returned successfully',
-        ),
+        );
+      },
     });
   };
 
@@ -133,13 +144,14 @@ export default function TaskDetail() {
       content: 'The task will become Approved. Continue?',
       okText: 'Approve',
       cancelText: 'Cancel',
+      autoFocusButton: null,
       onOk: () =>
         runAction(TaskAction.Approve, () => approveTask(task!.taskId, access.userId), 'Approved successfully'),
     });
   };
 
   return (
-    <div className='animate-fade-in'>
+    <div>
       <div className='mb-4 flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(RoutePath.TaskPool)}>

@@ -72,6 +72,11 @@ body,
   height: var(--task-pool-table-body-height);
 }
 
+/* 空表格只隐藏横向滚动条，保留纵向滚动槽，确保有无数据时表头使用相同的列宽补偿。 */
+.task-pool-table-empty .ant-table-body {
+  overflow-x: hidden !important;
+}
+
 /* 全局去除表格分页器底部间距（上间距保留），贴紧页面容器底部，减少空白 */
 .ant-table-pagination.ant-pagination {
   margin-bottom: 0;

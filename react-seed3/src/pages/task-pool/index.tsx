@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { Button, Col, Form, Row } from 'antd';
@@ -9,7 +8,6 @@ import type { Task } from '@/types';
 import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
 import { RoutePath } from '@/router/routes';
 import useTaskList from '@/pages/task-pool/useTaskList';
-import useTableScrollY from '@/pages/task-pool/useTableScrollY';
 import ResizableTable from '@/components/ResizableTable';
 import {
   TaskStatusFilter,
@@ -41,6 +39,11 @@ interface FilterValues {
   updateTimeRange: [Moment, Moment] | null;
 }
 
+// 固定预留高度 279px：Content 上内边距 24px + 筛选表单 112px + 表单下间距 16px
+// + 表头 55px + 分页器 48px（上间距 16px、控件高度 32px）+ Content 下内边距 24px。
+// 使用 vh 可在首帧直接确定表体高度。
+const TABLE_BODY_HEIGHT = 'calc(100vh - 279px)';
+
 export default function TaskPool() {
   const navigate = useNavigate();
   const {
@@ -61,8 +64,6 @@ export default function TaskPool() {
     reset,
   } = useTaskList();
   const [form] = Form.useForm();
-  const tableWrapRef = useRef<HTMLDivElement>(null);
-  const scrollY = useTableScrollY(tableWrapRef);
 
   // 文本筛选防抖：输入即时回显由 Form 受控管理，300ms 后才把值推给查询
   const { run: applyCusId, cancel: cancelApplyCusId } = useDebounceFn((value: string) => changeCusId(value), {
@@ -142,7 +143,7 @@ export default function TaskPool() {
   ];
 
   return (
-    <div className='animate-fade-in'>
+    <div>
       <Form
         form={form}
         layout='horizontal'
@@ -178,9 +179,8 @@ export default function TaskPool() {
         </Row>
       </Form>
       <div
-        ref={tableWrapRef}
-        className='task-pool-table'
-        style={{ '--task-pool-table-body-height': `${scrollY}px` } as CSSProperties}
+        className={`task-pool-table${tasks.length === 0 ? ' task-pool-table-empty' : ''}`}
+        style={{ '--task-pool-table-body-height': TABLE_BODY_HEIGHT } as CSSProperties}
       >
         <ResizableTable<Task>
           rowKey='taskId'
@@ -190,7 +190,7 @@ export default function TaskPool() {
           loading={loading}
           onChange={handleTableChange}
           onRow={(record) => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}
-          scroll={{ y: scrollY }}
+          scroll={{ y: TABLE_BODY_HEIGHT }}
           pagination={{
             current,
             pageSize,

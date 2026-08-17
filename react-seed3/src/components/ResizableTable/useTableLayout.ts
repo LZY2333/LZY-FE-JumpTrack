@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import type { ResizableHeaderCellProps } from './ResizableTitle';
+import { resolveFluidColumnId } from './resizableTableUtil';
 
 export interface TableLayout {
   /** 用户调整后的列宽，按列 id 保存。 */
@@ -21,7 +22,7 @@ export interface ColumnMeta {
 
 // 空布局表示完全使用源码列定义，是初始化和重置的共同基线。
 const EMPTY_LAYOUT: TableLayout = { widths: {}, order: [], hidden: [] };
-// 所有列必须有确定宽度，否则浏览器会根据单元格内容重新分配未声明宽度的列。
+// 普通列先获得确定的宽度基值；最终仅保留一个受控流体列吸收容器剩余空间。
 const DEFAULT_COLUMN_WIDTH = 160;
 
 // 保留用户对旧列的排序；新增列按源码中的相邻位置插入，并清除已删除列和重复 id。
@@ -46,7 +47,7 @@ export const resolveColumnOrder = (order: string[], sourceIds: string[]) => {
     // 找到前置锚点时插入其后，保持已有列的用户顺序。
     if (previousId) {
       insertIndex = resolved.indexOf(previousId) + 1;
-    // 只有后置锚点时插入其前，适配新增首列。
+      // 只有后置锚点时插入其前，适配新增首列。
     } else if (nextId) {
       insertIndex = resolved.indexOf(nextId);
     }
@@ -61,9 +62,7 @@ export const migrateTableLayout = (layout: TableLayout, sourceIds: string[]): Ta
   const sourceIdSet = new Set(sourceIds);
   return {
     widths: Object.fromEntries(
-      Object.entries(layout.widths).filter(
-        ([id, width]) => sourceIdSet.has(id) && Number.isFinite(width),
-      ),
+      Object.entries(layout.widths).filter(([id, width]) => sourceIdSet.has(id) && Number.isFinite(width)),
     ),
     order: resolveColumnOrder(layout.order, sourceIds),
     hidden: Array.from(new Set(layout.hidden.filter((id) => sourceIdSet.has(id)))),
@@ -80,9 +79,7 @@ const readLayout = (storageKey?: string): TableLayout => {
     return {
       widths: value?.widths && typeof value.widths === 'object' ? value.widths : {},
       order: Array.isArray(value?.order) ? value.order.filter((id): id is string => typeof id === 'string') : [],
-      hidden: Array.isArray(value?.hidden)
-        ? value.hidden.filter((id): id is string => typeof id === 'string')
-        : [],
+      hidden: Array.isArray(value?.hidden) ? value.hidden.filter((id): id is string => typeof id === 'string') : [],
     };
   } catch {
     // JSON 损坏或浏览器禁用 Storage 时不阻断表格渲染。
@@ -214,45 +211,55 @@ export default function useTableLayout<T>(sourceColumns: ColumnsType<T>, storage
     [layout, source],
   );
 
-  // 最终列：依次应用顺序、显隐、数值宽度和表头交互能力。
-  const columns = useMemo<ColumnsType<T>>(
-    () =>
-      layout.order
-        .filter((colId) => !layout.hidden.includes(colId))
-        .map((colId) => {
-          // layout.order 已经过迁移，当前 id 必然能从索引中取到列定义。
-          const column = source.columnsById.get(colId)!;
-          // 用户宽度优先，其次源码宽度，最后使用不受内容影响的默认宽度。
-          const width =
-            layout.widths[colId] ??
-            (typeof column.width === 'number' ? column.width : DEFAULT_COLUMN_WIDTH);
-          const originalHeaderCell = column.onHeaderCell;
-          // 右固定列依赖稳定的右边界，不开放右侧调宽；固定列也不参与列顺序拖拽。
-          const resizable = column.fixed !== 'right';
+  // 最终表格布局：可拖拽列使用确定宽度，最右侧普通列作为唯一流体列。
+  const resolvedTable = useMemo(() => {
+    const visibleIds = layout.order.filter((colId) => !layout.hidden.includes(colId));
+    const fluidColumnId = resolveFluidColumnId(
+      visibleIds.map((colId) => ({ columnId: colId, fixed: source.columnsById.get(colId)?.fixed })),
+    );
+    let tableWidth = 0;
 
-          return {
-            ...column,
+    const columns: ColumnsType<T> = visibleIds.map((colId) => {
+      // layout.order 已经过迁移，当前 id 必然能从索引中取到列定义。
+      const column = source.columnsById.get(colId)!;
+      // 宽度基值参与 scroll.x 计算；流体列渲染时不声明 width，由它独占剩余空间。
+      const basisWidth =
+        layout.widths[colId] ?? (typeof column.width === 'number' ? column.width : DEFAULT_COLUMN_WIDTH);
+      tableWidth += basisWidth;
+      const fluid = colId === fluidColumnId;
+      const width = fluid ? undefined : basisWidth;
+      const originalHeaderCell = column.onHeaderCell;
+      // 流体列负责吸收余量，不直接调宽；拖动它左侧列的分隔线即可改变其可见宽度。
+      const resizable = column.fixed !== 'right' && !fluid;
+
+      return {
+        ...column,
+        width,
+        ellipsis: column.ellipsis ?? true,
+        // 保留调用方的 onHeaderCell，并补充 ResizableTitle 所需的能力参数。
+        onHeaderCell: (headerColumn) =>
+          ({
+            ...originalHeaderCell?.(headerColumn),
+            columnId: colId,
             width,
-            ellipsis: column.ellipsis ?? true,
-            // 保留调用方的 onHeaderCell，并补充 ResizableTitle 所需的能力参数。
-            onHeaderCell: (headerColumn) =>
-              ({
-                ...originalHeaderCell?.(headerColumn),
-                columnId: colId,
-                width,
-                draggableColumn: !column.fixed,
-                sortableColumn: Boolean(column.sorter),
-                onColumnResize: resizable
-                  ? (nextWidth: number, finished: boolean) => resizeColumn(colId, nextWidth, finished)
-                  : undefined,
-                onColumnReorder: reorderColumn,
-              }) as ResizableHeaderCellProps as HTMLAttributes<HTMLElement>,
-          } as ColumnType<T>;
-        }),
-    [layout, reorderColumn, resizeColumn, source],
-  );
-  // 使用可见列宽总和作为 scroll.x，避免 max-content 因行数据有无而改变列宽分配。
-  const tableWidth = columns.reduce((total, column) => total + Number(column.width), 0);
+            draggableColumn: !column.fixed,
+            sortableColumn: Boolean(column.sorter),
+            onColumnResize: resizable
+              ? (nextWidth: number, finished: boolean) => resizeColumn(colId, nextWidth, finished)
+              : undefined,
+            onColumnReorder: reorderColumn,
+          } as ResizableHeaderCellProps as HTMLAttributes<HTMLElement>),
+      } as ColumnType<T>;
+    });
 
-  return { columns, tableWidth, columnMetaList, toggleColumn, reset };
+    return { columns, tableWidth };
+  }, [layout, reorderColumn, resizeColumn, source]);
+
+  return {
+    columns: resolvedTable.columns,
+    tableWidth: resolvedTable.tableWidth,
+    columnMetaList,
+    toggleColumn,
+    reset,
+  };
 }

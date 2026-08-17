@@ -8,7 +8,7 @@ export default function GlobalLoading() {
 
   return (
     <div
-      className='fixed inset-0 z-[2000] flex cursor-wait items-center justify-center bg-gray-900/20'
+      className='fixed inset-0 z-[2000] flex cursor-wait items-center justify-center'
       role='status'
       aria-label='Loading'
     >

@@ -227,6 +227,7 @@ export default [
     // 明细页聚合查询：任务、原始客户、完整客户变更快照和附件元数据一次返回。
     url: '/api/cies/v1/task/detail/:taskId',
     method: 'get',
+    timeout: 2000,
     response: (opt: { url: string }) => {
       const taskId = taskIdFromUrl(opt.url);
       const task = findTask(taskId);
