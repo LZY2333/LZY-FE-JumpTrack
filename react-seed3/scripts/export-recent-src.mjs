@@ -1,240 +1,121 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, extname, isAbsolute, relative, resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, extname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import ts from 'typescript';
 
-// 默认配置：目录路径相对于 react-seed3 项目根目录，src 即 react-seed3/src。
-const CONFIG = {
-  sourceDirectory: 'src',
-  outputDirectory: 'srctxt',
-  defaultCommitCount: 1,
-};
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const SOURCE = resolve(ROOT, 'src');
+const DEFAULT_OUTPUT = resolve(ROOT, 'srctxt');
+const META = '// @SRC ';
+const DEP_MARK = '__SRC_DEP__';
 
-const printUsage = () => {
-  console.log(`Usage:
-  npm run export:src
-  npm run export:src -- [commit-count]
-  node scripts/export-recent-src.mjs [commit-count] [--output <directory>]
-
-Examples:
-  npm run export:src
-  npm run export:src -- 5
-  node scripts/export-recent-src.mjs 10 --output srctxt
-
-Defaults:
-  Source directory: <project>/${CONFIG.sourceDirectory}
-  Commit count: ${CONFIG.defaultCommitCount}
-  Output directory: <project>/${CONFIG.outputDirectory}`);
-};
-
-const parseArguments = (argumentsToParse) => {
-  let commitCount;
-  let outputPath;
-
-  for (let index = 0; index < argumentsToParse.length; index += 1) {
-    const argument = argumentsToParse[index];
-
-    if (argument === '--help' || argument === '-h') {
-      printUsage();
-      process.exit(0);
-    }
-
-    if (argument === '--output' || argument === '-o') {
-      outputPath = argumentsToParse[index + 1];
-      if (!outputPath) {
-        throw new Error(`${argument} requires a directory path.`);
-      }
-      index += 1;
-      continue;
-    }
-
-    if (argument.startsWith('-')) {
-      throw new Error(`Unknown option: ${argument}`);
-    }
-
-    if (commitCount !== undefined) {
-      throw new Error(`Unexpected argument: ${argument}`);
-    }
-    commitCount = Number(argument);
-  }
-
-  commitCount ??= CONFIG.defaultCommitCount;
-
-  if (!Number.isSafeInteger(commitCount) || commitCount <= 0) {
-    throw new Error('commit-count must be a positive integer.');
-  }
-
-  return { commitCount, outputPath };
-};
-
-const runGit = (projectRoot, argumentsToRun) => {
-  const result = spawnSync('git', ['-c', 'core.quotepath=false', '-C', projectRoot, ...argumentsToRun], {
-    encoding: 'utf8',
+const git = (args, encoding = 'utf8') => {
+  const result = spawnSync('git', ['-c', 'core.quotepath=false', '-C', ROOT, ...args], {
+    encoding,
     maxBuffer: 20 * 1024 * 1024,
   });
-
-  if (result.error) {
-    throw new Error(`Unable to run Git: ${result.error.message}`);
-  }
-  if (result.status !== 0) {
-    throw new Error(result.stderr.trim() || 'Git command failed.');
-  }
-
+  if (result.status !== 0) throw new Error(result.stderr?.toString() || 'Git command failed.');
   return result.stdout;
 };
 
-const getScriptKind = (filePath) => {
-  const lowerCasePath = filePath.toLowerCase();
-
-  if (lowerCasePath.endsWith('.tsx')) return ts.ScriptKind.TSX;
-  if (lowerCasePath.endsWith('.jsx')) return ts.ScriptKind.JSX;
-  if (lowerCasePath.endsWith('.ts') || lowerCasePath.endsWith('.mts') || lowerCasePath.endsWith('.cts')) {
-    return ts.ScriptKind.TS;
-  }
-  if (lowerCasePath.endsWith('.js') || lowerCasePath.endsWith('.mjs') || lowerCasePath.endsWith('.cjs')) {
-    return ts.ScriptKind.JS;
-  }
-
-  return undefined;
-};
-
-const extendPastLineEnding = (content, statementEnd) => {
-  let rangeEnd = statementEnd;
-
-  while (content[rangeEnd] === ' ' || content[rangeEnd] === '\t') {
-    rangeEnd += 1;
-  }
-  if (content.startsWith('\r\n', rangeEnd)) {
-    return rangeEnd + 2;
-  }
-  if (content[rangeEnd] === '\n' || content[rangeEnd] === '\r') {
-    return rangeEnd + 1;
-  }
-
-  return statementEnd;
-};
-
-const removeLeadingImports = (filePath, content) => {
-  const scriptKind = getScriptKind(filePath);
-  if (scriptKind === undefined) {
-    return content;
-  }
-
-  const sourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true, scriptKind);
-  let importBoundary = 0;
-
-  for (const statement of sourceFile.statements) {
-    if (!ts.isImportDeclaration(statement) && !ts.isImportEqualsDeclaration(statement)) {
-      break;
+const parseArgs = () => {
+  const values = process.argv.slice(2);
+  let count = 1;
+  let output = DEFAULT_OUTPUT;
+  for (let index = 0; index < values.length; index += 1) {
+    if (values[index] === '--output' || values[index] === '-o') {
+      output = resolve(ROOT, values[index + 1]);
+      index += 1;
+      continue;
     }
-
-    importBoundary = extendPastLineEnding(content, statement.end);
+    if (!values[index].startsWith('-')) count = Number(values[index]);
   }
-
-  return content.slice(importBoundary);
+  return {
+    count,
+    output,
+  };
 };
 
-const isBinaryContent = (contentBuffer) => {
-  const bytesToInspect = contentBuffer.subarray(0, Math.min(contentBuffer.length, 8192));
-  return bytesToInspect.includes(0);
+const toTxt = (filePath) => {
+  const extension = extname(filePath);
+  return `${extension ? filePath.slice(0, -extension.length) : filePath}.txt`;
 };
 
-const toOutputRelativePath = (sourceRelativePath) => {
-  const extension = extname(sourceRelativePath);
-  if (!extension) {
-    return `${sourceRelativePath}.txt`;
-  }
+const hideDependencies = (content) => content.replace(/(^|\r?\n)([ \t]*)import(?=[ \t])/g, `$1$2${DEP_MARK}`);
 
-  return `${sourceRelativePath.slice(0, -extension.length)}.txt`;
+const statusChanges = () => {
+  const result = git(['diff', '--relative', '--name-status', '-z', '--no-renames', 'HEAD', '--', 'src']);
+  const tokens = result.split('\0').filter(Boolean);
+  const changes = new Map();
+  for (let index = 0; index < tokens.length; index += 2) {
+    changes.set(tokens[index + 1], tokens[index][0]);
+  }
+  for (const filePath of git(['ls-files', '--others', '--exclude-standard', '-z', '--', 'src'])
+    .split('\0')
+    .filter(Boolean)) {
+    changes.set(filePath, 'A');
+  }
+  return changes;
 };
 
-const main = () => {
-  const { commitCount, outputPath } = parseArguments(process.argv.slice(2));
-  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
-  const projectRoot = resolve(scriptDirectory, '..');
-  const sourceRoot = resolve(projectRoot, CONFIG.sourceDirectory);
-  const outputRoot = outputPath ? resolve(projectRoot, outputPath) : resolve(projectRoot, CONFIG.outputDirectory);
-
-  if (!existsSync(sourceRoot) || !statSync(sourceRoot).isDirectory()) {
-    throw new Error(`Source directory does not exist: ${sourceRoot}`);
-  }
-
-  const changedPaths = runGit(projectRoot, [
+const commitChanges = (count) => {
+  const paths = git([
     'log',
     '--relative',
     '-n',
-    String(commitCount),
+    String(count),
     '--format=',
     '--name-only',
-    '--diff-filter=ACMRT',
+    '-z',
+    '--no-renames',
+    '--',
+    'src',
   ])
-    .split(/\r?\n/)
-    .map((filePath) => filePath.trim())
+    .split('\0')
     .filter(Boolean);
+  return new Map(paths.map((filePath) => [filePath, 'C']));
+};
 
-  const sourcePaths = [...new Set(changedPaths)]
-    .map((gitPath) => resolve(projectRoot, gitPath))
-    .filter((sourcePath) => {
-      const pathWithinSource = relative(sourceRoot, sourcePath);
-      return (
-        pathWithinSource !== '' &&
-        !pathWithinSource.startsWith('..') &&
-        !isAbsolute(pathWithinSource) &&
-        existsSync(sourcePath) &&
-        statSync(sourcePath).isFile()
-      );
-    });
-
-  const outputMappings = sourcePaths.map((sourcePath) => {
-    const sourceRelativePath = relative(sourceRoot, sourcePath);
-    return {
-      sourcePath,
-      sourceRelativePath,
-      destinationPath: resolve(outputRoot, toOutputRelativePath(sourceRelativePath)),
-    };
+const headFile = (filePath) => {
+  const result = spawnSync('git', ['-c', 'core.quotepath=false', '-C', ROOT, 'show', `HEAD:./${filePath}`], {
+    encoding: null,
+    maxBuffer: 20 * 1024 * 1024,
   });
+  return result.status === 0 ? result.stdout : undefined;
+};
 
-  const destinations = new Map();
-  for (const mapping of outputMappings) {
-    const destinationKey = mapping.destinationPath.toLowerCase();
-    const existingSource = destinations.get(destinationKey);
-    if (existingSource) {
-      throw new Error(`Output path collision: ${existingSource} and ${mapping.sourceRelativePath}`);
+const main = () => {
+  const { count, output } = parseArgs();
+  const changes = count === 0 ? statusChanges() : commitChanges(count);
+
+  for (const [gitPath, type] of changes) {
+    const sourcePath = resolve(ROOT, gitPath);
+    const sourceRelativePath = relative(SOURCE, sourcePath);
+    let content;
+    if (count === 0) {
+      if (existsSync(sourcePath)) content = readFileSync(sourcePath);
+    } else {
+      content = headFile(gitPath);
     }
-    destinations.set(destinationKey, mapping.sourceRelativePath);
+    const operation = content === undefined ? 'delete' : 'upsert';
+    const metadata = `${META}${JSON.stringify({ operation, path: sourceRelativePath.replaceAll('\\', '/') })}\n`;
+    const outputPath = resolve(output, toTxt(sourceRelativePath));
+
+    mkdirSync(dirname(outputPath), { recursive: true });
+    writeFileSync(
+      outputPath,
+      operation === 'delete' ? metadata : metadata + hideDependencies(content.toString('utf8')),
+      'utf8',
+    );
+    console.log(`${type} ${sourceRelativePath}`);
   }
 
-  let exportedCount = 0;
-  const skippedBinaryPaths = [];
-
-  for (const mapping of outputMappings) {
-    const contentBuffer = readFileSync(mapping.sourcePath);
-    if (isBinaryContent(contentBuffer)) {
-      skippedBinaryPaths.push(mapping.sourceRelativePath);
-      continue;
-    }
-
-    const content = contentBuffer.toString('utf8');
-    const outputContent = removeLeadingImports(mapping.sourcePath, content);
-    mkdirSync(dirname(mapping.destinationPath), { recursive: true });
-    writeFileSync(mapping.destinationPath, outputContent, 'utf8');
-    exportedCount += 1;
-    console.log(`${mapping.sourceRelativePath} -> ${relative(projectRoot, mapping.destinationPath)}`);
-  }
-
-  console.log(`Exported ${exportedCount} file(s) changed in the latest ${commitCount} commit(s).`);
-  console.log(`Output directory: ${outputRoot}`);
-
-  if (skippedBinaryPaths.length > 0) {
-    console.warn(`Skipped ${skippedBinaryPaths.length} binary file(s): ${skippedBinaryPaths.join(', ')}`);
-  }
+  console.log(`Exported ${changes.size} file(s) to ${output}`);
 };
 
 try {
   main();
 } catch (error) {
-  console.error(`Error: ${error.message}`);
-  printUsage();
+  console.error(error.message);
   process.exitCode = 1;
 }

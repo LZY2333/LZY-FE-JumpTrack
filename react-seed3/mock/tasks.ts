@@ -1,42 +1,6 @@
 import type { TaskPageData, TaskSortField, TaskSortOrder, TaskStatusChange } from '@/api/tasks';
-import type { Attachment, Customer, Task } from '@/types';
-import { ResCode, TaskStatus, TranType } from '@/types/enums';
-import { mockCustomers, mockCustomerWithEmptyDates } from './customer';
-
-const cloneAttachment = (attachment: Attachment): Attachment => ({ ...attachment });
-
-const cloneCustomer = (customer: Customer): Customer => ({
-  ...customer,
-  investmentAccounts:
-    customer.investmentAccounts === null
-      ? customer.investmentAccounts
-      : customer.investmentAccounts?.map((account) => ({ ...account })),
-  subActIntrs: customer.subActIntrs?.map((intr) => ({ ...intr })),
-});
-
-const attachmentsFor = (taskId: string): Attachment[] => [
-  {
-    fileId: `${taskId}-1`,
-    fileName: `Cover_Letter_${taskId}.pdf`,
-    fileSize: '102400',
-    createTime: '2026-06-01 10:00:00',
-    createUser: 'U001',
-  },
-  {
-    fileId: `${taskId}-2`,
-    fileName: `Statement_${taskId}.pdf`,
-    fileSize: '204800',
-    createTime: '2026-06-01 10:00:00',
-    createUser: 'U001',
-  },
-  {
-    fileId: `${taskId}-3`,
-    fileName: `Transaction_${taskId}.pdf`,
-    fileSize: '51200',
-    createTime: '2026-06-01 10:00:00',
-    createUser: 'U001',
-  },
-];
+import type { Attachment, Task } from '@/types';
+import { ResCode, TaskStatus } from '@/types/enums';
 
 const STATUSES = [
   TaskStatus.Pending,
@@ -45,76 +9,52 @@ const STATUSES = [
   TaskStatus.Approved,
   TaskStatus.Cancelled,
 ];
-
-const EMPTY_OPTIONAL_TASK_COUNT = STATUSES.length * 2;
 const MAKER_USER_IDS = ['U001', 'U003'];
 const CHECKER_USER_IDS = ['U002', 'U003'];
 
-let attachmentSequence = 0;
+const cloneAttachment = (attachment: Attachment): Attachment => ({ ...attachment });
+const cloneTask = (task: Task): Task => ({ ...task });
 
-/**
- * 模块级可变数据在 dev server 进程存活期间持久：
- * - Task 保存任务表、申报交易表与客户信息联查后的列表字段；
- * - 客户变更快照及附件分别保存在任务关联集合中。
- */
+const attachmentsFor = (taskId: string): Attachment[] => [
+  {
+    fileId: `${taskId}-1`,
+    fileName: `Task_Summary_${taskId}.pdf`,
+    fileSize: '102400',
+    createTime: '2026-06-01 10:00:00',
+    createUser: 'U001',
+  },
+  {
+    fileId: `${taskId}-2`,
+    fileName: `Supporting_Document_${taskId}.pdf`,
+    fileSize: '204800',
+    createTime: '2026-06-01 10:00:00',
+    createUser: 'U001',
+  },
+];
+
+/** 模块级可变数据在 dev server 进程存活期间保持状态，用于演示列表、详情与状态流转。 */
 export const mockTasks: Task[] = Array.from({ length: 38 }, (_, index) => {
   const taskId = `T${String(index + 1).padStart(4, '0')}`;
   const taskStatus = STATUSES[index % STATUSES.length];
-  const makerId = MAKER_USER_IDS[index % MAKER_USER_IDS.length];
-  const checkerId = CHECKER_USER_IDS[index % CHECKER_USER_IDS.length];
-  const createTime = `2026-06-${String(28 - (index % 28)).padStart(2, '0')}`;
-  const transactionTime = `2026-05-${String(28 - (index % 28)).padStart(2, '0')}`;
-  const updateTime = `2026-07-${String(27 - (index % 27)).padStart(2, '0')}`;
-  const hasEmptyOptionalFields = index < EMPTY_OPTIONAL_TASK_COUNT;
-  const customer = hasEmptyOptionalFields ? mockCustomerWithEmptyDates : mockCustomers[0];
   const hasMaker = taskStatus !== TaskStatus.Pending;
   const hasChecker = taskStatus === TaskStatus.Returned || taskStatus === TaskStatus.Approved;
 
   return {
     taskId,
-    tranType: TranType.DailyReport,
+    taskName: `Sample Task ${index + 1}`,
+    description: `This is the editable description for sample task ${index + 1}.`,
     taskStatus,
-    cusId: customer.cusId,
-    cusEnName: customer.cusEnName,
-    cusCnName: customer.cusCnName,
-    makerId: !hasEmptyOptionalFields && hasMaker ? makerId : '',
-    checkerId: !hasEmptyOptionalFields && hasChecker ? checkerId : '',
-    createTime,
-    transactionTime: hasEmptyOptionalFields ? '' : transactionTime,
-    updateTime,
-    taskRemark:
-      !hasEmptyOptionalFields && taskStatus === TaskStatus.Returned
-        ? 'Please verify the updated customer information.'
-        : '',
+    makerId: hasMaker ? MAKER_USER_IDS[index % MAKER_USER_IDS.length] : '',
+    checkerId: hasChecker ? CHECKER_USER_IDS[index % CHECKER_USER_IDS.length] : '',
+    createTime: `2026-06-${String(28 - (index % 28)).padStart(2, '0')}`,
+    updateTime: `2026-07-${String(27 - (index % 27)).padStart(2, '0')}`,
+    taskRemark: taskStatus === TaskStatus.Returned ? 'Please verify the task description and submit again.' : '',
   };
 });
 
 /** 每个任务的附件元数据；附件二进制内容由下载接口单独返回。 */
 export const mockAttachmentsByTaskId = new Map<string, Attachment[]>(
   mockTasks.map((task) => [task.taskId, attachmentsFor(task.taskId)]),
-);
-
-/**
- * 客户变更接口返回完整 Customer，而不是差异 JSON。
- * Returned 示例修改 bankCusRef，用于后续验证重新进入明细页后的字段高亮。
- */
-export const mockCustomerChangesByTaskId = new Map<string, Customer>(
-  mockTasks.flatMap((task) => {
-    const hasSavedChange =
-      task.taskStatus === TaskStatus.Submitted ||
-      task.taskStatus === TaskStatus.Returned ||
-      task.taskStatus === TaskStatus.Approved;
-    if (!hasSavedChange) return [];
-
-    const customer = mockCustomers.find((item) => item.cusId === task.cusId);
-    if (!customer) return [];
-
-    const customerChange = cloneCustomer(customer);
-    if (task.taskStatus === TaskStatus.Returned) {
-      customerChange.bankCusRef = `CIES2.0:DRAFT-${task.taskId}`;
-    }
-    return [[task.taskId, customerChange] as const];
-  }),
 );
 
 const pathSegments = (url: string): string[] =>
@@ -128,11 +68,6 @@ const lastPathSegment = (url: string): string => {
   const segments = pathSegments(url);
   return segments[segments.length - 1] || '';
 };
-
-// 新接口中的 taskId 和 fileName 均位于路径末段。
-const taskIdFromUrl = (url: string): string => lastPathSegment(url);
-
-const fileNameFromUrl = (url: string): string => lastPathSegment(url);
 
 const findTask = (taskId: string) => mockTasks.find((task) => task.taskId === taskId);
 
@@ -154,11 +89,9 @@ interface TasksQuery {
   pageSize?: number | string;
   status?: string;
   taskId?: string;
-  cusId?: string;
+  taskName?: string;
   createTimeFrom?: string;
   createTimeTo?: string;
-  transactionTimeFrom?: string;
-  transactionTimeTo?: string;
   updateTimeFrom?: string;
   updateTimeTo?: string;
   sortField?: TaskSortField;
@@ -169,42 +102,34 @@ export default [
   {
     url: '/api/cies/v1/task/getTasks',
     method: 'post',
-    response: (opt: { body: TasksQuery }) => {
+    response: (option: { body: TasksQuery }) => {
       const {
         current = 1,
         pageSize = 10,
         status,
         taskId,
-        cusId,
+        taskName,
         createTimeFrom,
         createTimeTo,
-        transactionTimeFrom,
-        transactionTimeTo,
         updateTimeFrom,
         updateTimeTo,
         sortField,
         sortOrder,
-      } = opt.body || {};
+      } = option.body || {};
       let list = [...mockTasks];
       if (status) list = list.filter((task) => task.taskStatus === status);
       if (taskId) {
         const keyword = taskId.trim().toLowerCase();
         list = list.filter((task) => task.taskId.toLowerCase().includes(keyword));
       }
-      if (cusId) {
-        const keyword = cusId.trim().toLowerCase();
-        list = list.filter((task) => task.cusId.toLowerCase().includes(keyword));
+      if (taskName) {
+        const keyword = taskName.trim().toLowerCase();
+        list = list.filter((task) => task.taskName.toLowerCase().includes(keyword));
       }
-      if (createTimeFrom) list = list.filter((task) => task.createTime.slice(0, 10) >= createTimeFrom);
-      if (createTimeTo) list = list.filter((task) => task.createTime.slice(0, 10) <= createTimeTo);
-      if (transactionTimeFrom) {
-        list = list.filter((task) => !!task.transactionTime && task.transactionTime >= transactionTimeFrom);
-      }
-      if (transactionTimeTo) {
-        list = list.filter((task) => !!task.transactionTime && task.transactionTime <= transactionTimeTo);
-      }
-      if (updateTimeFrom) list = list.filter((task) => task.updateTime.slice(0, 10) >= updateTimeFrom);
-      if (updateTimeTo) list = list.filter((task) => task.updateTime.slice(0, 10) <= updateTimeTo);
+      if (createTimeFrom) list = list.filter((task) => task.createTime >= createTimeFrom);
+      if (createTimeTo) list = list.filter((task) => task.createTime <= createTimeTo);
+      if (updateTimeFrom) list = list.filter((task) => task.updateTime >= updateTimeFrom);
+      if (updateTimeTo) list = list.filter((task) => task.updateTime <= updateTimeTo);
       if (sortField && sortOrder) {
         const direction = sortOrder === 'asc' ? 1 : -1;
         list.sort((left, right) => left[sortField].localeCompare(right[sortField]) * direction);
@@ -215,7 +140,7 @@ export default [
       return {
         returnCode: ResCode.Success,
         body: {
-          list: list.slice((currentPage - 1) * size, currentPage * size),
+          list: list.slice((currentPage - 1) * size, currentPage * size).map(cloneTask),
           current: currentPage,
           pageSize: size,
           total: list.length,
@@ -224,47 +149,26 @@ export default [
     },
   },
   {
-    // 明细页聚合查询：任务、原始客户、完整客户变更快照和附件元数据一次返回。
     url: '/api/cies/v1/task/detail/:taskId',
     method: 'get',
     timeout: 2000,
-    response: (opt: { url: string }) => {
-      const taskId = taskIdFromUrl(opt.url);
+    response: (option: { url: string }) => {
+      const taskId = lastPathSegment(option.url);
       const task = findTask(taskId);
       if (!task) return notFound('Task', taskId);
 
-      const customer = mockCustomers.find((item) => item.cusId === task.cusId);
-      if (!customer) return notFound('Customer', task.cusId);
-
-      const customerChange = mockCustomerChangesByTaskId.get(taskId);
       const body: TaskPageData = {
-        task: { ...task },
-        customer: cloneCustomer(customer),
-        customerChange: customerChange ? cloneCustomer(customerChange) : null,
+        task: cloneTask(task),
         attachments: (mockAttachmentsByTaskId.get(taskId) || []).map(cloneAttachment),
       };
       return { returnCode: ResCode.Success, body };
     },
   },
   {
-    url: '/api/cies/v1/task/customer-change/:taskId',
-    method: 'get',
-    response: (opt: { url: string }) => {
-      const taskId = taskIdFromUrl(opt.url);
-      const customerChange = mockCustomerChangesByTaskId.get(taskId);
-      if (!findTask(taskId)) return notFound('Task', taskId);
-
-      return {
-        returnCode: ResCode.Success,
-        body: customerChange ? cloneCustomer(customerChange) : null,
-      };
-    },
-  },
-  {
     url: '/api/cies/v1/task/attachments/:taskId',
     method: 'get',
-    response: (opt: { url: string }) => {
-      const taskId = taskIdFromUrl(opt.url);
+    response: (option: { url: string }) => {
+      const taskId = lastPathSegment(option.url);
       if (!findTask(taskId)) return notFound('Task', taskId);
 
       return {
@@ -276,41 +180,18 @@ export default [
   {
     url: '/api/cies/v1/task/:taskId',
     method: 'get',
-    response: (opt: { url: string }) => {
-      const taskId = taskIdFromUrl(opt.url);
+    response: (option: { url: string }) => {
+      const taskId = lastPathSegment(option.url);
       const task = findTask(taskId);
-      return task ? { returnCode: ResCode.Success, body: { ...task } } : notFound('Task', taskId);
+      return task ? { returnCode: ResCode.Success, body: cloneTask(task) } : notFound('Task', taskId);
     },
   },
   {
-    // Mock 不存真实上传文件，只保存前端提交的文件名和大小，并生成附件 ID。
-    url: '/api/cies/v1/task/attachment/:taskId',
-    method: 'post',
-    response: (opt: { url: string; body: { fileName: string; fileSize: string } }) => {
-      const taskId = taskIdFromUrl(opt.url);
-      if (!findTask(taskId)) return notFound('Task', taskId);
-
-      const { fileName, fileSize } = opt.body || {};
-      const timestamp = Date.now();
-      attachmentSequence += 1;
-      const attachment: Attachment = {
-        fileId: `${taskId}-${timestamp}-${attachmentSequence}`,
-        fileName: fileName || 'unnamed',
-        fileSize: fileSize || '0',
-        createTime: new Date(timestamp).toISOString().slice(0, 19).replace('T', ' '),
-        createUser: 'U001',
-      };
-      const attachments = mockAttachmentsByTaskId.get(taskId) || [];
-      mockAttachmentsByTaskId.set(taskId, [...attachments, attachment]);
-      return { returnCode: ResCode.Success, body: cloneAttachment(attachment) };
-    },
-  },
-  {
-    // 下载接口返回原始二进制响应，不使用 ApiResult 包装。
+    /** 下载接口返回原始二进制响应，不使用 ApiResult 包装。 */
     url: '/api/cies/v1/task/attachment/download/:fileName',
     method: 'get',
     rawResponse: (request: import('node:http').IncomingMessage, response: import('node:http').ServerResponse) => {
-      const fileName = fileNameFromUrl(request.url || '');
+      const fileName = lastPathSegment(request.url || '');
       const attachment = findAttachment(fileName);
       if (!attachment) {
         response.statusCode = 404;
@@ -328,16 +209,11 @@ export default [
     },
   },
   {
-    /**
-     * 统一状态变更：
-     * - submit 有客户字段变化时保存完整 customerChange，无变化时清除变更快照；
-     * - return 保留变更快照并记录退回原因；
-     * - approve 将任务变更快照覆盖到客户主数据。
-     */
+    /** 统一状态变更：提交保存简单表单字段，退回保留原因，审批和取消仅改变流程状态。 */
     url: '/api/cies/v1/task/status',
     method: 'post',
-    response: (opt: { body: TaskStatusChange }) => {
-      const { taskId, taskStatus, makerId, checkerId, taskRemark, payload } = opt.body || {};
+    response: (option: { body: TaskStatusChange }) => {
+      const { taskId, taskStatus, makerId, checkerId, taskRemark, payload } = option.body || {};
       const task = findTask(taskId);
       if (!task) return notFound('Task', taskId);
       if (taskStatus === TaskStatus.Submitted && !payload) {
@@ -350,32 +226,20 @@ export default [
       ) {
         return { returnCode: 'ERR0403', errorMsg: 'Maker and Checker must be different users' };
       }
+
       task.taskStatus = taskStatus;
       task.updateTime = new Date().toISOString().slice(0, 10);
       if (makerId) task.makerId = makerId;
       if (checkerId) task.checkerId = checkerId;
+      if (payload) {
+        task.taskName = payload.taskName;
+        task.description = payload.description;
+      }
       if (taskStatus === TaskStatus.Returned) {
         task.taskRemark = taskRemark || '';
       } else if (taskStatus === TaskStatus.Submitted) {
         task.checkerId = '';
         task.taskRemark = '';
-      }
-
-      if (payload) {
-        if (payload.customerChange) {
-          mockCustomerChangesByTaskId.set(taskId, cloneCustomer(payload.customerChange));
-        } else {
-          mockCustomerChangesByTaskId.delete(taskId);
-        }
-        mockAttachmentsByTaskId.set(taskId, payload.attachments.map(cloneAttachment));
-      }
-
-      if (taskStatus === TaskStatus.Approved) {
-        const customer = mockCustomers.find((item) => item.cusId === task.cusId);
-        const customerChange = mockCustomerChangesByTaskId.get(taskId);
-        if (customer && customerChange) {
-          Object.assign(customer, cloneCustomer(customerChange));
-        }
       }
 
       return { returnCode: ResCode.Success, body: null };

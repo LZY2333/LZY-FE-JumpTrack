@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Button, Input, Modal, Tooltip, Typography, message } from 'antd';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, RollbackOutlined, SendOutlined } from '@ant-design/icons';
@@ -9,8 +9,6 @@ import useTaskPoolStore from '@/store/useTaskPoolStore';
 import useUserStore from '@/store/useUserStore';
 import { TaskStatus } from '@/types/enums';
 import { approveTask, cancelTask, returnTask, submitTask } from '@/api/tasks';
-import type { TaskStatusPayload } from '@/api/tasks';
-import { buildCustomerChange, toCustomerFormModel } from '@/pages/task-detail/customerFormUtil';
 import { getTaskAccess } from '@/pages/task-detail/taskAccess';
 
 enum TaskAction {
@@ -20,26 +18,15 @@ enum TaskAction {
   Approve,
 }
 
-export default function TaskDetail() {
+const TaskDetail = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const requestTaskPoolRefresh = useTaskPoolStore((state) => state.requestRefresh);
-  const { task, customer, customerChange, attachments } = useTaskDetail(taskId);
-  const taskFormData = useMemo(() => {
-    if (!customer) return null;
-
-    const customerForm = toCustomerFormModel(customer);
-    return {
-      customer,
-      customerForm,
-      initialForm: customerChange ? toCustomerFormModel(customerChange) : customerForm,
-    };
-  }, [customer, customerChange]);
+  const { task, attachments } = useTaskDetail(taskId);
   const [activeAction, setActiveAction] = useState<TaskAction | null>(null);
   const formRef = useRef<TaskFormRef>(null);
-
-  const access = getTaskAccess(task && taskFormData ? task : null, user);
+  const access = getTaskAccess(task, user);
 
   const runAction = (action: TaskAction, request: () => Promise<unknown>, successMessage: string) => {
     setActiveAction(action);
@@ -55,17 +42,7 @@ export default function TaskDetail() {
   const handleSubmit = () => {
     if (!access.canEdit || activeAction !== null) return;
 
-    formRef.current!.validate().then((updated) => {
-      const customerChangeNew = buildCustomerChange(
-        taskFormData!.customer,
-        taskFormData!.customerForm,
-        updated.customerFormNew,
-      );
-      const payload: TaskStatusPayload = {
-        attachments: updated.attachments,
-        ...(customerChangeNew ? { customerChange: customerChangeNew } : {}),
-      };
-
+    formRef.current!.validate().then((payload) => {
       Modal.confirm({
         title: 'Confirm Submit',
         content: 'The task will move to Checker review after submission. Continue?',
@@ -120,7 +97,7 @@ export default function TaskDetail() {
       okText: 'Return',
       cancelText: 'Cancel',
       autoFocusButton: null,
-      onOk: (_close) => {
+      onOk: () => {
         const trimmedTaskRemark = taskRemark.trim();
         if (!trimmedTaskRemark) {
           message.error('Please enter return reason');
@@ -145,8 +122,7 @@ export default function TaskDetail() {
       okText: 'Approve',
       cancelText: 'Cancel',
       autoFocusButton: null,
-      onOk: () =>
-        runAction(TaskAction.Approve, () => approveTask(task!.taskId, access.userId), 'Approved successfully'),
+      onOk: () => runAction(TaskAction.Approve, () => approveTask(task!.taskId, access.userId), 'Approved successfully'),
     });
   };
 
@@ -157,7 +133,7 @@ export default function TaskDetail() {
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(RoutePath.TaskPool)}>
             Back
           </Button>
-          <Typography.Text strong>Task {task?.taskId ?? taskId} – OPC AET</Typography.Text>
+          <Typography.Text strong>Task {task?.taskId ?? taskId}</Typography.Text>
         </div>
         <div className='flex gap-3'>
           {(task?.taskStatus === TaskStatus.Pending || task?.taskStatus === TaskStatus.Returned) && (
@@ -235,12 +211,12 @@ export default function TaskDetail() {
       <TaskForm
         key={task?.taskId ?? taskId}
         ref={formRef}
-        taskId={task?.taskId ?? taskId}
-        initialForm={taskFormData?.initialForm}
-        customerForm={taskFormData?.customerForm}
+        initialValues={task ? { taskName: task.taskName, description: task.description } : undefined}
         attachments={attachments}
         readonly={!access.canEdit}
       />
     </div>
   );
-}
+};
+
+export default TaskDetail;

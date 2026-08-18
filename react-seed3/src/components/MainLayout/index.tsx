@@ -6,7 +6,7 @@ import DevUserSwitcher from '@/components/DevUserSwitcher';
 
 const { Content } = Layout;
 
-const APP_TITLE = 'CIES Declaration System';
+const APP_TITLE = 'Workflow Management System';
 
 export default function MainLayout() {
   const location = useLocation();

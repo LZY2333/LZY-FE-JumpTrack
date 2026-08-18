@@ -18,9 +18,8 @@ const readPageSize = () => {
   }
 };
 
-// 任务池的查询状态与数据：分页 + 筛选 + 排序，任一查询条件变化都回到第一页。
-// 文本输入的防抖由 task-pool 页面负责，这里只接收最终查询值。
-export default function useTaskList() {
+/** 任务池的查询状态与数据：分页、筛选、排序与跨页刷新。 */
+const useTaskList = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -28,9 +27,8 @@ export default function useTaskList() {
   const [pageSize, setPageSizeState] = useState(readPageSize);
   const [status, setStatus] = useState('');
   const [taskId, setTaskId] = useState('');
-  const [cusId, setCusId] = useState('');
+  const [taskName, setTaskName] = useState('');
   const [createTimeRange, setCreateTimeRange] = useState<[Moment, Moment] | null>(null);
-  const [transactionTimeRange, setTransactionTimeRange] = useState<[Moment, Moment] | null>(null);
   const [updateTimeRange, setUpdateTimeRange] = useState<[Moment, Moment] | null>(null);
   const [sortField, setSortField] = useState<TaskSortField>();
   const [sortOrder, setSortOrder] = useState<TaskSortOrder>();
@@ -43,53 +41,35 @@ export default function useTaskList() {
       pageSize,
       status: status || undefined,
       taskId: taskId.trim() || undefined,
-      cusId: cusId.trim() || undefined,
+      taskName: taskName.trim() || undefined,
       createTimeFrom: createTimeRange?.[0].format('YYYY-MM-DD'),
       createTimeTo: createTimeRange?.[1].format('YYYY-MM-DD'),
-      transactionTimeFrom: transactionTimeRange?.[0].format('YYYY-MM-DD'),
-      transactionTimeTo: transactionTimeRange?.[1].format('YYYY-MM-DD'),
       updateTimeFrom: updateTimeRange?.[0].format('YYYY-MM-DD'),
       updateTimeTo: updateTimeRange?.[1].format('YYYY-MM-DD'),
       sortField,
       sortOrder,
     })
-      .then((res) => {
-        setTasks(res?.list ?? []);
-        setTotal(res?.total ?? 0);
+      .then((result) => {
+        setTasks(result?.list ?? []);
+        setTotal(result?.total ?? 0);
       })
       .finally(() => setLoading(false));
-  }, [
-    current,
-    pageSize,
-    status,
-    taskId,
-    cusId,
-    createTimeRange,
-    transactionTimeRange,
-    updateTimeRange,
-    sortField,
-    sortOrder,
-    refreshVersion,
-  ]);
+  }, [current, pageSize, status, taskId, taskName, createTimeRange, updateTimeRange, sortField, sortOrder, refreshVersion]);
 
   const changeStatus = useCallback((value: string) => {
     setStatus(value);
-    setCurrent(1);
-  }, []);
-  const changeCusId = useCallback((value: string) => {
-    setCusId(value);
     setCurrent(1);
   }, []);
   const changeTaskId = useCallback((value: string) => {
     setTaskId(value);
     setCurrent(1);
   }, []);
-  const changeCreateTimeRange = useCallback((value: [Moment, Moment] | null) => {
-    setCreateTimeRange(value);
+  const changeTaskName = useCallback((value: string) => {
+    setTaskName(value);
     setCurrent(1);
   }, []);
-  const changeTransactionTimeRange = useCallback((value: [Moment, Moment] | null) => {
-    setTransactionTimeRange(value);
+  const changeCreateTimeRange = useCallback((value: [Moment, Moment] | null) => {
+    setCreateTimeRange(value);
     setCurrent(1);
   }, []);
   const changeUpdateTimeRange = useCallback((value: [Moment, Moment] | null) => {
@@ -109,9 +89,8 @@ export default function useTaskList() {
   const reset = useCallback(() => {
     setStatus('');
     setTaskId('');
-    setCusId('');
+    setTaskName('');
     setCreateTimeRange(null);
-    setTransactionTimeRange(null);
     setUpdateTimeRange(null);
     setSortField(undefined);
     setSortOrder(undefined);
@@ -124,20 +103,16 @@ export default function useTaskList() {
     loading,
     current,
     pageSize,
-    status,
-    taskId,
-    createTimeRange,
-    transactionTimeRange,
-    updateTimeRange,
     setCurrent,
     setPageSize,
     changeStatus,
     changeTaskId,
-    changeCusId,
+    changeTaskName,
     changeCreateTimeRange,
-    changeTransactionTimeRange,
     changeUpdateTimeRange,
     changeSort,
     reset,
   };
-}
+};
+
+export default useTaskList;

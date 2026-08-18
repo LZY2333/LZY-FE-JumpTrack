@@ -1,165 +1,50 @@
-import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useState } from 'react';
-import { Button, Card, Col, Form, List, Modal, Row, Upload, message } from 'antd';
-import type { RcFile } from 'antd/es/upload';
-import { DeleteOutlined, DownloadOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
+import { forwardRef, useImperativeHandle, useLayoutEffect } from 'react';
+import { Button, Card, Form, List, message } from 'antd';
+import { DownloadOutlined, FileOutlined } from '@ant-design/icons';
 import type { Attachment } from '@/types';
-import { downloadAttachment, uploadAttachment } from '@/api/tasks';
-import {
-  getValueAtPath,
-  getInterestCurrencies,
-  isSemanticallyEqual,
-  type CustomerFormModel,
-  type ValuePath,
-} from '@/pages/task-detail/customerFormUtil';
-import {
-  AnnualReportDate,
-  BankCusRef,
-  CapitalInvestFlag,
-  CiesFlag,
-  CustodianAct,
-  CusBirthDate,
-  CusCnName,
-  CusEnName,
-  CusId,
-  CusPrmAct,
-  FormalAppDate,
-  FundAct,
-  GovCusRef,
-  InvestmentInterests,
-  PrincipleAppDate,
-  PrincipleExpDate,
-  SecurityAct,
-  TerminationDate,
-} from '@/components/FormItem';
+import { downloadAttachment } from '@/api/tasks';
+import { TaskDescription, TaskName } from '@/components/FormItem';
 
 interface TaskFormProps {
-  taskId?: string;
-  /** 表单初始值：已保存的变更优先，否则使用原始客户表单模型。 */
-  initialForm?: CustomerFormModel;
-  /** 原始客户表单模型，始终作为字段高亮和锁定规则的比较基线。 */
-  customerForm?: CustomerFormModel;
+  initialValues?: TaskFormValues;
   attachments?: Attachment[];
   readonly?: boolean;
 }
 
 export interface TaskFormValues {
-  customerFormNew: CustomerFormModel;
-  attachments: Attachment[];
+  taskName: string;
+  description: string;
 }
 
 export interface TaskFormRef {
-  // 先做字段校验，校验通过才返回表单值；不通过则 reject（antd 自动定位到首个错误项）
+  /** 校验通过后返回可提交的任务字段。 */
   validate: () => Promise<TaskFormValues>;
 }
 
-const HIGHLIGHT = 'rounded ring-2 ring-primary';
-// 附件上传限制
-const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg'];
-const MAX_SIZE_MB = 10;
+const EMPTY_TASK_FORM_VALUES: TaskFormValues = { taskName: '', description: '' };
 const EMPTY_ATTACHMENTS: Attachment[] = [];
-const EMPTY_CUSTOMER_FORM_MODEL: CustomerFormModel = {
-  cusId: '',
-  cusPrmAct: '',
-  ciesFlag: '' as CustomerFormModel['ciesFlag'],
-  cusEnName: '',
-  cusCnName: '',
-  cusBirthDate: '',
-  govCusRef: '',
-  bankCusRef: '',
-  principleAppDate: '',
-  principleExpDate: '',
-  formalAppDate: '',
-  annualReportDate: '',
-  terminationDate: '',
-  capitalInvestFlag: '' as CustomerFormModel['capitalInvestFlag'],
-  securityAct: [],
-  fundAct: [],
-  custodianAct: [],
-  withdrawnIntr: {},
-  transferIntr: {},
-};
 
 const TaskForm = forwardRef<TaskFormRef, TaskFormProps>((props, ref) => {
-  const taskId = props.taskId ?? '';
-  const initialForm = props.initialForm ?? EMPTY_CUSTOMER_FORM_MODEL;
-  const customerForm = props.customerForm ?? EMPTY_CUSTOMER_FORM_MODEL;
-  const initialAttachments = props.attachments ?? EMPTY_ATTACHMENTS;
-  const readonly = !props.initialForm || !props.customerForm || (props.readonly ?? false);
-  const principleAppDateDisabled = readonly || !!customerForm.principleAppDate;
-  const [form] = Form.useForm();
-  const [attachments, setAttachments] = useState<Attachment[]>(initialAttachments);
-  // 订阅整张表单，使字段变化时重新渲染并实时更新高亮；Form 字段注册完成前 useWatch 返回 undefined，
-  // 此时回退到 initialForm，避免首次渲染将“原值”和 undefined 比较而错误高亮全部字段。
-  const currentForm = (Form.useWatch([], form) as CustomerFormModel | undefined) ?? initialForm;
+  const initialValues = props.initialValues ?? EMPTY_TASK_FORM_VALUES;
+  const attachments = props.attachments ?? EMPTY_ATTACHMENTS;
+  const readonly = props.readonly ?? !props.initialValues;
+  const [form] = Form.useForm<TaskFormValues>();
 
   useLayoutEffect(() => {
-    form.setFieldsValue(initialForm);
-  }, [form, initialForm]);
-
-  useEffect(() => {
-    setAttachments(initialAttachments);
-  }, [initialAttachments]);
+    form.setFieldsValue(initialValues);
+  }, [form, initialValues]);
 
   useImperativeHandle(
     ref,
     () => ({
       validate: () =>
-        form.validateFields().then(() => {
-          const customerFormNew = {
-            ...initialForm,
-            ...form.getFieldsValue(true),
-          } as CustomerFormModel;
-          return { customerFormNew, attachments };
-        }),
+        form.validateFields().then((values) => ({
+          taskName: values.taskName,
+          description: values.description ?? '',
+        })),
     }),
-    [attachments, form, initialForm],
+    [form],
   );
-
-  // 当前表单值与原始客户表单模型不同即高亮；已保存的变更也会立即高亮。
-  const hl = (path: ValuePath) => {
-    const fieldName = Array.isArray(path) ? path.join('.') : path;
-    const value = getValueAtPath(customerForm, path);
-    const valueChange = getValueAtPath(currentForm, path);
-    const result = isSemanticallyEqual(value, valueChange);
-    console.log('高亮字段对比', { fieldName, value, valueChange, result });
-
-    return `transition-all duration-300 ${result ? '' : HIGHLIGHT}`;
-  };
-
-  const handleDelete = (att: Attachment) => {
-    Modal.confirm({
-      title: 'Confirm Delete Attachment',
-      content: `Delete "${att.fileName}"? This action cannot be undone.`,
-      okText: 'Delete',
-      okButtonProps: { danger: true },
-      cancelText: 'Cancel',
-      onOk: () => setAttachments((prev) => prev.filter((item) => item.fileId !== att.fileId)),
-    });
-  };
-
-  // 上传前校验文件类型与大小，通过后调用专门的附件上传接口，由后端落库并返回真实附件信息
-  const beforeUpload = (file: RcFile) => {
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      message.error('Only PDF / PNG / JPG formats are supported');
-      return Upload.LIST_IGNORE;
-    }
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      message.error(`File size must not exceed ${MAX_SIZE_MB}MB`);
-      return Upload.LIST_IGNORE;
-    }
-    uploadAttachment(taskId, file)
-      .then((attachment) => {
-        if (!attachment) {
-          message.error('Attachment upload returned no data');
-          return;
-        }
-        setAttachments((prev) => [...prev, attachment]);
-      })
-      .catch(() => {
-        message.error('Attachment upload failed');
-      });
-    return false;
-  };
 
   const handleDownload = (fileName: string) => {
     downloadAttachment(fileName)
@@ -183,104 +68,43 @@ const TaskForm = forwardRef<TaskFormRef, TaskFormProps>((props, ref) => {
 
   return (
     <>
-      <Form<CustomerFormModel>
-        form={form}
-        layout='horizontal'
-        labelAlign='left'
-        labelCol={{ span: 10 }}
-        wrapperCol={{ span: 14 }}
-        disabled={readonly}
-        scrollToFirstError
-        initialValues={initialForm}
-      >
-        {/* 客户信息与申报信息并列；initialValues 初始化，聚合响应变化时由 setFieldsValue 同步。 */}
-        <Row gutter={16}>
-          {/* Left: 客户信息 */}
-          <Col span={12}>
-            <Card title='Customer Info' size='small' className='h-full'>
-              <div className='space-y-3'>
-                <CiesFlag />
-                <CusCnName />
-                <CusEnName />
-                <CusBirthDate />
-                <CusId />
-                <CusPrmAct />
-                <SecurityAct />
-                <FundAct />
-                <CustodianAct />
-              </div>
-            </Card>
-          </Col>
+      <Card title='Task Information' size='small'>
+        <Form<TaskFormValues>
+          form={form}
+          layout='vertical'
+          disabled={readonly}
+          initialValues={initialValues}
+          scrollToFirstError
+        >
+          <TaskName />
+          <TaskDescription />
+        </Form>
+      </Card>
 
-          {/* Right: 申报信息（Our Ref / Your Ref 放最上面） */}
-          <Col span={12}>
-            <Card title='Declaration Info' size='small' className='h-full'>
-              <div className='space-y-3'>
-                <BankCusRef className={hl('bankCusRef')} />
-                <GovCusRef className={hl('govCusRef')} />
-                <PrincipleAppDate disabled={principleAppDateDisabled} className={hl('principleAppDate')} />
-                <PrincipleExpDate disableAutoCalculate={principleAppDateDisabled} className={hl('principleExpDate')} />
-                <FormalAppDate disabled={readonly || !!customerForm.formalAppDate} className={hl('formalAppDate')} />
-                <AnnualReportDate
-                  disabled={readonly || !!customerForm.annualReportDate}
-                  className={hl('annualReportDate')}
-                />
-                <TerminationDate className={hl('terminationDate')} />
-                <CapitalInvestFlag className={hl('capitalInvestFlag')} />
-                <InvestmentInterests
-                  currencies={getInterestCurrencies(customerForm, initialForm)}
-                  getFieldClassName={(fieldName, currency) => hl([fieldName, currency])}
-                />
-              </div>
-            </Card>
-          </Col>
-        </Row>
-      </Form>
-
-      {/* 附件区域独立于 Form，避免 readonly 禁用下载操作 */}
       <Card title='Attachments' size='small' className='mt-4'>
         <List
           size='small'
           dataSource={attachments}
-          renderItem={(att) => (
+          locale={{ emptyText: 'No attachments' }}
+          renderItem={(attachment) => (
             <List.Item
-              className='group rounded px-2 transition-colors hover:bg-gray-50'
               actions={[
                 <Button
                   key='download'
                   type='text'
                   size='small'
-                  danger
                   icon={<DownloadOutlined />}
-                  onClick={() => handleDownload(att.fileName)}
+                  onClick={() => handleDownload(attachment.fileName)}
                 />,
-                !readonly && (
-                  <Button
-                    key='del'
-                    type='text'
-                    size='small'
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => handleDelete(att)}
-                  />
-                ),
-              ].filter(Boolean)}
+              ]}
             >
-              {/* 图标+文件名合成一个 flex 子项，space-between 才会让名字始终靠左 */}
               <div className='flex items-center'>
                 <FileOutlined className='mr-2 text-gray-400' />
-                <span>{att.fileName}</span>
+                <span>{attachment.fileName}</span>
               </div>
             </List.Item>
           )}
         />
-        {!readonly && (
-          <Upload beforeUpload={beforeUpload} showUploadList={false}>
-            <Button icon={<UploadOutlined />} size='small' className='mt-2'>
-              Upload
-            </Button>
-          </Upload>
-        )}
       </Card>
     </>
   );

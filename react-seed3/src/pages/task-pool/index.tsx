@@ -10,41 +10,25 @@ import { RoutePath } from '@/router/routes';
 import useTaskList from '@/pages/task-pool/useTaskList';
 import ResizableTable from '@/components/ResizableTable';
 import {
-  TaskStatusFilter,
-  TaskCusIdFilter,
-  TaskIdFilter,
   TaskCreateTimeRangeFilter,
-  TaskTransactionTimeRangeFilter,
+  TaskIdFilter,
+  TaskNameFilter,
+  TaskStatusFilter,
   TaskUpdateTimeRangeFilter,
 } from '@/components/FormItem';
-import {
-  taskId,
-  tranType,
-  cusId,
-  customerName,
-  makerId,
-  checkerId,
-  createTime,
-  transactionTime,
-  updateTime,
-  taskStatus,
-} from '@/components/TableColumn/task';
+import { checkerId, createTime, makerId, taskId, taskName, taskStatus, updateTime } from '@/components/TableColumn/task';
 
 interface FilterValues {
   status: string;
   taskId: string;
-  cusId: string;
+  taskName: string;
   createTimeRange: [Moment, Moment] | null;
-  transactionTimeRange: [Moment, Moment] | null;
   updateTimeRange: [Moment, Moment] | null;
 }
 
-// 固定预留高度 279px：Content 上内边距 24px + 筛选表单 112px + 表单下间距 16px
-// + 表头 55px + 分页器 48px（上间距 16px、控件高度 32px）+ Content 下内边距 24px。
-// 使用 vh 可在首帧直接确定表体高度。
 const TABLE_BODY_HEIGHT = 'calc(100vh - 279px)';
 
-export default function TaskPool() {
+const TaskPool = () => {
   const navigate = useNavigate();
   const {
     tasks,
@@ -56,45 +40,38 @@ export default function TaskPool() {
     setPageSize,
     changeStatus,
     changeTaskId,
-    changeCusId,
+    changeTaskName,
     changeCreateTimeRange,
-    changeTransactionTimeRange,
     changeUpdateTimeRange,
     changeSort,
     reset,
   } = useTaskList();
   const [form] = Form.useForm();
 
-  // 文本筛选防抖：输入即时回显由 Form 受控管理，300ms 后才把值推给查询
-  const { run: applyCusId, cancel: cancelApplyCusId } = useDebounceFn((value: string) => changeCusId(value), {
-    wait: 300,
-  });
   const { run: applyTaskId, cancel: cancelApplyTaskId } = useDebounceFn((value: string) => changeTaskId(value), {
     wait: 300,
   });
+  const { run: applyTaskName, cancel: cancelApplyTaskName } = useDebounceFn((value: string) => changeTaskName(value), {
+    wait: 300,
+  });
 
-  // 状态/日期即时查询，文本输入走防抖；字段变更由 Form 统一分发
   const handleValuesChange = (changed: Partial<FilterValues>) => {
     if ('status' in changed) changeStatus(changed.status ?? '');
     if ('createTimeRange' in changed) {
       const range = changed.createTimeRange;
       changeCreateTimeRange(range?.[0] && range?.[1] ? range : null);
     }
-    if ('transactionTimeRange' in changed) {
-      const range = changed.transactionTimeRange;
-      changeTransactionTimeRange(range?.[0] && range?.[1] ? range : null);
-    }
     if ('updateTimeRange' in changed) {
       const range = changed.updateTimeRange;
       changeUpdateTimeRange(range?.[0] && range?.[1] ? range : null);
     }
     if ('taskId' in changed) applyTaskId(changed.taskId ?? '');
-    if ('cusId' in changed) applyCusId(changed.cusId ?? '');
+    if ('taskName' in changed) applyTaskName(changed.taskName ?? '');
   };
 
   const handleReset = () => {
-    cancelApplyCusId();
     cancelApplyTaskId();
+    cancelApplyTaskName();
     form.resetFields();
     reset();
   };
@@ -102,10 +79,10 @@ export default function TaskPool() {
   const handleTableChange: NonNullable<TableProps<Task>['onChange']> = (...args) => {
     const [, , sorter, extra] = args;
     if (extra.action !== 'sort') return;
+
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
     const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
-    const isSortableField =
-      field === 'taskId' || field === 'createTime' || field === 'transactionTime' || field === 'updateTime';
+    const isSortableField = field === 'taskId' || field === 'taskName' || field === 'createTime' || field === 'updateTime';
     let order: TaskSortOrder | undefined;
     if (activeSorter.order === 'ascend') {
       order = 'asc';
@@ -120,13 +97,10 @@ export default function TaskPool() {
 
   const columns: ColumnsType<Task> = [
     taskId,
-    tranType,
-    cusId,
-    customerName,
+    taskName,
     makerId,
     checkerId,
     createTime,
-    transactionTime,
     updateTime,
     taskStatus,
     {
@@ -159,16 +133,13 @@ export default function TaskPool() {
             <TaskIdFilter />
           </Col>
           <Col span={8} className='mb-2'>
-            <TaskCusIdFilter />
+            <TaskNameFilter />
           </Col>
           <Col span={8} className='mb-2'>
             <TaskStatusFilter />
           </Col>
           <Col span={8}>
             <TaskCreateTimeRangeFilter />
-          </Col>
-          <Col span={8}>
-            <TaskTransactionTimeRangeFilter />
           </Col>
           <Col span={8}>
             <TaskUpdateTimeRangeFilter />
@@ -198,13 +169,15 @@ export default function TaskPool() {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (count) => `Total ${count}`,
-            onChange: (nextCurrent, ps) => {
+            onChange: (nextCurrent, nextPageSize) => {
               setCurrent(nextCurrent);
-              setPageSize(ps);
+              setPageSize(nextPageSize);
             },
           }}
         />
       </div>
     </div>
   );
-}
+};
+
+export default TaskPool;
