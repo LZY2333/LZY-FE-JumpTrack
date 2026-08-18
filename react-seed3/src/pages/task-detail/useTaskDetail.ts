@@ -1,36 +1,30 @@
 import { useEffect, useState } from 'react';
-import { getTaskPageData } from '@/api/tasks';
-import type { TaskPageData } from '@/api/tasks';
+import { getTask } from '@/api/tasks';
+import type { Task } from '@/types';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 
-/** 明细页通过聚合接口一次获取任务和附件元数据。 */
-export default function useTaskDetail(taskId?: string) {
-  const [taskPageData, setTaskPageData] = useState<TaskPageData | null>(null);
+/** 获取任务详情，并统一接入全局加载状态。 */
+const useTaskDetail = (taskId?: string) => {
+  const [task, setTask] = useState<Task | null>(null);
 
   useEffect(() => {
     if (!taskId) {
-      setTaskPageData(null);
+      setTask(null);
       return;
     }
 
     let active = true;
     const stopGlobalLoading = startGlobalLoading();
+    setTask(null);
 
-    setTaskPageData(null);
-
-    getTaskPageData(taskId)
+    getTask(taskId)
       .then((data) => {
-        if (active) {
-          setTaskPageData(data ?? null);
-        }
+        if (active) setTask(data ?? null);
       })
       .catch(() => {
-        // 请求层负责全局错误提示，详情页保持无数据的只读表单。
-        if (active) setTaskPageData(null);
+        if (active) setTask(null);
       })
-      .finally(() => {
-        stopGlobalLoading();
-      });
+      .finally(stopGlobalLoading);
 
     return () => {
       active = false;
@@ -38,8 +32,7 @@ export default function useTaskDetail(taskId?: string) {
     };
   }, [taskId]);
 
-  return {
-    task: taskPageData?.task ?? null,
-    attachments: taskPageData?.attachments ?? [],
-  };
-}
+  return task;
+};
+
+export default useTaskDetail;

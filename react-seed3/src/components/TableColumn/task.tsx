@@ -1,5 +1,5 @@
 import { Tag } from 'antd';
-import type { ColumnType } from 'antd/es/table';
+import type { TableColumnType } from 'antd';
 import type { Task } from '@/types';
 import { TaskStatus } from '@/types/enums';
 
@@ -19,9 +19,9 @@ const STATUS_LABEL: Record<TaskStatus, string> = {
   [TaskStatus.Cancelled]: 'Cancelled',
 };
 
-export const taskId: ColumnType<Task> = { title: 'Task ID', dataIndex: 'taskId', width: 160, sorter: true };
+export const taskId: TableColumnType<Task> = { title: 'Task ID', dataIndex: 'taskId', width: 160, sorter: true };
 
-export const taskName: ColumnType<Task> = {
+export const taskName: TableColumnType<Task> = {
   title: 'Task Name',
   dataIndex: 'taskName',
   width: 240,
@@ -29,37 +29,41 @@ export const taskName: ColumnType<Task> = {
   ellipsis: true,
 };
 
-export const makerId: ColumnType<Task> = {
+export const makerId: TableColumnType<Task> = {
   title: 'Maker',
   dataIndex: 'makerId',
   width: 130,
   render: (value: string) => value || '-',
 };
 
-export const checkerId: ColumnType<Task> = {
+export const checkerId: TableColumnType<Task> = {
   title: 'Checker',
   dataIndex: 'checkerId',
   width: 130,
   render: (value: string) => value || '-',
 };
 
-export const createTime: ColumnType<Task> = {
+export const createTime: TableColumnType<Task> = {
   title: 'Created Date',
   dataIndex: 'createTime',
   width: 130,
   sorter: true,
 };
 
-export const updateTime: ColumnType<Task> = {
+export const updateTime: TableColumnType<Task> = {
   title: 'Updated Date',
   dataIndex: 'updateTime',
   width: 130,
   sorter: true,
 };
 
-export const taskStatus: ColumnType<Task> = {
+export const taskStatus: TableColumnType<Task> = {
   title: 'Status',
   dataIndex: 'taskStatus',
   width: 110,
-  render: (value: TaskStatus) => <Tag color={STATUS_COLOR[value]}>{STATUS_LABEL[value] || value}</Tag>,
+  render: (value: TaskStatus) => (
+    <Tag className='mr-0' color={STATUS_COLOR[value]}>
+      {STATUS_LABEL[value] || value}
+    </Tag>
+  ),
 };

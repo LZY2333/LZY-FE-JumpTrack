@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Layout } from 'antd';
 import { Outlet, matchRoutes, useLocation } from 'react-router-dom';
 import { routes } from '@/router/routes';
-import DevUserSwitcher from '@/components/DevUserSwitcher';
 
 const { Content } = Layout;
 
 const APP_TITLE = 'Workflow Management System';
+const DevUserSwitcher = __MOCK_ENABLED__ ? lazy(() => import('@/components/DevUserSwitcher')) : undefined;
 
 export default function MainLayout() {
   const location = useLocation();
@@ -19,7 +19,11 @@ export default function MainLayout() {
 
   return (
     <Layout className='h-screen overflow-hidden'>
-      <DevUserSwitcher />
+      {DevUserSwitcher && (
+        <Suspense fallback={null}>
+          <DevUserSwitcher />
+        </Suspense>
+      )}
       <Content className='min-h-0 overflow-x-hidden overflow-y-auto p-6'>
         <Outlet />
       </Content>

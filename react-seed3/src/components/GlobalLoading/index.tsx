@@ -1,20 +1,13 @@
 import { Spin } from 'antd';
 import useGlobalLoadingStore from '@/store/useGlobalLoadingStore';
+import useUserStore from '@/store/useUserStore';
+import { AuthStatus } from '@/types/enums';
 
-export default function GlobalLoading() {
-  const loading = useGlobalLoadingStore((state) => state.pendingCount > 0);
+const GlobalLoading = () => {
+  const taskLoading = useGlobalLoadingStore((state) => state.pendingCount > 0);
+  const authLoading = useUserStore((state) => state.authStatus === AuthStatus.Checking);
 
-  if (!loading) return null;
+  return <Spin fullscreen spinning={authLoading || taskLoading} size='large' tip='Loading' />;
+};
 
-  return (
-    <div
-      className='fixed inset-0 z-[2000] flex cursor-wait items-center justify-center'
-      role='status'
-      aria-label='Loading'
-    >
-      <div className='rounded-lg bg-white/90 px-6 py-5 shadow-lg'>
-        <Spin size='large' />
-      </div>
-    </div>
-  );
-}
+export default GlobalLoading;

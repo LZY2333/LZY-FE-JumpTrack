@@ -10,7 +10,8 @@
 | ---------- | --------------------------------- |
 | 框架       | React 18 + TypeScript             |
 | 构建       | Vite 4                            |
-| UI 组件    | Ant Design 4                      |
+| UI 组件    | Ant Design 5                      |
+| 日期处理   | Day.js                            |
 | 样式       | Tailwind CSS                      |
 | 状态管理   | Zustand                           |
 | 路由       | React Router v6                   |
@@ -54,13 +55,13 @@ import type { TaskDetail } from '@/types/task';
 
 ## 命名规范
 
-| 目录              | 文件夹命名                 | 文件命名                           |
-| ----------------- | -------------------------- | ---------------------------------- |
-| `src/pages/`      | kebab-case（`task-pool/`） | `index.tsx`                        |
-| `src/components/` | PascalCase（`TaskForm/`）  | `index.tsx`                        |
-| `src/store/`      | —                          | camelCase（`useUserStore.ts`）     |
-| `src/types/`      | —                          | camelCase（`task.ts`、`enums.ts`） |
-| `src/mock/`       | —                          | camelCase（`tasks.ts`）            |
+| 目录              | 文件夹命名                  | 文件命名                           |
+| ----------------- | --------------------------- | ---------------------------------- |
+| `src/pages/`      | kebab-case（`task-pool/`）  | `index.tsx`                        |
+| `src/components/` | PascalCase（`MainLayout/`） | `index.tsx`                        |
+| `src/store/`      | —                           | camelCase（`useUserStore.ts`）     |
+| `src/types/`      | —                           | camelCase（`task.ts`、`enums.ts`） |
+| `mock/`           | —                           | camelCase（`tasks.ts`）            |
 
 - `pages/` 用 kebab-case，与 URL 路径对应；`components/` 用 PascalCase，与组件名对应
 - 每个页面/组件文件夹的主文件统一为 `index.tsx`，import 路径无需写文件名
@@ -79,7 +80,8 @@ import type { TaskDetail } from '@/types/task';
 - 样式优先级：antd 内置 prop（`size`、`type` 等）> Tailwind 标准档位（`w-40`、`w-44`…）
 - 禁止内联样式 `style={{ ... }}`，禁止 Tailwind 任意值（`w-[180px]`），禁止自定义 CSS class
 - **例外**：`Select` 必须指定 Tailwind 标准宽度（如 `w-40`），防止因选项内容长度不同导致宽度抖动
-- Ant Design 全局主题覆盖写在 `src/index.css`，使用 CSS 变量（`--ant-primary-color` 等）或类选择器，不在组件内写覆盖
+- Ant Design 全局主题统一在根 `ConfigProvider` 的 `theme` 中使用 Design Token 配置，并开启 v5 CSS Variable 模式
+- 只有 Design Token 无法覆盖的样式才写入 `src/index.css`；引用主题值时使用 v5 CSS 变量（如 `--ant-color-primary`）
 
 ## 枚举规范
 
@@ -98,9 +100,9 @@ task.status === 'Pending Checker';
 
 ## 类型规范
 
-- 接口/类型定义放 `src/types/`
+- 跨页面共享类型放 `src/types/`，仅服务单个接口的请求/响应类型放在对应 `src/api/` 文件
 - 枚举放 `src/types/enums.ts`
-- Mock 数据的接口（如 `Task`）定义在对应 mock 文件中并 export，页面直接 `import type`
+- Mock 复用 `src/api/` 与 `src/types/` 中的接口类型，不重复定义业务模型
 
 ## FormItem 与 TableColumn 复用规范
 
@@ -124,6 +126,4 @@ task.status === 'Pending Checker';
 
 ## Mock
 
-- Mock 文件放 `mock/`；`npm run dev` 默认将 `/api` 代理到本地后端，`npm run dev:mock` 通过 `VITE_USE_MOCK=true` 启用 Mock
-- build 产物不包含 mock 逻辑
-- Mock 数组为模块单例，dev server 进程存活期间状态持久（适合模拟增删改）
+- Mock 文件放 `mock/`；`npm run dev` 通过反向代理连接配置的后端，`npm run dev:mock` 启用本地 Mock

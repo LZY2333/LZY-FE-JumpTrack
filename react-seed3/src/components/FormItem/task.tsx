@@ -1,7 +1,7 @@
 import { DatePicker, Form, Input, Select } from 'antd';
 import type { FormItemProps } from 'antd';
-import type { Moment } from 'moment';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import { TaskStatus } from '@/types/enums';
 
 type TaskFilterFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
@@ -16,12 +16,21 @@ const STATUS_OPTIONS = [
   { value: TaskStatus.Cancelled, label: 'Cancelled' },
 ];
 
-const disableFutureDate = (current: Moment) => current.isAfter(moment(), 'day');
-const RECENT_DATE_RANGES: Record<string, () => [Moment, Moment]> = {
-  'Past Week': () => [moment().subtract(1, 'week').startOf('day'), moment().endOf('day')],
-  'Past Month': () => [moment().subtract(1, 'month').startOf('day'), moment().endOf('day')],
-  'Past 3 Months': () => [moment().subtract(3, 'months').startOf('day'), moment().endOf('day')],
-};
+const disableFutureDate = (current: Dayjs) => current.isAfter(dayjs(), 'day');
+const RECENT_DATE_PRESETS = [
+  {
+    label: 'Past Week',
+    value: (): [Dayjs, Dayjs] => [dayjs().subtract(1, 'week').startOf('day'), dayjs().endOf('day')],
+  },
+  {
+    label: 'Past Month',
+    value: (): [Dayjs, Dayjs] => [dayjs().subtract(1, 'month').startOf('day'), dayjs().endOf('day')],
+  },
+  {
+    label: 'Past 3 Months',
+    value: (): [Dayjs, Dayjs] => [dayjs().subtract(3, 'months').startOf('day'), dayjs().endOf('day')],
+  },
+];
 
 export const TaskStatusFilter = (props: TaskFilterFormItemProps) => (
   <Form.Item {...props} name='status' label='Status'>
@@ -43,13 +52,13 @@ export const TaskNameFilter = (props: TaskFilterFormItemProps) => (
 
 export const TaskCreateTimeRangeFilter = (props: TaskFilterFormItemProps) => (
   <Form.Item {...props} name='createTimeRange' label='Created Date'>
-    <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} ranges={RECENT_DATE_RANGES} />
+    <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} presets={RECENT_DATE_PRESETS} />
   </Form.Item>
 );
 
 export const TaskUpdateTimeRangeFilter = (props: TaskFilterFormItemProps) => (
   <Form.Item {...props} name='updateTimeRange' label='Updated Date'>
-    <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} ranges={RECENT_DATE_RANGES} />
+    <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} presets={RECENT_DATE_PRESETS} />
   </Form.Item>
 );
 

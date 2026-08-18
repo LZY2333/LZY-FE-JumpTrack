@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { message } from 'antd';
+import { showErrorMessage } from '@/components/AntdAppBridge';
 import { ResCode } from '@/types/enums';
 
 // 后端响应体DTO
@@ -26,18 +26,13 @@ const request = axios.create({
   timeout: import.meta.env.DEV ? 0 : 20000,
 });
 
-// 统一响应拦截器：JSON 接口做业务 returnCode 判定并透传 ApiResult；
-// 文件下载接口返回原始 Blob，不使用统一响应体。
+// 统一响应拦截器：JSON 接口做业务 returnCode 判定并透传 ApiResult。
 request.interceptors.response.use(
   (response) => {
-    if (response.config.responseType === 'blob') {
-      return response;
-    }
-
     const apiResult = response.data as ApiResult;
     // 约定：非 SUC0000 即业务错误，统一提示并中断 Promise 链
     if (apiResult && apiResult.returnCode !== ResCode.Success) {
-      message.error(apiResult.errorMsg || '请求失败，请稍后重试');
+      showErrorMessage(apiResult.errorMsg || '请求失败，请稍后重试');
       return Promise.reject(new Error(apiResult.errorMsg || `业务错误 returnCode=${apiResult.returnCode}`));
     }
     // 拦截器实际把业务体透传给调用方；调用方用 request.get<T, ApiResult<T>> 指定解析类型。
@@ -49,7 +44,7 @@ request.interceptors.response.use(
     const msg = error?.response?.status
       ? `请求失败（${error.response.status}）`
       : error?.message || '网络异常，请稍后重试';
-    message.error(msg);
+    showErrorMessage(msg);
     return Promise.reject(error);
   },
 );
@@ -60,9 +55,5 @@ export const get = <T>(url: string, config?: AxiosRequestConfig) =>
 
 export const post = <T>(url: string, data?: unknown) =>
   request.post<ApiResult<T>, ApiResult<T>>(url, data).then((res) => res.body);
-
-/** 获取不使用 ApiResult 包装的二进制文件。 */
-export const getBlob = (url: string) =>
-  request.get<Blob, AxiosResponse<Blob>>(url, { responseType: 'blob' }).then((response) => response.data);
 
 export default request;

@@ -14,20 +14,6 @@ export interface User extends UserIdentity {
   roles: Role[];
 }
 
-/** 附件下载与列表展示共用的元数据。 */
-export interface Attachment {
-  /** 附件 ID */
-  fileId: string;
-  /** 附件文件名 */
-  fileName: string;
-  /** 附件大小，单位字节 */
-  fileSize: string;
-  /** 附件创建时间 */
-  createTime: string;
-  /** 附件创建用户 */
-  createUser: string;
-}
-
 /** 任务列表、详情与状态流转共用的基础模型。 */
 export interface Task {
   /** 任务流水号 */

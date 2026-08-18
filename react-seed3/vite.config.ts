@@ -4,10 +4,17 @@ import svgr from 'vite-plugin-svgr';
 import { viteMockServe } from 'vite-plugin-mock';
 import path from 'node:path';
 
+const API_PROXY_TARGETS: Record<string, string> = {
+  development: 'http://localhost:8080',
+  dev: 'https://dev-api.example.com',
+  st: 'https://st-api.example.com',
+  uat: 'https://uat-api.example.com',
+};
+
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), ['APP_']);
   const mockEnabled = command === 'serve' && process.env.MOCK_ENABLED === 'true';
-  const apiBaseUrl = env.APP_API_BASE_URL || '';
+  const apiProxyTarget = API_PROXY_TARGETS[mode] || API_PROXY_TARGETS.development;
 
   return {
     // 该配置会注入浏览，用于SRC内代码读取，不要暴露token
@@ -28,15 +35,8 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: { '@': path.resolve(__dirname, 'src') },
     },
-    css: {
-      preprocessorOptions: {
-        less: {
-          javascriptEnabled: true, // antd4 主题 less 必需；运行时主题由 ConfigProvider.config 统一生成 CSS 变量
-        },
-      },
-    },
     build: {
-      outDir: path.resolve(__dirname, 'dist', env.APP_OUTPUT_PATH || ''),
+      outDir: path.resolve(__dirname, 'dist', env.APP_OUT_PATH || ''),
     },
     server: {
       port: 5173,
@@ -45,7 +45,7 @@ export default defineConfig(({ command, mode }) => {
         ? undefined
         : {
             '/api': {
-              target: apiBaseUrl.startsWith('//') ? `https:${apiBaseUrl}` : apiBaseUrl,
+              target: apiProxyTarget,
               changeOrigin: true,
             },
           },

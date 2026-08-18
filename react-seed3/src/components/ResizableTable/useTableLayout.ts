@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { HTMLAttributes } from 'react';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
+import type { TableColumnsType, TableColumnType } from 'antd';
 import type { ResizableHeaderCellProps } from './ResizableTitle';
 import { resolveFluidColumnId } from './resizableTableUtil';
 
@@ -88,7 +88,7 @@ const readLayout = (storageKey?: string): TableLayout => {
 };
 
 /** 解析列的稳定 id，优先级为 key → dataIndex → index。 */
-const getColumnId = <T>(column: ColumnType<T>, index: number) => {
+const getColumnId = <T>(column: TableColumnType<T>, index: number) => {
   // 显式 key 最稳定，优先用于持久化。
   if (column.key !== null && column.key !== undefined) return String(column.key);
   // 数组 dataIndex 转为路径字符串，支持嵌套字段列。
@@ -126,16 +126,16 @@ const removeLayout = (storageKey?: string) => {
 };
 
 /** 将源码列定义与用户布局合并，向表格输出最终列和全部布局操作。 */
-export default function useTableLayout<T>(sourceColumns: ColumnsType<T>, storageKey?: string) {
+export default function useTableLayout<T>(sourceColumns: TableColumnsType<T>, storageKey?: string) {
   // storedLayout 只保存用户布局，不复制任何行数据或业务状态。
   const [storedLayout, setStoredLayout] = useState<TableLayout>(() => readLayout(storageKey));
 
   // key/dataIndex 是列宽、顺序和显隐跨版本持久化时唯一可信的稳定标识。
   const source = useMemo(() => {
     // columnsById 让后续排序、显隐和列宽操作都走同一索引。
-    const columnsById = new Map<string, ColumnType<T>>();
+    const columnsById = new Map<string, TableColumnType<T>>();
     sourceColumns.forEach((column, index) => {
-      columnsById.set(getColumnId(column as ColumnType<T>, index), column as ColumnType<T>);
+      columnsById.set(getColumnId(column as TableColumnType<T>, index), column as TableColumnType<T>);
     });
     return { columnsById, ids: Array.from(columnsById.keys()) };
   }, [sourceColumns]);
@@ -219,7 +219,7 @@ export default function useTableLayout<T>(sourceColumns: ColumnsType<T>, storage
     );
     let tableWidth = 0;
 
-    const columns: ColumnsType<T> = visibleIds.map((colId) => {
+    const columns: TableColumnsType<T> = visibleIds.map((colId) => {
       // layout.order 已经过迁移，当前 id 必然能从索引中取到列定义。
       const column = source.columnsById.get(colId)!;
       // 宽度基值参与 scroll.x 计算；流体列渲染时不声明 width，由它独占剩余空间。
@@ -249,7 +249,7 @@ export default function useTableLayout<T>(sourceColumns: ColumnsType<T>, storage
               : undefined,
             onColumnReorder: reorderColumn,
           } as ResizableHeaderCellProps as HTMLAttributes<HTMLElement>),
-      } as ColumnType<T>;
+      } as TableColumnType<T>;
     });
 
     return { columns, tableWidth };

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { Moment } from 'moment';
+import type { Dayjs } from 'dayjs';
 import type { Task } from '@/types';
 import { getTasks } from '@/api/tasks';
 import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
@@ -28,8 +28,8 @@ const useTaskList = () => {
   const [status, setStatus] = useState('');
   const [taskId, setTaskId] = useState('');
   const [taskName, setTaskName] = useState('');
-  const [createTimeRange, setCreateTimeRange] = useState<[Moment, Moment] | null>(null);
-  const [updateTimeRange, setUpdateTimeRange] = useState<[Moment, Moment] | null>(null);
+  const [createTimeRange, setCreateTimeRange] = useState<[Dayjs, Dayjs] | null>(null);
+  const [updateTimeRange, setUpdateTimeRange] = useState<[Dayjs, Dayjs] | null>(null);
   const [sortField, setSortField] = useState<TaskSortField>();
   const [sortOrder, setSortOrder] = useState<TaskSortOrder>();
   const refreshVersion = useTaskPoolStore((state) => state.refreshVersion);
@@ -54,7 +54,18 @@ const useTaskList = () => {
         setTotal(result?.total ?? 0);
       })
       .finally(() => setLoading(false));
-  }, [current, pageSize, status, taskId, taskName, createTimeRange, updateTimeRange, sortField, sortOrder, refreshVersion]);
+  }, [
+    current,
+    pageSize,
+    status,
+    taskId,
+    taskName,
+    createTimeRange,
+    updateTimeRange,
+    sortField,
+    sortOrder,
+    refreshVersion,
+  ]);
 
   const changeStatus = useCallback((value: string) => {
     setStatus(value);
@@ -68,11 +79,11 @@ const useTaskList = () => {
     setTaskName(value);
     setCurrent(1);
   }, []);
-  const changeCreateTimeRange = useCallback((value: [Moment, Moment] | null) => {
+  const changeCreateTimeRange = useCallback((value: [Dayjs, Dayjs] | null) => {
     setCreateTimeRange(value);
     setCurrent(1);
   }, []);
-  const changeUpdateTimeRange = useCallback((value: [Moment, Moment] | null) => {
+  const changeUpdateTimeRange = useCallback((value: [Dayjs, Dayjs] | null) => {
     setUpdateTimeRange(value);
     setCurrent(1);
   }, []);

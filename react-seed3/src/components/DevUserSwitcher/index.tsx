@@ -17,7 +17,7 @@ export default function DevUserSwitcher() {
   const draggingRef = useRef(false);
 
   useEffect(() => {
-    if (!__MOCK_ENABLED__ || user) return;
+    if (user) return;
     setUser(MOCK_USERS[0]);
   }, [setUser, user]);
 
@@ -43,11 +43,6 @@ export default function DevUserSwitcher() {
     draggingRef.current = false;
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
-
-  // 仅本地 Mock 模式展示，代理真实后端或生产构建时不渲染。
-  if (!__MOCK_ENABLED__) {
-    return null;
-  }
 
   const sideClass = pos.side === 'right' ? 'right-0 flex-row-reverse' : 'left-0 flex-row';
 

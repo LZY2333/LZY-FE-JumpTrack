@@ -1,14 +1,14 @@
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Button, Input, Modal, Tooltip, Typography, message } from 'antd';
+import { Alert, App, Button, Form, Input, Tooltip, Typography } from 'antd';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, RollbackOutlined, SendOutlined } from '@ant-design/icons';
-import TaskForm, { type TaskFormRef } from '@/components/TaskForm';
+import { TaskDescription, TaskName } from '@/components/FormItem';
 import useTaskDetail from '@/pages/task-detail/useTaskDetail';
 import { RoutePath } from '@/router/routes';
 import useTaskPoolStore from '@/store/useTaskPoolStore';
 import useUserStore from '@/store/useUserStore';
 import { TaskStatus } from '@/types/enums';
-import { approveTask, cancelTask, returnTask, submitTask } from '@/api/tasks';
+import { updateTask } from '@/api/tasks';
 import { getTaskAccess } from '@/pages/task-detail/taskAccess';
 
 enum TaskAction {
@@ -18,15 +18,30 @@ enum TaskAction {
   Approve,
 }
 
+interface TaskFormValues {
+  taskName: string;
+  description: string;
+}
+
 const TaskDetail = () => {
+  // 使用 antd App 上下文实例，使消息和确认框继承根 ConfigProvider；不要改回脱离上下文的静态 API。
+  const { message, modal } = App.useApp();
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const requestTaskPoolRefresh = useTaskPoolStore((state) => state.requestRefresh);
-  const { task, attachments } = useTaskDetail(taskId);
+  const task = useTaskDetail(taskId);
   const [activeAction, setActiveAction] = useState<TaskAction | null>(null);
-  const formRef = useRef<TaskFormRef>(null);
+  const [form] = Form.useForm<TaskFormValues>();
   const access = getTaskAccess(task, user);
+
+  useEffect(() => {
+    if (!task) {
+      form.resetFields();
+      return;
+    }
+    form.setFieldsValue({ taskName: task.taskName, description: task.description });
+  }, [form, task]);
 
   const runAction = (action: TaskAction, request: () => Promise<unknown>, successMessage: string) => {
     setActiveAction(action);
@@ -42,8 +57,8 @@ const TaskDetail = () => {
   const handleSubmit = () => {
     if (!access.canEdit || activeAction !== null) return;
 
-    formRef.current!.validate().then((payload) => {
-      Modal.confirm({
+    form.validateFields().then((values) => {
+      modal.confirm({
         title: 'Confirm Submit',
         content: 'The task will move to Checker review after submission. Continue?',
         okText: 'Submit',
@@ -52,7 +67,13 @@ const TaskDetail = () => {
         onOk: () =>
           runAction(
             TaskAction.Submit,
-            () => submitTask(task!.taskId, payload, access.userId),
+            () =>
+              updateTask(task!.taskId, {
+                taskStatus: TaskStatus.Submitted,
+                operatorId: access.userId,
+                taskName: values.taskName,
+                description: values.description ?? '',
+              }),
             'Submitted successfully',
           ),
       });
@@ -62,13 +83,22 @@ const TaskDetail = () => {
   const handleCancel = () => {
     if (!access.canEdit || activeAction !== null) return;
 
-    Modal.confirm({
+    modal.confirm({
       title: 'Confirm Cancel',
       content: 'The task will become Cancelled and cannot be recovered. Continue?',
       okText: 'Confirm',
       cancelText: 'Cancel',
       autoFocusButton: null,
-      onOk: () => runAction(TaskAction.Cancel, () => cancelTask(task!.taskId, access.userId), 'Cancelled successfully'),
+      onOk: () =>
+        runAction(
+          TaskAction.Cancel,
+          () =>
+            updateTask(task!.taskId, {
+              taskStatus: TaskStatus.Cancelled,
+              operatorId: access.userId,
+            }),
+          'Cancelled successfully',
+        ),
     });
   };
 
@@ -76,7 +106,7 @@ const TaskDetail = () => {
     if (!access.canReview || activeAction !== null) return;
 
     let taskRemark = '';
-    Modal.confirm({
+    modal.confirm({
       title: 'Confirm Return',
       content: (
         <div>
@@ -106,7 +136,12 @@ const TaskDetail = () => {
 
         return runAction(
           TaskAction.Return,
-          () => returnTask(task!.taskId, access.userId, trimmedTaskRemark),
+          () =>
+            updateTask(task!.taskId, {
+              taskStatus: TaskStatus.Returned,
+              operatorId: access.userId,
+              taskRemark: trimmedTaskRemark,
+            }),
           'Returned successfully',
         );
       },
@@ -116,13 +151,22 @@ const TaskDetail = () => {
   const handleApprove = () => {
     if (!access.canReview || activeAction !== null) return;
 
-    Modal.confirm({
+    modal.confirm({
       title: 'Confirm Approve',
       content: 'The task will become Approved. Continue?',
       okText: 'Approve',
       cancelText: 'Cancel',
       autoFocusButton: null,
-      onOk: () => runAction(TaskAction.Approve, () => approveTask(task!.taskId, access.userId), 'Approved successfully'),
+      onOk: () =>
+        runAction(
+          TaskAction.Approve,
+          () =>
+            updateTask(task!.taskId, {
+              taskStatus: TaskStatus.Approved,
+              operatorId: access.userId,
+            }),
+          'Approved successfully',
+        ),
     });
   };
 
@@ -130,7 +174,12 @@ const TaskDetail = () => {
     <div>
       <div className='mb-4 flex items-center justify-between'>
         <div className='flex items-center gap-3'>
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(RoutePath.TaskPool)}>
+          <Button
+            color='primary'
+            variant='solid'
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(RoutePath.TaskPool)}
+          >
             Back
           </Button>
           <Typography.Text strong>Task {task?.taskId ?? taskId}</Typography.Text>
@@ -141,7 +190,8 @@ const TaskDetail = () => {
               <Tooltip title={access.editDisabledReason}>
                 <span className={access.canEdit ? undefined : 'cursor-default'}>
                   <Button
-                    danger
+                    color='danger'
+                    variant='solid'
                     icon={<CloseOutlined />}
                     loading={activeAction === TaskAction.Cancel}
                     disabled={!access.canEdit || activeAction !== null}
@@ -154,7 +204,8 @@ const TaskDetail = () => {
               <Tooltip title={access.editDisabledReason}>
                 <span className={access.canEdit ? undefined : 'cursor-default'}>
                   <Button
-                    type='primary'
+                    color='primary'
+                    variant='solid'
                     icon={<SendOutlined />}
                     loading={activeAction === TaskAction.Submit}
                     disabled={!access.canEdit || activeAction !== null}
@@ -171,6 +222,8 @@ const TaskDetail = () => {
               <Tooltip title={access.reviewDisabledReason}>
                 <span className={access.canReview ? undefined : 'cursor-default'}>
                   <Button
+                    color='primary'
+                    variant='solid'
                     icon={<RollbackOutlined />}
                     loading={activeAction === TaskAction.Return}
                     disabled={!access.canReview || activeAction !== null}
@@ -183,7 +236,8 @@ const TaskDetail = () => {
               <Tooltip title={access.reviewDisabledReason} placement='bottomRight' autoAdjustOverflow>
                 <span className={access.canReview ? undefined : 'cursor-default'}>
                   <Button
-                    type='primary'
+                    color='primary'
+                    variant='solid'
                     icon={<CheckOutlined />}
                     loading={activeAction === TaskAction.Approve}
                     disabled={!access.canReview || activeAction !== null}
@@ -208,13 +262,10 @@ const TaskDetail = () => {
         />
       )}
 
-      <TaskForm
-        key={task?.taskId ?? taskId}
-        ref={formRef}
-        initialValues={task ? { taskName: task.taskName, description: task.description } : undefined}
-        attachments={attachments}
-        readonly={!access.canEdit}
-      />
+      <Form<TaskFormValues> form={form} layout='vertical' disabled={!access.canEdit} scrollToFirstError>
+        <TaskName />
+        <TaskDescription />
+      </Form>
     </div>
   );
 };

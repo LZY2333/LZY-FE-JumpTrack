@@ -31,7 +31,7 @@ export default function ColumnSettings({ columns, onToggle, onReset }: ColumnSet
         ))}
       </Space>
       <div className='flex justify-end border-t border-gray-100 pt-1'>
-        <Button type='text' size='small' className='app-text-button px-0' onClick={onReset}>
+        <Button color='primary' variant='text' size='small' className='px-0' onClick={onReset}>
           Reset
         </Button>
       </div>
@@ -41,7 +41,7 @@ export default function ColumnSettings({ columns, onToggle, onReset }: ColumnSet
   return (
     <Popover content={content} trigger='click' placement='bottomRight'>
       <Tooltip title='Columns'>
-        <Button shape='circle' icon={<SettingOutlined />} size='small' />
+        <Button color='primary' variant='solid' shape='circle' icon={<SettingOutlined />} size='small' />
       </Tooltip>
     </Popover>
   );

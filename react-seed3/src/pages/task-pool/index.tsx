@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { Button, Col, Form, Row } from 'antd';
-import type { ColumnsType, TableProps } from 'antd/es/table';
-import type { Moment } from 'moment';
+import type { TableColumnsType, TableProps } from 'antd';
+import type { Dayjs } from 'dayjs';
 import { useDebounceFn } from 'ahooks';
 import type { Task } from '@/types';
 import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
@@ -16,14 +16,14 @@ import {
   TaskStatusFilter,
   TaskUpdateTimeRangeFilter,
 } from '@/components/FormItem';
-import { checkerId, createTime, makerId, taskId, taskName, taskStatus, updateTime } from '@/components/TableColumn/task';
+import { checkerId, createTime, makerId, taskId, taskName, taskStatus, updateTime } from '@/components/TableColumn';
 
 interface FilterValues {
   status: string;
   taskId: string;
   taskName: string;
-  createTimeRange: [Moment, Moment] | null;
-  updateTimeRange: [Moment, Moment] | null;
+  createTimeRange: [Dayjs, Dayjs] | null;
+  updateTimeRange: [Dayjs, Dayjs] | null;
 }
 
 const TABLE_BODY_HEIGHT = 'calc(100vh - 279px)';
@@ -46,7 +46,7 @@ const TaskPool = () => {
     changeSort,
     reset,
   } = useTaskList();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FilterValues>();
 
   const { run: applyTaskId, cancel: cancelApplyTaskId } = useDebounceFn((value: string) => changeTaskId(value), {
     wait: 300,
@@ -82,7 +82,8 @@ const TaskPool = () => {
 
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
     const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
-    const isSortableField = field === 'taskId' || field === 'taskName' || field === 'createTime' || field === 'updateTime';
+    const isSortableField =
+      field === 'taskId' || field === 'taskName' || field === 'createTime' || field === 'updateTime';
     let order: TaskSortOrder | undefined;
     if (activeSorter.order === 'ascend') {
       order = 'asc';
@@ -95,7 +96,7 @@ const TaskPool = () => {
   const openDetail = (record: Task) =>
     navigate(generatePath(RoutePath.TaskDetail, { taskId: encodeURIComponent(record.taskId) }));
 
-  const columns: ColumnsType<Task> = [
+  const columns: TableColumnsType<Task> = [
     taskId,
     taskName,
     makerId,
@@ -109,7 +110,7 @@ const TaskPool = () => {
       width: 90,
       fixed: 'right',
       render: (_, record) => (
-        <Button type='text' size='small' className='app-text-button' onClick={() => openDetail(record)}>
+        <Button color='primary' variant='text' size='small' onClick={() => openDetail(record)}>
           View
         </Button>
       ),
@@ -145,7 +146,9 @@ const TaskPool = () => {
             <TaskUpdateTimeRangeFilter />
           </Col>
           <Col span={24} className='mt-2 flex items-center justify-end'>
-            <Button onClick={handleReset}>Reset</Button>
+            <Button color='primary' variant='solid' onClick={handleReset}>
+              Reset
+            </Button>
           </Col>
         </Row>
       </Form>

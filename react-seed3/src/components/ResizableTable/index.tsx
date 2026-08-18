@@ -1,5 +1,5 @@
 import { Table } from 'antd';
-import type { ColumnsType, TableProps } from 'antd/es/table';
+import type { TableColumnsType, TableProps } from 'antd';
 import ColumnSettings from './ColumnSettings';
 import ResizableTitle from './ResizableTitle';
 import useTableLayout from './useTableLayout';
@@ -11,7 +11,7 @@ type ResizableTableScroll<T> = Omit<NonNullable<TableProps<T>['scroll']>, 'x'>;
 
 interface ResizableTableProps<T> extends Omit<TableProps<T>, 'columns' | 'components' | 'scroll' | 'tableLayout'> {
   /** 调用方提供的原始列定义，布局层不会修改其对象。 */
-  columns: ColumnsType<T>;
+  columns: TableColumnsType<T>;
   /** 配置后持久化列宽、顺序和显隐；缺省时只保存于内存。 */
   storageKey?: string;
   /** 横向布局由组件统一管理；调用方只配置纵向滚动。 */
@@ -37,7 +37,7 @@ export default function ResizableTable<T extends object>(props: ResizableTablePr
         pagination={pagination === false ? false : { size: 'small', ...pagination }}
         scroll={{ ...scroll, x: layout.tableWidth }}
         tableLayout='fixed'
-        showSorterTooltip={false}
+        showSorterTooltip={{ target: 'sorter-icon' }}
       />
     </div>
   );

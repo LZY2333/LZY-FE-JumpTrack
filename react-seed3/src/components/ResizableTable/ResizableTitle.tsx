@@ -7,7 +7,6 @@ import type {
   PointerEvent as ReactPointerEvent,
   ReactNode,
 } from 'react';
-import { Tooltip } from 'antd';
 import cn from 'classnames';
 import { resolveResizedWidth, resolveResizeStartWidth } from './resizableTableUtil';
 
@@ -49,7 +48,7 @@ interface HeaderActions {
 
 // 自定义 MIME 只接受本表格列拖拽，避免响应页面中的其他拖拽源。
 const DRAG_MIME = 'application/x-resizable-table-column';
-// 以下 class 由 antd 4 sorter 生成，是表头组件原生扩展点中的节点标识。
+// 以下 class 由 antd 5 sorter 生成，是表头组件原生扩展点中的节点标识。
 const TITLE_CLASS = 'ant-table-column-title';
 const SORTER_CLASS = 'ant-table-column-sorter';
 const SORTABLE_CELL_CLASS = 'ant-table-column-has-sorters';
@@ -57,7 +56,7 @@ const SORTABLE_CELL_CLASS = 'ant-table-column-has-sorters';
 /** 精确匹配 class token，避免 includes 误命中相似类名。 */
 const hasClass = (className: string | undefined, target: string) => className?.split(/\s+/).includes(target) ?? false;
 
-// antd 4 将 Title 和 sorter 注入到 children 中：Title 负责原生列拖拽，排序回调只下放给三角形。
+// antd 5 将 Title 和 sorter 注入到 children 中：Title 负责原生列拖拽，排序回调只下放给三角形。
 const renderHeaderContent = (children: ReactNode, actions: HeaderActions): ReactNode =>
   Children.map(children, (child) => {
     // 文本等非 ReactElement 节点无需注入事件，保持原样。
@@ -83,7 +82,7 @@ const renderHeaderContent = (children: ReactNode, actions: HeaderActions): React
 
     // sorter 三角形独占排序点击、键盘触发和 Tooltip。
     if (hasClass(child.props.className, SORTER_CLASS)) {
-      // 提升层级以越过 antd 4 sorter 容器的全表头伪元素。
+      // 提升层级以越过 sorter 容器的全表头伪元素。
       const sorter = cloneElement(child, {
         className: cn(child.props.className, 'relative z-10 cursor-pointer'),
         role: 'button',
@@ -100,7 +99,7 @@ const renderHeaderContent = (children: ReactNode, actions: HeaderActions): React
           actions.onSortByKeyboard?.(event);
         },
       });
-      return <Tooltip title={actions.sortTooltip}>{sorter}</Tooltip>;
+      return sorter;
     }
 
     // 叶子节点没有可继续处理的子树，直接返回。
@@ -223,7 +222,7 @@ export default function ResizableTitle(props: ResizableHeaderCellProps) {
     if (sourceId && columnId) onColumnReorder?.(sourceId, columnId);
   };
 
-  // Tooltip 文案跟随 antd 注入的 aria-sort，保持与下一次排序动作一致。
+  // 无障碍文案跟随 antd 注入的 aria-sort，保持与下一次排序动作一致。
   let sortTooltip = 'Click to sort ascending';
   // 已升序时，下一次点击进入降序。
   if (cellProps['aria-sort'] === 'ascending') sortTooltip = 'Click to sort descending';
