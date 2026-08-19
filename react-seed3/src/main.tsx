@@ -6,6 +6,7 @@ import useUserStore from '@/store/useUserStore';
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Root element not found');
 
-createRoot(rootElement).render(<App />);
+const root = createRoot(rootElement);
+root.render(<App />);
 
 if (!__MOCK_ENABLED__) void useUserStore.getState().login().catch(() => undefined);

@@ -10,6 +10,7 @@ import useUserStore from '@/store/useUserStore';
 import { TaskStatus } from '@/types/enums';
 import { updateTask } from '@/api/tasks';
 import { getTaskAccess } from '@/pages/task-detail/taskAccess';
+import { omitEmptyValues } from '@/utils/formUtil';
 
 enum TaskAction {
   Submit,
@@ -71,8 +72,10 @@ const TaskDetail = () => {
               updateTask(task!.taskId, {
                 taskStatus: TaskStatus.Submitted,
                 operatorId: access.userId,
-                taskName: values.taskName,
-                description: values.description ?? '',
+                ...omitEmptyValues({
+                  taskName: values.taskName.trim(),
+                  description: values.description?.trim(),
+                }),
               }),
             'Submitted successfully',
           ),

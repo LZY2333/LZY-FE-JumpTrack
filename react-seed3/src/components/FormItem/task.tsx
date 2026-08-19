@@ -33,31 +33,31 @@ const RECENT_DATE_PRESETS = [
 ];
 
 export const TaskStatusFilter = (props: TaskFilterFormItemProps) => (
-  <Form.Item {...props} name='status' label='Status'>
+  <Form.Item {...props} name='status' label='Status' initialValue=''>
     <Select className='w-full' options={STATUS_OPTIONS} />
   </Form.Item>
 );
 
 export const TaskIdFilter = (props: TaskFilterFormItemProps) => (
-  <Form.Item {...props} name='taskId' label='Task ID'>
+  <Form.Item {...props} name='taskId' label='Task ID' initialValue=''>
     <Input allowClear placeholder='Filter by Task ID' />
   </Form.Item>
 );
 
 export const TaskNameFilter = (props: TaskFilterFormItemProps) => (
-  <Form.Item {...props} name='taskName' label='Task Name'>
+  <Form.Item {...props} name='taskName' label='Task Name' initialValue=''>
     <Input allowClear placeholder='Filter by Task Name' />
   </Form.Item>
 );
 
 export const TaskCreateTimeRangeFilter = (props: TaskFilterFormItemProps) => (
-  <Form.Item {...props} name='createTimeRange' label='Created Date'>
+  <Form.Item {...props} name='createTimeRange' label='Created Date' initialValue={null}>
     <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} presets={RECENT_DATE_PRESETS} />
   </Form.Item>
 );
 
 export const TaskUpdateTimeRangeFilter = (props: TaskFilterFormItemProps) => (
-  <Form.Item {...props} name='updateTimeRange' label='Updated Date'>
+  <Form.Item {...props} name='updateTimeRange' label='Updated Date' initialValue={null}>
     <DatePicker.RangePicker className='w-full' disabledDate={disableFutureDate} presets={RECENT_DATE_PRESETS} />
   </Form.Item>
 );
@@ -67,6 +67,7 @@ export const TaskName = (props: TaskDetailFormItemProps) => (
     {...props}
     name='taskName'
     label='Task Name'
+    initialValue=''
     rules={[{ required: true, message: 'Please enter task name' }]}
   >
     <Input maxLength={100} showCount />
@@ -74,7 +75,7 @@ export const TaskName = (props: TaskDetailFormItemProps) => (
 );
 
 export const TaskDescription = (props: TaskDetailFormItemProps) => (
-  <Form.Item {...props} name='description' label='Description'>
+  <Form.Item {...props} name='description' label='Description' initialValue=''>
     <Input.TextArea rows={5} maxLength={500} showCount />
   </Form.Item>
 );

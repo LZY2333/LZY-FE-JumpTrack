@@ -4,6 +4,7 @@ import type { Task } from '@/types';
 import { getTasks } from '@/api/tasks';
 import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
 import useTaskPoolStore from '@/store/useTaskPoolStore';
+import { omitEmptyValues } from '@/utils/formUtil';
 
 const PAGE_SIZE_STORAGE_KEY = 'task-pool-page-size';
 const DEFAULT_PAGE_SIZE = 10;
@@ -36,19 +37,23 @@ const useTaskList = () => {
 
   useEffect(() => {
     setLoading(true);
-    getTasks({
+    const query = {
       current,
       pageSize,
-      status: status || undefined,
-      taskId: taskId.trim() || undefined,
-      taskName: taskName.trim() || undefined,
-      createTimeFrom: createTimeRange?.[0].format('YYYY-MM-DD'),
-      createTimeTo: createTimeRange?.[1].format('YYYY-MM-DD'),
-      updateTimeFrom: updateTimeRange?.[0].format('YYYY-MM-DD'),
-      updateTimeTo: updateTimeRange?.[1].format('YYYY-MM-DD'),
-      sortField,
-      sortOrder,
-    })
+      ...omitEmptyValues({
+        status,
+        taskId: taskId.trim(),
+        taskName: taskName.trim(),
+        createTimeFrom: createTimeRange?.[0].format('YYYY-MM-DD'),
+        createTimeTo: createTimeRange?.[1].format('YYYY-MM-DD'),
+        updateTimeFrom: updateTimeRange?.[0].format('YYYY-MM-DD'),
+        updateTimeTo: updateTimeRange?.[1].format('YYYY-MM-DD'),
+        sortField,
+        sortOrder,
+      }),
+    };
+
+    getTasks(query)
       .then((result) => {
         setTasks(result?.list ?? []);
         setTotal(result?.total ?? 0);

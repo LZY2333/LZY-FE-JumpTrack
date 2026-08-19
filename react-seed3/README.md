@@ -2,6 +2,8 @@
 
 React 18 + TypeScript + Tailwind + Vite 的开箱即用的React工程基座。
 
+AI友好型项目，前期基础必须打牢，AI会模仿项目的写法，差的只会更差。
+
 ## 快速开始
 
 ```bash
@@ -64,6 +66,8 @@ Pending / Returned -- Maker 取消 --> Cancelled
 
 组件高内聚 该字段的 所有业务规则, 例如: 校验rule 初始值 下拉Options Normalize 字段联动等等。
 
+组件 必须兜底空态展示，Page 只负责“有数据就填进去”，不需要让表单不报错而构造空 model。
+
 组件 可提供Props参数以启用该FormItem组件不同状态。
 
 组件 可通过form.watch 与依赖字段联动，同时保持解耦。
@@ -96,6 +100,14 @@ const columns = [taskId, taskName, taskStatus];
 - type规范: 跨页面共享模型放在 `src/types/`, 状态 常量 字面量 放在 `src/types/enums.ts`
 - 功能实现 优先使用或顺应 组件原生特性
 - 样式优先级: 组件原生属性 > Tailwind标准类
+- if 括号内的判断条件 应基于业务语义 尽量收敛到单点，禁止随意叠加判断条件
+- 派生值只读不改(去修改原始值),减少派生变量的使用(优先使用原始值变量)。
+
+## 表单空值规范
+
+- 控件自己兜底空态，页面不构造空 model。
+- Input/TextArea 用 ''，Select 按业务含义选 '' 或 undefined，日期范围用 null。
+- 提交前根据业务需要，统一过滤 '' / null / undefined，不要直接原样提交表单值。
 
 ## DevUserSwitcher
 

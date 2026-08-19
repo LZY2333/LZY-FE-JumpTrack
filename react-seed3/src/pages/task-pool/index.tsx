@@ -126,7 +126,6 @@ const TaskPool = () => {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         className='mb-4'
-        initialValues={{ status: '' }}
         onValuesChange={handleValuesChange}
       >
         <Row gutter={16}>
