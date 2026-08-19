@@ -79,7 +79,7 @@ export function CusBirthDate(props: CustomerFormItemProps) {
 
 export function CusId(props: CustomerFormItemProps) {
   return (
-    <Form.Item {...props} name='cusId' label='Customer ID (CIF)'>
+    <Form.Item {...props} name='cusId' label='CIF'>
       <Input disabled />
     </Form.Item>
   );

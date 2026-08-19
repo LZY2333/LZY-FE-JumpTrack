@@ -136,6 +136,11 @@ const fileNameFromUrl = (url: string): string => lastPathSegment(url);
 
 const findTask = (taskId: string) => mockTasks.find((task) => task.taskId === taskId);
 
+const digitsOf = (value: string): string => value.replace(/\D/g, '');
+
+const cusPrmActOf = (task: Task): string =>
+  digitsOf(mockCustomers.find((customer) => customer.cusId === task.cusId)?.cusPrmAct ?? '');
+
 const findAttachment = (fileName: string) => {
   for (const attachments of mockAttachmentsByTaskId.values()) {
     const attachment = attachments.find((item) => item.fileName === fileName);
@@ -155,6 +160,8 @@ interface TasksQuery {
   status?: string;
   taskId?: string;
   cusId?: string;
+  cusPrmAct?: string;
+  cusEnName?: string;
   createTimeFrom?: string;
   createTimeTo?: string;
   transactionTimeFrom?: string;
@@ -176,6 +183,8 @@ export default [
         status,
         taskId,
         cusId,
+        cusPrmAct,
+        cusEnName,
         createTimeFrom,
         createTimeTo,
         transactionTimeFrom,
@@ -194,6 +203,14 @@ export default [
       if (cusId) {
         const keyword = cusId.trim().toLowerCase();
         list = list.filter((task) => task.cusId.toLowerCase().includes(keyword));
+      }
+      if (cusPrmAct) {
+        const keyword = cusPrmAct.trim();
+        list = list.filter((task) => cusPrmActOf(task).includes(keyword));
+      }
+      if (cusEnName) {
+        const keyword = cusEnName.trim().toLowerCase();
+        list = list.filter((task) => task.cusEnName.toLowerCase().includes(keyword));
       }
       if (createTimeFrom) list = list.filter((task) => task.createTime.slice(0, 10) >= createTimeFrom);
       if (createTimeTo) list = list.filter((task) => task.createTime.slice(0, 10) <= createTimeTo);

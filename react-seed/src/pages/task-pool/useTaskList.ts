@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { Moment } from 'moment';
+import type { Dayjs } from 'dayjs';
 import type { Task } from '@/types';
 import { getTasks } from '@/api/tasks';
 import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
 import useTaskPoolStore from '@/store/useTaskPoolStore';
+import { omitEmptyValues } from '@/utils/formUtil';
 
 const PAGE_SIZE_STORAGE_KEY = 'task-pool-page-size';
 const DEFAULT_PAGE_SIZE = 10;
@@ -18,9 +19,8 @@ const readPageSize = () => {
   }
 };
 
-// 任务池的查询状态与数据：分页 + 筛选 + 排序，任一查询条件变化都回到第一页。
-// 文本输入的防抖由 task-pool 页面负责，这里只接收最终查询值。
-export default function useTaskList() {
+/** 任务池的查询状态与数据：分页、筛选、排序与跨页刷新。 */
+const useTaskList = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -28,38 +28,35 @@ export default function useTaskList() {
   const [pageSize, setPageSizeState] = useState(readPageSize);
   const [status, setStatus] = useState('');
   const [taskId, setTaskId] = useState('');
-  const [cusId, setCusId] = useState('');
-  const [cusPrmAct, setCusPrmAct] = useState('');
-  const [cusEnName, setCusEnName] = useState('');
-  const [createTimeRange, setCreateTimeRange] = useState<[Moment, Moment] | null>(null);
-  const [transactionTimeRange, setTransactionTimeRange] = useState<[Moment, Moment] | null>(null);
-  const [updateTimeRange, setUpdateTimeRange] = useState<[Moment, Moment] | null>(null);
+  const [taskName, setTaskName] = useState('');
+  const [createTimeRange, setCreateTimeRange] = useState<[Dayjs, Dayjs] | null>(null);
+  const [updateTimeRange, setUpdateTimeRange] = useState<[Dayjs, Dayjs] | null>(null);
   const [sortField, setSortField] = useState<TaskSortField>();
   const [sortOrder, setSortOrder] = useState<TaskSortOrder>();
   const refreshVersion = useTaskPoolStore((state) => state.refreshVersion);
 
   useEffect(() => {
     setLoading(true);
-    getTasks({
+    const query = {
       current,
       pageSize,
-      status: status || undefined,
-      taskId: taskId.trim() || undefined,
-      cusId: cusId.trim() || undefined,
-      cusPrmAct: cusPrmAct.trim() || undefined,
-      cusEnName: cusEnName.trim() || undefined,
-      createTimeFrom: createTimeRange?.[0].format('YYYY-MM-DD'),
-      createTimeTo: createTimeRange?.[1].format('YYYY-MM-DD'),
-      transactionTimeFrom: transactionTimeRange?.[0].format('YYYY-MM-DD'),
-      transactionTimeTo: transactionTimeRange?.[1].format('YYYY-MM-DD'),
-      updateTimeFrom: updateTimeRange?.[0].format('YYYY-MM-DD'),
-      updateTimeTo: updateTimeRange?.[1].format('YYYY-MM-DD'),
-      sortField,
-      sortOrder,
-    })
-      .then((res) => {
-        setTasks(res?.list ?? []);
-        setTotal(res?.total ?? 0);
+      ...omitEmptyValues({
+        status,
+        taskId: taskId.trim(),
+        taskName: taskName.trim(),
+        createTimeFrom: createTimeRange?.[0].format('YYYY-MM-DD'),
+        createTimeTo: createTimeRange?.[1].format('YYYY-MM-DD'),
+        updateTimeFrom: updateTimeRange?.[0].format('YYYY-MM-DD'),
+        updateTimeTo: updateTimeRange?.[1].format('YYYY-MM-DD'),
+        sortField,
+        sortOrder,
+      }),
+    };
+
+    getTasks(query)
+      .then((result) => {
+        setTasks(result?.list ?? []);
+        setTotal(result?.total ?? 0);
       })
       .finally(() => setLoading(false));
   }, [
@@ -67,11 +64,8 @@ export default function useTaskList() {
     pageSize,
     status,
     taskId,
-    cusId,
-    cusPrmAct,
-    cusEnName,
+    taskName,
     createTimeRange,
-    transactionTimeRange,
     updateTimeRange,
     sortField,
     sortOrder,
@@ -82,31 +76,19 @@ export default function useTaskList() {
     setStatus(value);
     setCurrent(1);
   }, []);
-  const changeCusId = useCallback((value: string) => {
-    setCusId(value);
-    setCurrent(1);
-  }, []);
   const changeTaskId = useCallback((value: string) => {
     setTaskId(value);
     setCurrent(1);
   }, []);
-  const changeCusPrmAct = useCallback((value: string) => {
-    setCusPrmAct(value);
+  const changeTaskName = useCallback((value: string) => {
+    setTaskName(value);
     setCurrent(1);
   }, []);
-  const changeCusEnName = useCallback((value: string) => {
-    setCusEnName(value);
-    setCurrent(1);
-  }, []);
-  const changeCreateTimeRange = useCallback((value: [Moment, Moment] | null) => {
+  const changeCreateTimeRange = useCallback((value: [Dayjs, Dayjs] | null) => {
     setCreateTimeRange(value);
     setCurrent(1);
   }, []);
-  const changeTransactionTimeRange = useCallback((value: [Moment, Moment] | null) => {
-    setTransactionTimeRange(value);
-    setCurrent(1);
-  }, []);
-  const changeUpdateTimeRange = useCallback((value: [Moment, Moment] | null) => {
+  const changeUpdateTimeRange = useCallback((value: [Dayjs, Dayjs] | null) => {
     setUpdateTimeRange(value);
     setCurrent(1);
   }, []);
@@ -123,11 +105,8 @@ export default function useTaskList() {
   const reset = useCallback(() => {
     setStatus('');
     setTaskId('');
-    setCusId('');
-    setCusPrmAct('');
-    setCusEnName('');
+    setTaskName('');
     setCreateTimeRange(null);
-    setTransactionTimeRange(null);
     setUpdateTimeRange(null);
     setSortField(undefined);
     setSortOrder(undefined);
@@ -140,25 +119,16 @@ export default function useTaskList() {
     loading,
     current,
     pageSize,
-    status,
-    taskId,
-    cusId,
-    cusPrmAct,
-    cusEnName,
-    createTimeRange,
-    transactionTimeRange,
-    updateTimeRange,
     setCurrent,
     setPageSize,
     changeStatus,
     changeTaskId,
-    changeCusId,
-    changeCusPrmAct,
-    changeCusEnName,
+    changeTaskName,
     changeCreateTimeRange,
-    changeTransactionTimeRange,
     changeUpdateTimeRange,
     changeSort,
     reset,
   };
-}
+};
+
+export default useTaskList;

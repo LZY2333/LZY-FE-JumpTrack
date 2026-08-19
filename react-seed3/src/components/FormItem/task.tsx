@@ -27,6 +27,10 @@ const RECENT_DATE_RANGES: Record<string, () => [Moment, Moment]> = {
   'Past Year': () => [moment().subtract(1, 'year').startOf('day'), moment().endOf('day')],
 };
 
+const keepAlphanumeric = (value?: string) => (value ?? '').replace(/[^A-Za-z0-9]/g, '');
+const keepDigits = (value?: string) => (value ?? '').replace(/\D/g, '');
+const keepEnglish = (value?: string) => (value ?? '').replace(/[^A-Za-z ]/g, '');
+
 export function TaskStatusFilter(props: TaskFilterFormItemProps) {
   return (
     <Form.Item {...props} name='status' label='Status'>
@@ -37,16 +41,32 @@ export function TaskStatusFilter(props: TaskFilterFormItemProps) {
 
 export function TaskCusIdFilter(props: TaskFilterFormItemProps) {
   return (
-    <Form.Item {...props} name='cusId' label='Customer ID'>
-      <Input allowClear placeholder='Filter by Customer ID (CIF)' />
+    <Form.Item {...props} name='cusId' label='CIF' normalize={keepDigits}>
+      <Input allowClear maxLength={10} placeholder='Filter by CIF' />
     </Form.Item>
   );
 }
 
 export function TaskIdFilter(props: TaskFilterFormItemProps) {
   return (
-    <Form.Item {...props} name='taskId' label='Task ID'>
-      <Input allowClear placeholder='Filter by Task ID' />
+    <Form.Item {...props} name='taskId' label='Reference No' normalize={keepAlphanumeric}>
+      <Input allowClear maxLength={30} placeholder='Filter by Reference No' />
+    </Form.Item>
+  );
+}
+
+export function TaskCusPrmActFilter(props: TaskFilterFormItemProps) {
+  return (
+    <Form.Item {...props} name='cusPrmAct' label='Account No' normalize={keepDigits}>
+      <Input allowClear maxLength={30} placeholder='Filter by Account No' />
+    </Form.Item>
+  );
+}
+
+export function TaskCusEnNameFilter(props: TaskFilterFormItemProps) {
+  return (
+    <Form.Item {...props} name='cusEnName' label='Customer Name' normalize={keepEnglish}>
+      <Input allowClear maxLength={30} placeholder='Filter by Customer Name' />
     </Form.Item>
   );
 }

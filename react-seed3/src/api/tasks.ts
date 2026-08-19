@@ -11,6 +11,8 @@ export interface TaskQuery {
   status?: string;
   taskId?: string;
   cusId?: string;
+  cusPrmAct?: string;
+  cusEnName?: string;
   createTimeFrom?: string;
   createTimeTo?: string;
   transactionTimeFrom?: string;

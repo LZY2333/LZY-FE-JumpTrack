@@ -27,7 +27,7 @@ const TRAN_TYPE_LABEL: Record<TranType, string> = {
   [TranType.InformationAmendment]: 'NCIES Information Amendment',
 };
 
-export const taskId: ColumnType<Task> = { title: 'Task ID', dataIndex: 'taskId', width: 100, sorter: true };
+export const taskId: ColumnType<Task> = { title: 'Reference No', dataIndex: 'taskId', width: 160, sorter: true };
 
 export const tranType: ColumnType<Task> = {
   title: 'Task Name',
@@ -35,7 +35,7 @@ export const tranType: ColumnType<Task> = {
   render: (tranType: TranType) => TRAN_TYPE_LABEL[tranType] || tranType,
 };
 
-export const cusId: ColumnType<Task> = { title: 'Customer ID (CIF)', dataIndex: 'cusId' };
+export const cusId: ColumnType<Task> = { title: 'CIF', dataIndex: 'cusId', witdh: 150 };
 
 export const customerName: ColumnType<Task> = {
   title: 'Customer Name',
