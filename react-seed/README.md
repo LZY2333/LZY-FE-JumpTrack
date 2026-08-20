@@ -51,64 +51,6 @@ Pending / Returned -- Maker 取消 --> Cancelled
 | `src/types/`                           | 放置跨层共享的模型与枚举；                                                       |
 | `mock/`                                | 提供本地接口和可变示例数据，仅开发服务器使用，并复用正式接口类型                                               |
 
-## 【表单字段】统一封装 FormItem 组件
-根本目的，字段业务规则高内聚，高复用，字段与字段之间 字段与Form之间 低耦合。
-
-调用方 直接放置字段或组合列，只负责布局、顺序和页面上下文，不负责字段规则。
-
-每层职责清晰，降低心智负担。
-
-### 存放位置 `src/components/FormItem/`
-内部业务领域拆分文件，例如任务字段放在 `task.tsx`。
-
-### 组件规范
-组件名 建议直接使用 后端字段名
-
-组件高内聚 该字段的 所有业务规则, 例如: 校验rule 初始值 下拉Options Normalize 字段联动等等。
-
-组件 必须兜底空态展示，Page 只负责“有数据就填进去”，不需要让表单不报错而构造空 model。
-
-组件 可提供Props参数以启用该FormItem组件不同状态。
-
-组件 可通过form.watch 与依赖字段联动，同时保持解耦。
-
-## 【表格列】统一封装 TableColumn 对象
-和 FormItem组件 同理
-
-### 存放位置 `src/components/TableColumn/`
-按业务领域拆分文件
-
-### FormItem 及 TableColumn 最终使用效果
-
-```tsx
-import { TaskDescription, TaskName } from '@/components/FormItem';
-import { taskId, taskName, taskStatus } from '@/components/TableColumn';
-
-<Form>
-  <TaskName />
-  <TaskDescription />
-</Form>;
-
-const columns = [taskId, taskName, taskStatus];
-```
-
-## 其他规范约定
-
-- 一个复杂Page组件内 必含至少一个Hooks 一个Util, Page控制UI(JSX)，Hooks内编排业务逻辑，不同业务逻辑拆分不同Hooks
-- 抽离公共逻辑优先使用: Util工具函数(纯函数) > Hooks(使用到了hooks) > 组件(使用到了JSX)
-- 内聚: 不要所有抽象都往公共文件夹丢，与当前组件强相关，或仅在当前组件使用 的 变量 type Util Hooks 子组件，都内聚在当前组件
-- type规范: 跨页面共享模型放在 `src/types/`, 状态 常量 字面量 放在 `src/types/enums.ts`
-- 功能实现 优先使用或顺应 组件原生特性
-- 样式优先级: 组件原生属性 > Tailwind标准类
-- if 括号内的判断条件 应基于业务语义 尽量收敛到单点，禁止随意叠加判断条件
-- 派生值只读不改(去修改原始值),减少派生变量的使用(优先使用原始值变量)。
-
-## 表单空值规范
-
-- 控件自己兜底空态，页面不构造空 model。
-- Input/TextArea 用 ''，Select 按业务含义选 '' 或 undefined，日期范围用 null。
-- 提交前根据业务需要，统一过滤 '' / null / undefined，不要直接原样提交表单值。
-
 ## DevUserSwitcher
 
 `DevUserSwitcher` 使用条件动态导入。`__MOCK_ENABLED__` 由 Vite 在编译期替换，所有 `build:*` 命令下均为 `false`，Rollup 会删除该分支及动态导入模块，因此组件代码不会进入打包产物，而不是打包后再通过 Mock 标记隐藏。

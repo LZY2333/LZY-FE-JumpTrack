@@ -23,6 +23,7 @@
     "react/jsx-no-useless-fragment": "error",
     "no-nested-ternary": "error",
     "max-params": ["error", 3],
+    "complexity": ["error", 10],
     "eqeqeq": ["error", "always"],
     "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-explicit-any": "warn",
