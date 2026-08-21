@@ -12,6 +12,12 @@ body,
   overflow: hidden;
 }
 
+/* antd 5 不再提供全局文本选区样式，继续使用应用主题色保持与 antd 4 一致。 */
+::selection {
+  color: var(--ant-color-text-light-solid);
+  background: var(--ant-color-primary);
+}
+
 /* 页面滚动收敛到 Content，并预留纵向滚动槽位，避免弹层/表格重排时滚动条闪现导致抖动 */
 .ant-layout-content {
   scrollbar-gutter: stable;
@@ -26,17 +32,74 @@ body,
   height: var(--task-pool-table-body-height);
 }
 
-/* 空表格只隐藏横向滚动条，保留纵向滚动槽，确保有无数据时表头使用相同的列宽补偿。 */
+/* rc-table 会内联 overflow-x: auto；空表格只隐藏横向滚动条，纵向滚动槽仍保留。 */
 .task-pool-table-empty .ant-table-body {
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
-/* 全局去除表格分页器底部间距（上间距保留），贴紧页面容器底部，减少空白 */
-.ant-table-pagination.ant-pagination {
-  margin-bottom: 0;
+/* antd 5 的表格分页样式带 .ant-table-wrapper 上下文；增加 .ant-app 层级以稳定覆盖其底部间距。 */
+.ant-app .ant-table-wrapper .ant-table-pagination.ant-pagination {
+  margin-block-end: 0;
 }
 
-/* 全局取消 antd disabled 态的 not-allowed 光标，统一为默认箭头 */
+/* Table 未开放排序/筛选图标颜色 Token，统一直接使用主题色。 */
+.ant-app .ant-table-wrapper .ant-table-thead .ant-table-column-sorter,
+.ant-app .ant-table-wrapper .ant-table-thead .ant-table-filter-trigger {
+  color: var(--ant-color-primary);
+}
+
+.ant-app .ant-table-wrapper .ant-table-thead .ant-table-column-sorters:hover .ant-table-column-sorter,
+.ant-app .ant-table-wrapper .ant-table-thead .ant-table-filter-trigger:hover {
+  color: var(--ant-color-primary-hover);
+}
+
+.ant-app .ant-table-wrapper .ant-table-thead .ant-table-column-sorter-up.active,
+.ant-app .ant-table-wrapper .ant-table-thead .ant-table-column-sorter-down.active,
+.ant-app .ant-table-wrapper .ant-table-thead .ant-table-filter-trigger.active {
+  color: var(--ant-color-primary-active);
+}
+
+.ant-app .ant-table-wrapper .ant-table-thead .ant-table-column-sorter:focus-visible {
+  border-radius: var(--ant-border-radius-sm);
+  outline: 2px solid var(--ant-color-primary);
+  outline-offset: 2px;
+}
+
+/* 分页器使用主题色悬浮态，避免页码和前后翻页按钮出现默认灰色背景。 */
+.ant-app .ant-pagination .ant-pagination-item:not(.ant-pagination-item-active):hover {
+  background: var(--ant-color-primary-bg-hover);
+  border-color: var(--ant-color-primary-border-hover);
+}
+
+.ant-app .ant-pagination .ant-pagination-item:not(.ant-pagination-item-active):hover a,
+.ant-app .ant-pagination .ant-pagination-prev:not(.ant-pagination-disabled):hover .ant-pagination-item-link,
+.ant-app .ant-pagination .ant-pagination-next:not(.ant-pagination-disabled):hover .ant-pagination-item-link {
+  color: var(--ant-color-primary-text-hover);
+}
+
+.ant-app .ant-pagination .ant-pagination-prev:not(.ant-pagination-disabled):hover .ant-pagination-item-link,
+.ant-app .ant-pagination .ant-pagination-next:not(.ant-pagination-disabled):hover .ant-pagination-item-link {
+  background: var(--ant-color-primary-bg-hover);
+  border-color: var(--ant-color-primary-border-hover);
+}
+
+.ant-app .ant-pagination .ant-pagination-jump-prev:hover .ant-pagination-item-link-icon,
+.ant-app .ant-pagination .ant-pagination-jump-next:hover .ant-pagination-item-link-icon {
+  color: var(--ant-color-primary-hover);
+}
+
+/* total 与快速跳转文案默认继承中性文字色，这里统一到主题文字色。 */
+.ant-app .ant-pagination .ant-pagination-total-text,
+.ant-app .ant-pagination .ant-pagination-options,
+.ant-app .ant-pagination .ant-pagination-options-quick-jumper {
+  color: var(--ant-color-primary-text);
+}
+
+.ant-app .ant-pagination .ant-pagination-options-quick-jumper input {
+  color: var(--ant-color-primary-text);
+}
+
+/* antd 5 的 variant disabled 选择器优先级更高，统一强制使用默认箭头。 */
 .ant-input-disabled,
 .ant-input[disabled],
 .ant-input-affix-wrapper-disabled,
@@ -56,5 +119,5 @@ body,
 .ant-switch-disabled,
 .ant-btn[disabled],
 .ant-btn-disabled {
-  cursor: default;
+  cursor: default !important;
 }

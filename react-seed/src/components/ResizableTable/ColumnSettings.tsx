@@ -39,7 +39,7 @@ export default function ColumnSettings({ columns, onToggle, onReset }: ColumnSet
   );
 
   return (
-    <Popover content={content} trigger='click' placement='bottomRight'>
+    <Popover content={content} trigger='click' color='#fff1ef' placement='bottomRight'>
       <Tooltip title='Columns'>
         <Button color='primary' variant='solid' shape='circle' icon={<SettingOutlined />} size='small' />
       </Tooltip>

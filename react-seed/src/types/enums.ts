@@ -28,6 +28,8 @@ export enum ResCode {
   Success = 'SUC0000',
 }
 
+/** 任务列表支持排序的字段。 */
 export type TaskSortField = 'taskId' | 'taskName' | 'createTime' | 'updateTime';
 
-export type TaskSortOrder = 'asc' | 'desc';
+/** 任务列表沿用 Ant Design 的排序方向。 */
+export type TaskSortOrder = 'ascend' | 'descend';

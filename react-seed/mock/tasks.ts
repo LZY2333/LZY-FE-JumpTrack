@@ -1,4 +1,4 @@
-import type { TaskQuery, TaskSortField, TaskSortOrder, TaskUpdate } from '@/api/tasks';
+import type { TaskQuery, TaskUpdate } from '@/api/tasks';
 import type { Task } from '@/types';
 import { ResCode, TaskStatus } from '@/types/enums';
 
@@ -49,8 +49,6 @@ const notFound = (taskId: string) => ({
 interface MockTaskQuery extends Omit<TaskQuery, 'current' | 'pageSize'> {
   current?: number | string;
   pageSize?: number | string;
-  sortField?: TaskSortField;
-  sortOrder?: TaskSortOrder;
 }
 
 export default [

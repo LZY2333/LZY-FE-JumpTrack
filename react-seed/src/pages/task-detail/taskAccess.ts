@@ -14,19 +14,9 @@ export const getTaskAccess = (task?: Task | null, user?: User) => {
     };
   }
 
-  if (!user) {
-    return {
-      userId: null,
-      canEdit: false as const,
-      canReview: false as const,
-      editDisabledReason: 'User data is unavailable',
-      reviewDisabledReason: 'User data is unavailable',
-    };
-  }
-
-  const isMaker = user.roles.includes(Role.Maker);
-  const isChecker = user.roles.includes(Role.Checker);
-  const isSelfReview = !!task.makerId && task.makerId === user.userId;
+  const isMaker = user!.roles.includes(Role.Maker);
+  const isChecker = user!.roles.includes(Role.Checker);
+  const isSelfReview = !!task.makerId && task.makerId === user!.userId;
   let reviewDisabledReason = '';
   if (!isChecker) {
     reviewDisabledReason = 'Checker only';
@@ -35,7 +25,7 @@ export const getTaskAccess = (task?: Task | null, user?: User) => {
   }
 
   return {
-    userId: user.userId,
+    userId: user!.userId,
     canEdit: EDITABLE_STATUSES.includes(task.taskStatus) && isMaker,
     canReview: task.taskStatus === TaskStatus.Submitted && isChecker && !isSelfReview,
     editDisabledReason: !isMaker ? 'Maker only' : '',

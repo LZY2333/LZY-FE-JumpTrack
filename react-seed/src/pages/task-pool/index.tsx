@@ -2,12 +2,10 @@ import type { CSSProperties } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { Button, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import type { Dayjs } from 'dayjs';
-import { useDebounceFn } from 'ahooks';
 import type { Task } from '@/types';
-import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
+import type { TaskSortField, TaskSortOrder } from '@/types/enums';
 import { RoutePath } from '@/router/routes';
-import useTaskList from '@/pages/task-pool/useTaskList';
+import useTaskList, { PAGE_SIZE_OPTIONS, type TaskPoolFilterValues } from '@/pages/task-pool/useTaskList';
 import ResizableTable from '@/components/ResizableTable';
 import {
   TaskCreateTimeRangeFilter,
@@ -18,64 +16,29 @@ import {
 } from '@/components/FormItem';
 import { checkerId, createTime, makerId, taskId, taskName, taskStatus, updateTime } from '@/components/TableColumn';
 
-interface FilterValues {
-  status: string;
-  taskId: string;
-  taskName: string;
-  createTimeRange: [Dayjs, Dayjs] | null;
-  updateTimeRange: [Dayjs, Dayjs] | null;
-}
+// 279px = Content 上下内边距 48 + 筛选区 72 + 筛选区下边距 16
+// + 表头 55 + 分页器上边距 16 + small 分页器 24 + 安全余量 8。
+// 分页器下边距已由全局 antd 5 覆盖归零，因此不参与扣减。
+const TABLE_BODY_HEIGHT = 'calc(100vh - 239px)';
 
-const TABLE_BODY_HEIGHT = 'calc(100vh - 279px)';
-
+/** 任务池查询与列表页面。 */
 const TaskPool = () => {
   const navigate = useNavigate();
-  const {
-    tasks,
-    total,
-    loading,
-    current,
-    pageSize,
-    setCurrent,
-    setPageSize,
-    changeStatus,
-    changeTaskId,
-    changeTaskName,
-    changeCreateTimeRange,
-    changeUpdateTimeRange,
-    changeSort,
-    reset,
-  } = useTaskList();
-  const [form] = Form.useForm<FilterValues>();
+  const [form] = Form.useForm<TaskPoolFilterValues>();
+  const { tasks, total, loading, current, pageSize, setCurrent, setPageSize, setSort, query, reset } = useTaskList();
 
-  const { run: applyTaskId, cancel: cancelApplyTaskId } = useDebounceFn((value: string) => changeTaskId(value), {
-    wait: 300,
-  });
-  const { run: applyTaskName, cancel: cancelApplyTaskName } = useDebounceFn((value: string) => changeTaskName(value), {
-    wait: 300,
-  });
-
-  const handleValuesChange = (changed: Partial<FilterValues>) => {
-    if ('status' in changed) changeStatus(changed.status ?? '');
-    if ('createTimeRange' in changed) {
-      const range = changed.createTimeRange;
-      changeCreateTimeRange(range?.[0] && range?.[1] ? range : null);
-    }
-    if ('updateTimeRange' in changed) {
-      const range = changed.updateTimeRange;
-      changeUpdateTimeRange(range?.[0] && range?.[1] ? range : null);
-    }
-    if ('taskId' in changed) applyTaskId(changed.taskId ?? '');
-    if ('taskName' in changed) applyTaskName(changed.taskName ?? '');
+  /** 提交任务筛选条件。 */
+  const handleQuery = (values: TaskPoolFilterValues) => {
+    query(values);
   };
 
+  /** 重置筛选表单和列表查询状态。 */
   const handleReset = () => {
-    cancelApplyTaskId();
-    cancelApplyTaskName();
     form.resetFields();
     reset();
   };
 
+  /** 将表格排序状态转换为任务查询排序条件。 */
   const handleTableChange: NonNullable<TableProps<Task>['onChange']> = (...args) => {
     const [, , sorter, extra] = args;
     if (extra.action !== 'sort') return;
@@ -84,15 +47,11 @@ const TaskPool = () => {
     const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
     const isSortableField =
       field === 'taskId' || field === 'taskName' || field === 'createTime' || field === 'updateTime';
-    let order: TaskSortOrder | undefined;
-    if (activeSorter.order === 'ascend') {
-      order = 'asc';
-    } else if (activeSorter.order === 'descend') {
-      order = 'desc';
-    }
-    changeSort(isSortableField ? (field as TaskSortField) : undefined, order);
+    const order: TaskSortOrder | undefined = activeSorter.order ?? undefined;
+    setSort(isSortableField ? (field as TaskSortField) : undefined, order);
   };
 
+  /** 打开指定任务的详情页。 */
   const openDetail = (record: Task) =>
     navigate(generatePath(RoutePath.TaskDetail, { taskId: encodeURIComponent(record.taskId) }));
 
@@ -126,7 +85,7 @@ const TaskPool = () => {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         className='mb-4'
-        onValuesChange={handleValuesChange}
+        onFinish={handleQuery}
       >
         <Row gutter={16}>
           <Col span={8} className='mb-2'>
@@ -144,40 +103,41 @@ const TaskPool = () => {
           <Col span={8}>
             <TaskUpdateTimeRangeFilter />
           </Col>
-          <Col span={24} className='mt-2 flex items-center justify-end'>
-            <Button color='primary' variant='solid' onClick={handleReset}>
+          <Col span={8} className='ml-auto flex items-center justify-end'>
+            <Button htmlType='submit' color='primary' variant='solid'>
+              Query
+            </Button>
+            <Button htmlType='button' className='ml-2' onClick={handleReset}>
               Reset
             </Button>
           </Col>
         </Row>
       </Form>
-      <div
+      <ResizableTable<Task>
         className={`task-pool-table${tasks.length === 0 ? ' task-pool-table-empty' : ''}`}
         style={{ '--task-pool-table-body-height': TABLE_BODY_HEIGHT } as CSSProperties}
-      >
-        <ResizableTable<Task>
-          rowKey='taskId'
-          columns={columns}
-          storageKey='task-pool'
-          dataSource={tasks}
-          loading={loading}
-          onChange={handleTableChange}
-          onRow={(record) => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}
-          scroll={{ y: TABLE_BODY_HEIGHT }}
-          pagination={{
-            current,
-            pageSize,
-            total,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (count) => `Total ${count}`,
-            onChange: (nextCurrent, nextPageSize) => {
-              setCurrent(nextCurrent);
-              setPageSize(nextPageSize);
-            },
-          }}
-        />
-      </div>
+        rowKey='taskId'
+        columns={columns}
+        storageKey='task-pool'
+        dataSource={tasks}
+        loading={loading}
+        onChange={handleTableChange}
+        onRow={(record) => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}
+        scroll={{ y: TABLE_BODY_HEIGHT }}
+        pagination={{
+          current,
+          pageSize,
+          total,
+          pageSizeOptions: PAGE_SIZE_OPTIONS,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (count) => `Total ${count}`,
+          onChange: (nextCurrent, nextPageSize) => {
+            setCurrent(nextCurrent);
+            setPageSize(nextPageSize);
+          },
+        }}
+      />
     </div>
   );
 };

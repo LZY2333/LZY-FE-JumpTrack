@@ -193,7 +193,7 @@ const TaskDetail = () => {
               <Tooltip title={access.editDisabledReason}>
                 <span className={access.canEdit ? undefined : 'cursor-default'}>
                   <Button
-                    color='danger'
+                    color='primary'
                     variant='solid'
                     icon={<CloseOutlined />}
                     loading={activeAction === TaskAction.Cancel}
