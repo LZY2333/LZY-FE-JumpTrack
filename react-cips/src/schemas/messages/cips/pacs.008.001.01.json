@@ -1,0 +1,89 @@
+{
+  "type": "object",
+  "properties": {
+    "messageGrid": {
+      "type": "void",
+      "x-component": "FormGrid",
+      "x-component-props": {
+        "minColumns": 4,
+        "maxColumns": 4,
+        "columnGap": 12,
+        "rowGap": 0
+      },
+      "properties": {
+        "instructionId": {
+          "type": "string",
+          "title": "指令标识",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "transactionId": {
+          "type": "string",
+          "title": "交易标识",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "settlementMethod": {
+          "type": "string",
+          "title": "清算方式",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "chargeBearer": {
+          "type": "string",
+          "title": "费用承担方",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "settlementAmount": {
+          "type": "number",
+          "title": "清算金额",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "currency": {
+          "type": "string",
+          "title": "币种",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "debtorName": {
+          "type": "string",
+          "title": "付款人名称",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "debtorAccount": {
+          "type": "string",
+          "title": "付款人账号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "creditorName": {
+          "type": "string",
+          "title": "收款人名称",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "creditorAccount": {
+          "type": "string",
+          "title": "收款人账号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "purposeCode": {
+          "type": "string",
+          "title": "业务用途代码",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "remittanceInformation": {
+          "type": "string",
+          "title": "附言",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        }
+      }
+    }
+  }
+}

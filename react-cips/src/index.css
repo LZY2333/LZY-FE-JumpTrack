@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tailwind Preflight 已关闭，显式清除浏览器为 body 添加的 8px 默认外边距。 */
+body {
+  margin: 0;
+}
+
 /* 页面滚动统一由 Layout Content 承担，避免挂载到 body 的浮层撑大根滚动区域。 */
 html,
 body,
@@ -23,18 +28,40 @@ body,
   scrollbar-gutter: stable;
 }
 
-/* scroll.y is a max-height by default; keep the task table filled to the available page height. */
-.task-pool-table .ant-table-body {
-  height: var(--task-pool-table-body-height);
+/* scroll.y 默认是 max-height；让报文列表在可用页面高度内保持填充。 */
+.message-list-table .ant-table-body {
+  height: var(--message-list-table-body-height);
 }
 
-.task-pool-table .ant-table-placeholder {
-  height: var(--task-pool-table-body-height);
+.message-list-table .ant-table-placeholder {
+  height: var(--message-list-table-body-height);
 }
 
 /* rc-table 会内联 overflow-x: auto；空表格只隐藏横向滚动条，纵向滚动槽仍保留。 */
-.task-pool-table-empty .ant-table-body {
+.message-list-table-empty .ant-table-body {
   overflow-x: hidden !important;
+}
+
+/* 明细只读字段保持单行紧凑展示；悬浮查看全文，双击复制对应 label 或完整 value。 */
+.message-schema-form .ant-formily-item-label,
+.message-schema-form .ant-formily-item-control,
+.message-schema-form .ant-formily-item-control-content,
+.message-schema-form .ant-formily-item-control-content-component {
+  min-width: 0;
+}
+
+.message-schema-form .ant-formily-item-label-content,
+.message-schema-form .ant-formily-item-label-content > span,
+.message-schema-form .ant-formily-item-label-content label,
+.message-schema-form .ant-formily-item-control-content-component,
+.message-schema-form .ant-form-text,
+.message-schema-form .ant-form-text > .ant-space-item {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* antd 5 的表格分页样式带 .ant-table-wrapper 上下文；增加 .ant-app 层级以稳定覆盖其底部间距。 */

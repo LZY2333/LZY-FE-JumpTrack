@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "properties": {
+    "messageGrid": {
+      "type": "void",
+      "x-component": "FormGrid",
+      "x-component-props": {
+        "minColumns": 4,
+        "maxColumns": 4,
+        "columnGap": 12,
+        "rowGap": 0
+      },
+      "properties": {
+        "eventCode": {
+          "type": "string",
+          "title": "事件代码",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "eventName": {
+          "type": "string",
+          "title": "事件名称",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "eventSeverity": {
+          "type": "string",
+          "title": "事件级别",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "eventTime": {
+          "type": "string",
+          "title": "事件时间",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "sourceSystem": {
+          "type": "string",
+          "title": "来源系统",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "affectedService": {
+          "type": "string",
+          "title": "受影响服务",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "originalMessageId": {
+          "type": "string",
+          "title": "原报文标识号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "originalMessageType": {
+          "type": "string",
+          "title": "原报文类型",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "errorCode": {
+          "type": "string",
+          "title": "错误代码",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "errorReason": {
+          "type": "string",
+          "title": "错误原因",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "suggestedAction": {
+          "type": "string",
+          "title": "建议处理措施",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "acknowledgmentRequired": {
+          "type": "string",
+          "title": "是否需要确认",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "eventDescription": {
+          "type": "string",
+          "title": "事件描述",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        }
+      }
+    }
+  }
+}

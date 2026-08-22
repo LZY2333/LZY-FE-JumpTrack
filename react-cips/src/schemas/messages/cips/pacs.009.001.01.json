@@ -1,0 +1,89 @@
+{
+  "type": "object",
+  "properties": {
+    "messageGrid": {
+      "type": "void",
+      "x-component": "FormGrid",
+      "x-component-props": {
+        "minColumns": 4,
+        "maxColumns": 4,
+        "columnGap": 12,
+        "rowGap": 0
+      },
+      "properties": {
+        "instructionId": {
+          "type": "string",
+          "title": "指令标识",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "transactionId": {
+          "type": "string",
+          "title": "交易标识",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "settlementMethod": {
+          "type": "string",
+          "title": "清算方式",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "clearingSystemCode": {
+          "type": "string",
+          "title": "清算系统代码",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "settlementAmount": {
+          "type": "number",
+          "title": "清算金额",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "currency": {
+          "type": "string",
+          "title": "币种",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "interbankSettlementDate": {
+          "type": "string",
+          "title": "银行间清算日期",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "debtorAgent": {
+          "type": "string",
+          "title": "付款行",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "creditorAgent": {
+          "type": "string",
+          "title": "收款行",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "serviceLevelCode": {
+          "type": "string",
+          "title": "服务等级代码",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "localInstrumentCode": {
+          "type": "string",
+          "title": "本地工具代码",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "remittanceInformation": {
+          "type": "string",
+          "title": "附言",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        }
+      }
+    }
+  }
+}

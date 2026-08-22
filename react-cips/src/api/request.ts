@@ -29,6 +29,9 @@ const request = axios.create({
 // 统一响应拦截器：JSON 接口做业务 returnCode 判定并透传 ApiResult。
 request.interceptors.response.use(
   (response) => {
+    // 文件接口保留完整 AxiosResponse，供调用方读取 Blob 与 Content-Disposition。
+    if (response.config.responseType === 'blob') return response;
+
     const apiResult = response.data as ApiResult;
     // 约定：非 SUC0000 即业务错误，统一提示并中断 Promise 链
     if (apiResult && apiResult.returnCode !== ResCode.Success) {
@@ -56,5 +59,13 @@ export const get = <T>(url: string, config?: AxiosRequestConfig) =>
 
 export const post = <T>(url: string, data?: unknown) =>
   request.post<ApiResult<T>, ApiResult<T>>(url, data).then((res) => res.body);
+
+/** 下载类 GET 请求，不经过 JSON 业务体解包。 */
+export const getBlob = (url: string, config?: AxiosRequestConfig) =>
+  request.get<Blob>(url, { ...config, responseType: 'blob' });
+
+/** 下载类 POST 请求，不经过 JSON 业务体解包。 */
+export const postBlob = (url: string, data?: unknown, config?: AxiosRequestConfig) =>
+  request.post<Blob>(url, data, { ...config, responseType: 'blob' });
 
 export default request;

@@ -21,29 +21,30 @@
 
 ## 分层与目录职责
 
-| 路径/模块                              | 职责                                                                                                                  |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `src/main.tsx`                         | 创建 React 根节点并挂载 `App`；非 Mock 模式下触发用户登录初始化                                                       |
-| `src/App.tsx`                          | 统一挂载主题、Router、全局 Loading、Keep Alive 等应用级 Provider                                                       |
-| `src/router/routes.tsx`                | 作为路由配置的唯一来源，集中维护 `RoutePath`、页面组件、标题、角色和 Keep Alive；新增页面统一在此注册                   |
-| `src/router/index.tsx`                 | 根据路由配置生成路由结构，并统一接入默认 Layout、权限校验和兜底跳转                                                   |
-| `src/pages/`                           | 承载具体页面的业务流程、UI 组合和页面级状态，不放置跨页面通用能力                                                     |
-| `src/components/`                      | 放置跨页面复用的展示与交互组件，不承载具体页面流程                                                                    |
-| `src/components/MainLayout/index.tsx`  | 承载页面共用结构和行为，例如标题、公共工具及 `Outlet`；特殊页面结构应单独封装 Layout                                   |
-| `src/components/ResizableTable/`       | 统一封装列宽、拖拽、显隐、顺序和持久化；页面只提供业务列与表格数据                                                     |
-| `src/api/`                             | 按业务领域定义接口地址、请求参数和响应类型，不重复实现通用请求处理                                                    |
-| `src/api/request.ts`                   | 统一维护 Axios 实例、响应体解包以及业务错误和网络错误处理                                                             |
-| `src/store/useUserStore.ts`            | 统一负责登录、用户信息和权限管理；页面禁止自行解析 token 或直接调用用户接口                                           |
-| `src/store/useGlobalLoadingStore.ts`   | 统一管理支持并发计数的全局 Loading；业务侧通过 `startGlobalLoading()` 获取对应的清理函数                               |
-| `src/store/useTaskPoolStore.ts`        | 作为跨页面触发表格刷新的实现示例；其他表格按相同模式建立独立 Store                                                    |
-| `src/types/`                           | 放置跨页面共享的业务模型、枚举和常量类型                                                                              |
-| `mock/`                                | 提供仅供本地开发使用的接口和可变示例数据，并复用正式接口类型                                                          |
+| 路径/模块                             | 职责                                                                                                  |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `src/main.tsx`                        | 创建 React 根节点并挂载 `App`；非 Mock 模式下触发用户登录初始化                                       |
+| `src/App.tsx`                         | 统一挂载主题、Router、全局 Loading、Keep Alive 等应用级 Provider                                      |
+| `src/router/routes.tsx`               | 作为路由配置的唯一来源，集中维护 `RoutePath`、页面组件、标题、角色和 Keep Alive；新增页面统一在此注册 |
+| `src/router/index.tsx`                | 根据路由配置生成路由结构，并统一接入默认 Layout、权限校验和兜底跳转                                   |
+| `src/pages/`                          | 承载具体页面的业务流程、UI 组合和页面级状态，不放置跨页面通用能力                                     |
+| `src/components/`                     | 放置跨页面复用的展示与交互组件，不承载具体页面流程                                                    |
+| `src/components/MainLayout/index.tsx` | 承载页面共用结构和行为，例如标题、公共工具及 `Outlet`；特殊页面结构应单独封装 Layout                  |
+| `src/components/ResizableTable/`      | 统一封装列宽、拖拽、显隐、顺序和持久化；页面只提供业务列与表格数据                                    |
+| `src/api/`                            | 按业务领域定义接口地址、请求参数和响应类型，不重复实现通用请求处理                                    |
+| `src/api/request.ts`                  | 统一维护 Axios 实例、响应体解包以及业务错误和网络错误处理                                             |
+| `src/store/useUserStore.ts`           | 统一负责登录、用户信息和权限管理；页面禁止自行解析 token 或直接调用用户接口                           |
+| `src/store/useGlobalLoadingStore.ts`  | 统一管理支持并发计数的全局 Loading；业务侧通过 `startGlobalLoading()` 获取对应的清理函数              |
+| `src/store/useTaskPoolStore.ts`       | 作为跨页面触发表格刷新的实现示例；其他表格按相同模式建立独立 Store                                    |
+| `src/types/`                          | 放置跨页面共享的业务模型、枚举和常量类型                                                              |
+| `mock/`                               | 提供仅供本地开发使用的接口和可变示例数据，并复用正式接口类型                                          |
 
 ## 页面与组件职责
 
 - **复杂 Page 结构**：复杂 Page 组件必须至少包含一个 Hook 和一个 Util；Page 负责控制 UI（JSX），Hook 负责编排业务逻辑，不同业务逻辑拆分为不同 Hook
 - **逻辑抽离优先级**：优先使用 Util 工具函数（纯函数），其次是 Hook（使用 React Hooks），最后是组件（包含 JSX）
 - **就近内聚**：不要将所有抽象都放入公共文件夹；仅在当前组件使用或与其强相关的变量、type、Util、Hook 和子组件统一放在当前组件目录
+- **组件注释**：组件注释写上所代表的业务内容，Props 要有类型约束且每个字段都要有注释。
 
 ## 业务逻辑规范
 
@@ -52,7 +53,7 @@
 - **判断条件**：`if` 中的判断条件应基于业务语义收敛到单点，禁止随意叠加判断条件
 - **派生值**：保持只读，不反向修改原始值；能够直接使用原始值时，不额外创建派生变量
 - **函数声明方式**：统一使用函数表达式，例如 `const fn = (...) => { ... }`，适用于组件、Hook 和普通工具函数
-- **函数组织顺序**：type及常量放顶部，核心函数前置，内部辅助函数按调用顺序集中后置，每个函数必须有简短注释说明用途。
+- **函数组织顺序**：type 及常量放顶部，核心函数前置，内部辅助函数按调用顺序集中后置，每个函数必须有简短注释说明用途。
 
 ## 类型及常量规范
 
@@ -115,4 +116,69 @@ import { taskId, taskName, taskStatus } from '@/components/TableColumn';
 </Form>;
 
 const columns = [taskId, taskName, taskStatus];
+```
+
+## 常见布局场景与实现方案
+
+### 固定区 + 剩余区局部滚动
+
+适用于定高页面、抽屉或 Tab 中，上方内容保持自身高度，下方内容占满剩余空间的场景。
+
+#### 方案一：视口定额扣减
+
+```tsx
+// 仅适用于顶部区域高度固定、布局状态有限的页面；顶部结构变化时必须同步维护偏移量。
+const TABLE_BODY_HEIGHT = 'calc(100vh - 234px)';
+
+<Table scroll={{ y: TABLE_BODY_HEIGHT }} />;
+```
+
+#### 方案二：Flex 剩余空间下沉
+
+```tsx
+<div className='flex h-full flex-col overflow-hidden'>
+  {/* 高度起点必须明确；固定区域禁止参与压缩。 */}
+  <div className='shrink-0'>固定内容</div>
+
+  {/* min-h-0 允许剩余区域缩小；此方案会让区域内的表头和内容一起滚动。 */}
+  <div className='min-h-0 flex-1 overflow-auto'>
+    <Table />
+  </div>
+</div>
+```
+
+#### 方案三：Flex 表体高度桥接
+
+```tsx
+const TablePanel = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [tableBodyHeight, setTableBodyHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const updateTableBodyHeight = () => {
+      const header = container.querySelector<HTMLElement>('.ant-table-thead');
+      // Flex 只确定外层高度；antd Table 需要通过 scroll.y 接收扣除表头后的实际像素高度。
+      setTableBodyHeight(Math.max(container.clientHeight - (header?.offsetHeight ?? 0), 0));
+    };
+
+    updateTableBodyHeight();
+    // 必须监听容器变化，以覆盖窗口缩放、条件内容显隐和隐藏 Tab 激活等情况。
+    const observer = new ResizeObserver(updateTableBodyHeight);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className='flex h-full flex-col overflow-hidden'>
+      <div className='shrink-0'>固定内容</div>
+      <div ref={containerRef} className='min-h-0 flex-1 overflow-hidden'>
+        {/* 固定表头并只滚动表体；存在分页器时还需从可用高度中扣除分页器占用。 */}
+        <Table scroll={{ y: tableBodyHeight }} />
+      </div>
+    </div>
+  );
+};
 ```

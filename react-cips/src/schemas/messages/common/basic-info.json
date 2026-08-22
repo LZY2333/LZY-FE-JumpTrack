@@ -1,0 +1,161 @@
+{
+  "type": "object",
+  "properties": {
+    "basicGrid": {
+      "type": "void",
+      "x-component": "FormGrid",
+      "x-component-props": {
+        "minColumns": 4,
+        "maxColumns": 4,
+        "columnGap": 12,
+        "rowGap": 0
+      },
+      "properties": {
+        "msgId": {
+          "type": "string",
+          "title": "报文标识号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgDirection": {
+          "type": "string",
+          "title": "报文收发标志",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "businessType": {
+          "type": "string",
+          "title": "业务类型",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "messageTime": {
+          "type": "string",
+          "title": "统一报文时间",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "transmissionStatus": {
+          "type": "string",
+          "title": "收发状态",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "businessStatus": {
+          "type": "string",
+          "title": "业务状态",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgRecvDate": {
+          "type": "string",
+          "title": "收报日期",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgSendTime": {
+          "type": "string",
+          "title": "报文发出时间",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "mainMsgId": {
+          "type": "string",
+          "title": "主报文编号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgChannel": {
+          "type": "string",
+          "title": "收报渠道",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgType": {
+          "type": "string",
+          "title": "报文类型编码",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgBusinessNo": {
+          "type": "string",
+          "title": "交易流水号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgRelatedId": {
+          "type": "string",
+          "title": "关联流水号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgEndId": {
+          "type": "string",
+          "title": "端到端流水号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgUetr": {
+          "type": "string",
+          "title": "UETR 唯一标识号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgSendInst": {
+          "type": "string",
+          "title": "发报机构编号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "msgRecvInst": {
+          "type": "string",
+          "title": "收报机构编号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "remark": {
+          "type": "string",
+          "title": "备注",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "createUser": {
+          "type": "string",
+          "title": "创建人",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "createBrno": {
+          "type": "string",
+          "title": "创建人部门号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "authorUser": {
+          "type": "string",
+          "title": "审批人",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "authorBrno": {
+          "type": "string",
+          "title": "审批人部门号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "createTime": {
+          "type": "string",
+          "title": "记录创建时间",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "updateTime": {
+          "type": "string",
+          "title": "记录更新时间",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        }
+      }
+    }
+  }
+}

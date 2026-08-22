@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "properties": {
+    "messageGrid": {
+      "type": "void",
+      "x-component": "FormGrid",
+      "x-component-props": {
+        "minColumns": 4,
+        "maxColumns": 4,
+        "columnGap": 12,
+        "rowGap": 0
+      },
+      "properties": {
+        "notificationId": {
+          "type": "string",
+          "title": "通知标识",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "accountServicerReference": {
+          "type": "string",
+          "title": "账户服务机构参考号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "entryReference": {
+          "type": "string",
+          "title": "账务明细参考号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "accountId": {
+          "type": "string",
+          "title": "账户标识",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "accountCurrency": {
+          "type": "string",
+          "title": "账户币种",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "creditDebitIndicator": {
+          "type": "string",
+          "title": "借贷标志",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "entryStatus": {
+          "type": "string",
+          "title": "账务状态",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "bookingDate": {
+          "type": "string",
+          "title": "记账日期",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "valueDate": {
+          "type": "string",
+          "title": "起息日期",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "amount": {
+          "type": "number",
+          "title": "交易金额",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "currency": {
+          "type": "string",
+          "title": "交易币种",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "transactionCode": {
+          "type": "string",
+          "title": "交易代码",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        },
+        "relatedReference": {
+          "type": "string",
+          "title": "关联业务参考号",
+          "x-decorator": "MessageFormItem",
+          "x-component": "PreviewText"
+        }
+      }
+    }
+  }
+}

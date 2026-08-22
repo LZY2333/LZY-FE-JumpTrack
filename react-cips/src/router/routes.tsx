@@ -1,15 +1,12 @@
 import type { ReactElement } from 'react';
 import KeepAlive from 'react-activation';
 import { Navigate } from 'react-router-dom';
-import TaskPool from '@/pages/task-pool';
-import TaskDetail from '@/pages/task-detail';
+import MessageList from '@/pages/message-list';
+import MessageDetail from '@/pages/message-detail';
 import { Role } from '@/types/enums';
+import { RoutePath } from './paths';
 
-export enum RoutePath {
-  Root = '/',
-  TaskPool = '/tasks',
-  TaskDetail = '/task/:taskId',
-}
+export { RoutePath } from './paths';
 
 export interface AppRoute {
   path: string;
@@ -21,17 +18,21 @@ export interface AppRoute {
 export const routes: AppRoute[] = [
   {
     path: RoutePath.Root,
-    element: <Navigate to={RoutePath.TaskPool} replace />,
-    meta: { title: 'Redirect to Task Pool' },
+    element: <Navigate to={RoutePath.MessageList} replace />,
+    meta: { title: '报文列表' },
   },
   {
-    path: RoutePath.TaskPool,
+    path: RoutePath.MessageList,
     element: (
-      <KeepAlive name='task-pool'>
-        <TaskPool />
+      <KeepAlive name='message-list'>
+        <MessageList />
       </KeepAlive>
     ),
-    meta: { title: 'Task Pool' },
+    meta: { title: '报文列表' },
   },
-  { path: RoutePath.TaskDetail, element: <TaskDetail />, meta: { title: 'Task Detail' } },
+  {
+    path: RoutePath.MessageDetail,
+    element: <MessageDetail />,
+    meta: { title: '报文明细' },
+  },
 ];

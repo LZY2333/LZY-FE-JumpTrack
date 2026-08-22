@@ -14,15 +14,17 @@ interface ResizableTableProps<T> extends Omit<TableProps<T>, 'columns' | 'compon
   columns: TableColumnsType<T>;
   /** 配置后持久化列宽、顺序和显隐；缺省时只保存于内存。 */
   storageKey?: string;
+  /** 首次进入和重置布局时默认隐藏的列 id。 */
+  defaultHiddenColumnIds?: string[];
   /** 横向布局由组件统一管理；调用方只配置纵向滚动。 */
   scroll?: ResizableTableScroll<T>;
 }
 
 /** 在 antd Table 之上组合列布局管理和列设置入口。 */
 export default function ResizableTable<T extends object>(props: ResizableTableProps<T>) {
-  const { columns, storageKey, pagination, scroll, ...tableProps } = props;
+  const { columns, storageKey, defaultHiddenColumnIds, pagination, scroll, ...tableProps } = props;
   // layout 是列布局的唯一来源，封装最终列、总宽度和设置操作。
-  const layout = useTableLayout(columns, storageKey);
+  const layout = useTableLayout(columns, storageKey, defaultHiddenColumnIds);
 
   return (
     <div className='relative'>

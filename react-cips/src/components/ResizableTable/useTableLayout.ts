@@ -70,12 +70,18 @@ export const migrateTableLayout = (layout: TableLayout, sourceIds: string[]): Ta
 };
 
 /** 从 localStorage 读取布局；未启用缓存或缓存无效时回退到空布局。 */
-const readLayout = (storageKey?: string): TableLayout => {
+const createDefaultLayout = (defaultHiddenColumnIds: string[] = []): TableLayout => ({
+  ...EMPTY_LAYOUT,
+  hidden: [...defaultHiddenColumnIds],
+});
+
+const readLayout = (storageKey?: string, defaultHiddenColumnIds?: string[]): TableLayout => {
   // storageKey 缺省表示只维护当前组件生命周期内的状态。
-  if (!storageKey) return EMPTY_LAYOUT;
+  if (!storageKey) return createDefaultLayout(defaultHiddenColumnIds);
 
   try {
     const value = JSON.parse(localStorage.getItem(storageKey) ?? 'null') as Partial<TableLayout> | null;
+    if (!value) return createDefaultLayout(defaultHiddenColumnIds);
     return {
       widths: value?.widths && typeof value.widths === 'object' ? value.widths : {},
       order: Array.isArray(value?.order) ? value.order.filter((id): id is string => typeof id === 'string') : [],
@@ -126,9 +132,13 @@ const removeLayout = (storageKey?: string) => {
 };
 
 /** 将源码列定义与用户布局合并，向表格输出最终列和全部布局操作。 */
-export default function useTableLayout<T>(sourceColumns: TableColumnsType<T>, storageKey?: string) {
+export default function useTableLayout<T>(
+  sourceColumns: TableColumnsType<T>,
+  storageKey?: string,
+  defaultHiddenColumnIds: string[] = [],
+) {
   // storedLayout 只保存用户布局，不复制任何行数据或业务状态。
-  const [storedLayout, setStoredLayout] = useState<TableLayout>(() => readLayout(storageKey));
+  const [storedLayout, setStoredLayout] = useState<TableLayout>(() => readLayout(storageKey, defaultHiddenColumnIds));
 
   // key/dataIndex 是列宽、顺序和显隐跨版本持久化时唯一可信的稳定标识。
   const source = useMemo(() => {
@@ -194,8 +204,8 @@ export default function useTableLayout<T>(sourceColumns: TableColumnsType<T>, st
   /** 同时重置内存布局和当前表格的持久化布局。 */
   const reset = useCallback(() => {
     removeLayout(storageKey);
-    setStoredLayout(EMPTY_LAYOUT);
-  }, [storageKey]);
+    setStoredLayout(createDefaultLayout(defaultHiddenColumnIds));
+  }, [defaultHiddenColumnIds, storageKey]);
 
   // 设置面板按当前用户顺序展示全部列，包括已隐藏列。
   const columnMetaList = useMemo<ColumnMeta[]>(
