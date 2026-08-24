@@ -171,10 +171,10 @@ const MessageList = () => {
             <MessageIdFilter />
           </Col>
           <Col span={8} className='mb-2'>
-            <MessageBusinessNoFilter />
+            <MessageTypeFilter />
           </Col>
           <Col span={8} className='mb-2'>
-            <MessageTypeFilter />
+            <MessageBusinessNoFilter />
           </Col>
           <Col span={8} className='mb-2'>
             <MessageDirectionFilter />
@@ -191,10 +191,16 @@ const MessageList = () => {
           {advancedVisible && (
             <>
               <Col span={8} className='mb-2'>
-                <BusinessTypeFilter />
+                <MessageSendInstFilter />
+              </Col>
+              <Col span={8} className='mb-2'>
+                <MessageRecvInstFilter />
               </Col>
               <Col span={8} className='mb-2'>
                 <MessageChannelFilter />
+              </Col>
+              <Col span={8} className='mb-2'>
+                <BusinessTypeFilter />
               </Col>
               <Col span={8} className='mb-2'>
                 <MainMessageIdFilter />
@@ -202,17 +208,11 @@ const MessageList = () => {
               <Col span={8} className='mb-2'>
                 <RelatedMessageIdFilter />
               </Col>
-              <Col span={8} className='mb-2'>
+              <Col span={8}>
                 <EndToEndMessageIdFilter />
               </Col>
               <Col span={8}>
                 <MessageUetrFilter />
-              </Col>
-              <Col span={8}>
-                <MessageSendInstFilter />
-              </Col>
-              <Col span={8}>
-                <MessageRecvInstFilter />
               </Col>
             </>
           )}

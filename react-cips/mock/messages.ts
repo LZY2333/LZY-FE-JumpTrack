@@ -10,37 +10,47 @@ const RECV_INSTS = ['WUBAHKHH', 'BKCHCNBJ', 'CITIUS33', 'HSBCHKHH'];
 const TRANSMISSION_STATUSES = Object.values(TransmissionStatus);
 const BUSINESS_STATUSES = Object.values(BusinessStatus);
 const BUSINESS_TYPES = Object.values(BusinessType);
+const MESSAGE_COUNT = 40;
+const RELATED_MESSAGE_GROUP_SIZE = 2;
 
 // 集中处理 Mock 数据的二选一规则，避免生成函数被大量条件表达式淹没。
 const choose = <T, F>(condition: boolean, whenTrue: T, whenFalse: F): T | F => (condition ? whenTrue : whenFalse);
+
+/** 按列表统一规则生成真实报文标识，关联字段只能引用由此生成的列表记录。 */
+const createMessageId = (index: number) => {
+  const direction = choose(index % 2 === 0, MessageDirection.In, MessageDirection.Out);
+  return `CIPS${direction}20260822${String(index + 1).padStart(6, '0')}`;
+};
 
 // 一条记录代表一份物理报文；固定 40 条便于验证分页、筛选、排序和空值展示。
 interface MockMessageDetail extends MessageDetail {
   processingRecords: MessageProcessingRecord[];
 }
 
-const messages: MockMessageDetail[] = Array.from({ length: 40 }, (_, index) => createMessage(index));
+const messages: MockMessageDetail[] = Array.from({ length: MESSAGE_COUNT }, (_, index) => createMessage(index));
 
 /** 生成列表与详情共用的报文元数据，并附带处理轨迹。 */
 function createMessage(index: number): MockMessageDetail {
   const sequence = String(index + 1).padStart(6, '0');
   const msgDirection = choose(index % 2 === 0, MessageDirection.In, MessageDirection.Out);
   const msgType = MESSAGE_TYPES[index % MESSAGE_TYPES.length];
+  const relatedGroupStartIndex = index - (index % RELATED_MESSAGE_GROUP_SIZE);
+  const relatedMessageIndex = index === relatedGroupStartIndex ? index + 1 : relatedGroupStartIndex;
   const messageTime = new Date(
     Date.UTC(2026, 7, 22 - Math.floor(index / 6), 9 + (index % 8), index % 60, 0),
   ).toISOString();
-  const msgId = `CIPS${msgDirection}20260822${sequence}`;
+  const msgId = createMessageId(index);
 
   return {
     msgId,
     msgDirection,
     businessType: BUSINESS_TYPES[index % BUSINESS_TYPES.length],
     msgRecvDate: choose(msgDirection === MessageDirection.In, messageTime, null),
-    mainMsgId: choose(index % 5 === 0, null, `MAIN20260822${String(Math.ceil((index + 1) / 2)).padStart(6, '0')}`),
+    mainMsgId: choose(index === relatedGroupStartIndex, null, createMessageId(relatedGroupStartIndex)),
     msgChannel: choose(index % 3 === 0, 'SWIFT', 'CIPS'),
     msgType,
     msgBusinessNo: `TXN20260822${sequence}`,
-    msgRelatedId: choose(index % 4 === 0, `REL20260822${sequence}`, null),
+    msgRelatedId: createMessageId(relatedMessageIndex),
     msgEndId: choose(index % 3 === 0, `E2E20260822${sequence}`, null),
     msgUetr: choose(index % 6 === 0, null, `9f1c3f0e-${String(index + 1).padStart(4, '0')}-4b68-8e8a-9e6f8a1c2d3e`),
     msgSendTime: choose(msgDirection === MessageDirection.Out, messageTime, null),
@@ -226,6 +236,18 @@ const messageIdBeforeAction = (url = '') => {
 
 const findMessage = (msgId: string) => messages.find((record) => record.msgId === msgId);
 
+/** 根据报文号、主报文号和关联流水号的交集查找同一业务链路中的其他报文。 */
+const findRelatedMessages = (record: MessageRecord) => {
+  const relationKeys = new Set(messageRelationKeys(record));
+  return messages.filter(
+    (candidate) =>
+      candidate.msgId !== record.msgId && messageRelationKeys(candidate).some((key) => relationKeys.has(key)),
+  );
+};
+
+const messageRelationKeys = ({ msgId, mainMsgId, msgRelatedId }: MessageRecord) =>
+  [msgId, mainMsgId, msgRelatedId].filter((value): value is string => Boolean(value));
+
 const cloneMessage = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
 const notFound = (msgId: string) => ({
@@ -315,6 +337,21 @@ export default [
       const msgId = messageIdBeforeAction(option.url);
       const record = findMessage(msgId);
       return record ? { returnCode: ResCode.Success, body: cloneMessage(record.processingRecords) } : notFound(msgId);
+    },
+  },
+  {
+    url: '/api/example/v1/messages/:messageId/related-messages',
+    method: 'get',
+    timeout: 500,
+    response: (option: { url: string }) => {
+      const msgId = messageIdBeforeAction(option.url);
+      const record = findMessage(msgId);
+      return record
+        ? {
+            returnCode: ResCode.Success,
+            body: cloneMessage(findRelatedMessages(record).map(stripDetail)),
+          }
+        : notFound(msgId);
     },
   },
   {

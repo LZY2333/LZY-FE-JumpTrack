@@ -7,6 +7,7 @@ import { BUSINESS_STATUS_LABELS, MESSAGE_DIRECTION_LABELS, TRANSMISSION_STATUS_L
 import MessageSchemaForm from '@/components/MessageSchemaForm';
 import useMessageDetail from './useMessageDetail';
 import TabProcessing from './TabProcessing';
+import TabRelatedMessages from './TabRelatedMessages';
 import TabRaw from './TabRaw';
 import { RoutePath } from '@/router/paths';
 import { getMessageSchema, messageBasicInfoSchema } from '@/schemas/messages';
@@ -41,6 +42,12 @@ const MessageDetailPage = () => {
       label: '处理记录',
       className: TAB_CONTENT_CLASS_NAME,
       children: <TabProcessing messageId={messageId} />,
+    },
+    {
+      key: 'related',
+      label: '关联报文',
+      className: TAB_CONTENT_CLASS_NAME,
+      children: <TabRelatedMessages messageId={messageId} />,
     },
   ];
 

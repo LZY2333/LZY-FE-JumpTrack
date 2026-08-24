@@ -56,6 +56,10 @@ export const getMessageRaw = (msgId: string) => get<MessageRaw>(`${MESSAGE_API}/
 export const getMessageProcessingRecords = (msgId: string) =>
   get<MessageProcessingRecord[]>(`${MESSAGE_API}/${encodeURIComponent(msgId)}/processing-records`);
 
+/** 异步加载与指定报文处于同一业务链路的关联报文。 */
+export const getRelatedMessages = (msgId: string) =>
+  get<MessageRecord[]>(`${MESSAGE_API}/${encodeURIComponent(msgId)}/related-messages`);
+
 /** 下载指定报文的原始文件。 */
 export const downloadMessage = (msgId: string) => getBlob(`${MESSAGE_API}/${encodeURIComponent(msgId)}/download`);
 
