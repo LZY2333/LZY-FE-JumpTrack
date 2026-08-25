@@ -15,79 +15,79 @@
           "type": "string",
           "title": "事件代码",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "eventName": {
           "type": "string",
           "title": "事件名称",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "eventSeverity": {
           "type": "string",
           "title": "事件级别",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "eventTime": {
           "type": "string",
           "title": "事件时间",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "sourceSystem": {
           "type": "string",
           "title": "来源系统",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "affectedService": {
           "type": "string",
           "title": "受影响服务",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "originalMessageId": {
           "type": "string",
           "title": "原报文标识号",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "originalMessageType": {
           "type": "string",
           "title": "原报文类型",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "errorCode": {
           "type": "string",
           "title": "错误代码",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "errorReason": {
           "type": "string",
           "title": "错误原因",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "suggestedAction": {
           "type": "string",
           "title": "建议处理措施",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "acknowledgmentRequired": {
           "type": "string",
           "title": "是否需要确认",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         },
         "eventDescription": {
           "type": "string",
           "title": "事件描述",
           "x-decorator": "MessageFormItem",
-          "x-component": "PreviewText"
+          "x-component": "Input"
         }
       }
     }

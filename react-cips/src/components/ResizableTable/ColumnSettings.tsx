@@ -17,20 +17,22 @@ export default function ColumnSettings({ columns, onToggle, onReset }: ColumnSet
   const visibleCount = columns.filter((column) => column.visible).length;
   // content 独立声明，避免 Popover 主结构中混入设置列表细节。
   const content = (
-    <div className='flex min-w-32 flex-col gap-1'>
-      <Space direction='vertical' size={4}>
-        {columns.map((col) => (
-          <Checkbox
-            key={col.colId}
-            checked={col.visible}
-            disabled={col.visible && visibleCount === 1}
-            onChange={() => onToggle(col.colId)}
-          >
-            {col.title}
-          </Checkbox>
-        ))}
-      </Space>
-      <div className='flex justify-end border-t border-gray-100 pt-1'>
+    <div className='flex max-h-80 min-w-32 flex-col'>
+      <div className='min-h-0 overflow-y-auto pr-1'>
+        <Space direction='vertical' size={4}>
+          {columns.map((col) => (
+            <Checkbox
+              key={col.colId}
+              checked={col.visible}
+              disabled={col.visible && visibleCount === 1}
+              onChange={() => onToggle(col.colId)}
+            >
+              {col.title}
+            </Checkbox>
+          ))}
+        </Space>
+      </div>
+      <div className='mt-1 flex shrink-0 justify-end border-t border-gray-100 pt-1'>
         <Button color='primary' variant='text' size='small' className='px-0' onClick={onReset}>
           Reset
         </Button>

@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Alert, App, Button, Empty, Spin } from 'antd';
-import { CopyOutlined, DownloadOutlined } from '@ant-design/icons';
+import { CopyOutlined, DownloadOutlined, PrinterOutlined } from '@ant-design/icons';
 import { downloadMessage, getMessageRaw } from '@/api/messages';
 import XMLViewer from '@/components/XMLViewer';
 import type { MessageRaw } from '@/types';
 import { copyText, saveBlobResponse } from '@/utils/fileUtil';
-import { isCopyDisabled } from './util';
+import { isRawContentActionDisabled } from './util';
+import { printTextDocument } from './printUtil';
 
-/** 报文原文 Tab：独立加载、复制和下载报文系统接收或发送的原始 XML。 */
-const TabRaw = ({ messageId }: { messageId?: string }) => {
+interface TabRawProps {
+  /** 当前报文标识号，用于加载、下载和命名原文。 */
+  messageId?: string;
+}
+
+/** 报文原文 Tab：独立加载、复制、打印和下载报文系统接收或发送的原始 XML。 */
+const TabRaw = ({ messageId }: TabRawProps) => {
   const { message } = App.useApp();
   const [raw, setRaw] = useState<MessageRaw | null>(null);
   const [loading, setLoading] = useState(false);
@@ -61,6 +67,15 @@ const TabRaw = ({ messageId }: { messageId?: string }) => {
       .finally(() => setDownloading(false));
   };
 
+  /** 打开只包含当前 XML 原文的浏览器打印窗口。 */
+  const handlePrint = () => {
+    if (!raw?.content) return;
+    const opened = printTextDocument(raw.fileName || `${messageId || 'message'}.xml`, raw.content);
+    if (!opened) message.error('打印窗口被浏览器拦截，请允许弹出窗口后重试');
+  };
+
+  const rawContentActionDisabled = isRawContentActionDisabled(raw, loading);
+
   const content = raw?.content ? (
     <XMLViewer className='min-h-0 flex-1 text-xs' xml={raw.content} />
   ) : (
@@ -70,11 +85,14 @@ const TabRaw = ({ messageId }: { messageId?: string }) => {
   );
 
   return (
-    <div className='flex h-full flex-col'>
+    <div className='flex min-h-0 flex-1 flex-col'>
       {error && <Alert className='mb-2 shrink-0' type='error' showIcon message={error} />}
-      <div className='mb-2 flex shrink-0 justify-end gap-2'>
-        <Button size='small' icon={<CopyOutlined />} disabled={isCopyDisabled(raw, loading)} onClick={handleCopy}>
+      <div className='mb-2 flex shrink-0 justify-start gap-2'>
+        <Button size='small' icon={<CopyOutlined />} disabled={rawContentActionDisabled} onClick={handleCopy}>
           复制原文
+        </Button>
+        <Button size='small' icon={<PrinterOutlined />} disabled={rawContentActionDisabled} onClick={handlePrint}>
+          打印原文
         </Button>
         <Button
           size='small'

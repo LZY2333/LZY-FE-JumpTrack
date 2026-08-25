@@ -1,4 +1,3 @@
-import { Tag } from 'antd';
 import type { TableColumnType } from 'antd';
 import dayjs from 'dayjs';
 import type { MessageRecord } from '@/types';
@@ -13,22 +12,6 @@ import {
   TransmissionStatus,
 } from '@/types/enums';
 
-// 状态色在列表与详情页共用，避免同一状态出现不同视觉语义。
-const TRANSMISSION_STATUS_COLORS: Record<TransmissionStatus, string> = {
-  [TransmissionStatus.Pending]: 'default',
-  [TransmissionStatus.Processing]: 'processing',
-  [TransmissionStatus.Success]: 'success',
-  [TransmissionStatus.Failed]: 'error',
-};
-
-const BUSINESS_STATUS_COLORS: Record<BusinessStatus, string> = {
-  [BusinessStatus.Pending]: 'default',
-  [BusinessStatus.Accepted]: 'processing',
-  [BusinessStatus.Settled]: 'success',
-  [BusinessStatus.Rejected]: 'error',
-  [BusinessStatus.Cancelled]: 'warning',
-};
-
 /** 表格空值统一展示为 --，但不修改数据本身。 */
 export const renderMessageText = (value: unknown) =>
   value === undefined || value === null || value === '' ? '--' : String(value);
@@ -39,12 +22,6 @@ export const renderMessageDateTime = (value: unknown) => {
   const date = dayjs(String(value));
   return date.isValid() ? date.format('YYYY-MM-DD HH:mm:ss') : String(value);
 };
-
-export const getTransmissionStatusColor = (value: TransmissionStatus) =>
-  TRANSMISSION_STATUS_COLORS[value] ?? 'default';
-
-export const getBusinessStatusColor = (value: BusinessStatus) =>
-  BUSINESS_STATUS_COLORS[value] ?? 'default';
 
 export const msgId: TableColumnType<MessageRecord> = {
   title: '报文标识号',
@@ -133,22 +110,14 @@ export const transmissionStatus: TableColumnType<MessageRecord> = {
   title: '收发状态',
   dataIndex: 'transmissionStatus',
   width: 110,
-  render: (value: TransmissionStatus) => (
-    <Tag className='mr-0' color={getTransmissionStatusColor(value)}>
-      {TRANSMISSION_STATUS_LABELS[value] ?? renderMessageText(value)}
-    </Tag>
-  ),
+  render: (value: TransmissionStatus) => TRANSMISSION_STATUS_LABELS[value] ?? renderMessageText(value),
 };
 
 export const businessStatus: TableColumnType<MessageRecord> = {
   title: '业务状态',
   dataIndex: 'businessStatus',
   width: 110,
-  render: (value: BusinessStatus) => (
-    <Tag className='mr-0' color={getBusinessStatusColor(value)}>
-      {BUSINESS_STATUS_LABELS[value] ?? renderMessageText(value)}
-    </Tag>
-  ),
+  render: (value: BusinessStatus) => BUSINESS_STATUS_LABELS[value] ?? renderMessageText(value),
 };
 
 // 一期只允许统一报文时间、创建时间、更新时间触发服务端排序。

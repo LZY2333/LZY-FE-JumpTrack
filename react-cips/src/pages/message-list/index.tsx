@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { App, Button, Col, Form, Row } from 'antd';
+import { App, Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { DownOutlined, DownloadOutlined, UpOutlined } from '@ant-design/icons';
 import type { MessageRecord } from '@/types';
@@ -49,12 +49,11 @@ import {
 } from '@/components/TableColumn';
 import { saveBlobResponse } from '@/utils/fileUtil';
 
-// 默认筛选：顶部 24px + 表单 88px + 表单下间距 16px + 表头 42px
-// + 分页上间距 16px + 分页器 24px + 页面底部 24px = 234px。
-const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 234px)';
-// 展开筛选：顶部 24px + 表单 184px + 表单下间距 16px + 表头 42px
-// + 分页上间距 16px + 分页器 24px + 页面底部 24px = 330px。
-const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 330px)';
+// 默认筛选：页面上下边距 48px + Card 边框/内边距 26px + 表单 88px + 表单下间距 16px
+// + 表头 42px + 分页上间距 16px + 分页器 24px = 260px。
+const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 260px)';
+// 展开筛选比默认筛选多三行条件，共增加 96px。
+const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 356px)';
 // 低频公共字段默认隐藏，用户仍可通过列设置开启并持久化自己的布局。
 const DEFAULT_HIDDEN_COLUMNS = [
   'businessType',
@@ -155,7 +154,7 @@ const MessageList = () => {
   const tableBodyHeight = advancedVisible ? EXPANDED_TABLE_BODY_HEIGHT : DEFAULT_TABLE_BODY_HEIGHT;
 
   return (
-    <div>
+    <Card size='small'>
       <Form
         form={form}
         size='small'
@@ -205,7 +204,7 @@ const MessageList = () => {
               <Col span={8} className='mb-2'>
                 <MainMessageIdFilter />
               </Col>
-              <Col span={8} className='mb-2'>
+              <Col span={8}>
                 <RelatedMessageIdFilter />
               </Col>
               <Col span={8}>
@@ -270,7 +269,7 @@ const MessageList = () => {
           },
         }}
       />
-    </div>
+    </Card>
   );
 };
 

@@ -60,7 +60,7 @@ export interface MessageRecord {
   createTime: string;
   /** UPDATE_TIME：记录更新时间。 */
   updateTime: string;
-  /** 后端归一化后的报文时间，入站取收报时间，出站取发报时间。 */
+  /** 后端归一化后的报文时间，收报取收报时间，发报取发报时间。 */
   messageTime: string;
   /** 收发状态。 */
   transmissionStatus: TransmissionStatus;

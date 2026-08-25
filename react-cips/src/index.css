@@ -23,11 +23,6 @@ body,
   background: var(--ant-color-primary);
 }
 
-/* 页面滚动收敛到 Content，并预留纵向滚动槽位，避免弹层/表格重排时滚动条闪现导致抖动 */
-.ant-layout-content {
-  scrollbar-gutter: stable;
-}
-
 /* scroll.y 默认是 max-height；让报文列表在可用页面高度内保持填充。 */
 .message-list-table .ant-table-body {
   height: var(--message-list-table-body-height);

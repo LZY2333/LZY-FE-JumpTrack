@@ -1,5 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { Alert, Button, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { getRelatedMessages } from '@/api/messages';
@@ -14,8 +13,9 @@ import {
   msgType,
   transmissionStatus,
 } from '@/components/TableColumn';
-import { RoutePath } from '@/router/paths';
 import type { MessageRecord } from '@/types';
+import DetailTableViewport, { FILL_TABLE_CLASS_NAME } from './detailTableViewport';
+import RelatedMessageDetailModal from './relatedMessageDetailModal';
 
 interface TabRelatedMessagesProps {
   /** 当前报文标识号，用于查询同一业务链路中的其他报文。 */
@@ -24,12 +24,10 @@ interface TabRelatedMessagesProps {
 
 /** 关联报文 Tab：独立加载并展示当前报文同一业务链路中的其他报文。 */
 const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
-  const navigate = useNavigate();
   const [records, setRecords] = useState<MessageRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
-  const [tableBodyHeight, setTableBodyHeight] = useState(0);
-  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [selectedMessageId, setSelectedMessageId] = useState<string>();
 
   useEffect(() => {
     if (!messageId) {
@@ -62,25 +60,9 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
     };
   }, [messageId]);
 
-  useLayoutEffect(() => {
-    const container = tableContainerRef.current;
-    if (!container) return;
-
-    const updateTableBodyHeight = () => {
-      const header = container.querySelector<HTMLElement>('.ant-table-thead');
-      const nextHeight = Math.max(container.clientHeight - (header?.offsetHeight ?? 0), 0);
-      setTableBodyHeight((currentHeight) => (currentHeight === nextHeight ? currentHeight : nextHeight));
-    };
-
-    updateTableBodyHeight();
-    const observer = new ResizeObserver(updateTableBodyHeight);
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, []);
-
-  /** 进入所选关联报文明细，路由参数变化后当前页面会重新加载。 */
+  /** 在弹窗中打开所选关联报文的简化明细。 */
   const handleOpenDetail = (record: MessageRecord) => {
-    navigate(generatePath(RoutePath.MessageDetail, { messageId: encodeURIComponent(record.msgId) }));
+    setSelectedMessageId(record.msgId);
   };
 
   const columns: TableColumnsType<MessageRecord> = [
@@ -107,22 +89,30 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
   ];
 
   return (
-    <div className='flex h-full flex-col overflow-hidden'>
-      {error && <Alert className='mb-2 shrink-0' type='error' showIcon message={error} />}
-      <div ref={tableContainerRef} className='min-h-0 flex-1 overflow-hidden'>
-        <Table<MessageRecord>
-          size='small'
-          rowKey='msgId'
-          columns={columns}
-          dataSource={records}
-          loading={loading}
-          pagination={false}
-          onRow={(record) => ({ onDoubleClick: () => handleOpenDetail(record), className: 'cursor-pointer' })}
-          scroll={{ x: 'max-content', y: tableBodyHeight }}
-          locale={{ emptyText: '暂无关联报文' }}
-        />
+    <>
+      <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
+        {error && <Alert className='mb-2 shrink-0' type='error' showIcon message={error} />}
+        <DetailTableViewport>
+          {(tableBodyHeight) => (
+            <Table<MessageRecord>
+              className={FILL_TABLE_CLASS_NAME}
+              size='small'
+              rowKey='msgId'
+              columns={columns}
+              dataSource={records}
+              loading={loading}
+              pagination={false}
+              onRow={(record) => ({ onDoubleClick: () => handleOpenDetail(record), className: 'cursor-pointer' })}
+              scroll={{ x: records.length > 0 ? 'max-content' : undefined, y: tableBodyHeight }}
+              locale={{ emptyText: '暂无关联报文' }}
+            />
+          )}
+        </DetailTableViewport>
       </div>
-    </div>
+      {selectedMessageId && (
+        <RelatedMessageDetailModal messageId={selectedMessageId} open onClose={() => setSelectedMessageId(undefined)} />
+      )}
+    </>
   );
 };
 

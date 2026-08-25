@@ -30,8 +30,8 @@ export enum BusinessType {
 }
 
 export const MESSAGE_DIRECTION_LABELS: Record<MessageDirection, string> = {
-  [MessageDirection.In]: '入站',
-  [MessageDirection.Out]: '出站',
+  [MessageDirection.In]: '收报',
+  [MessageDirection.Out]: '发报',
 };
 
 export const TRANSMISSION_STATUS_LABELS: Record<TransmissionStatus, string> = {

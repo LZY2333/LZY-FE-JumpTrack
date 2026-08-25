@@ -4,7 +4,7 @@ import { ConfigProvider, Segmented, theme as antdTheme } from 'antd';
 import cn from 'classnames';
 import ReactXMLViewer from 'react-xml-viewer';
 
-export type XMLViewerThemeName = 'github-light' | 'dracula';
+export type XMLViewerThemeName = 'light' | 'dark';
 
 const XML_VIEWER_THEME_STORAGE_KEY = 'xml-viewer-theme';
 
@@ -18,7 +18,6 @@ export interface XMLViewerProps {
   indentSize?: number;
   collapsible?: boolean;
   initialCollapsedDepth?: number;
-  showLineNumbers?: boolean;
   invalidXml?: ReactElement;
 }
 
@@ -28,17 +27,15 @@ interface XMLViewerThemePreset {
   label: string;
   dark: boolean;
   backgroundColor: string;
-  toolbarBackgroundColor: string;
   borderColor: string;
   viewerTheme: ReactXMLViewerTheme;
 }
 
 const XML_VIEWER_THEMES: Record<XMLViewerThemeName, XMLViewerThemePreset> = {
-  'github-light': {
-    label: 'GitHub Light',
+  light: {
+    label: 'Light',
     dark: false,
     backgroundColor: '#f6f8fa',
-    toolbarBackgroundColor: '#ffffff',
     borderColor: '#d0d7de',
     viewerTheme: {
       tagColor: '#cf222e',
@@ -49,15 +46,12 @@ const XML_VIEWER_THEMES: Record<XMLViewerThemeName, XMLViewerThemePreset> = {
       commentColor: '#6e7781',
       cdataColor: '#116329',
       fontFamily: 'ui-monospace, SFMono-Regular, Consolas, monospace',
-      lineNumberBackground: '#f6f8fa',
-      lineNumberColor: '#8c959f',
     },
   },
-  dracula: {
-    label: 'Dracula',
+  dark: {
+    label: 'Dark',
     dark: true,
     backgroundColor: '#282a36',
-    toolbarBackgroundColor: '#21222c',
     borderColor: '#44475a',
     viewerTheme: {
       tagColor: '#ff79c6',
@@ -68,8 +62,6 @@ const XML_VIEWER_THEMES: Record<XMLViewerThemeName, XMLViewerThemePreset> = {
       commentColor: '#6272a4',
       cdataColor: '#8be9fd',
       fontFamily: 'ui-monospace, SFMono-Regular, Consolas, monospace',
-      lineNumberBackground: '#21222c',
-      lineNumberColor: '#6272a4',
     },
   },
 };
@@ -80,12 +72,20 @@ const THEME_OPTIONS = Object.entries(XML_VIEWER_THEMES).map(([value, preset]) =>
 }));
 
 const isXMLViewerThemeName = (value: string | null): value is XMLViewerThemeName =>
-  value === 'github-light' || value === 'dracula';
+  value === 'light' || value === 'dark';
+
+/** 将旧版本持久化的主题名迁移到 light/dark，保留用户原有明暗偏好。 */
+const normalizeStoredTheme = (value: string | null): XMLViewerThemeName | undefined => {
+  if (isXMLViewerThemeName(value)) return value;
+  if (value === 'github-light') return 'light';
+  if (value === 'dracula') return 'dark';
+  return undefined;
+};
 
 const readStoredTheme = (fallback: XMLViewerThemeName) => {
   try {
     const storedTheme = localStorage.getItem(XML_VIEWER_THEME_STORAGE_KEY);
-    return isXMLViewerThemeName(storedTheme) ? storedTheme : fallback;
+    return normalizeStoredTheme(storedTheme) ?? fallback;
   } catch {
     return fallback;
   }
@@ -105,12 +105,11 @@ const XMLViewer = ({
   className,
   style,
   theme,
-  defaultTheme = 'github-light',
+  defaultTheme = 'light',
   onThemeChange,
   indentSize = 2,
   collapsible = true,
   initialCollapsedDepth,
-  showLineNumbers = true,
   invalidXml,
 }: XMLViewerProps) => {
   const [internalTheme, setInternalTheme] = useState<XMLViewerThemeName>(() => readStoredTheme(defaultTheme));
@@ -129,7 +128,7 @@ const XMLViewer = ({
   return (
     <ConfigProvider theme={{ algorithm: preset.dark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm }}>
       <div
-        className={cn('flex flex-col overflow-hidden rounded border', className)}
+        className={cn('relative flex flex-col overflow-hidden rounded border', className)}
         data-theme={activeTheme}
         style={{
           backgroundColor: preset.backgroundColor,
@@ -138,10 +137,7 @@ const XMLViewer = ({
           ...style,
         }}
       >
-        <div
-          className='flex shrink-0 items-center justify-end border-b px-3 py-2'
-          style={{ backgroundColor: preset.toolbarBackgroundColor, borderColor: preset.borderColor }}
-        >
+        <div className='absolute right-2 top-2 z-10'>
           <Segmented<XMLViewerThemeName>
             aria-label='XML 展示主题'
             size='small'
@@ -156,8 +152,7 @@ const XMLViewer = ({
             theme={preset.viewerTheme}
             indentSize={indentSize}
             collapsible={collapsible}
-            initialCollapsedDepth={initialCollapsedDepth}
-            showLineNumbers={showLineNumbers}
+            initalCollapsedDepth={initialCollapsedDepth}
             invalidXml={
               invalidXml ?? (
                 <pre

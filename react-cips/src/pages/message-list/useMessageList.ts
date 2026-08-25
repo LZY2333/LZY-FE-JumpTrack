@@ -30,7 +30,6 @@ export interface MessageListFilterValues {
   msgRecvInst?: string;
 }
 
-// 只记忆页容量；筛选、页码和滚动位置由 KeepAlive 保留在组件实例中。
 const PAGE_SIZE_STORAGE_KEY = 'message-list-page-size';
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[0];
