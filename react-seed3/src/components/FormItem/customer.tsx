@@ -87,7 +87,7 @@ export function CusId(props: CustomerFormItemProps) {
 
 export function CusPrmAct(props: CustomerFormItemProps) {
   return (
-    <Form.Item {...props} name='cusPrmAct' label='CIES Account'>
+    <Form.Item {...props} name='cusPrmAct' label='Saving Account'>
       <Input disabled />
     </Form.Item>
   );
@@ -111,7 +111,7 @@ export function FundAct(props: CustomerFormItemProps) {
 
 export function CustodianAct(props: CustomerFormItemProps) {
   return (
-    <Form.Item {...props} name='custodianAct' label='Custodian Account'>
+    <Form.Item {...props} name='custodianAct' label='Securities Custodian Account'>
       <AccountListInput />
     </Form.Item>
   );
@@ -263,8 +263,8 @@ export function InvestmentInterests({ currencies, getFieldClassName, ...props }:
     <div className='flex flex-col gap-2 text-sm'>
       <div className='flex items-center gap-8 text-center'>
         <div className='w-12 font-medium'>Currency</div>
-        <div className='flex-1 font-medium'>Withdrawable Interests</div>
-        <div className='flex-1 font-medium'>Transferred Interests</div>
+        <div className='flex-1 font-medium'>Investment Interests</div>
+        <div className='flex-1 font-medium'>Transferred out Interests</div>
       </div>
 
       {currencies.map((currency) => (
