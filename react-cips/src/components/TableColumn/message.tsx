@@ -2,9 +2,7 @@ import type { TableColumnType } from 'antd';
 import dayjs from 'dayjs';
 import type { MessageRecord } from '@/types';
 import {
-  BUSINESS_STATUS_LABELS,
   BUSINESS_TYPE_LABELS,
-  BusinessStatus,
   BusinessType,
   MESSAGE_DIRECTION_LABELS,
   MessageDirection,
@@ -21,6 +19,13 @@ export const renderMessageDateTime = (value: unknown) => {
   if (value === undefined || value === null || value === '') return '--';
   const date = dayjs(String(value));
   return date.isValid() ? date.format('YYYY-MM-DD HH:mm:ss') : String(value);
+};
+
+/** 报文收发时间只展示日期；非法时间保留原值，便于定位数据问题。 */
+export const renderMessageDate = (value: unknown) => {
+  if (value === undefined || value === null || value === '') return '--';
+  const date = dayjs(String(value));
+  return date.isValid() ? date.format('YYYY-MM-DD') : String(value);
 };
 
 export const msgId: TableColumnType<MessageRecord> = {
@@ -44,9 +49,9 @@ export const businessType: TableColumnType<MessageRecord> = {
 };
 
 export const msgChannel: TableColumnType<MessageRecord> = {
-  title: '收报渠道',
+  title: '收/发报通道',
   dataIndex: 'msgChannel',
-  width: 120,
+  width: 140,
   render: renderMessageText,
 };
 
@@ -107,26 +112,18 @@ export const msgRecvInst: TableColumnType<MessageRecord> = {
 };
 
 export const transmissionStatus: TableColumnType<MessageRecord> = {
-  title: '收发状态',
+  title: '报文状态',
   dataIndex: 'transmissionStatus',
   width: 110,
   render: (value: TransmissionStatus) => TRANSMISSION_STATUS_LABELS[value] ?? renderMessageText(value),
 };
 
-export const businessStatus: TableColumnType<MessageRecord> = {
-  title: '业务状态',
-  dataIndex: 'businessStatus',
-  width: 110,
-  render: (value: BusinessStatus) => BUSINESS_STATUS_LABELS[value] ?? renderMessageText(value),
-};
-
-// 一期只允许统一报文时间、创建时间、更新时间触发服务端排序。
 export const messageTime: TableColumnType<MessageRecord> = {
-  title: '统一报文时间',
+  title: '收/发报文日期',
   dataIndex: 'messageTime',
-  width: 180,
+  width: 150,
   sorter: true,
-  render: renderMessageDateTime,
+  render: renderMessageDate,
 };
 
 export const createTime: TableColumnType<MessageRecord> = {

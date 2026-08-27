@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { App, Button, Card, Col, Form, Row } from 'antd';
+import { Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import { DownOutlined, DownloadOutlined, UpOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import type { MessageRecord } from '@/types';
+import { MessageDirection } from '@/types/enums';
 import type { MessageSortField, MessageSortOrder } from '@/types/enums';
-import { exportMessages } from '@/api/messages';
 import { RoutePath } from '@/router/paths';
 import useMessageList, { PAGE_SIZE_OPTIONS, type MessageListFilterValues } from './useMessageList';
 import ResizableTable from '@/components/ResizableTable';
 import {
-  BusinessStatusFilter,
   BusinessTypeFilter,
   EndToEndMessageIdFilter,
   MainMessageIdFilter,
@@ -28,7 +27,6 @@ import {
   TransmissionStatusFilter,
 } from '@/components/FormItem';
 import {
-  businessStatus,
   businessType,
   createTime,
   mainMsgId,
@@ -47,61 +45,25 @@ import {
   transmissionStatus,
   updateTime,
 } from '@/components/TableColumn';
-import { saveBlobResponse } from '@/utils/fileUtil';
 
 // 默认筛选：页面上下边距 48px + Card 边框/内边距 26px + 表单 88px + 表单下间距 16px
 // + 表头 42px + 分页上间距 16px + 分页器 24px = 260px。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 260px)';
-// 展开筛选比默认筛选多三行条件，共增加 96px。
-const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 356px)';
-// 低频公共字段默认隐藏，用户仍可通过列设置开启并持久化自己的布局。
-const DEFAULT_HIDDEN_COLUMNS = [
-  'businessType',
-  'msgChannel',
-  'mainMsgId',
-  'msgRelatedId',
-  'msgEndId',
-  'msgUetr',
-  'createTime',
-  'updateTime',
-  'remark',
-];
+// 展开筛选后按钮与最后两个条件共用一行，比默认筛选多两行，共增加 64px。
+const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 324px)';
+const DEFAULT_FILTER_VALUES: MessageListFilterValues = { msgDirection: MessageDirection.In };
 
 /** 报文查询与列表页面。 */
 const MessageList = () => {
-  const { message } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm<MessageListFilterValues>();
   const [advancedVisible, setAdvancedVisible] = useState(false);
-  const [exporting, setExporting] = useState(false);
-  const {
-    messages,
-    total,
-    loading,
-    current,
-    pageSize,
-    queryConditions,
-    setCurrent,
-    setPageSize,
-    setSort,
-    query,
-    reset,
-  } = useMessageList();
+  const { messages, total, loading, current, pageSize, setCurrent, setPageSize, setSort, query, reset } =
+    useMessageList(DEFAULT_FILTER_VALUES);
 
   const handleReset = () => {
     form.resetFields();
     reset();
-  };
-
-  const handleExport = () => {
-    if (exporting) return;
-    setExporting(true);
-    exportMessages(queryConditions)
-      .then((response) => {
-        saveBlobResponse(response, 'messages.xlsx');
-        message.success('导出成功');
-      })
-      .finally(() => setExporting(false));
   };
 
   const handleTableChange: NonNullable<TableProps<MessageRecord>['onChange']> = (...args) => {
@@ -133,22 +95,10 @@ const MessageList = () => {
     msgSendInst,
     msgRecvInst,
     transmissionStatus,
-    businessStatus,
     messageTime,
     createTime,
     updateTime,
     remark,
-    {
-      title: '操作',
-      key: 'action',
-      width: 80,
-      fixed: 'right',
-      render: (_, record) => (
-        <Button color='primary' variant='text' size='small' onClick={() => openDetail(record)}>
-          查看
-        </Button>
-      ),
-    },
   ];
 
   const tableBodyHeight = advancedVisible ? EXPANDED_TABLE_BODY_HEIGHT : DEFAULT_TABLE_BODY_HEIGHT;
@@ -163,45 +113,43 @@ const MessageList = () => {
         labelCol={{ span: 9 }}
         wrapperCol={{ span: 15 }}
         className='mb-4'
+        initialValues={DEFAULT_FILTER_VALUES}
         onFinish={query}
       >
-        <Row gutter={16}>
-          <Col span={8} className='mb-2'>
-            <MessageIdFilter />
-          </Col>
-          <Col span={8} className='mb-2'>
-            <MessageTypeFilter />
-          </Col>
-          <Col span={8} className='mb-2'>
-            <MessageBusinessNoFilter />
-          </Col>
-          <Col span={8} className='mb-2'>
+        <Row gutter={[16, 8]}>
+          <Col span={8}>
             <MessageDirectionFilter />
           </Col>
-          <Col span={8} className='mb-2'>
+          <Col span={8}>
+            <MessageIdFilter />
+          </Col>
+          <Col span={8}>
+            <MessageTypeFilter />
+          </Col>
+          <Col span={8}>
+            <MessageBusinessNoFilter />
+          </Col>
+          <Col span={8}>
             <TransmissionStatusFilter />
           </Col>
-          <Col span={8} className='mb-2'>
-            <BusinessStatusFilter />
-          </Col>
-          <Col span={8} className={advancedVisible ? 'mb-2' : undefined}>
+          <Col span={8}>
             <MessageTimeRangeFilter />
           </Col>
           {advancedVisible && (
             <>
-              <Col span={8} className='mb-2'>
+              <Col span={8}>
                 <MessageSendInstFilter />
               </Col>
-              <Col span={8} className='mb-2'>
+              <Col span={8}>
                 <MessageRecvInstFilter />
               </Col>
-              <Col span={8} className='mb-2'>
+              <Col span={8}>
                 <MessageChannelFilter />
               </Col>
-              <Col span={8} className='mb-2'>
+              <Col span={8}>
                 <BusinessTypeFilter />
               </Col>
-              <Col span={8} className='mb-2'>
+              <Col span={8}>
                 <MainMessageIdFilter />
               </Col>
               <Col span={8}>
@@ -215,10 +163,7 @@ const MessageList = () => {
               </Col>
             </>
           )}
-          <Col
-            span={advancedVisible ? 24 : 16}
-            className={`${advancedVisible ? 'mt-2 ' : ''}flex items-center justify-end`}
-          >
+          <Col span={8} className='ml-auto flex items-center justify-end'>
             <Button size='small' type='link' onClick={() => setAdvancedVisible((visible) => !visible)}>
               更多条件 {advancedVisible ? <UpOutlined /> : <DownOutlined />}
             </Button>
@@ -227,16 +172,6 @@ const MessageList = () => {
             </Button>
             <Button size='small' htmlType='button' className='ml-2' onClick={handleReset}>
               重置
-            </Button>
-            <Button
-              htmlType='button'
-              size='small'
-              className='ml-2'
-              icon={<DownloadOutlined />}
-              loading={exporting}
-              onClick={handleExport}
-            >
-              导出
             </Button>
           </Col>
         </Row>
@@ -249,7 +184,6 @@ const MessageList = () => {
         size='small'
         columns={columns}
         storageKey='message-list'
-        defaultHiddenColumnIds={DEFAULT_HIDDEN_COLUMNS}
         dataSource={messages}
         loading={loading}
         onChange={handleTableChange}

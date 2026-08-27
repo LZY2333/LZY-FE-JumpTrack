@@ -4,7 +4,7 @@ export enum MessageDirection {
   Out = 'OUT',
 }
 
-/** 临时收发状态，正式联调时由后端权威代码表整体替换。 */
+/** 临时报文状态，正式联调时由后端权威代码表整体替换。 */
 export enum TransmissionStatus {
   Pending = 'PENDING',
   Processing = 'PROCESSING',

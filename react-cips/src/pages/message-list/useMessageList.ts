@@ -3,14 +3,12 @@ import type { MessageRecord } from '@/types';
 import { getMessages } from '@/api/messages';
 import type { MessageQuery, MessageQueryConditions, MessageQuerySortOrder } from '@/api/messages';
 import type {
-  BusinessStatus,
   BusinessType,
   MessageDirection,
   MessageSortField,
   MessageSortOrder,
   TransmissionStatus,
 } from '@/types/enums';
-import { omitEmptyValues } from '@/utils/formUtil';
 
 export interface MessageListFilterValues {
   msgId?: string;
@@ -18,7 +16,6 @@ export interface MessageListFilterValues {
   msgType?: string;
   msgDirection?: MessageDirection;
   transmissionStatus?: TransmissionStatus;
-  businessStatus?: BusinessStatus;
   messageTimeRange?: [string, string] | null;
   businessType?: BusinessType;
   msgChannel?: string;
@@ -35,7 +32,7 @@ export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[0];
 
 /** 报文列表查询状态：保留现有分页、筛选和远程排序交互。 */
-const useMessageList = () => {
+const useMessageList = (initialFilters: MessageListFilterValues) => {
   const [messages, setMessages] = useState<MessageRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -44,7 +41,7 @@ const useMessageList = () => {
     const storedPageSize = Number(localStorage.getItem(PAGE_SIZE_STORAGE_KEY));
     return PAGE_SIZE_OPTIONS.includes(storedPageSize) ? storedPageSize : DEFAULT_PAGE_SIZE;
   });
-  const [filters, setFilters] = useState<MessageListFilterValues>();
+  const [filters, setFilters] = useState<MessageListFilterValues>(() => ({ ...initialFilters }));
   const [sortField, setSortField] = useState<MessageSortField>();
   const [sortOrder, setSortOrder] = useState<MessageSortOrder>();
 
@@ -93,11 +90,11 @@ const useMessageList = () => {
   }, []);
 
   const reset = useCallback(() => {
-    setFilters(undefined);
+    setFilters({ ...initialFilters });
     setSortField(undefined);
     setSortOrder(undefined);
     setCurrent(1);
-  }, []);
+  }, [initialFilters]);
 
   return {
     messages,
@@ -105,7 +102,6 @@ const useMessageList = () => {
     loading,
     current,
     pageSize,
-    queryConditions,
     setCurrent,
     setPageSize,
     query,
@@ -127,7 +123,6 @@ const buildQueryConditions = (
     msgType: filters?.msgType,
     msgDirection: filters?.msgDirection,
     transmissionStatus: filters?.transmissionStatus,
-    businessStatus: filters?.businessStatus,
     messageTimeFrom: filters?.messageTimeRange?.[0],
     messageTimeTo: filters?.messageTimeRange?.[1],
     businessType: filters?.businessType,
@@ -142,5 +137,15 @@ const buildQueryConditions = (
     sortOrder: sortOrder ? querySortOrder : undefined,
   });
 };
+
+/** 删除查询条件对象中的空值字段。 */
+const omitEmptyValues = <T extends Record<string, unknown>>(data: T) => {
+  const entries = Object.entries(data).filter(([, value]) => !isEmptyValue(value));
+  return Object.fromEntries(entries) as Partial<T>;
+};
+
+/** 判断查询条件值是否为空。 */
+const isEmptyValue = (value: unknown) =>
+  value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0);
 
 export default useMessageList;

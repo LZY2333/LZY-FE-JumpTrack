@@ -6,9 +6,7 @@ import type { IFormItemProps } from '@formily/antd-v5';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import {
-  BUSINESS_STATUS_LABELS,
   BUSINESS_TYPE_LABELS,
-  BusinessStatus,
   BusinessType,
   MESSAGE_DIRECTION_LABELS,
   MessageDirection,
@@ -19,10 +17,9 @@ import {
 type MessageFilterFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
 type MessageTimeRange = [string, string] | null;
 
-const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const DATE_FORMAT = 'YYYY-MM-DD';
 const directionOptions = enumOptions(MessageDirection, MESSAGE_DIRECTION_LABELS);
 const transmissionStatusOptions = enumOptions(TransmissionStatus, TRANSMISSION_STATUS_LABELS);
-const businessStatusOptions = enumOptions(BusinessStatus, BUSINESS_STATUS_LABELS);
 const businessTypeOptions = enumOptions(BusinessType, BUSINESS_TYPE_LABELS);
 
 /** Formily 详情字段装饰器：空值只在展示层转换为 --，不污染表单数据。 */
@@ -51,20 +48,14 @@ export const MessageTypeFilter = (props: MessageFilterFormItemProps) => (
 );
 
 export const MessageDirectionFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgDirection' label='收发标志'>
-    <Select allowClear placeholder='全部' options={directionOptions} />
+  <Form.Item {...props} name='msgDirection' label='收发标志' rules={[{ required: true, message: '请选择收发标志' }]}>
+    <Select placeholder='请选择收发标志' options={directionOptions} />
   </Form.Item>
 );
 
 export const TransmissionStatusFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='transmissionStatus' label='收发状态'>
+  <Form.Item {...props} name='transmissionStatus' label='报文状态'>
     <Select allowClear placeholder='全部' options={transmissionStatusOptions} />
-  </Form.Item>
-);
-
-export const BusinessStatusFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='businessStatus' label='业务状态'>
-    <Select allowClear placeholder='全部' options={businessStatusOptions} />
   </Form.Item>
 );
 
@@ -72,11 +63,11 @@ export const MessageTimeRangeFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item
     {...props}
     name='messageTimeRange'
-    label='统一报文时间'
-    getValueFromEvent={getIsoDateTimeRange}
-    getValueProps={getDateTimeRangeValueProps}
+    label='收/发报文日期'
+    getValueFromEvent={getIsoDateRange}
+    getValueProps={getDateRangeValueProps}
   >
-    <DatePicker.RangePicker className='w-full' showTime format={DATE_TIME_FORMAT} />
+    <DatePicker.RangePicker className='w-full' format={DATE_FORMAT} />
   </Form.Item>
 );
 
@@ -87,8 +78,8 @@ export const BusinessTypeFilter = (props: MessageFilterFormItemProps) => (
 );
 
 export const MessageChannelFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgChannel' label='收报渠道' normalize={trimWhitespace}>
-    <Input allowClear placeholder='请输入收报渠道' />
+  <Form.Item {...props} name='msgChannel' label='收/发报通道' normalize={trimWhitespace}>
+    <Input allowClear placeholder='请输入收/发报通道' />
   </Form.Item>
 );
 
@@ -130,11 +121,12 @@ export const MessageRecvInstFilter = (props: MessageFilterFormItemProps) => (
 
 const trimWhitespace = (value?: string) => value?.trim() ?? '';
 
-// 查询协议使用 ISO 字符串，组件层负责在 Dayjs 与接口值之间双向转换。
-const getIsoDateTimeRange = (dates: [Dayjs, Dayjs] | null): MessageTimeRange =>
-  dates ? [dates[0].toISOString(), dates[1].toISOString()] : null;
+/** 将日期组件选中的 Dayjs 区间转换为覆盖整日的 ISO 时间区间，供表单查询使用。 */
+const getIsoDateRange = (dates: [Dayjs, Dayjs] | null): MessageTimeRange =>
+  dates ? [dates[0].startOf('day').toISOString(), dates[1].endOf('day').toISOString()] : null;
 
-const getDateTimeRangeValueProps = (value?: MessageTimeRange) => ({
+/** 将表单中的 ISO 时间区间转换为日期组件可识别的 Dayjs 区间，用于回显。 */
+const getDateRangeValueProps = (value?: MessageTimeRange) => ({
   value: value ? [dayjs(value[0]), dayjs(value[1])] : null,
 });
 

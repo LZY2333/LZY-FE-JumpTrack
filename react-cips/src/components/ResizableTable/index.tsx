@@ -25,10 +25,12 @@ export default function ResizableTable<T extends object>(props: ResizableTablePr
   const { columns, storageKey, defaultHiddenColumnIds, pagination, scroll, ...tableProps } = props;
   // layout 是列布局的唯一来源，封装最终列、总宽度和设置操作。
   const layout = useTableLayout(columns, storageKey, defaultHiddenColumnIds);
+  // 紧凑表头使用较小内边距，设置入口按 Table 尺寸对齐标题文字的垂直中心。
+  const columnSettingsTopClassName = tableProps.size === 'small' ? 'top-2' : 'top-4';
 
   return (
     <div className='relative'>
-      <div className='absolute right-4 top-4 z-10'>
+      <div className={`absolute right-12 ${columnSettingsTopClassName} z-10`}>
         <ColumnSettings columns={layout.columnMetaList} onToggle={layout.toggleColumn} onReset={layout.reset} />
       </div>
       {/* fixed 与 scroll.x 是列宽模型的不变量，不开放给调用方覆盖。 */}

@@ -1,29 +1,55 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Button, Card, Space, Tabs, Typography } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import type { MessageDetail } from '@/types';
-import { BUSINESS_STATUS_LABELS, MESSAGE_DIRECTION_LABELS, TRANSMISSION_STATUS_LABELS } from '@/types/enums';
+import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
+import { ArrowLeftOutlined, CopyOutlined, DownloadOutlined, PrinterOutlined } from '@ant-design/icons';
+import { downloadMessage } from '@/api/messages';
 import useMessageDetail from './useMessageDetail';
+import useMessageRaw from './useMessageRaw';
 import TabProcessing from './TabProcessing';
 import TabRelatedMessages from './TabRelatedMessages';
 import TabRaw from './TabRaw';
 import { RoutePath } from '@/router/paths';
-import { MessageBasicInfoPanel, MessageBusinessContent } from './messageDetailContent';
-import { resolveDisplayMessageId, resolveLabel } from './util';
+import { MessageBasicInfoPanel, MessageBusinessContent } from './ModalMessageRelated';
+import { isRawContentActionDisabled, printTextDocument, resolveDisplayMessageId } from './util';
+import { copyText, saveBlobResponse } from '@/utils/fileUtil';
 
 const SCROLLABLE_TAB_CONTENT_CLASS_NAME = 'h-full overflow-auto';
 const FLEX_TAB_CONTENT_CLASS_NAME = 'flex h-full min-h-0 flex-col overflow-hidden';
 
-interface MessageStatusTextProps {
-  /** 当前报文明细；请求完成前不展示状态摘要。 */
-  detail: MessageDetail | null;
-}
-
 /** 报文明细页：展示报文基础信息、结构化业务内容、原始报文和处理记录。 */
 const MessageDetailPage = () => {
+  const { message } = App.useApp();
   const { messageId } = useParams<{ messageId: string }>();
   const navigate = useNavigate();
   const { detail, detailError } = useMessageDetail(messageId);
+  const { raw, rawLoading, rawError } = useMessageRaw(messageId);
+  const [downloading, setDownloading] = useState(false);
+
+  /** 复制当前报文原文。 */
+  const handleCopy = () => {
+    if (!raw?.content) return;
+    copyText(raw.content)
+      .then(() => message.success('原文已复制'))
+      .catch(() => message.error('复制失败'));
+  };
+
+  /** 打开只包含当前报文原文的打印窗口。 */
+  const handlePrint = () => {
+    if (!raw?.content) return;
+    const opened = printTextDocument(raw.fileName || `${messageId || 'message'}.xml`, raw.content);
+    if (!opened) message.error('打印窗口被浏览器拦截，请允许弹出窗口后重试');
+  };
+
+  /** 下载当前报文原始文件。 */
+  const handleDownload = () => {
+    if (!messageId || downloading) return;
+    setDownloading(true);
+    downloadMessage(messageId)
+      .then((response) => saveBlobResponse(response, raw?.fileName || `${messageId}.xml`))
+      .finally(() => setDownloading(false));
+  };
+
+  const rawContentActionDisabled = isRawContentActionDisabled(raw, rawLoading);
 
   const tabs = [
     {
@@ -36,7 +62,7 @@ const MessageDetailPage = () => {
       key: 'raw',
       label: '报文原文',
       className: FLEX_TAB_CONTENT_CLASS_NAME,
-      children: <TabRaw messageId={messageId} />,
+      children: <TabRaw raw={raw} loading={rawLoading} error={rawError} />,
     },
     {
       key: 'related',
@@ -54,19 +80,37 @@ const MessageDetailPage = () => {
 
   return (
     <div className='flex h-full flex-col overflow-hidden'>
-      <Space className='mb-3 shrink-0' size={8} wrap>
-        <Button
-          size='small'
-          color='primary'
-          variant='solid'
-          icon={<ArrowLeftOutlined />}
-          onClick={() => navigate(RoutePath.MessageList)}
-        >
-          返回
-        </Button>
-        <Typography.Text strong>报文 {resolveDisplayMessageId(detail, messageId)}</Typography.Text>
-        <MessageStatusText detail={detail} />
-      </Space>
+      <div className='mb-3 flex shrink-0 items-center justify-between gap-3'>
+        <Space size={8} wrap>
+          <Button
+            size='small'
+            color='primary'
+            variant='solid'
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(RoutePath.MessageList)}
+          >
+            返回
+          </Button>
+          <Typography.Text strong>报文 {resolveDisplayMessageId(detail, messageId)} 详情</Typography.Text>
+        </Space>
+        <Space size={8} wrap>
+          <Button size='small' icon={<CopyOutlined />} disabled={rawContentActionDisabled} onClick={handleCopy}>
+            复制原文
+          </Button>
+          <Button size='small' icon={<PrinterOutlined />} disabled={rawContentActionDisabled} onClick={handlePrint}>
+            打印原文
+          </Button>
+          <Button
+            size='small'
+            icon={<DownloadOutlined />}
+            loading={downloading}
+            disabled={!messageId}
+            onClick={handleDownload}
+          >
+            下载原文
+          </Button>
+        </Space>
+      </div>
 
       {detailError && <Alert className='mb-3 shrink-0' type='error' showIcon message={detailError} />}
       <MessageBasicInfoPanel className='shrink-0' detail={detail} />
@@ -87,16 +131,3 @@ const MessageDetailPage = () => {
 };
 
 export default MessageDetailPage;
-
-/** 报文状态摘要：直接展示收发方向、收发状态和业务处理状态文字。 */
-const MessageStatusText = ({ detail }: MessageStatusTextProps) => {
-  if (!detail) return null;
-
-  return (
-    <Space size={16} wrap>
-      <Typography.Text>收发标志：{resolveLabel(MESSAGE_DIRECTION_LABELS, detail.msgDirection)}</Typography.Text>
-      <Typography.Text>收发状态：{resolveLabel(TRANSMISSION_STATUS_LABELS, detail.transmissionStatus)}</Typography.Text>
-      <Typography.Text>业务状态：{resolveLabel(BUSINESS_STATUS_LABELS, detail.businessStatus)}</Typography.Text>
-    </Space>
-  );
-};

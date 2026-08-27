@@ -3,7 +3,6 @@ import { Alert, Button, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { getRelatedMessages } from '@/api/messages';
 import {
-  businessStatus,
   messageTime,
   msgBusinessNo,
   msgDirection,
@@ -13,9 +12,9 @@ import {
   msgType,
   transmissionStatus,
 } from '@/components/TableColumn';
+import TableViewport from '@/components/TableViewport';
 import type { MessageRecord } from '@/types';
-import DetailTableViewport, { FILL_TABLE_CLASS_NAME } from './detailTableViewport';
-import RelatedMessageDetailModal from './relatedMessageDetailModal';
+import ModalMessageRelated from './ModalMessageRelated';
 
 interface TabRelatedMessagesProps {
   /** 当前报文标识号，用于查询同一业务链路中的其他报文。 */
@@ -73,7 +72,6 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
     msgSendInst,
     msgRecvInst,
     transmissionStatus,
-    businessStatus,
     { ...messageTime, sorter: undefined },
     {
       title: '操作',
@@ -92,25 +90,21 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
     <>
       <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
         {error && <Alert className='mb-2 shrink-0' type='error' showIcon message={error} />}
-        <DetailTableViewport>
-          {(tableBodyHeight) => (
-            <Table<MessageRecord>
-              className={FILL_TABLE_CLASS_NAME}
-              size='small'
-              rowKey='msgId'
-              columns={columns}
-              dataSource={records}
-              loading={loading}
-              pagination={false}
-              onRow={(record) => ({ onDoubleClick: () => handleOpenDetail(record), className: 'cursor-pointer' })}
-              scroll={{ x: records.length > 0 ? 'max-content' : undefined, y: tableBodyHeight }}
-              locale={{ emptyText: '暂无关联报文' }}
-            />
-          )}
-        </DetailTableViewport>
+        <TableViewport>
+          <Table<MessageRecord>
+            size='small'
+            rowKey='msgId'
+            columns={columns}
+            dataSource={records}
+            loading={loading}
+            pagination={false}
+            onRow={(record) => ({ onDoubleClick: () => handleOpenDetail(record), className: 'cursor-pointer' })}
+            locale={{ emptyText: '暂无关联报文' }}
+          />
+        </TableViewport>
       </div>
       {selectedMessageId && (
-        <RelatedMessageDetailModal messageId={selectedMessageId} open onClose={() => setSelectedMessageId(undefined)} />
+        <ModalMessageRelated messageId={selectedMessageId} open onClose={() => setSelectedMessageId(undefined)} />
       )}
     </>
   );

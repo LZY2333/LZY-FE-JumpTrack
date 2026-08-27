@@ -64,8 +64,4 @@ export const post = <T>(url: string, data?: unknown) =>
 export const getBlob = (url: string, config?: AxiosRequestConfig) =>
   request.get<Blob>(url, { ...config, responseType: 'blob' });
 
-/** 下载类 POST 请求，不经过 JSON 业务体解包。 */
-export const postBlob = (url: string, data?: unknown, config?: AxiosRequestConfig) =>
-  request.post<Blob>(url, data, { ...config, responseType: 'blob' });
-
 export default request;

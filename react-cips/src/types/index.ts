@@ -28,7 +28,7 @@ export interface MessageRecord {
   msgRecvDate: NullableText;
   /** MAIN_MSG_ID：主报文编号。 */
   mainMsgId: NullableText;
-  /** MSG_CHANNEL：收报渠道。 */
+  /** MSG_CHANNEL：收/发报通道。 */
   msgChannel: NullableText;
   /** MSG_TYPE：包含版本号的报文类型编码，同时作为 Formily Schema 注册键。 */
   msgType: string;
@@ -62,7 +62,7 @@ export interface MessageRecord {
   updateTime: string;
   /** 后端归一化后的报文时间，收报取收报时间，发报取发报时间。 */
   messageTime: string;
-  /** 收发状态。 */
+  /** 报文状态。 */
   transmissionStatus: TransmissionStatus;
   /** 业务状态。 */
   businessStatus: BusinessStatus;

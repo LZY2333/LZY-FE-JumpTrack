@@ -70,9 +70,9 @@
 
 - **页面目录**：`src/pages/` 下使用 kebab-case，例如 `task-pool/`
 - **公共组件目录**：`src/components/` 下使用 PascalCase，例如 `MainLayout/`
+- **组件文件及组件命名**: ：始终使用 PascalCase，文件与组件同名，组件类型放最前面，然后是业务领域，越细分越在后面，例如 关联报文弹出 -> `ModalMessageRelated`
 - **Page/Component 主文件**：统一为 `index.tsx`，import 路径无需写文件名
 - **其他文件**：统一使用 camelCase，并按业务拆分文件
-- **组件函数**：始终使用 PascalCase
 - **事件处理函数**：使用 `handle` 前缀，例如 `handlePointerDown`；JSX 通过 `on*` 属性绑定，例如 `onPointerDown={handlePointerDown}`
 - **变量和参数**：禁止使用无语义的单字母，须使用简短的语义化单词，例如 `task`、`value`、`key`；`e`（事件对象）、`x`/`y`（坐标）、`i`（循环索引）等约定俗成的单字母命名除外
 
@@ -124,11 +124,11 @@ const columns = [taskId, taskName, taskStatus];
 
 ## 常见布局场景与实现方案
 
-### 固定区 + 剩余区局部滚动
-
-适用于定高页面、抽屉或 Tab 中，上方内容保持自身高度，下方内容占满剩余空间的场景。
+### 无页面级滚动条，局部滚动
 
 #### 方案一：视口定额扣减
+
+适合：顶部结构完全固定、页面布局简单且短期不会变化的场景。
 
 ```tsx
 // 仅适用于顶部区域高度固定、布局状态有限的页面；顶部结构变化时必须同步维护偏移量。
@@ -138,6 +138,8 @@ const TABLE_BODY_HEIGHT = 'calc(100vh - 234px)';
 ```
 
 #### 方案二：Flex 剩余空间下沉
+
+适合: 非表格场景，整个包裹内容参与滚动
 
 ```tsx
 <div className='flex h-full flex-col overflow-hidden'>
@@ -152,6 +154,8 @@ const TABLE_BODY_HEIGHT = 'calc(100vh - 234px)';
 ```
 
 #### 方案三：Flex 表体高度桥接
+
+适合: 需要动态剩余高度，并且必须固定表头、只滚动表体，会产生一次布局调整。
 
 ```tsx
 const TablePanel = () => {

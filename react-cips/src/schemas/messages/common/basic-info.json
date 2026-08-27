@@ -19,7 +19,7 @@
         },
         "transmissionStatus": {
           "type": "string",
-          "title": "收发状态",
+          "title": "报文状态",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
@@ -37,7 +37,7 @@
         },
         "msgSendInst": {
           "type": "string",
-          "title": "发报机构编号",
+          "title": "发报机构",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
@@ -61,7 +61,7 @@
         },
         "msgRecvInst": {
           "type": "string",
-          "title": "收报机构编号",
+          "title": "收报机构",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
@@ -91,7 +91,7 @@
         },
         "messageTime": {
           "type": "string",
-          "title": "统一报文时间",
+          "title": "收/发报文日期",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
@@ -109,7 +109,7 @@
         },
         "msgDirection": {
           "type": "string",
-          "title": "报文收发标志",
+          "title": "收发标志",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
@@ -121,7 +121,7 @@
         },
         "msgUetr": {
           "type": "string",
-          "title": "UETR 唯一标识号",
+          "title": "UETR",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
@@ -133,7 +133,7 @@
         },
         "msgChannel": {
           "type": "string",
-          "title": "收报渠道",
+          "title": "收/发报通道",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },

@@ -137,7 +137,7 @@ const XMLViewer = ({
           ...style,
         }}
       >
-        <div className='absolute right-2 top-2 z-10'>
+        <div className='absolute right-6 top-2 z-10'>
           <Segmented<XMLViewerThemeName>
             aria-label='XML 展示主题'
             size='small'

@@ -4,7 +4,7 @@ import { createForm } from '@formily/core';
 import type { FormPatternTypes } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import type { ISchema } from '@formily/react';
-import { App } from 'antd';
+import { App, ConfigProvider, theme } from 'antd';
 import { FormGrid, FormLayout, Input } from '@formily/antd-v5';
 import cn from 'classnames';
 import { MessageFormItem } from '@/components/FormItem';
@@ -42,6 +42,7 @@ interface MessageSchemaFormProps {
 /** 使用前端白名单组件渲染静态 Formily Schema，并保持紧凑详情模式。 */
 const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSchemaFormProps) => {
   const { message } = App.useApp();
+  const { token } = theme.useToken();
   const form = useMemo(() => createForm({ pattern }), [pattern, schema]);
 
   useEffect(() => {
@@ -77,22 +78,24 @@ const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSc
       onDoubleClick={handleDoubleClick}
       onMouseOver={handleMouseOver}
     >
-      <FormProvider form={form}>
-        <FormLayout
-          layout='horizontal'
-          size='small'
-          labelAlign='left'
-          labelWidth={112}
-          labelWrap={false}
-          wrapperWrap={false}
-          spaceGap={4}
-          gridColumnGap={12}
-          gridRowGap={0}
-          feedbackLayout='none'
-        >
-          <SchemaField schema={schema} />
-        </FormLayout>
-      </FormProvider>
+      <ConfigProvider theme={{ token: { colorTextDisabled: token.colorText } }}>
+        <FormProvider form={form}>
+          <FormLayout
+            layout='horizontal'
+            size='small'
+            labelAlign='left'
+            labelWidth={112}
+            labelWrap={false}
+            wrapperWrap={false}
+            spaceGap={4}
+            gridColumnGap={12}
+            gridRowGap={0}
+            feedbackLayout='none'
+          >
+            <SchemaField schema={schema} />
+          </FormLayout>
+        </FormProvider>
+      </ConfigProvider>
     </div>
   );
 };

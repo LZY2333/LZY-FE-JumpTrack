@@ -280,17 +280,6 @@ const createRawXml = (message: MessageDetail) => `<?xml version="1.0" encoding="
 const escapeXml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const readJsonBody = async (req: IncomingMessage) => {
-  let body = '';
-  await new Promise<void>((resolve) => {
-    req.on('data', (chunk) => {
-      body += chunk;
-    });
-    req.on('end', () => resolve());
-  });
-  return body ? (JSON.parse(body) as MessageQueryConditions) : {};
-};
-
 const writeDownloadHeaders = (res: ServerResponse, fileName: string, contentType: string) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', contentType);
@@ -317,16 +306,6 @@ export default [
           total: list.length,
         },
       };
-    },
-  },
-  {
-    url: '/api/example/v1/messages/export',
-    method: 'post',
-    rawResponse: async (req: IncomingMessage, res: ServerResponse) => {
-      const conditions = await readJsonBody(req);
-      const workbook = createXlsx(filterMessages(conditions));
-      writeDownloadHeaders(res, 'messages.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.end(workbook);
     },
   },
   {
@@ -408,122 +387,3 @@ const stripProcessingRecords = ({
   processingRecords: _processingRecords,
   ...detail
 }: MockMessageDetail): MessageDetail => detail;
-
-/** 生成一个仅包含内联字符串的最小有效 XLSX，避免 Mock 引入额外 Excel 依赖。 */
-function createXlsx(records: MessageRecord[]) {
-  const rows = [
-    [
-      '报文标识号',
-      '收发标志',
-      '报文类型编码',
-      '交易流水号',
-      '发报机构',
-      '收报机构',
-      '收发状态',
-      '业务状态',
-      '统一报文时间',
-    ],
-    ...records.map((record) => [
-      record.msgId,
-      record.msgDirection,
-      record.msgType,
-      record.msgBusinessNo ?? '',
-      record.msgSendInst ?? '',
-      record.msgRecvInst ?? '',
-      record.transmissionStatus,
-      record.businessStatus,
-      record.messageTime,
-    ]),
-  ];
-  const sheetRows = rows
-    .map(
-      (row, rowIndex) =>
-        `<row r="${rowIndex + 1}">${row
-          .map(
-            (cell, columnIndex) =>
-              `<c r="${columnName(columnIndex)}${rowIndex + 1}" t="inlineStr"><is><t>${escapeXml(
-                String(cell),
-              )}</t></is></c>`,
-          )
-          .join('')}</row>`,
-    )
-    .join('');
-
-  const files: Record<string, string> = {
-    '[Content_Types].xml':
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>',
-    '_rels/.rels':
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
-    'xl/workbook.xml':
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="报文列表" sheetId="1" r:id="rId1"/></sheets></workbook>',
-    'xl/_rels/workbook.xml.rels':
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>',
-    'xl/worksheets/sheet1.xml': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${sheetRows}</sheetData></worksheet>`,
-  };
-  return createStoredZip(files);
-}
-
-const columnName = (index: number) => {
-  let value = index + 1;
-  let result = '';
-  while (value > 0) {
-    result = String.fromCharCode(65 + ((value - 1) % 26)) + result;
-    value = Math.floor((value - 1) / 26);
-  }
-  return result;
-};
-
-function createStoredZip(files: Record<string, string>) {
-  const localParts: Buffer[] = [];
-  const centralParts: Buffer[] = [];
-  let offset = 0;
-
-  Object.entries(files).forEach(([name, value]) => {
-    const nameBuffer = Buffer.from(name, 'utf8');
-    const dataBuffer = Buffer.from(value, 'utf8');
-    const checksum = crc32(dataBuffer);
-    const localHeader = Buffer.alloc(30);
-    localHeader.writeUInt32LE(0x04034b50, 0);
-    localHeader.writeUInt16LE(20, 4);
-    localHeader.writeUInt16LE(0x0800, 6);
-    localHeader.writeUInt32LE(checksum, 14);
-    localHeader.writeUInt32LE(dataBuffer.length, 18);
-    localHeader.writeUInt32LE(dataBuffer.length, 22);
-    localHeader.writeUInt16LE(nameBuffer.length, 26);
-    localParts.push(localHeader, nameBuffer, dataBuffer);
-
-    const centralHeader = Buffer.alloc(46);
-    centralHeader.writeUInt32LE(0x02014b50, 0);
-    centralHeader.writeUInt16LE(20, 4);
-    centralHeader.writeUInt16LE(20, 6);
-    centralHeader.writeUInt16LE(0x0800, 8);
-    centralHeader.writeUInt32LE(checksum, 16);
-    centralHeader.writeUInt32LE(dataBuffer.length, 20);
-    centralHeader.writeUInt32LE(dataBuffer.length, 24);
-    centralHeader.writeUInt16LE(nameBuffer.length, 28);
-    centralHeader.writeUInt32LE(offset, 42);
-    centralParts.push(centralHeader, nameBuffer);
-    offset += localHeader.length + nameBuffer.length + dataBuffer.length;
-  });
-
-  const centralDirectory = Buffer.concat(centralParts);
-  const end = Buffer.alloc(22);
-  end.writeUInt32LE(0x06054b50, 0);
-  end.writeUInt16LE(Object.keys(files).length, 8);
-  end.writeUInt16LE(Object.keys(files).length, 10);
-  end.writeUInt32LE(centralDirectory.length, 12);
-  end.writeUInt32LE(offset, 16);
-  return Buffer.concat([...localParts, centralDirectory, end]);
-}
-
-const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
-  let value = index;
-  for (let bit = 0; bit < 8; bit += 1) value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
-  return value >>> 0;
-});
-
-const crc32 = (buffer: Buffer) => {
-  let value = 0xffffffff;
-  for (const byte of buffer) value = CRC_TABLE[(value ^ byte) & 0xff] ^ (value >>> 8);
-  return (value ^ 0xffffffff) >>> 0;
-};

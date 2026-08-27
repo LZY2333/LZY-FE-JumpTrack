@@ -15,7 +15,9 @@
     "build:uat": "tsc -p tsconfig.build.json && vite build --mode uat",
     "build:prd": "tsc -p tsconfig.build.json && vite build --mode prd",
     "export:src": "node scripts/export-recent-src.mjs",
-    "import:src": "node scripts/import-src-txt.mjs"
+    "import:src": "node scripts/import-src-txt.mjs",
+    "export:src:patch": "node scripts/export-src-patch.mjs",
+    "import:src:patch": "node scripts/import-src-patch.mjs"
   },
   "dependencies": {
     "@ant-design/icons": "5.6.1",

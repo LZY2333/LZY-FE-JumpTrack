@@ -3,7 +3,7 @@ import { getMessage } from '@/api/messages';
 import type { MessageDetail } from '@/types';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 
-/** 加载报文基础信息和结构化字段，Tab 内的独立业务数据由各 Tab 自行请求。 */
+/** 加载报文基础信息和结构化字段，原文等独立资源由各自的 Hook 负责。 */
 const useMessageDetail = (messageId?: string) => {
   const [detail, setDetail] = useState<MessageDetail | null>(null);
   const [detailError, setDetailError] = useState<string>();

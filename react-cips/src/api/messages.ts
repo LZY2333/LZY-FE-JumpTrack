@@ -1,5 +1,5 @@
 import type { Pagination } from './request';
-import { get, getBlob, post, postBlob } from './request';
+import { get, getBlob, post } from './request';
 import type { MessageDetail, MessageProcessingRecord, MessageRaw, MessageRecord } from '@/types';
 import type {
   BusinessStatus,
@@ -62,6 +62,3 @@ export const getRelatedMessages = (msgId: string) =>
 
 /** 下载指定报文的原始文件。 */
 export const downloadMessage = (msgId: string) => getBlob(`${MESSAGE_API}/${encodeURIComponent(msgId)}/download`);
-
-/** 按当前完整查询条件导出服务端生成的 XLSX。 */
-export const exportMessages = (params: MessageQueryConditions) => postBlob(`${MESSAGE_API}/export`, params);

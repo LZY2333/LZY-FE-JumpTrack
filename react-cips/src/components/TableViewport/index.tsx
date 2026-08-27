@@ -1,19 +1,21 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import classNames from 'classnames';
+import { cloneElement, useLayoutEffect, useRef, useState } from 'react';
+import type { ReactElement } from 'react';
+import type { TableProps } from 'antd';
 
-// 将 antd Table 的内部容器串成纵向 Flex，使 scroll.y 从最大高度约束变为实际剩余高度。
-export const FILL_TABLE_CLASS_NAME =
+const FILL_TABLE_CLASS_NAME =
   'h-full [&_.ant-spin-nested-loading]:h-full [&_.ant-spin-container]:flex [&_.ant-spin-container]:h-full [&_.ant-spin-container]:flex-col [&_.ant-table]:min-h-0 [&_.ant-table]:flex-1 [&_.ant-table]:overflow-hidden [&_.ant-table-container]:flex [&_.ant-table-container]:h-full [&_.ant-table-container]:flex-col [&_.ant-table-header]:shrink-0 [&_.ant-table-body]:min-h-0 [&_.ant-table-body]:flex-1 [&_.ant-table-placeholder]:h-full';
 
-interface DetailTableViewportProps {
-  /** 根据视口扣除表头后的高度渲染表格。 */
-  children: (tableBodyHeight: number) => ReactNode;
+interface TableViewportProps<RecordType extends object> {
+  /** 需要自适应剩余高度并由视口注入滚动配置的 Ant Design Table。 */
+  children: ReactElement<TableProps<RecordType>>;
 }
 
-/** 明细 Tab 表格视口：占满父级余高，并把实际表体高度桥接给 antd Table。 */
-const DetailTableViewport = ({ children }: DetailTableViewportProps) => {
+/** 表格自适应视口：占满父级剩余高度，并为子 Table 注入横纵向滚动配置。 */
+const TableViewport = <RecordType extends object,>({ children }: TableViewportProps<RecordType>) => {
   const [tableBodyHeight, setTableBodyHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const records = children.props.dataSource ?? [];
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -34,9 +36,15 @@ const DetailTableViewport = ({ children }: DetailTableViewportProps) => {
 
   return (
     <div ref={containerRef} className='min-h-0 flex-1 overflow-hidden'>
-      {children(tableBodyHeight)}
+      {cloneElement(children, {
+        className: classNames(FILL_TABLE_CLASS_NAME, children.props.className),
+        scroll: {
+          x: records.length > 0 ? 'max-content' : undefined,
+          y: tableBodyHeight,
+        },
+      })}
     </div>
   );
 };
 
-export default DetailTableViewport;
+export default TableViewport;
