@@ -87,9 +87,9 @@ describe('task detail customer form', () => {
 
     const change = buildCustomerChange(customer, baseline, current);
 
-    expect(change?.bankCusRef).toBe('BANK-NEW');
-    expect(change?.cusPrmAct).toBe('622xxxxxxx1');
-    expect(change?.subActIntrs?.filter((intr) => intr.currency === 'HKD')).toEqual([
+    expect(change.bankCusRef).toBe('BANK-NEW');
+    expect(change.cusPrmAct).toBe('622xxxxxxx1');
+    expect(change.subActIntrs?.filter((intr) => intr.currency === 'HKD')).toEqual([
       { ...subActIntrs[0], withdrawnIntr: 120 },
       { ...subActIntrs[2], withdrawnIntr: 120 },
     ]);
@@ -135,13 +135,22 @@ describe('task detail customer form', () => {
     };
 
     expect(baseline.terminationDate).toBeNull();
-    expect(buildCustomerChange(customer, baseline, current)).toBeNull();
+    const change = buildCustomerChange(customer, baseline, current);
+
+    expect(change).toEqual(customer);
+    expect(change).not.toBe(customer);
+    expect(change.terminationDate).toBeNull();
   });
 
-  it('returns null when the validated form has no semantic change', () => {
+  it('returns a complete Customer snapshot when the validated form has no semantic change', () => {
     const customer = createCustomer(accounts, subActIntrs);
     const baseline = toCustomerFormModel(customer);
 
-    expect(buildCustomerChange(customer, baseline, { ...baseline })).toBeNull();
+    const change = buildCustomerChange(customer, baseline, { ...baseline });
+
+    expect(change).toEqual(customer);
+    expect(change).not.toBe(customer);
+    expect(change.investmentAccounts).not.toBe(customer.investmentAccounts);
+    expect(change.subActIntrs).not.toBe(customer.subActIntrs);
   });
 });

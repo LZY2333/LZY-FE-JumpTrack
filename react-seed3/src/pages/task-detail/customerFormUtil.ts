@@ -71,20 +71,21 @@ export const toCustomerFormModel = (customer: Customer): CustomerFormModel => {
 };
 
 /**
- * 以原始 Customer 为模板，将表单中确实发生的业务变化写回后端结构；无变化时返回 null。
+ * 以原始 Customer 为模板，将表单业务变化写回并生成 Submit 必传的完整客户快照。
+ * @param customer 后端返回的原始 Customer，作为完整客户快照的结构和数据模板。
+ * @param customerForm 原始 Customer 转换后的表单模型，作为判断字段是否变化的比较基线。
+ * @param customerFormNew 校验通过后的当前表单模型，提供需要写回客户快照的最新字段值。
  */
 export const buildCustomerChange = (
   customer: Customer,
   customerForm: CustomerFormModel,
   customerFormNew: CustomerFormModel,
-): Customer | null => {
+): Customer => {
   const customerChange = cloneCustomer(customer);
-  let changed = false;
 
   const applyScalarChange = <K extends MutableCustomerField>(field: K): void => {
     if (consoleCompareField(field, customerForm[field], customerFormNew[field])) return;
     customerChange[field] = customerFormNew[field];
-    changed = true;
   };
 
   MUTABLE_CUSTOMER_FIELDS.forEach(applyScalarChange);
@@ -101,7 +102,6 @@ export const buildCustomerChange = (
       customerChange.subActIntrs?.forEach((intr) => {
         if (intr.currency !== currency) return;
         intr[dtoField] = currentAmount ?? 0;
-        changed = true;
       });
     });
   };
@@ -109,7 +109,7 @@ export const buildCustomerChange = (
   applyInterestChanges('withdrawnIntr', 'withdrawnIntr');
   applyInterestChanges('transferIntr', 'transferIntr');
 
-  return changed ? customerChange : null;
+  return customerChange;
 };
 
 export const getInterestCurrencies = (...forms: CustomerFormModel[]): string[] =>

@@ -62,8 +62,8 @@ export default function TaskDetail() {
         updated.customerFormNew,
       );
       const payload: TaskStatusPayload = {
+        customerChange: customerChangeNew,
         attachments: updated.attachments,
-        ...(customerChangeNew ? { customerChange: customerChangeNew } : {}),
       };
 
       Modal.confirm({

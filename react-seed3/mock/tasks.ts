@@ -347,7 +347,7 @@ export default [
   {
     /**
      * 统一状态变更：
-     * - submit 有客户字段变化时保存完整 customerChange，无变化时清除变更快照；
+     * - submit 始终保存完整 customerChange；
      * - return 保留变更快照并记录退回原因；
      * - approve 将任务变更快照覆盖到客户主数据。
      */
@@ -357,8 +357,8 @@ export default [
       const { taskId, taskStatus, makerId, checkerId, taskRemark, payload } = opt.body || {};
       const task = findTask(taskId);
       if (!task) return notFound('Task', taskId);
-      if (taskStatus === TaskStatus.Submitted && !payload) {
-        return { returnCode: 'ERR0400', errorMsg: 'Submitting a task requires payload' };
+      if (taskStatus === TaskStatus.Submitted && !payload?.customerChange) {
+        return { returnCode: 'ERR0400', errorMsg: 'Submitting a task requires customerChange' };
       }
       if (
         (taskStatus === TaskStatus.Returned || taskStatus === TaskStatus.Approved) &&
@@ -379,11 +379,7 @@ export default [
       }
 
       if (payload) {
-        if (payload.customerChange) {
-          mockCustomerChangesByTaskId.set(taskId, cloneCustomer(payload.customerChange));
-        } else {
-          mockCustomerChangesByTaskId.delete(taskId);
-        }
+        mockCustomerChangesByTaskId.set(taskId, cloneCustomer(payload.customerChange));
         mockAttachmentsByTaskId.set(taskId, payload.attachments.map(cloneAttachment));
       }
 

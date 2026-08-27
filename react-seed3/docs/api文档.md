@@ -237,13 +237,13 @@
 | `makerId`    | string                    | 否   | Maker 柜员 ID，提交 / 撤销时携带   |
 | `checkerId`  | string                    | 否   | Checker 柜员 ID，批准 / 退回时携带 |
 | `taskRemark` | string                    | 否   | 任务备注，退回时用于填写退回原因   |
-| `payload`    | TaskStatusPayload         | 否   | 提交时携带的业务数据               |
+| `payload`    | TaskStatusPayload         | 否   | 提交时必传，其他状态变更无需携带   |
 
 **TaskStatusPayload**
 
 | 字段             | 类型                          | 说明                       |
 | ---------------- | ----------------------------- | -------------------------- |
-| `customerChange` | [Customer](#customer)         | 有客户字段变化时携带完整客户变更信息；无变化时省略 |
+| `customerChange` | [Customer](#customer)         | Submit 时必传的完整客户快照，无论字段是否变化均须携带 |
 | `attachments`    | [Attachment](#attachment)\[\] | 当前附件列表，每次全量提交 |
 
 **前端派生方法**
