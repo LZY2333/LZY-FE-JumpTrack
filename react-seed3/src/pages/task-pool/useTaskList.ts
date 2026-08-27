@@ -4,6 +4,7 @@ import type { Task } from '@/types';
 import { getTasks } from '@/api/tasks';
 import type { TaskSortField, TaskSortOrder } from '@/api/tasks';
 import useTaskPoolStore from '@/store/useTaskPoolStore';
+import useUserStore from '@/store/useUserStore';
 
 const PAGE_SIZE_STORAGE_KEY = 'task-pool-page-size';
 const DEFAULT_PAGE_SIZE = 10;
@@ -37,8 +38,16 @@ export default function useTaskList() {
   const [sortField, setSortField] = useState<TaskSortField>();
   const [sortOrder, setSortOrder] = useState<TaskSortOrder>();
   const refreshVersion = useTaskPoolStore((state) => state.refreshVersion);
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
+    if (!user) {
+      setTasks([]);
+      setTotal(0);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     getTasks({
       current,
@@ -63,6 +72,7 @@ export default function useTaskList() {
       })
       .finally(() => setLoading(false));
   }, [
+    user,
     current,
     pageSize,
     status,

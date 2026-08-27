@@ -2,7 +2,7 @@ import type { UserIdentity } from '@/types';
 import { get } from './request';
 
 export interface GetOt4UserBody {
-  user: UserIdentity;
+  user?: UserIdentity;
   roles: string[];
   pageRoles: Record<string, string[]>;
 }

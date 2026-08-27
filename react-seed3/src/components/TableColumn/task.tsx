@@ -35,7 +35,7 @@ export const tranType: ColumnType<Task> = {
   render: (tranType: TranType) => TRAN_TYPE_LABEL[tranType] || tranType,
 };
 
-export const cusId: ColumnType<Task> = { title: 'CIF', dataIndex: 'cusId', witdh: 150 };
+export const cusId: ColumnType<Task> = { title: 'CIF', dataIndex: 'cusId', width: 150 };
 
 export const customerName: ColumnType<Task> = {
   title: 'Customer Name',

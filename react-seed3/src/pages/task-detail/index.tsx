@@ -25,7 +25,7 @@ export default function TaskDetail() {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const requestTaskPoolRefresh = useTaskPoolStore((state) => state.requestRefresh);
-  const { task, customer, customerChange, attachments } = useTaskDetail(taskId);
+  const { task, customer, customerChange, attachments } = useTaskDetail(user ? taskId : undefined);
   const taskFormData = useMemo(() => {
     if (!customer) return null;
 
