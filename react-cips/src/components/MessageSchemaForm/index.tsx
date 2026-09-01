@@ -59,8 +59,8 @@ const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSc
 
     event.preventDefault();
     copyText(text)
-      .then(() => message.success('已复制'))
-      .catch(() => message.error('复制失败'));
+      .then(() => message.success('Copied'))
+      .catch(() => message.error('Failed to copy'));
   };
 
   /** 省略区域悬浮时通过原生 title 展示完整内容，内容变化后无需额外同步状态。 */

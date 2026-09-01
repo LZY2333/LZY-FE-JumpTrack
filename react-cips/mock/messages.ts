@@ -7,6 +7,7 @@ import { BusinessStatus, BusinessType, MessageDirection, ResCode, TransmissionSt
 const MESSAGE_TYPES = ['pacs.008.001.01', 'pacs.009.001.01', 'camt.054.001.08', 'admi.002.001.01'];
 const SEND_INSTS = ['CMBCCNBJ', 'ICBKCNBJ', 'PCBCCNBJ', 'ABOCCNBJ'];
 const RECV_INSTS = ['WUBAHKHH', 'BKCHCNBJ', 'CITIUS33', 'HSBCHKHH'];
+const CLEARING_TARGET_DEPARTMENTS = ['CIPS-OPS', 'PAYMENT-OPS', 'TREASURY', 'COMPLIANCE'];
 const TRANSMISSION_STATUSES = Object.values(TransmissionStatus);
 const BUSINESS_STATUSES = Object.values(BusinessStatus);
 const BUSINESS_TYPES = Object.values(BusinessType);
@@ -40,6 +41,8 @@ function createMessage(index: number): MockMessageDetail {
     Date.UTC(2026, 7, 22 - Math.floor(index / 6), 9 + (index % 8), index % 60, 0),
   ).toISOString();
   const msgId = createMessageId(index);
+  const amount = Number((1000 + index * 238.75).toFixed(2));
+  const hasPaymentAmount = msgType !== 'admi.002.001.01';
 
   return {
     msgId,
@@ -50,13 +53,18 @@ function createMessage(index: number): MockMessageDetail {
     msgChannel: choose(index % 3 === 0, 'SWIFT', 'CIPS'),
     msgType,
     msgBusinessNo: `TXN20260822${sequence}`,
+    amount: choose(hasPaymentAmount, amount, null),
+    currency: choose(hasPaymentAmount, 'CNY', null),
+    refTxn20: choose(index % 5 === 0, null, `REF20-${sequence}`),
+    ourReference: choose(index % 4 === 0, null, `OUR-${sequence}`),
+    clearingTargetDepartment: CLEARING_TARGET_DEPARTMENTS[index % CLEARING_TARGET_DEPARTMENTS.length],
     msgRelatedId: createMessageId(relatedMessageIndex),
     msgEndId: choose(index % 3 === 0, `E2E20260822${sequence}`, null),
     msgUetr: choose(index % 6 === 0, null, `9f1c3f0e-${String(index + 1).padStart(4, '0')}-4b68-8e8a-9e6f8a1c2d3e`),
     msgSendTime: choose(msgDirection === MessageDirection.Out, messageTime, null),
     msgSendInst: SEND_INSTS[index % SEND_INSTS.length],
     msgRecvInst: RECV_INSTS[index % RECV_INSTS.length],
-    remark: choose(index % 7 === 0, `Mock 报文备注 ${index + 1}`, null),
+    remark: choose(index % 7 === 0, `Mock message remark ${index + 1}`, null),
     createUser: choose(index % 5 === 0, null, `A${String(90000 + index)}`),
     createBrno: `BR${String(100000 + (index % 8)).slice(1)}`,
     authorUser: choose(index % 4 === 0, null, 'SYSTEM'),
@@ -71,25 +79,25 @@ function createMessage(index: number): MockMessageDetail {
       {
         recordId: `${msgId}-01`,
         processTime: messageTime,
-        node: choose(msgDirection === MessageDirection.In, '报文接收', '报文生成'),
-        status: '成功',
-        resultSummary: '报文进入处理队列',
+        node: choose(msgDirection === MessageDirection.In, 'Message Receipt', 'Message Generation'),
+        status: 'Success',
+        resultSummary: 'Message entered the processing queue',
         operator: 'SYSTEM',
       },
       {
         recordId: `${msgId}-02`,
         processTime: new Date(Date.parse(messageTime) + 30_000).toISOString(),
-        node: '格式校验',
-        status: choose(index % 9 === 0, '失败', '成功'),
-        resultSummary: choose(index % 9 === 0, 'Mock：字段格式校验失败', 'CIPS 报文格式校验通过'),
+        node: 'Format Validation',
+        status: choose(index % 9 === 0, 'Failed', 'Success'),
+        resultSummary: choose(index % 9 === 0, 'Mock: field format validation failed', 'CIPS message format validated'),
         operator: 'SYSTEM',
       },
       {
         recordId: `${msgId}-03`,
         processTime: new Date(Date.parse(messageTime) + 90_000).toISOString(),
-        node: '业务处理',
+        node: 'Business Processing',
         status: BUSINESS_STATUSES[index % BUSINESS_STATUSES.length],
-        resultSummary: '业务状态已更新',
+        resultSummary: 'Business status updated',
         operator: choose(index % 3 === 0, null, `A${String(90000 + index)}`),
       },
     ],
@@ -118,12 +126,12 @@ function createFormData({ index, msgId, msgType, messageTime }: MockFormDataCont
         chargeBearer: 'SLEV',
         settlementAmount: amount,
         currency: 'CNY',
-        debtorName: `付款客户 ${index + 1}`,
+        debtorName: `Debtor Customer ${index + 1}`,
         debtorAccount: `621700${String(1000000000 + index)}`,
-        creditorName: `收款客户 ${index + 1}`,
+        creditorName: `Creditor Customer ${index + 1}`,
         creditorAccount: `622202${String(2000000000 + index)}`,
         purposeCode: choose(index % 2 === 0, 'GDDS', 'SUPP'),
-        remittanceInformation: choose(index % 5 === 0, null, `报文 ${msgId} 的 Mock 附言`),
+        remittanceInformation: choose(index % 5 === 0, null, `Mock remittance information for ${msgId}`),
       };
     case 'pacs.009.001.01':
       return {
@@ -138,7 +146,7 @@ function createFormData({ index, msgId, msgType, messageTime }: MockFormDataCont
         creditorAgent: RECV_INSTS[index % RECV_INSTS.length],
         serviceLevelCode: 'URGP',
         localInstrumentCode: 'CIPS',
-        remittanceInformation: `金融机构间转账 ${msgId}`,
+        remittanceInformation: `Financial institution transfer ${msgId}`,
       };
     case 'camt.054.001.08':
       return {
@@ -159,7 +167,7 @@ function createFormData({ index, msgId, msgType, messageTime }: MockFormDataCont
     case 'admi.002.001.01':
       return {
         eventCode: choose(index % 2 === 0, 'CIPS-E001', 'CIPS-W001'),
-        eventName: choose(index % 2 === 0, '报文校验失败', '系统处理延迟'),
+        eventName: choose(index % 2 === 0, 'Message Validation Failed', 'System Processing Delay'),
         eventSeverity: choose(index % 2 === 0, 'ERROR', 'WARNING'),
         eventTime: messageTime,
         sourceSystem: 'CIPS-GATEWAY',
@@ -167,10 +175,10 @@ function createFormData({ index, msgId, msgType, messageTime }: MockFormDataCont
         originalMessageId: `ORIG-${msgId}`,
         originalMessageType: 'pacs.008.001.01',
         errorCode: choose(index % 2 === 0, 'FMT-001', 'TIMEOUT-001'),
-        errorReason: choose(index % 2 === 0, '报文格式校验未通过', '下游系统响应超时'),
-        suggestedAction: '核对报文内容后重新处理',
-        acknowledgmentRequired: '是',
-        eventDescription: `Mock 系统事件 ${index + 1}`,
+        errorReason: choose(index % 2 === 0, 'Message format validation failed', 'Downstream system response timed out'),
+        suggestedAction: 'Verify the message content and process it again',
+        acknowledgmentRequired: 'Yes',
+        eventDescription: `Mock system event ${index + 1}`,
       };
     default:
       return {};
@@ -214,6 +222,19 @@ const filterMessages = (query: MessageQueryConditions = {}) => {
     const keyword = query.msgRecvInst.toLowerCase();
     list = list.filter((record) => (record.msgRecvInst ?? '').toLowerCase().includes(keyword));
   }
+  if (query.clearingTargetDepartment) {
+    const keyword = query.clearingTargetDepartment.toLowerCase();
+    list = list.filter((record) => (record.clearingTargetDepartment ?? '').toLowerCase().includes(keyword));
+  }
+  // 金额区间仅匹配包含有效金额的报文记录。
+  if (query.amountFrom !== undefined) {
+    const amountFrom = query.amountFrom;
+    list = list.filter((record) => record.amount !== null && record.amount >= amountFrom);
+  }
+  if (query.amountTo !== undefined) {
+    const amountTo = query.amountTo;
+    list = list.filter((record) => record.amount !== null && record.amount <= amountTo);
+  }
   if (query.messageTimeFrom) list = list.filter((record) => record.messageTime >= query.messageTimeFrom!);
   if (query.messageTimeTo) list = list.filter((record) => record.messageTime <= query.messageTimeTo!);
 
@@ -252,7 +273,7 @@ const cloneMessage = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
 const notFound = (msgId: string) => ({
   returnCode: 'ERR0404',
-  errorMsg: `报文 ${msgId} 不存在`,
+  errorMsg: `Message ${msgId} does not exist`,
 });
 
 const createRawXml = (message: MessageDetail) => `<?xml version="1.0" encoding="UTF-8"?>

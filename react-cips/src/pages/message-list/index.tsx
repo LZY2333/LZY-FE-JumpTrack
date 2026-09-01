@@ -5,13 +5,14 @@ import { Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import type { MessageRecord } from '@/types';
-import { MessageDirection } from '@/types/enums';
 import type { MessageSortField, MessageSortOrder } from '@/types/enums';
 import { RoutePath } from '@/router/paths';
 import useMessageList, { PAGE_SIZE_OPTIONS, type MessageListFilterValues } from './useMessageList';
 import ResizableTable from '@/components/ResizableTable';
 import {
+  AmountRangeFilter,
   BusinessTypeFilter,
+  ClearingTargetDepartmentFilter,
   EndToEndMessageIdFilter,
   MainMessageIdFilter,
   MessageBusinessNoFilter,
@@ -27,8 +28,10 @@ import {
   TransmissionStatusFilter,
 } from '@/components/FormItem';
 import {
+  amount,
   businessType,
   createTime,
+  currency,
   mainMsgId,
   messageTime,
   msgBusinessNo,
@@ -41,6 +44,8 @@ import {
   msgSendInst,
   msgType,
   msgUetr,
+  ourReference,
+  refTxn20,
   remark,
   transmissionStatus,
   updateTime,
@@ -49,9 +54,9 @@ import {
 // 默认筛选：页面上下边距 48px + Card 边框/内边距 26px + 表单 88px + 表单下间距 16px
 // + 表头 42px + 分页上间距 16px + 分页器 24px = 260px。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 260px)';
-// 展开筛选后按钮与最后两个条件共用一行，比默认筛选多两行，共增加 64px。
-const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 324px)';
-const DEFAULT_FILTER_VALUES: MessageListFilterValues = { msgDirection: MessageDirection.In };
+// 展开筛选后比默认筛选多三行，共增加 96px。
+const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 356px)';
+const DEFAULT_FILTER_VALUES: MessageListFilterValues = {};
 
 /** 报文查询与列表页面。 */
 const MessageList = () => {
@@ -88,6 +93,10 @@ const MessageList = () => {
     msgChannel,
     msgType,
     msgBusinessNo,
+    amount,
+    currency,
+    refTxn20,
+    ourReference,
     mainMsgId,
     msgRelatedId,
     msgEndId,
@@ -118,10 +127,10 @@ const MessageList = () => {
       >
         <Row gutter={[16, 8]}>
           <Col span={8}>
-            <MessageDirectionFilter />
+            <MessageTimeRangeFilter />
           </Col>
           <Col span={8}>
-            <MessageIdFilter />
+            <MessageDirectionFilter />
           </Col>
           <Col span={8}>
             <MessageTypeFilter />
@@ -133,7 +142,10 @@ const MessageList = () => {
             <TransmissionStatusFilter />
           </Col>
           <Col span={8}>
-            <MessageTimeRangeFilter />
+            <AmountRangeFilter />
+          </Col>
+          <Col span={8}>
+            <ClearingTargetDepartmentFilter />
           </Col>
           {advancedVisible && (
             <>
@@ -161,17 +173,20 @@ const MessageList = () => {
               <Col span={8}>
                 <MessageUetrFilter />
               </Col>
+              <Col span={8}>
+                <MessageIdFilter />
+              </Col>
             </>
           )}
           <Col span={8} className='ml-auto flex items-center justify-end'>
             <Button size='small' type='link' onClick={() => setAdvancedVisible((visible) => !visible)}>
-              更多条件 {advancedVisible ? <UpOutlined /> : <DownOutlined />}
+              More Filters {advancedVisible ? <UpOutlined /> : <DownOutlined />}
             </Button>
             <Button size='small' htmlType='submit' color='primary' variant='solid'>
-              查询
+              Search
             </Button>
             <Button size='small' htmlType='button' className='ml-2' onClick={handleReset}>
-              重置
+              Reset
             </Button>
           </Col>
         </Row>

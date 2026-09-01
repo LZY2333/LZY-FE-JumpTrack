@@ -25,6 +25,9 @@ export interface MessageListFilterValues {
   msgUetr?: string;
   msgSendInst?: string;
   msgRecvInst?: string;
+  amountFrom?: number | null;
+  amountTo?: number | null;
+  clearingTargetDepartment?: string;
 }
 
 const PAGE_SIZE_STORAGE_KEY = 'message-list-page-size';
@@ -133,6 +136,9 @@ const buildQueryConditions = (
     msgUetr: filters?.msgUetr,
     msgSendInst: filters?.msgSendInst,
     msgRecvInst: filters?.msgRecvInst,
+    amountFrom: filters?.amountFrom ?? undefined,
+    amountTo: filters?.amountTo ?? undefined,
+    clearingTargetDepartment: filters?.clearingTargetDepartment,
     sortField,
     sortOrder: sortOrder ? querySortOrder : undefined,
   });

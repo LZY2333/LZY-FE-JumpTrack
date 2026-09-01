@@ -11,7 +11,7 @@ const useMessageRaw = (messageId?: string) => {
   useEffect(() => {
     if (!messageId) {
       setRaw(null);
-      setRawError('缺少报文标识号');
+      setRawError('Message ID is required');
       setRawLoading(false);
       return;
     }
@@ -25,10 +25,10 @@ const useMessageRaw = (messageId?: string) => {
       .then((data) => {
         if (!active) return;
         setRaw(data ?? null);
-        if (!data) setRawError('未返回原始报文');
+        if (!data) setRawError('No raw message was returned');
       })
       .catch((requestError: Error) => {
-        if (active) setRawError(requestError.message || '原始报文加载失败');
+        if (active) setRawError(requestError.message || 'Failed to load the raw message');
       })
       .finally(() => {
         if (active) setRawLoading(false);

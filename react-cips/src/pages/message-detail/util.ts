@@ -14,6 +14,10 @@ const PRINT_DOCUMENT_STYLES = `
   @page { margin: 16mm; }
   body { margin: 0; color: #000; font-family: Consolas, "Courier New", monospace; }
   pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 10pt; line-height: 1.5; }
+  .xml-print-content { font-size: 10pt; line-height: 1.5; }
+  .xml-print-content * { color: #000 !important; }
+  .xml-print-content .rxv-container { white-space: pre-wrap !important; overflow-wrap: anywhere; }
+  .xml-print-content svg { display: none !important; }
 `;
 
 /** 创建独立文本打印文档，避免把详情页导航、Tab 和操作按钮一并打印。 */
@@ -28,27 +32,60 @@ export const printTextDocument = (title: string, content: string, printWindow = 
   if (!printWindow) return false;
 
   printWindow.document.title = title;
-  appendPrintDocumentContent(printWindow.document, content);
-  printWindow.document.close();
-  printWindow.addEventListener('afterprint', () => printWindow.close(), { once: true });
-  printWindow.focus();
-  printWindow.print();
+  appendPrintDocumentHead(printWindow.document);
+  appendPrintTextContent(printWindow.document, content);
+  triggerPrint(printWindow);
   return true;
 };
 
-/** 使用 DOM API 写入纯文本，确保报文内容不会被当作 HTML 解析。 */
-const appendPrintDocumentContent = (document: Document, content: string) => {
+/** 克隆 XMLViewer 当前渲染结果并打印，保留原生缩进、换行和折叠效果。 */
+export const printElementDocument = (
+  title: string,
+  contentElement: HTMLElement,
+  printWindow = openTextPrintWindow(),
+) => {
+  if (!printWindow) return false;
+
+  printWindow.document.title = title;
+  appendPrintDocumentHead(printWindow.document);
+  appendPrintElementContent(printWindow.document, contentElement);
+  triggerPrint(printWindow);
+  return true;
+};
+
+/** 写入打印页面的基础元数据和样式。 */
+const appendPrintDocumentHead = (document: Document) => {
   const charset = document.createElement('meta');
   charset.setAttribute('charset', 'UTF-8');
 
   const style = document.createElement('style');
   style.textContent = PRINT_DOCUMENT_STYLES;
 
+  document.head.append(charset, style);
+};
+
+/** 使用 DOM API 写入纯文本，确保报文内容不会被当作 HTML 解析。 */
+const appendPrintTextContent = (document: Document, content: string) => {
   const rawContent = document.createElement('pre');
   rawContent.textContent = content;
 
-  document.head.append(charset, style);
   document.body.append(rawContent);
+};
+
+/** 克隆当前可见的 XML DOM，避免 innerText 丢失层级缩进。 */
+const appendPrintElementContent = (document: Document, contentElement: HTMLElement) => {
+  const clonedContent = document.importNode(contentElement, true);
+  clonedContent.classList.add('xml-print-content');
+
+  document.body.append(clonedContent);
+};
+
+/** 完成打印文档并在打印结束后关闭临时窗口。 */
+const triggerPrint = (printWindow: Window) => {
+  printWindow.document.close();
+  printWindow.addEventListener('afterprint', () => printWindow.close(), { once: true });
+  printWindow.focus();
+  printWindow.print();
 };
 
 // #endregion ==================== 报文原文打印 Util ====================

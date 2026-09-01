@@ -30,30 +30,30 @@ export enum BusinessType {
 }
 
 export const MESSAGE_DIRECTION_LABELS: Record<MessageDirection, string> = {
-  [MessageDirection.In]: '收报',
-  [MessageDirection.Out]: '发报',
+  [MessageDirection.In]: 'Received',
+  [MessageDirection.Out]: 'Sent',
 };
 
 export const TRANSMISSION_STATUS_LABELS: Record<TransmissionStatus, string> = {
-  [TransmissionStatus.Pending]: '待处理',
-  [TransmissionStatus.Processing]: '处理中',
-  [TransmissionStatus.Success]: '成功',
-  [TransmissionStatus.Failed]: '失败',
+  [TransmissionStatus.Pending]: 'Pending',
+  [TransmissionStatus.Processing]: 'Processing',
+  [TransmissionStatus.Success]: 'Success',
+  [TransmissionStatus.Failed]: 'Failed',
 };
 
 export const BUSINESS_STATUS_LABELS: Record<BusinessStatus, string> = {
-  [BusinessStatus.Pending]: '待处理',
-  [BusinessStatus.Accepted]: '已受理',
-  [BusinessStatus.Settled]: '已清算',
-  [BusinessStatus.Rejected]: '已拒绝',
-  [BusinessStatus.Cancelled]: '已撤销',
+  [BusinessStatus.Pending]: 'Pending',
+  [BusinessStatus.Accepted]: 'Accepted',
+  [BusinessStatus.Settled]: 'Settled',
+  [BusinessStatus.Rejected]: 'Rejected',
+  [BusinessStatus.Cancelled]: 'Cancelled',
 };
 
 export const BUSINESS_TYPE_LABELS: Record<BusinessType, string> = {
-  [BusinessType.Payment]: '支付',
-  [BusinessType.Query]: '查询',
-  [BusinessType.Return]: '退汇',
-  [BusinessType.Other]: '其他',
+  [BusinessType.Payment]: 'Payment',
+  [BusinessType.Query]: 'Query',
+  [BusinessType.Return]: 'Return',
+  [BusinessType.Other]: 'Other',
 };
 
 export enum Role {

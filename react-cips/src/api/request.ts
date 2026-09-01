@@ -35,9 +35,9 @@ request.interceptors.response.use(
     const apiResult = response.data as ApiResult;
     // 约定：非 SUC0000 即业务错误，统一提示并中断 Promise 链
     if (apiResult && apiResult.returnCode !== ResCode.Success) {
-      const msg = apiResult.errorMsg || '请求失败，请稍后重试';
+      const msg = apiResult.errorMsg || 'Request failed. Please try again later.';
       message.error(msg);
-      return Promise.reject(new Error(apiResult.errorMsg || `业务错误 returnCode=${apiResult.returnCode}`));
+      return Promise.reject(new Error(apiResult.errorMsg || `Business error: returnCode=${apiResult.returnCode}`));
     }
     // 拦截器实际把业务体透传给调用方；调用方用 request.get<T, ApiResult<T>> 指定解析类型。
     // 此处 cast 仅为满足 axios 拦截器声明的 AxiosResponse 返回类型。
@@ -46,8 +46,8 @@ request.interceptors.response.use(
   (error) => {
     // 网络层 / HTTP 状态码错误统一兜底提示
     const msg = error?.response?.status
-      ? `请求失败（${error.response.status}）`
-      : error?.message || '网络异常，请稍后重试';
+      ? `Request failed (${error.response.status})`
+      : error?.message || 'Network error. Please try again later.';
     message.error(msg);
     return Promise.reject(error);
   },

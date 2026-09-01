@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
 import { ArrowLeftOutlined, CopyOutlined, DownloadOutlined, PrinterOutlined } from '@ant-design/icons';
@@ -10,11 +10,18 @@ import TabRelatedMessages from './TabRelatedMessages';
 import TabRaw from './TabRaw';
 import { RoutePath } from '@/router/paths';
 import { MessageBasicInfoPanel, MessageBusinessContent } from './ModalMessageRelated';
-import { isRawContentActionDisabled, printTextDocument, resolveDisplayMessageId } from './util';
+import {
+  isRawContentActionDisabled,
+  printElementDocument,
+  printTextDocument,
+  resolveDisplayMessageId,
+} from './util';
 import { copyText, saveBlobResponse } from '@/utils/fileUtil';
 
 const SCROLLABLE_TAB_CONTENT_CLASS_NAME = 'h-full overflow-auto';
 const FLEX_TAB_CONTENT_CLASS_NAME = 'flex h-full min-h-0 flex-col overflow-hidden';
+const DEFAULT_TAB_KEY = 'structured';
+const RAW_TAB_KEY = 'raw';
 
 /** 报文明细页：展示报文基础信息、结构化业务内容、原始报文和处理记录。 */
 const MessageDetailPage = () => {
@@ -24,20 +31,26 @@ const MessageDetailPage = () => {
   const { detail, detailError } = useMessageDetail(messageId);
   const { raw, rawLoading, rawError } = useMessageRaw(messageId);
   const [downloading, setDownloading] = useState(false);
+  const [activeTabKey, setActiveTabKey] = useState(DEFAULT_TAB_KEY);
+  const rawViewerContentRef = useRef<HTMLDivElement>(null);
 
   /** 复制当前报文原文。 */
   const handleCopy = () => {
     if (!raw?.content) return;
     copyText(raw.content)
-      .then(() => message.success('原文已复制'))
-      .catch(() => message.error('复制失败'));
+      .then(() => message.success('Raw message copied'))
+      .catch(() => message.error('Failed to copy raw message'));
   };
 
   /** 打开只包含当前报文原文的打印窗口。 */
   const handlePrint = () => {
     if (!raw?.content) return;
-    const opened = printTextDocument(raw.fileName || `${messageId || 'message'}.xml`, raw.content);
-    if (!opened) message.error('打印窗口被浏览器拦截，请允许弹出窗口后重试');
+    const title = raw.fileName || `${messageId || 'message'}.xml`;
+    const currentViewElement = activeTabKey === RAW_TAB_KEY ? rawViewerContentRef.current : null;
+    const opened = currentViewElement
+      ? printElementDocument(title, currentViewElement)
+      : printTextDocument(title, raw.content);
+    if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
   };
 
   /** 下载当前报文原始文件。 */
@@ -54,25 +67,25 @@ const MessageDetailPage = () => {
   const tabs = [
     {
       key: 'structured',
-      label: '业务信息',
+      label: 'Business Information',
       className: SCROLLABLE_TAB_CONTENT_CLASS_NAME,
       children: <MessageBusinessContent detail={detail} />,
     },
     {
-      key: 'raw',
-      label: '报文原文',
+      key: RAW_TAB_KEY,
+      label: 'Raw Message',
       className: FLEX_TAB_CONTENT_CLASS_NAME,
-      children: <TabRaw raw={raw} loading={rawLoading} error={rawError} />,
+      children: <TabRaw ref={rawViewerContentRef} raw={raw} loading={rawLoading} error={rawError} />,
     },
     {
       key: 'related',
-      label: '关联报文',
+      label: 'Related Messages',
       className: FLEX_TAB_CONTENT_CLASS_NAME,
       children: <TabRelatedMessages messageId={messageId} />,
     },
     {
       key: 'processing',
-      label: '处理记录',
+      label: 'Processing History',
       className: FLEX_TAB_CONTENT_CLASS_NAME,
       children: <TabProcessing messageId={messageId} />,
     },
@@ -89,16 +102,16 @@ const MessageDetailPage = () => {
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate(RoutePath.MessageList)}
           >
-            返回
+            Back
           </Button>
-          <Typography.Text strong>报文 {resolveDisplayMessageId(detail, messageId)} 详情</Typography.Text>
+          <Typography.Text strong>Message {resolveDisplayMessageId(detail, messageId)} Details</Typography.Text>
         </Space>
         <Space size={8} wrap>
           <Button size='small' icon={<CopyOutlined />} disabled={rawContentActionDisabled} onClick={handleCopy}>
-            复制原文
+            Copy Raw
           </Button>
           <Button size='small' icon={<PrinterOutlined />} disabled={rawContentActionDisabled} onClick={handlePrint}>
-            打印原文
+            Print Raw
           </Button>
           <Button
             size='small'
@@ -107,7 +120,7 @@ const MessageDetailPage = () => {
             disabled={!messageId}
             onClick={handleDownload}
           >
-            下载原文
+            Download Raw
           </Button>
         </Space>
       </div>
@@ -123,7 +136,9 @@ const MessageDetailPage = () => {
           className='flex h-full min-h-0 flex-col overflow-hidden [&_.ant-tabs-tab-btn]:font-semibold [&>.ant-tabs-content-holder>.ant-tabs-content]:h-full [&>.ant-tabs-content-holder]:min-h-0 [&>.ant-tabs-content-holder]:flex-1 [&>.ant-tabs-content-holder]:overflow-hidden'
           size='small'
           tabBarGutter={20}
+          activeKey={activeTabKey}
           items={tabs}
+          onChange={setActiveTabKey}
         />
       </Card>
     </div>

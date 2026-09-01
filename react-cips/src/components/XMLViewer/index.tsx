@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import type { ComponentProps, CSSProperties, ReactElement } from 'react';
 import { ConfigProvider, Segmented, theme as antdTheme } from 'antd';
 import cn from 'classnames';
@@ -100,74 +100,81 @@ const writeStoredTheme = (theme: XMLViewerThemeName) => {
 };
 
 /** 统一 XML 的格式化展示、主题切换和异常内容回退。 */
-const XMLViewer = ({
-  xml,
-  className,
-  style,
-  theme,
-  defaultTheme = 'light',
-  onThemeChange,
-  indentSize = 2,
-  collapsible = true,
-  initialCollapsedDepth,
-  invalidXml,
-}: XMLViewerProps) => {
-  const [internalTheme, setInternalTheme] = useState<XMLViewerThemeName>(() => readStoredTheme(defaultTheme));
-  const activeTheme = theme ?? internalTheme;
-  const preset = XML_VIEWER_THEMES[activeTheme];
+const XMLViewer = forwardRef<HTMLDivElement, XMLViewerProps>(
+  (
+    {
+      xml,
+      className,
+      style,
+      theme,
+      defaultTheme = 'light',
+      onThemeChange,
+      indentSize = 2,
+      collapsible = true,
+      initialCollapsedDepth,
+      invalidXml,
+    },
+    contentRef,
+  ) => {
+    const [internalTheme, setInternalTheme] = useState<XMLViewerThemeName>(() => readStoredTheme(defaultTheme));
+    const activeTheme = theme ?? internalTheme;
+    const preset = XML_VIEWER_THEMES[activeTheme];
 
-  useEffect(() => {
-    writeStoredTheme(activeTheme);
-  }, [activeTheme]);
+    useEffect(() => {
+      writeStoredTheme(activeTheme);
+    }, [activeTheme]);
 
-  const handleThemeChange = (nextTheme: XMLViewerThemeName) => {
-    if (theme === undefined) setInternalTheme(nextTheme);
-    onThemeChange?.(nextTheme);
-  };
+    const handleThemeChange = (nextTheme: XMLViewerThemeName) => {
+      if (theme === undefined) setInternalTheme(nextTheme);
+      onThemeChange?.(nextTheme);
+    };
 
-  return (
-    <ConfigProvider theme={{ algorithm: preset.dark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm }}>
-      <div
-        className={cn('relative flex flex-col overflow-hidden rounded border', className)}
-        data-theme={activeTheme}
-        style={{
-          backgroundColor: preset.backgroundColor,
-          borderColor: preset.borderColor,
-          colorScheme: preset.dark ? 'dark' : 'light',
-          ...style,
-        }}
-      >
-        <div className='absolute right-6 top-2 z-10'>
-          <Segmented<XMLViewerThemeName>
-            aria-label='XML 展示主题'
-            size='small'
-            options={THEME_OPTIONS}
-            value={activeTheme}
-            onChange={handleThemeChange}
-          />
+    return (
+      <ConfigProvider theme={{ algorithm: preset.dark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm }}>
+        <div
+          className={cn('relative flex flex-col overflow-hidden rounded border', className)}
+          data-theme={activeTheme}
+          style={{
+            backgroundColor: preset.backgroundColor,
+            borderColor: preset.borderColor,
+            colorScheme: preset.dark ? 'dark' : 'light',
+            ...style,
+          }}
+        >
+          <div className='absolute right-6 top-2 z-10'>
+            <Segmented<XMLViewerThemeName>
+              aria-label='XML viewer theme'
+              size='small'
+              options={THEME_OPTIONS}
+              value={activeTheme}
+              onChange={handleThemeChange}
+            />
+          </div>
+          <div ref={contentRef} className='min-h-0 flex-1 overflow-auto p-3'>
+            <ReactXMLViewer
+              xml={xml}
+              theme={preset.viewerTheme}
+              indentSize={indentSize}
+              collapsible={collapsible}
+              initalCollapsedDepth={initialCollapsedDepth}
+              invalidXml={
+                invalidXml ?? (
+                  <pre
+                    className='m-0 whitespace-pre overflow-auto font-mono text-xs'
+                    style={{ color: preset.viewerTheme.textColor }}
+                  >
+                    {xml}
+                  </pre>
+                )
+              }
+            />
+          </div>
         </div>
-        <div className='min-h-0 flex-1 overflow-auto p-3'>
-          <ReactXMLViewer
-            xml={xml}
-            theme={preset.viewerTheme}
-            indentSize={indentSize}
-            collapsible={collapsible}
-            initalCollapsedDepth={initialCollapsedDepth}
-            invalidXml={
-              invalidXml ?? (
-                <pre
-                  className='m-0 whitespace-pre overflow-auto font-mono text-xs'
-                  style={{ color: preset.viewerTheme.textColor }}
-                >
-                  {xml}
-                </pre>
-              )
-            }
-          />
-        </div>
-      </div>
-    </ConfigProvider>
-  );
-};
+      </ConfigProvider>
+    );
+  },
+);
+
+XMLViewer.displayName = 'XMLViewer';
 
 export default XMLViewer;

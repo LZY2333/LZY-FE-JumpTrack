@@ -15,7 +15,7 @@ const TabProcessing = ({ messageId }: { messageId?: string }) => {
   useEffect(() => {
     if (!messageId) {
       setRecords([]);
-      setError('缺少报文标识号');
+      setError('Message ID is required');
       setLoading(false);
       return;
     }
@@ -29,10 +29,10 @@ const TabProcessing = ({ messageId }: { messageId?: string }) => {
       .then((data) => {
         if (!active) return;
         setRecords(data ?? []);
-        if (!data) setError('未返回处理记录');
+        if (!data) setError('No processing history was returned');
       })
       .catch((requestError: Error) => {
-        if (active) setError(requestError.message || '处理记录加载失败');
+        if (active) setError(requestError.message || 'Failed to load processing history');
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -44,11 +44,16 @@ const TabProcessing = ({ messageId }: { messageId?: string }) => {
   }, [messageId]);
 
   const columns: TableColumnsType<MessageProcessingRecord> = [
-    { title: '处理时间', dataIndex: 'processTime', width: 180, render: renderMessageDateTime },
-    { title: '处理节点', dataIndex: 'node', width: 160 },
-    { title: '状态', dataIndex: 'status', width: 120, render: (value: string) => value || '--' },
-    { title: '结果摘要', dataIndex: 'resultSummary' },
-    { title: '操作人', dataIndex: 'operator', width: 140, render: (value: string | null) => value || '--' },
+    /** 处理时间 */
+    { title: 'Processed At', dataIndex: 'processTime', width: 180, render: renderMessageDateTime },
+    /** 处理节点 */
+    { title: 'Processing Node', dataIndex: 'node', width: 160 },
+    /** 处理状态 */
+    { title: 'Status', dataIndex: 'status', width: 120, render: (value: string) => value || '--' },
+    /** 处理结果摘要 */
+    { title: 'Result Summary', dataIndex: 'resultSummary' },
+    /** 操作人 */
+    { title: 'Operator', dataIndex: 'operator', width: 140, render: (value: string | null) => value || '--' },
   ];
 
   return (
@@ -62,7 +67,7 @@ const TabProcessing = ({ messageId }: { messageId?: string }) => {
           dataSource={records}
           loading={loading}
           pagination={false}
-          locale={{ emptyText: '暂无处理记录' }}
+          locale={{ emptyText: 'No processing history' }}
         />
       </TableViewport>
     </div>

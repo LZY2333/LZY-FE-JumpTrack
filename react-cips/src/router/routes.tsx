@@ -19,7 +19,7 @@ export const routes: AppRoute[] = [
   {
     path: RoutePath.Root,
     element: <Navigate to={RoutePath.MessageList} replace />,
-    meta: { title: '报文列表' },
+    meta: { title: 'Message List' },
   },
   {
     path: RoutePath.MessageList,
@@ -28,11 +28,11 @@ export const routes: AppRoute[] = [
         <MessageList />
       </KeepAlive>
     ),
-    meta: { title: '报文列表' },
+    meta: { title: 'Message List' },
   },
   {
     path: RoutePath.MessageDetail,
     element: <MessageDetail />,
-    meta: { title: '报文明细' },
+    meta: { title: 'Message Details' },
   },
 ];

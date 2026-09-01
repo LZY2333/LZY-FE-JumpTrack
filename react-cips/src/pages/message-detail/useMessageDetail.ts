@@ -11,7 +11,7 @@ const useMessageDetail = (messageId?: string) => {
   useEffect(() => {
     if (!messageId) {
       setDetail(null);
-      setDetailError('缺少报文标识号');
+      setDetailError('Message ID is required');
       return;
     }
 
@@ -24,10 +24,10 @@ const useMessageDetail = (messageId?: string) => {
       .then((data) => {
         if (!active) return;
         setDetail(data ?? null);
-        if (!data) setDetailError('未找到报文明细');
+        if (!data) setDetailError('Message details were not found');
       })
       .catch((error: Error) => {
-        if (active) setDetailError(error.message || '报文明细加载失败');
+        if (active) setDetailError(error.message || 'Failed to load message details');
       })
       .finally(stopGlobalLoading);
 

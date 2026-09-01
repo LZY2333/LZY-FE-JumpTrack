@@ -13,73 +13,85 @@
       "properties": {
         "instructionId": {
           "type": "string",
-          "title": "指令标识",
+          "title": "Instruction ID",
+          "$comment": "指令标识",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "transactionId": {
           "type": "string",
-          "title": "交易标识",
+          "title": "Transaction ID",
+          "$comment": "交易标识",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "settlementMethod": {
           "type": "string",
-          "title": "清算方式",
+          "title": "Settlement Method",
+          "$comment": "清算方式",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "chargeBearer": {
           "type": "string",
-          "title": "费用承担方",
+          "title": "Charge Bearer",
+          "$comment": "费用承担方",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "settlementAmount": {
           "type": "number",
-          "title": "清算金额",
+          "title": "Settlement Amount",
+          "$comment": "清算金额",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "currency": {
           "type": "string",
-          "title": "币种",
+          "title": "Currency",
+          "$comment": "币种",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "debtorName": {
           "type": "string",
-          "title": "付款人名称",
+          "title": "Debtor Name",
+          "$comment": "付款人名称",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "debtorAccount": {
           "type": "string",
-          "title": "付款人账号",
+          "title": "Debtor Account",
+          "$comment": "付款人账号",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "creditorName": {
           "type": "string",
-          "title": "收款人名称",
+          "title": "Creditor Name",
+          "$comment": "收款人名称",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "creditorAccount": {
           "type": "string",
-          "title": "收款人账号",
+          "title": "Creditor Account",
+          "$comment": "收款人账号",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "purposeCode": {
           "type": "string",
-          "title": "业务用途代码",
+          "title": "Purpose Code",
+          "$comment": "业务用途代码",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         },
         "remittanceInformation": {
           "type": "string",
-          "title": "附言",
+          "title": "Remittance Information",
+          "$comment": "附言",
           "x-decorator": "MessageFormItem",
           "x-component": "Input"
         }

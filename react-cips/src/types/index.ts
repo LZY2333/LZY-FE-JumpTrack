@@ -34,6 +34,16 @@ export interface MessageRecord {
   msgType: string;
   /** MSG_BUSINESS_NO：交易流水号。 */
   msgBusinessNo: NullableText;
+  /** AMOUNT：报文金额。 */
+  amount: number | null;
+  /** CURRENCY：报文币种。 */
+  currency: NullableText;
+  /** REF_TXN20：外部交易参考号。 */
+  refTxn20: NullableText;
+  /** OUR_REFERENCE：本方参考号。 */
+  ourReference: NullableText;
+  /** CLEARING_TARGET_DEPARTMENT：清分目标部门。 */
+  clearingTargetDepartment: NullableText;
   /** MSG_RELATED_ID：关联流水号。 */
   msgRelatedId: NullableText;
   /** MSG_END_ID：报文端到端流水号。 */

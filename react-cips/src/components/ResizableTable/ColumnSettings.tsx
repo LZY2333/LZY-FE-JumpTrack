@@ -34,7 +34,7 @@ export default function ColumnSettings({ columns, onToggle, onReset }: ColumnSet
       </div>
       <div className='mt-1 flex shrink-0 justify-end border-t border-gray-100 pt-1'>
         <Button color='primary' variant='text' size='small' className='px-0' onClick={onReset}>
-          重置
+          Reset
         </Button>
       </div>
     </div>
@@ -42,7 +42,7 @@ export default function ColumnSettings({ columns, onToggle, onReset }: ColumnSet
 
   return (
     <Popover content={content} trigger='click' color='#fff1ef' placement='bottomRight'>
-      <Tooltip title='列设置'>
+      <Tooltip title='Column Settings'>
         <Button
           className='shadow-md transition-shadow hover:shadow-lg'
           color='primary'

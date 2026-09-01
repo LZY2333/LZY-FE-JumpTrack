@@ -41,14 +41,14 @@ const ModalMessageRelated = ({ messageId, open, onClose }: ModalMessageRelatedPr
       destroyOnHidden
       footer={null}
       open={open}
-      title={`关联报文 ${resolveDisplayMessageId(detail, messageId)}`}
+      title={`Related Message ${resolveDisplayMessageId(detail, messageId)}`}
       width={1200}
       onCancel={onClose}
     >
       {detailError && <Alert className='mb-3' type='error' showIcon message={detailError} />}
       {!detail && !detailError ? (
         <div className='flex min-h-40 items-center justify-center'>
-          <Spin size='small' tip='正在加载关联报文' />
+          <Spin size='small' tip='Loading related message' />
         </div>
       ) : (
         <div className='flex flex-col gap-3'>
@@ -62,7 +62,7 @@ const ModalMessageRelated = ({ messageId, open, onClose }: ModalMessageRelatedPr
 
 /** 基础信息面板：使用禁用 Input 保留表单形态和字段边界。 */
 export const MessageBasicInfoPanel = ({ detail, className }: MessageBasicInfoPanelProps) => (
-  <Card className={className} size='small' title='基础信息'>
+  <Card className={className} size='small' title='Basic Information'>
     <MessageSchemaForm
       schema={messageBasicInfoSchema}
       values={detail ? toMessageBasicFormData(detail) : {}}
@@ -73,7 +73,7 @@ export const MessageBasicInfoPanel = ({ detail, className }: MessageBasicInfoPan
 
 /** 业务信息面板：供弹窗等无 Tab 容器的简化明细复用。 */
 export const MessageBusinessInfoPanel = ({ detail, className }: MessageBusinessInfoPanelProps) => (
-  <Card className={className} size='small' title='业务信息'>
+  <Card className={className} size='small' title='Business Information'>
     <MessageBusinessContent detail={detail} />
   </Card>
 );
@@ -82,7 +82,13 @@ export const MessageBusinessInfoPanel = ({ detail, className }: MessageBusinessI
 export const MessageBusinessContent = ({ detail }: MessageBusinessContentProps) => {
   const schema = getMessageSchema(detail?.msgType);
   if (!schema) {
-    return <Alert type='info' showIcon message='当前报文类型暂无业务信息模板，可查看或下载报文原文。' />;
+    return (
+      <Alert
+        type='info'
+        showIcon
+        message='No business information template is available for this message type. View or download the raw message instead.'
+      />
+    );
   }
   return <MessageSchemaForm schema={schema} values={detail?.formData ?? {}} pattern='disabled' />;
 };

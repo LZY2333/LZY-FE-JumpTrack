@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { Alert, Empty, Spin } from 'antd';
 import XMLViewer from '@/components/XMLViewer';
 import type { MessageRaw } from '@/types';
@@ -12,12 +13,12 @@ interface TabRawProps {
 }
 
 /** 报文原文 Tab：展示报文系统接收或发送的原始 XML。 */
-const TabRaw = ({ raw, loading, error }: TabRawProps) => {
+const TabRaw = forwardRef<HTMLDivElement, TabRawProps>(({ raw, loading, error }, viewerContentRef) => {
   const content = raw?.content ? (
-    <XMLViewer className='min-h-0 flex-1 text-xs' xml={raw.content} />
+    <XMLViewer ref={viewerContentRef} className='min-h-0 flex-1 text-xs' xml={raw.content} />
   ) : (
     <div className='flex flex-1 items-center justify-center'>
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='暂无原始报文' />
+      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='No raw message' />
     </div>
   );
 
@@ -28,7 +29,7 @@ const TabRaw = ({ raw, loading, error }: TabRawProps) => {
         {loading ? (
           <div className='flex flex-1 items-center justify-center gap-2'>
             <Spin size='small' />
-            <span>正在加载原文</span>
+            <span>Loading raw message</span>
           </div>
         ) : (
           content
@@ -36,6 +37,8 @@ const TabRaw = ({ raw, loading, error }: TabRawProps) => {
       </div>
     </div>
   );
-};
+});
+
+TabRaw.displayName = 'TabRaw';
 
 export default TabRaw;

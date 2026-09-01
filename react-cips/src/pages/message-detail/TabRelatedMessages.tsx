@@ -31,7 +31,7 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
   useEffect(() => {
     if (!messageId) {
       setRecords([]);
-      setError('缺少报文标识号');
+      setError('Message ID is required');
       setLoading(false);
       return;
     }
@@ -45,10 +45,10 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
       .then((data) => {
         if (!active) return;
         setRecords(data ?? []);
-        if (!data) setError('未返回关联报文');
+        if (!data) setError('No related messages were returned');
       })
       .catch((requestError: Error) => {
-        if (active) setError(requestError.message || '关联报文加载失败');
+        if (active) setError(requestError.message || 'Failed to load related messages');
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -74,13 +74,14 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
     transmissionStatus,
     { ...messageTime, sorter: undefined },
     {
-      title: '操作',
+      /** 操作 */
+      title: 'Action',
       key: 'action',
       width: 80,
       fixed: 'right',
       render: (_, record) => (
         <Button color='primary' variant='text' size='small' onClick={() => handleOpenDetail(record)}>
-          查看
+          View
         </Button>
       ),
     },
@@ -99,7 +100,7 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
             loading={loading}
             pagination={false}
             onRow={(record) => ({ onDoubleClick: () => handleOpenDetail(record), className: 'cursor-pointer' })}
-            locale={{ emptyText: '暂无关联报文' }}
+            locale={{ emptyText: 'No related messages' }}
           />
         </TableViewport>
       </div>

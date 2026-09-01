@@ -40,5 +40,5 @@ export const copyText = async (value: string) => {
   textarea.select();
   const copied = document.execCommand('copy');
   document.body.removeChild(textarea);
-  if (!copied) throw new Error('浏览器未允许复制');
+  if (!copied) throw new Error('The browser did not allow copying');
 };

@@ -30,6 +30,9 @@ export interface MessageQueryConditions {
   msgUetr?: string;
   msgSendInst?: string;
   msgRecvInst?: string;
+  amountFrom?: number;
+  amountTo?: number;
+  clearingTargetDepartment?: string;
   sortField?: MessageSortField;
   sortOrder?: MessageQuerySortOrder;
 }
