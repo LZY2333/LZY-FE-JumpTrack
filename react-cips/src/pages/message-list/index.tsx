@@ -10,53 +10,63 @@ import { RoutePath } from '@/router/paths';
 import useMessageList, { PAGE_SIZE_OPTIONS, type MessageListFilterValues } from './useMessageList';
 import ResizableTable from '@/components/ResizableTable';
 import {
-  AmountRangeFilter,
-  BusinessTypeFilter,
-  ClearingTargetDepartmentFilter,
   EndToEndMessageIdFilter,
   MainMessageIdFilter,
+  MessageBusTypeFilter,
   MessageBusinessNoFilter,
   MessageChannelFilter,
   MessageDirectionFilter,
   MessageIdFilter,
+  MessageRecvDateRangeFilter,
   MessageRecvInstFilter,
+  MessageRecvStatusFilter,
+  MessageSendDateRangeFilter,
   MessageSendInstFilter,
-  MessageTimeRangeFilter,
+  MessageSendStatusFilter,
   MessageTypeFilter,
   MessageUetrFilter,
+  MsgOwnerGroupFilter,
+  MsgOwnerDeptFilter,
+  NonStpCodeFilter,
+  RefNoFilter,
   RelatedMessageIdFilter,
-  TransmissionStatusFilter,
+  RemitAmountRangeFilter,
+  StpIndFilter,
+  TranIdFilter,
 } from '@/components/FormItem';
 import {
-  amount,
-  businessType,
   createTime,
-  currency,
   mainMsgId,
-  messageTime,
   msgBusinessNo,
   msgChannel,
   msgDirection,
   msgEndId,
   msgId,
+  msgOwnerDept,
+  msgRecvDate,
   msgRecvInst,
+  msgRecvStatus,
   msgRelatedId,
+  msgSendDate,
   msgSendInst,
+  msgSendStatus,
   msgType,
   msgUetr,
-  ourReference,
-  refTxn20,
+  refNo,
+  remitAmount,
+  remitCcy,
   remark,
-  transmissionStatus,
+  tranId,
   updateTime,
 } from '@/components/TableColumn';
 
-// 默认筛选：页面上下边距 48px + Card 边框/内边距 26px + 表单 88px + 表单下间距 16px
-// + 表头 42px + 分页上间距 16px + 分页器 24px = 260px。
-const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 260px)';
-// 展开筛选后比默认筛选多三行，共增加 96px。
-const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 356px)';
+// 默认筛选：页面上下边距 48px + Card 边框/内边距 26px + 表单 120px + 表单下间距 16px
+// + 表头 42px + 分页上间距 16px + 分页器 24px = 292px。
+const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 292px)';
+// 展开筛选后比默认筛选多四行，共增加 128px。
+const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 420px)';
 const DEFAULT_FILTER_VALUES: MessageListFilterValues = {};
+const DEFAULT_HIDDEN_COLUMN_IDS = ['mainMsgId', 'msgRelatedId', 'msgEndId', 'createTime', 'updateTime', 'remark'];
 
 /** 报文查询与列表页面。 */
 const MessageList = () => {
@@ -78,7 +88,8 @@ const MessageList = () => {
     // 排序字段
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
     const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
-    const isSortableField = field === 'messageTime' || field === 'createTime' || field === 'updateTime';
+    const isSortableField =
+      field === 'msgRecvDate' || field === 'msgSendDate' || field === 'createTime' || field === 'updateTime';
     const order: MessageSortOrder | undefined = activeSorter.order ?? undefined;
     setSort(isSortableField ? (field as MessageSortField) : undefined, order);
   };
@@ -89,22 +100,24 @@ const MessageList = () => {
   const columns: TableColumnsType<MessageRecord> = [
     msgId,
     msgDirection,
-    businessType,
     msgChannel,
     msgType,
     msgBusinessNo,
-    amount,
-    currency,
-    refTxn20,
-    ourReference,
+    remitAmount,
+    remitCcy,
+    tranId,
+    refNo,
+    msgOwnerDept,
+    msgSendInst,
+    msgRecvInst,
+    msgRecvStatus,
+    msgSendStatus,
+    msgRecvDate,
+    msgSendDate,
+    msgUetr,
     mainMsgId,
     msgRelatedId,
     msgEndId,
-    msgUetr,
-    msgSendInst,
-    msgRecvInst,
-    transmissionStatus,
-    messageTime,
     createTime,
     updateTime,
     remark,
@@ -127,7 +140,10 @@ const MessageList = () => {
       >
         <Row gutter={[16, 8]}>
           <Col span={8}>
-            <MessageTimeRangeFilter />
+            <MessageRecvDateRangeFilter />
+          </Col>
+          <Col span={8}>
+            <MessageSendDateRangeFilter />
           </Col>
           <Col span={8}>
             <MessageDirectionFilter />
@@ -139,16 +155,28 @@ const MessageList = () => {
             <MessageBusinessNoFilter />
           </Col>
           <Col span={8}>
-            <TransmissionStatusFilter />
+            <MessageRecvStatusFilter />
           </Col>
           <Col span={8}>
-            <AmountRangeFilter />
+            <MessageSendStatusFilter />
           </Col>
           <Col span={8}>
-            <ClearingTargetDepartmentFilter />
+            <MessageIdFilter />
+          </Col>
+          <Col span={8}>
+            <MsgOwnerDeptFilter />
           </Col>
           {advancedVisible && (
             <>
+              <Col span={8}>
+                <MessageBusTypeFilter />
+              </Col>
+              <Col span={8}>
+                <RefNoFilter />
+              </Col>
+              <Col span={8}>
+                <TranIdFilter />
+              </Col>
               <Col span={8}>
                 <MessageSendInstFilter />
               </Col>
@@ -159,7 +187,13 @@ const MessageList = () => {
                 <MessageChannelFilter />
               </Col>
               <Col span={8}>
-                <BusinessTypeFilter />
+                <MsgOwnerGroupFilter />
+              </Col>
+              <Col span={8}>
+                <StpIndFilter />
+              </Col>
+              <Col span={8}>
+                <NonStpCodeFilter />
               </Col>
               <Col span={8}>
                 <MainMessageIdFilter />
@@ -174,7 +208,7 @@ const MessageList = () => {
                 <MessageUetrFilter />
               </Col>
               <Col span={8}>
-                <MessageIdFilter />
+                <RemitAmountRangeFilter />
               </Col>
             </>
           )}
@@ -198,7 +232,8 @@ const MessageList = () => {
         rowKey='msgId'
         size='small'
         columns={columns}
-        storageKey='message-list'
+        storageKey='message-list-v2'
+        defaultHiddenColumnIds={DEFAULT_HIDDEN_COLUMN_IDS}
         dataSource={messages}
         loading={loading}
         onChange={handleTableChange}

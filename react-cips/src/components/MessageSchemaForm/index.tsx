@@ -1,34 +1,17 @@
 import { useEffect, useMemo } from 'react';
-import type { ComponentProps, MouseEvent } from 'react';
+import type { ComponentProps, MouseEvent, PropsWithChildren } from 'react';
 import { createForm } from '@formily/core';
 import type { FormPatternTypes } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import type { ISchema } from '@formily/react';
-import { App, ConfigProvider, theme } from 'antd';
+import { App, Card, ConfigProvider, Table, theme } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { FormGrid, FormLayout, Input } from '@formily/antd-v5';
 import cn from 'classnames';
 import { MessageFormItem } from '@/components/FormItem';
 import { copyText } from '@/utils/fileUtil';
 
 const COPY_TARGET_SELECTOR = '.ant-formily-item-label-content, .ant-formily-item-control-content-component';
-
-/** 详情输入框统一展示空态；禁用时让指针事件落到字段容器，以支持双击复制。 */
-const MessageInput = ({ className, disabled, placeholder = '--', ...props }: ComponentProps<typeof Input>) => (
-  <Input
-    {...props}
-    className={cn(disabled && 'pointer-events-none', className)}
-    disabled={disabled}
-    placeholder={placeholder}
-  />
-);
-
-const SchemaField = createSchemaField({
-  components: {
-    FormGrid,
-    Input: MessageInput,
-    MessageFormItem,
-  },
-});
 
 interface MessageSchemaFormProps {
   /** 描述字段结构和展示组件的静态 Schema。 */
@@ -100,17 +83,124 @@ const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSc
   );
 };
 
+/** 详情输入框统一展示空态；禁用时让指针事件落到字段容器，以支持双击复制。 */
+const MessageInput = ({ className, disabled, placeholder = '--', ...props }: ComponentProps<typeof Input>) => (
+  <Input
+    {...props}
+    className={cn(disabled && 'pointer-events-none', className)}
+    disabled={disabled}
+    placeholder={placeholder}
+  />
+);
+
+/** 详情多行文本统一展示空态，并保留字段容器的双击复制能力。 */
+const MessageTextArea = ({
+  className,
+  disabled,
+  placeholder = '--',
+  ...props
+}: ComponentProps<typeof Input.TextArea>) => (
+  <Input.TextArea
+    {...props}
+    className={cn('mb-1', disabled && 'pointer-events-none', className)}
+    disabled={disabled}
+    placeholder={placeholder}
+  />
+);
+
+interface MessageSectionProps {
+  /** 当前业务信息区块标题。 */
+  title: string;
+}
+
+/** 带标题的业务信息区块。 */
+const MessageSection = ({ title, children }: PropsWithChildren<MessageSectionProps>) => (
+  <Card className='mb-3 last:mb-0' size='small' title={title}>
+    {children}
+  </Card>
+);
+
+interface MessageBusinessTableColumn {
+  /** 数据库字段对应的 camelCase 属性名。 */
+  dataIndex: string;
+  /** 用户可见的英文字段名。 */
+  title: string;
+  /** 表格列宽。 */
+  width?: number;
+}
+
+interface MessageBusinessTableProps {
+  /** 一对多子表记录。 */
+  value?: Array<Record<string, unknown>>;
+  /** 子表面板标题。 */
+  title: string;
+  /** 作为表格行唯一标识的字段。 */
+  rowKey: string;
+  /** 子表字段列定义。 */
+  columns: MessageBusinessTableColumn[];
+}
+
+/** 一对多业务属性表，保持数据库字段列顺序并提供横向滚动。 */
+const MessageBusinessTable = ({ value = [], title, rowKey, columns }: MessageBusinessTableProps) => {
+  const tableColumns: TableColumnsType<Record<string, unknown>> = columns.map((column) => ({
+    ...column,
+    render: renderBusinessTableCell,
+  }));
+
+  return (
+    <Card className='mb-3 last:mb-0' size='small' title={title}>
+      <Table<Record<string, unknown>>
+        bordered
+        size='small'
+        rowKey={(record, index) => String(record[rowKey] ?? index)}
+        columns={tableColumns}
+        dataSource={value}
+        pagination={false}
+        scroll={{ x: 'max-content' }}
+      />
+    </Card>
+  );
+};
+
+const SchemaField = createSchemaField({
+  components: {
+    FormGrid,
+    FormGridColumn: FormGrid.GridColumn,
+    Input: MessageInput,
+    MessageBusinessTable,
+    MessageFormItem,
+    MessageSection,
+    TextArea: MessageTextArea,
+  },
+});
+
 /** 将接口空值归一化为 Input 约定的空字符串，由控件 placeholder 负责展示 --。 */
 const normalizeInputValues = (values: Record<string, unknown>) =>
-  Object.fromEntries(
-    Object.entries(values).map(([name, value]) => [name, value === null || value === undefined ? '' : value]),
+  Object.fromEntries(Object.entries(values).map(([name, value]) => [name, normalizeInputValue(value)]));
+
+/** 递归处理嵌套业务对象和子表记录中的接口空值。 */
+const normalizeInputValue = (value: unknown): unknown => {
+  if (value === null || value === undefined) return '';
+  if (Array.isArray(value)) return value.map(normalizeInputValue);
+  if (typeof value !== 'object') return value;
+
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([name, childValue]) => [
+      name,
+      normalizeInputValue(childValue),
+    ]),
   );
+};
 
 /** 优先读取 Input 的完整值，空 Input 使用当前展示的 placeholder。 */
 const resolveTargetText = (target: HTMLElement) => {
-  const input = target.querySelector<HTMLInputElement>('input');
+  const input = target.querySelector<HTMLInputElement | HTMLTextAreaElement>('input, textarea');
   if (!input) return target.textContent?.trim();
   return input.value.trim() || input.placeholder.trim();
 };
+
+/** 业务子表空值统一展示为 --。 */
+const renderBusinessTableCell = (value: unknown) =>
+  value === undefined || value === null || value === '' ? '--' : String(value);
 
 export default MessageSchemaForm;

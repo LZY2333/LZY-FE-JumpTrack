@@ -3,14 +3,16 @@ import { Alert, Button, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { getRelatedMessages } from '@/api/messages';
 import {
-  messageTime,
   msgBusinessNo,
   msgDirection,
   msgId,
+  msgRecvDate,
   msgRecvInst,
+  msgRecvStatus,
+  msgSendDate,
   msgSendInst,
+  msgSendStatus,
   msgType,
-  transmissionStatus,
 } from '@/components/TableColumn';
 import TableViewport from '@/components/TableViewport';
 import type { MessageRecord } from '@/types';
@@ -71,8 +73,10 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
     msgBusinessNo,
     msgSendInst,
     msgRecvInst,
-    transmissionStatus,
-    { ...messageTime, sorter: undefined },
+    msgRecvStatus,
+    msgSendStatus,
+    { ...msgRecvDate, sorter: undefined },
+    { ...msgSendDate, sorter: undefined },
     {
       /** 操作 */
       title: 'Action',

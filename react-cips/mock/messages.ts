@@ -1,16 +1,23 @@
-import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { MessageQuery, MessageQueryConditions } from '@/api/messages';
 import type { MessageDetail, MessageProcessingRecord, MessageRecord } from '@/types';
-import { BusinessStatus, BusinessType, MessageDirection, ResCode, TransmissionStatus } from '@/types/enums';
+import { BusinessStatus, MessageBusinessType, MessageDirection, MsgRecvStatus, ResCode } from '@/types/enums';
 
-// 报文类型覆盖当前已注册的四个 CIPS Schema；状态和业务类型始终复用 types 中的统一枚举。
+// 报文类型用于模拟多种 CIPS 报文，BUSINESS_TYPE 决定三类业务信息 Schema。
 const MESSAGE_TYPES = ['pacs.008.001.01', 'pacs.009.001.01', 'camt.054.001.08', 'admi.002.001.01'];
+const MESSAGE_BUSINESS_TYPES = [
+  MessageBusinessType.Payment,
+  MessageBusinessType.Payment,
+  MessageBusinessType.Bill,
+  MessageBusinessType.Query,
+];
 const SEND_INSTS = ['CMBCCNBJ', 'ICBKCNBJ', 'PCBCCNBJ', 'ABOCCNBJ'];
 const RECV_INSTS = ['WUBAHKHH', 'BKCHCNBJ', 'CITIUS33', 'HSBCHKHH'];
-const CLEARING_TARGET_DEPARTMENTS = ['CIPS-OPS', 'PAYMENT-OPS', 'TREASURY', 'COMPLIANCE'];
-const TRANSMISSION_STATUSES = Object.values(TransmissionStatus);
+const MSG_OWNER_DEPTS = ['CIPS-OPS', 'PAYMENT-OPS', 'TREASURY', 'COMPLIANCE'];
+const MSG_OWNER_GROUPS = ['GROUP-A', 'GROUP-B', 'GROUP-C'];
+const MSG_RECV_STATUSES = Object.values(MsgRecvStatus);
+// 发报状态代码表在当前数据库设计中仍为“枚举待定”，Mock 暂时保留通用状态值。
+const MSG_SEND_STATUSES = ['PENDING', 'PROCESSING', 'SUCCESS', 'FAILED'];
 const BUSINESS_STATUSES = Object.values(BusinessStatus);
-const BUSINESS_TYPES = Object.values(BusinessType);
 const MESSAGE_COUNT = 40;
 const RELATED_MESSAGE_GROUP_SIZE = 2;
 
@@ -35,6 +42,8 @@ function createMessage(index: number): MockMessageDetail {
   const sequence = String(index + 1).padStart(6, '0');
   const msgDirection = choose(index % 2 === 0, MessageDirection.In, MessageDirection.Out);
   const msgType = MESSAGE_TYPES[index % MESSAGE_TYPES.length];
+  const businessType = MESSAGE_BUSINESS_TYPES[index % MESSAGE_BUSINESS_TYPES.length];
+  const msgBusType = msgType.split('.').slice(0, 2).join('.');
   const relatedGroupStartIndex = index - (index % RELATED_MESSAGE_GROUP_SIZE);
   const relatedMessageIndex = index === relatedGroupStartIndex ? index + 1 : relatedGroupStartIndex;
   const messageTime = new Date(
@@ -42,28 +51,38 @@ function createMessage(index: number): MockMessageDetail {
   ).toISOString();
   const msgId = createMessageId(index);
   const amount = Number((1000 + index * 238.75).toFixed(2));
-  const hasPaymentAmount = msgType !== 'admi.002.001.01';
+  const hasPaymentDetail = msgType === 'pacs.008.001.01' || msgType === 'pacs.009.001.01';
+  const received = msgDirection === MessageDirection.In;
+  const stpInd = choose(index % 4 === 0, 'N', 'Y');
 
   return {
     msgId,
     msgDirection,
-    businessType: BUSINESS_TYPES[index % BUSINESS_TYPES.length],
-    msgRecvDate: choose(msgDirection === MessageDirection.In, messageTime, null),
+    businessType,
+    msgRecvDate: choose(received, messageTime, null),
+    msgSendDate: choose(received, null, messageTime),
     mainMsgId: choose(index === relatedGroupStartIndex, null, createMessageId(relatedGroupStartIndex)),
     msgChannel: choose(index % 3 === 0, 'SWIFT', 'CIPS'),
+    msgBusType,
     msgType,
     msgBusinessNo: `TXN20260822${sequence}`,
-    amount: choose(hasPaymentAmount, amount, null),
-    currency: choose(hasPaymentAmount, 'CNY', null),
-    refTxn20: choose(index % 5 === 0, null, `REF20-${sequence}`),
-    ourReference: choose(index % 4 === 0, null, `OUR-${sequence}`),
-    clearingTargetDepartment: CLEARING_TARGET_DEPARTMENTS[index % CLEARING_TARGET_DEPARTMENTS.length],
+    remitAmount: choose(hasPaymentDetail, amount.toFixed(2), null),
+    remitCcy: choose(hasPaymentDetail, 'CNY', null),
+    tranId: choose(hasPaymentDetail, `REF20-${sequence}`, null),
+    refNo: choose(index % 4 === 0, null, `OUR-${sequence}`),
+    msgOwnerDept: choose(received, MSG_OWNER_DEPTS[index % MSG_OWNER_DEPTS.length], null),
+    msgOwnerGroup: choose(received, MSG_OWNER_GROUPS[index % MSG_OWNER_GROUPS.length], null),
+    stpInd,
+    nonStpCode: choose(stpInd === 'N', 'NSTP01', null),
+    nonStpReason: choose(stpInd === 'N', 'Manual processing required', null),
     msgRelatedId: createMessageId(relatedMessageIndex),
     msgEndId: choose(index % 3 === 0, `E2E20260822${sequence}`, null),
     msgUetr: choose(index % 6 === 0, null, `9f1c3f0e-${String(index + 1).padStart(4, '0')}-4b68-8e8a-9e6f8a1c2d3e`),
     msgSendTime: choose(msgDirection === MessageDirection.Out, messageTime, null),
     msgSendInst: SEND_INSTS[index % SEND_INSTS.length],
     msgRecvInst: RECV_INSTS[index % RECV_INSTS.length],
+    msgRecvStatus: choose(received, MSG_RECV_STATUSES[index % MSG_RECV_STATUSES.length], null),
+    msgSendStatus: choose(received, null, MSG_SEND_STATUSES[index % MSG_SEND_STATUSES.length]),
     remark: choose(index % 7 === 0, `Mock message remark ${index + 1}`, null),
     createUser: choose(index % 5 === 0, null, `A${String(90000 + index)}`),
     createBrno: `BR${String(100000 + (index % 8)).slice(1)}`,
@@ -71,10 +90,7 @@ function createMessage(index: number): MockMessageDetail {
     authorBrno: choose(index % 4 === 0, null, 'SYSTEM'),
     createTime: messageTime,
     updateTime: new Date(Date.parse(messageTime) + 90_000).toISOString(),
-    messageTime,
-    transmissionStatus: TRANSMISSION_STATUSES[index % TRANSMISSION_STATUSES.length],
-    businessStatus: BUSINESS_STATUSES[index % BUSINESS_STATUSES.length],
-    formData: createFormData({ index, msgId, msgType, messageTime }),
+    formData: createFormData({ index, msgId, businessType, messageTime }),
     processingRecords: [
       {
         recordId: `${msgId}-01`,
@@ -107,78 +123,155 @@ function createMessage(index: number): MockMessageDetail {
 interface MockFormDataContext {
   index: number;
   msgId: string;
-  msgType: string;
+  businessType: MessageBusinessType;
   messageTime: string;
 }
 
-/** 按完整 MSG_TYPE 生成与前端静态 Formily Schema 一一对应的结构化值。 */
-function createFormData({ index, msgId, msgType, messageTime }: MockFormDataContext): Record<string, unknown> {
+/** 按 BUSINESS_TYPE 生成与数据库类型信息表、属性表一一对应的结构化值。 */
+function createFormData({ index, msgId, businessType, messageTime }: MockFormDataContext): Record<string, unknown> {
   const sequence = String(index + 1).padStart(8, '0');
   const amount = Number((1000 + index * 238.75).toFixed(2));
   const businessDate = messageTime.slice(0, 10);
+  const auditFields = {
+    createUser: `A${String(90000 + index)}`,
+    createBrno: `BR${String(100000 + (index % 8)).slice(1)}`,
+    authorUser: 'SYSTEM',
+    authorBrno: 'SYSTEM',
+    createTime: messageTime,
+    updateTime: new Date(Date.parse(messageTime) + 90_000).toISOString(),
+  };
 
-  switch (msgType) {
-    case 'pacs.008.001.01':
+  switch (businessType) {
+    case MessageBusinessType.Query:
       return {
-        instructionId: `INSTR-${sequence}`,
-        transactionId: `TRANS-${sequence}`,
-        settlementMethod: choose(index % 2 === 0, 'CLRG', 'INDA'),
-        chargeBearer: 'SLEV',
-        settlementAmount: amount,
-        currency: 'CNY',
-        debtorName: `Debtor Customer ${index + 1}`,
-        debtorAccount: `621700${String(1000000000 + index)}`,
-        creditorName: `Creditor Customer ${index + 1}`,
-        creditorAccount: `622202${String(2000000000 + index)}`,
-        purposeCode: choose(index % 2 === 0, 'GDDS', 'SUPP'),
-        remittanceInformation: choose(index % 5 === 0, null, `Mock remittance information for ${msgId}`),
+        queryInfo: {
+          content: `Query / response content for ${msgId}`,
+          ...auditFields,
+        },
+        queryGpi: {
+          msgUetr: `9f1c3f0e-${String(index + 1).padStart(4, '0')}-4b68-8e8a-9e6f8a1c2d3e`,
+          gpiMsgDate: messageTime,
+          gpiMsgStatus: choose(index % 2 === 0, 'ACSP', 'ACCC'),
+          gpiMsgStatusReson: choose(index % 2 === 0, 'G000', 'G001'),
+          gpiOriginatorBic: SEND_INSTS[index % SEND_INSTS.length],
+          gpiForwardedBic: RECV_INSTS[index % RECV_INSTS.length],
+          gpiSettleMethod: choose(index % 2 === 0, 'CLRG', 'INDA'),
+          gpiClearingSys: 'CIPS',
+          gpiCcy: 'CNY',
+          gpiAmount: amount.toFixed(2),
+          gpiChargeDetails: 'SLEV',
+          gpiOriginalCcy: 'USD',
+          gpiTargetCcy: 'CNY',
+          gpiExchangeRate: '7.1200',
+          gpiChargeFee: '10.00',
+          createTime: messageTime,
+        },
       };
-    case 'pacs.009.001.01':
+    case MessageBusinessType.Bill:
       return {
-        instructionId: `FI-INSTR-${sequence}`,
-        transactionId: `FI-TRANS-${sequence}`,
-        settlementMethod: 'CLRG',
-        clearingSystemCode: 'CIPS',
-        settlementAmount: amount,
-        currency: 'CNY',
-        interbankSettlementDate: businessDate,
-        debtorAgent: SEND_INSTS[index % SEND_INSTS.length],
-        creditorAgent: RECV_INSTS[index % RECV_INSTS.length],
-        serviceLevelCode: 'URGP',
-        localInstrumentCode: 'CIPS',
-        remittanceInformation: `Financial institution transfer ${msgId}`,
+        billInfo: {
+          billSec: choose(index % 2 === 0, 'CIPS_01', 'CIPS_02'),
+          billAccount: `CIPS-ACCT-${String(100000 + index)}`,
+          billDate: businessDate,
+          billCcy: 'CNY',
+          nettingAmount: amount.toFixed(2),
+          creditCount: 12 + index,
+          creditAmount: (amount * 1.7).toFixed(2),
+          debitCount: 8 + index,
+          debitAmount: (amount * 0.7).toFixed(2),
+          createTime: messageTime,
+        },
+        billDetails: [0, 1].map((detailIndex) => ({
+          txnRef: `BILL-TXN-${sequence}-${detailIndex + 1}`,
+          seqNo: String(detailIndex + 1),
+          remitBankBic: SEND_INSTS[(index + detailIndex) % SEND_INSTS.length],
+          remitCcy: 'CNY',
+          remitAmt: (amount + detailIndex * 100).toFixed(2),
+          creditType: choose(detailIndex === 0, 'C', 'D'),
+          valueDate: businessDate,
+          createTime: messageTime,
+        })),
       };
-    case 'camt.054.001.08':
+    case MessageBusinessType.Payment:
       return {
-        notificationId: `NTF-${sequence}`,
-        accountServicerReference: `ASR-${sequence}`,
-        entryReference: `ENTRY-${sequence}`,
-        accountId: `CIPS-ACCT-${String(100000 + index)}`,
-        accountCurrency: 'CNY',
-        creditDebitIndicator: choose(index % 2 === 0, 'CRDT', 'DBIT'),
-        entryStatus: 'BOOK',
-        bookingDate: businessDate,
-        valueDate: businessDate,
-        amount,
-        currency: 'CNY',
-        transactionCode: 'PMNT-RCDT-ESCT',
-        relatedReference: `REL-${sequence}`,
-      };
-    case 'admi.002.001.01':
-      return {
-        eventCode: choose(index % 2 === 0, 'CIPS-E001', 'CIPS-W001'),
-        eventName: choose(index % 2 === 0, 'Message Validation Failed', 'System Processing Delay'),
-        eventSeverity: choose(index % 2 === 0, 'ERROR', 'WARNING'),
-        eventTime: messageTime,
-        sourceSystem: 'CIPS-GATEWAY',
-        affectedService: 'MESSAGE-PROCESSING',
-        originalMessageId: `ORIG-${msgId}`,
-        originalMessageType: 'pacs.008.001.01',
-        errorCode: choose(index % 2 === 0, 'FMT-001', 'TIMEOUT-001'),
-        errorReason: choose(index % 2 === 0, 'Message format validation failed', 'Downstream system response timed out'),
-        suggestedAction: 'Verify the message content and process it again',
-        acknowledgmentRequired: 'Yes',
-        eventDescription: `Mock system event ${index + 1}`,
+        paymentInfo: {
+          settlementMethod: choose(index % 2 === 0, 'CLRG', 'INDA'),
+          categoryPurpose: 'SUPP',
+          tranId: `REF20-${String(index + 1).padStart(6, '0')}`,
+          remitCcy: 'CNY',
+          remitAmount: amount.toFixed(2),
+          valueDate: businessDate,
+          settlemtnTime: messageTime,
+          settlePriority: choose(index % 2 === 0, 'NORM', 'HIGH'),
+          instructedCcy: 'USD',
+          instructedAmt: (amount / 7.12).toFixed(2),
+          exchangeRate: '7.1200',
+          chargeType: 'SLEV',
+          remitInfo: `Payment remittance information for ${msgId}`,
+          instrForCdtrAgt: 'Credit beneficiary account after settlement',
+          instrForNextAgt: null,
+          ...auditFields,
+        },
+        paymentParties: [
+          {
+            partyType: 'DBTR',
+            partyAcct: `621700${String(1000000000 + index)}`,
+            partyName: `Debtor Customer ${index + 1}`,
+            idType: 'ORGID',
+            idNum: `DBTR-${sequence}`,
+            agentBic: SEND_INSTS[index % SEND_INSTS.length],
+            agentLei: null,
+            agentClrSys: 'CIPS',
+            agentClrMmBid: `CIPS-SEND-${sequence}`,
+            agentBranchId: `SEND-BR-${sequence}`,
+            addrDept: 'Treasury Department',
+            addrSubDept: null,
+            addrStrNm: 'Finance Street',
+            addrBidgNb: '88',
+            addrBidgNm: 'CIPS Tower',
+            addrFloor: '18',
+            addrPstBx: null,
+            addrRoom: '1801',
+            addrPstCd: '200120',
+            addrTwnNm: 'Shanghai',
+            addrTwnLctNm: 'Pudong',
+            addrDstrctNm: 'Pudong New Area',
+            addrCtrySubDvsn: 'Shanghai',
+            addrCtryCode: 'CN',
+            addrLine: 'Room 1801, CIPS Tower, 88 Finance Street',
+            createTime: messageTime,
+            updateTime: auditFields.updateTime,
+          },
+          {
+            partyType: 'CDTR',
+            partyAcct: `622202${String(2000000000 + index)}`,
+            partyName: `Creditor Customer ${index + 1}`,
+            idType: 'ORGID',
+            idNum: `CDTR-${sequence}`,
+            agentBic: RECV_INSTS[index % RECV_INSTS.length],
+            agentLei: null,
+            agentClrSys: 'CIPS',
+            agentClrMmBid: `CIPS-RECV-${sequence}`,
+            agentBranchId: `RECV-BR-${sequence}`,
+            addrDept: 'Settlement Department',
+            addrSubDept: null,
+            addrStrNm: 'Harbour Road',
+            addrBidgNb: '1',
+            addrBidgNm: 'Clearing Centre',
+            addrFloor: '9',
+            addrPstBx: null,
+            addrRoom: '901',
+            addrPstCd: '999077',
+            addrTwnNm: 'Hong Kong',
+            addrTwnLctNm: 'Wan Chai',
+            addrDstrctNm: 'Wan Chai',
+            addrCtrySubDvsn: 'Hong Kong',
+            addrCtryCode: 'HK',
+            addrLine: 'Room 901, Clearing Centre, 1 Harbour Road',
+            createTime: messageTime,
+            updateTime: auditFields.updateTime,
+          },
+        ],
       };
     default:
       return {};
@@ -190,22 +283,34 @@ interface MockMessageQuery extends Omit<MessageQuery, 'current' | 'pageSize'> {
   pageSize?: number | string;
 }
 
-/** 模拟后端筛选；未指定前端排序时统一按 messageTime 倒序返回。 */
+interface MessageDateRangeFilter {
+  /** 要过滤的数据库日期字段。 */
+  field: 'msgRecvDate' | 'msgSendDate';
+  /** 日期范围起点。 */
+  dateFrom?: string;
+  /** 日期范围终点。 */
+  dateTo?: string;
+}
+
+/** 模拟后端筛选；未指定前端排序时统一按记录创建时间倒序返回。 */
 const filterMessages = (query: MessageQueryConditions = {}) => {
   let list = [...messages];
   const exactFilters: Array<[keyof MessageRecord, unknown]> = [
     ['msgId', query.msgId],
     ['msgBusinessNo', query.msgBusinessNo],
+    ['msgBusType', query.msgBusType],
     ['msgType', query.msgType],
     ['msgDirection', query.msgDirection],
-    ['transmissionStatus', query.transmissionStatus],
-    ['businessStatus', query.businessStatus],
-    ['businessType', query.businessType],
+    ['msgRecvStatus', query.msgRecvStatus],
+    ['msgSendStatus', query.msgSendStatus],
     ['msgChannel', query.msgChannel],
     ['mainMsgId', query.mainMsgId],
     ['msgRelatedId', query.msgRelatedId],
     ['msgEndId', query.msgEndId],
     ['msgUetr', query.msgUetr],
+    ['refNo', query.refNo],
+    ['tranId', query.tranId],
+    ['stpInd', query.stpInd],
   ];
 
   exactFilters.forEach(([field, expected]) => {
@@ -214,35 +319,68 @@ const filterMessages = (query: MessageQueryConditions = {}) => {
     list = list.filter((record) => String(record[field] ?? '').toLowerCase() === normalized);
   });
 
-  if (query.msgSendInst) {
-    const keyword = query.msgSendInst.toLowerCase();
-    list = list.filter((record) => (record.msgSendInst ?? '').toLowerCase().includes(keyword));
-  }
-  if (query.msgRecvInst) {
-    const keyword = query.msgRecvInst.toLowerCase();
-    list = list.filter((record) => (record.msgRecvInst ?? '').toLowerCase().includes(keyword));
-  }
-  if (query.clearingTargetDepartment) {
-    const keyword = query.clearingTargetDepartment.toLowerCase();
-    list = list.filter((record) => (record.clearingTargetDepartment ?? '').toLowerCase().includes(keyword));
-  }
-  // 金额区间仅匹配包含有效金额的报文记录。
-  if (query.amountFrom !== undefined) {
-    const amountFrom = query.amountFrom;
-    list = list.filter((record) => record.amount !== null && record.amount >= amountFrom);
-  }
-  if (query.amountTo !== undefined) {
-    const amountTo = query.amountTo;
-    list = list.filter((record) => record.amount !== null && record.amount <= amountTo);
-  }
-  if (query.messageTimeFrom) list = list.filter((record) => record.messageTime >= query.messageTimeFrom!);
-  if (query.messageTimeTo) list = list.filter((record) => record.messageTime <= query.messageTimeTo!);
+  list = filterByText(list, 'msgSendInst', query.msgSendInst);
+  list = filterByText(list, 'msgRecvInst', query.msgRecvInst);
+  list = filterByText(list, 'msgOwnerDept', query.msgOwnerDept);
+  list = filterByText(list, 'msgOwnerGroup', query.msgOwnerGroup);
+  list = filterByText(list, 'nonStpCode', query.nonStpCode);
+  list = filterByAmountRange(list, query.remitAmountFrom, query.remitAmountTo);
+  list = filterByDateRange(list, {
+    field: 'msgRecvDate',
+    dateFrom: query.msgRecvDateFrom,
+    dateTo: query.msgRecvDateTo,
+  });
+  list = filterByDateRange(list, {
+    field: 'msgSendDate',
+    dateFrom: query.msgSendDateFrom,
+    dateTo: query.msgSendDateTo,
+  });
 
-  const sortField = query.sortField ?? 'messageTime';
+  const sortField = query.sortField ?? 'createTime';
   const sortOrder = query.sortOrder ?? 'desc';
   const direction = sortOrder === 'asc' ? 1 : -1;
-  list.sort((left, right) => left[sortField].localeCompare(right[sortField]) * direction);
+  list.sort((left, right) => String(left[sortField] ?? '').localeCompare(String(right[sortField] ?? '')) * direction);
   return list;
+};
+
+/** 对指定文本字段执行不区分大小写的包含查询。 */
+const filterByText = (
+  records: MockMessageDetail[],
+  field: 'msgSendInst' | 'msgRecvInst' | 'msgOwnerDept' | 'msgOwnerGroup' | 'nonStpCode',
+  keyword?: string,
+) => {
+  if (!keyword) return records;
+
+  const normalized = keyword.toLowerCase();
+  return records.filter((record) => (record[field] ?? '').toLowerCase().includes(normalized));
+};
+
+/** 按支付类报文的 REMIT_AMOUNT 过滤金额区间。 */
+const filterByAmountRange = (records: MockMessageDetail[], amountFrom?: number, amountTo?: number) => {
+  if (amountFrom === undefined && amountTo === undefined) return records;
+
+  return records.filter((record) => {
+    if (record.remitAmount === null) return false;
+
+    const amount = Number(record.remitAmount);
+    if (!Number.isFinite(amount)) return false;
+    if (amountFrom !== undefined && amount < amountFrom) return false;
+    if (amountTo !== undefined && amount > amountTo) return false;
+    return true;
+  });
+};
+
+/** 按数据库日期字段过滤闭区间，空日期不参与匹配。 */
+const filterByDateRange = (records: MockMessageDetail[], { field, dateFrom, dateTo }: MessageDateRangeFilter) => {
+  if (!dateFrom && !dateTo) return records;
+
+  return records.filter((record) => {
+    const value = record[field];
+    if (!value) return false;
+    if (dateFrom && value < dateFrom) return false;
+    if (dateTo && value > dateTo) return false;
+    return true;
+  });
 };
 
 const lastPathSegment = (url: string) => {
@@ -276,36 +414,56 @@ const notFound = (msgId: string) => ({
   errorMsg: `Message ${msgId} does not exist`,
 });
 
-const createRawXml = (message: MessageDetail) => `<?xml version="1.0" encoding="UTF-8"?>
+/** 将未知业务值安全收敛为字段对象。 */
+const asBusinessRecord = (value: unknown): Record<string, unknown> =>
+  value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+
+/** 将未知业务值安全收敛为子表记录列表。 */
+const asBusinessRecords = (value: unknown): Array<Record<string, unknown>> =>
+  Array.isArray(value) ? value.map(asBusinessRecord) : [];
+
+/** 按节点类型查找支付参与方。 */
+const findPaymentParty = (parties: Array<Record<string, unknown>>, partyType: string) =>
+  parties.find((party) => party.partyType === partyType) ?? {};
+
+/** 将可空业务值转换为 XML 安全文本。 */
+const toXmlText = (value: unknown) => escapeXml(String(value ?? ''));
+
+const createRawXml = (message: MessageDetail) => {
+  const paymentInfo = asBusinessRecord(message.formData.paymentInfo);
+  const paymentParties = asBusinessRecords(message.formData.paymentParties);
+  const debtor = findPaymentParty(paymentParties, 'DBTR');
+  const creditor = findPaymentParty(paymentParties, 'CDTR');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:${message.msgType}">
   <FIToFICstmrCdtTrf>
     <GrpHdr>
       <MsgId>${escapeXml(message.msgId)}</MsgId>
-      <CreDtTm>${escapeXml(message.messageTime)}</CreDtTm>
-      <InstgAgt>${escapeXml(message.msgSendInst ?? '')}</InstgAgt>
-      <InstdAgt>${escapeXml(message.msgRecvInst ?? '')}</InstdAgt>
+      <CreDtTm>${escapeXml(resolveMessageCreationTime(message))}</CreDtTm>
+      <InstgAgt>${toXmlText(message.msgSendInst)}</InstgAgt>
+      <InstdAgt>${toXmlText(message.msgRecvInst)}</InstdAgt>
     </GrpHdr>
     <CdtTrfTxInf>
       <PmtId>
-        <InstrId>${escapeXml(String(message.formData.instructionId ?? ''))}</InstrId>
-        <EndToEndId>${escapeXml(message.msgEndId ?? '')}</EndToEndId>
-        <UETR>${escapeXml(message.msgUetr ?? '')}</UETR>
+        <InstrId>${toXmlText(paymentInfo.tranId)}</InstrId>
+        <EndToEndId>${toXmlText(message.msgEndId)}</EndToEndId>
+        <UETR>${toXmlText(message.msgUetr)}</UETR>
       </PmtId>
-      <IntrBkSttlmAmt Ccy="CNY">${escapeXml(String(message.formData.settlementAmount ?? ''))}</IntrBkSttlmAmt>
-      <Dbtr>${escapeXml(String(message.formData.debtorName ?? ''))}</Dbtr>
-      <Cdtr>${escapeXml(String(message.formData.creditorName ?? ''))}</Cdtr>
+      <IntrBkSttlmAmt Ccy="${toXmlText(paymentInfo.remitCcy)}">${toXmlText(paymentInfo.remitAmount)}</IntrBkSttlmAmt>
+      <Dbtr>${toXmlText(debtor.partyName)}</Dbtr>
+      <Cdtr>${toXmlText(creditor.partyName)}</Cdtr>
     </CdtTrfTxInf>
   </FIToFICstmrCdtTrf>
 </Document>`;
+};
+
+/** 原文创建时间优先取方向对应的业务日期，再回退记录创建时间。 */
+const resolveMessageCreationTime = ({ msgRecvDate, msgSendDate, createTime }: MessageDetail) =>
+  msgRecvDate || msgSendDate || createTime;
 
 const escapeXml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-const writeDownloadHeaders = (res: ServerResponse, fileName: string, contentType: string) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', contentType);
-  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`);
-};
 
 export default [
   {
@@ -370,21 +528,6 @@ export default [
     },
   },
   {
-    url: '/api/example/v1/messages/:messageId/download',
-    method: 'get',
-    rawResponse: (req: IncomingMessage, res: ServerResponse) => {
-      const msgId = messageIdBeforeAction(req.url);
-      const record = findMessage(msgId);
-      if (!record) {
-        res.statusCode = 404;
-        res.end('Not found');
-        return;
-      }
-      writeDownloadHeaders(res, `${msgId}.xml`, 'application/xml; charset=utf-8');
-      res.end(createRawXml(record));
-    },
-  },
-  {
     url: '/api/example/v1/messages/:messageId',
     method: 'get',
     timeout: 300,
@@ -399,6 +542,7 @@ export default [
 ];
 
 const stripDetail = ({
+  businessType: _businessType,
   formData: _formData,
   processingRecords: _processingRecords,
   ...record

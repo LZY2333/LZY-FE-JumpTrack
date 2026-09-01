@@ -5,22 +5,22 @@ import { FormItem as FormilyFormItem, PreviewText } from '@formily/antd-v5';
 import type { IFormItemProps } from '@formily/antd-v5';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
-import {
-  BUSINESS_TYPE_LABELS,
-  BusinessType,
-  MESSAGE_DIRECTION_LABELS,
-  MessageDirection,
-  TRANSMISSION_STATUS_LABELS,
-  TransmissionStatus,
-} from '@/types/enums';
+import { MESSAGE_DIRECTION_LABELS, MSG_RECV_STATUS_LABELS, MessageDirection, MsgRecvStatus } from '@/types/enums';
 
 type MessageFilterFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
 type MessageTimeRange = [string, string] | null;
 
+/** 将字符串枚举转换为 Ant Design 下拉选项。 */
+const enumOptions = <Value extends string>(values: Record<string, Value>, labels: Record<Value, string>) =>
+  Object.values(values).map((value) => ({ value, label: labels[value] ?? value }));
+
 const DATE_FORMAT = 'YYYY-MM-DD';
 const directionOptions = enumOptions(MessageDirection, MESSAGE_DIRECTION_LABELS);
-const transmissionStatusOptions = enumOptions(TransmissionStatus, TRANSMISSION_STATUS_LABELS);
-const businessTypeOptions = enumOptions(BusinessType, BUSINESS_TYPE_LABELS);
+const msgRecvStatusOptions = enumOptions(MsgRecvStatus, MSG_RECV_STATUS_LABELS);
+const stpIndicatorOptions = [
+  { value: 'Y', label: 'Y - STP' },
+  { value: 'N', label: 'N - Non-STP' },
+];
 
 /** Formily 详情字段装饰器：空值只在展示层转换为 --，不污染表单数据。 */
 export const MessageFormItem = ({ children, ...props }: PropsWithChildren<IFormItemProps>) => (
@@ -38,8 +38,8 @@ export const MessageIdFilter = (props: MessageFilterFormItemProps) => (
 
 /** 交易流水号 */
 export const MessageBusinessNoFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgBusinessNo' label='Transaction No.' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter transaction number' />
+  <Form.Item {...props} name='msgBusinessNo' label='Business No.' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter business number' />
   </Form.Item>
 );
 
@@ -50,6 +50,13 @@ export const MessageTypeFilter = (props: MessageFilterFormItemProps) => (
   </Form.Item>
 );
 
+/** 报文业务类型编码 */
+export const MessageBusTypeFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='msgBusType' label='Message Business Type' normalize={trimWhitespace}>
+    <Input allowClear placeholder='e.g. pacs.008' />
+  </Form.Item>
+);
+
 /** 收发标志 */
 export const MessageDirectionFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item {...props} name='msgDirection' label='Direction'>
@@ -57,19 +64,26 @@ export const MessageDirectionFilter = (props: MessageFilterFormItemProps) => (
   </Form.Item>
 );
 
-/** 报文状态 */
-export const TransmissionStatusFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='transmissionStatus' label='Message Status'>
-    <Select allowClear placeholder='All' options={transmissionStatusOptions} />
+/** 收报状态 */
+export const MessageRecvStatusFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='msgRecvStatus' label='Received Status'>
+    <Select allowClear placeholder='All' options={msgRecvStatusOptions} />
   </Form.Item>
 );
 
-/** 收发报文日期 */
-export const MessageTimeRangeFilter = (props: MessageFilterFormItemProps) => (
+/** 发报状态；状态码待后端代码表确定，当前按原值查询。 */
+export const MessageSendStatusFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='msgSendStatus' label='Sent Status' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter sent status' />
+  </Form.Item>
+);
+
+/** 收报日期 */
+export const MessageRecvDateRangeFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item
     {...props}
-    name='messageTimeRange'
-    label='Received/Sent Date'
+    name='msgRecvDateRange'
+    label='Received Date'
     getValueFromEvent={getIsoDateRange}
     getValueProps={getDateRangeValueProps}
   >
@@ -77,10 +91,16 @@ export const MessageTimeRangeFilter = (props: MessageFilterFormItemProps) => (
   </Form.Item>
 );
 
-/** 业务类型 */
-export const BusinessTypeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='businessType' label='Business Type'>
-    <Select allowClear placeholder='All' options={businessTypeOptions} />
+/** 发报日期 */
+export const MessageSendDateRangeFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item
+    {...props}
+    name='msgSendDateRange'
+    label='Sent Date'
+    getValueFromEvent={getIsoDateRange}
+    getValueProps={getDateRangeValueProps}
+  >
+    <DatePicker.RangePicker className='w-full' format={DATE_FORMAT} />
   </Form.Item>
 );
 
@@ -100,8 +120,8 @@ export const MainMessageIdFilter = (props: MessageFilterFormItemProps) => (
 
 /** 关联流水号 */
 export const RelatedMessageIdFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgRelatedId' label='Related Transaction No.' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter related transaction number' />
+  <Form.Item {...props} name='msgRelatedId' label='Related Message ID' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter related message ID' />
   </Form.Item>
 );
 
@@ -133,30 +153,60 @@ export const MessageRecvInstFilter = (props: MessageFilterFormItemProps) => (
   </Form.Item>
 );
 
-/** 金额区间 */
-export const AmountRangeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} label='Amount'>
+/** REF_NO：显示名沿用 OurReference */
+export const RefNoFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='refNo' label='OurReference' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter reference number' />
+  </Form.Item>
+);
+
+/** TRAN_ID：显示名沿用 refTxn20 */
+export const TranIdFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='tranId' label='refTxn20' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter transaction ID' />
+  </Form.Item>
+);
+
+/** 支付类报文汇付金额区间 */
+export const RemitAmountRangeFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} label='Remittance Amount'>
     <Space.Compact block>
-      <Form.Item name='amountFrom' noStyle>
+      <Form.Item name='remitAmountFrom' noStyle>
         <InputNumber className='min-w-0 flex-1' controls={false} placeholder='Minimum' />
       </Form.Item>
       <span className='flex shrink-0 items-center px-2'>-</span>
-      <Form.Item name='amountTo' noStyle>
+      <Form.Item name='remitAmountTo' noStyle>
         <InputNumber className='min-w-0 flex-1' controls={false} placeholder='Maximum' />
       </Form.Item>
     </Space.Compact>
   </Form.Item>
 );
 
-/** 清分目标部门 */
-export const ClearingTargetDepartmentFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item
-    {...props}
-    name='clearingTargetDepartment'
-    label='Clearing Target Department'
-    normalize={trimWhitespace}
-  >
+/** MSG_OWNER_DEPT：显示名沿用 Clearing Target Department */
+export const MsgOwnerDeptFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='msgOwnerDept' label='Clearing Target Department' normalize={trimWhitespace}>
     <Input allowClear placeholder='Enter department' />
+  </Form.Item>
+);
+
+/** 报文归属组 */
+export const MsgOwnerGroupFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='msgOwnerGroup' label='Message Owner Group' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter owner group' />
+  </Form.Item>
+);
+
+/** 直通标记 */
+export const StpIndFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='stpInd' label='STP Indicator'>
+    <Select allowClear placeholder='All' options={stpIndicatorOptions} />
+  </Form.Item>
+);
+
+/** 非直通原因编号 */
+export const NonStpCodeFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='nonStpCode' label='Non-STP Reason Code' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter reason code' />
   </Form.Item>
 );
 
@@ -170,7 +220,3 @@ const getIsoDateRange = (dates: [Dayjs, Dayjs] | null): MessageTimeRange =>
 const getDateRangeValueProps = (value?: MessageTimeRange) => ({
   value: value ? [dayjs(value[0]), dayjs(value[1])] : null,
 });
-
-function enumOptions<T extends string>(values: Record<string, T>, labels: Record<T, string>) {
-  return Object.values(values).map((value) => ({ value, label: labels[value] ?? value }));
-}

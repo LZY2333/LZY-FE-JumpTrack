@@ -1,32 +1,26 @@
 /** 报文收发方向。 */
 export enum MessageDirection {
   In = 'IN',
-  Out = 'OUT',
+  Out = 'OU',
 }
 
-/** 临时报文状态，正式联调时由后端权威代码表整体替换。 */
-export enum TransmissionStatus {
-  Pending = 'PENDING',
-  Processing = 'PROCESSING',
-  Success = 'SUCCESS',
-  Failed = 'FAILED',
+/** 收报状态。 */
+export enum MsgRecvStatus {
+  Created = 'C01',
+  Parsing = 'P01',
+  ParseFailed = 'P02',
+  Attributing = 'B01',
+  ManualAttribution = 'B02',
+  AmlScanning = 'L01',
+  Distributing = 'D01',
+  DistributionCompleted = 'D02',
 }
 
-/** 临时业务状态，正式联调时由后端权威代码表整体替换。 */
-export enum BusinessStatus {
-  Pending = 'PENDING',
-  Accepted = 'ACCEPTED',
-  Settled = 'SETTLED',
-  Rejected = 'REJECTED',
-  Cancelled = 'CANCELLED',
-}
-
-/** 临时业务类型，保持四位代码以匹配当前数据表字段。 */
-export enum BusinessType {
-  Payment = 'PAYM',
+/** BUSINESS_TYPE：业务信息表分类；正式代码值待后端代码表确认。 */
+export enum MessageBusinessType {
   Query = 'QURY',
-  Return = 'RTRN',
-  Other = 'OTHR',
+  Bill = 'BILL',
+  Payment = 'PAYM',
 }
 
 export const MESSAGE_DIRECTION_LABELS: Record<MessageDirection, string> = {
@@ -34,26 +28,15 @@ export const MESSAGE_DIRECTION_LABELS: Record<MessageDirection, string> = {
   [MessageDirection.Out]: 'Sent',
 };
 
-export const TRANSMISSION_STATUS_LABELS: Record<TransmissionStatus, string> = {
-  [TransmissionStatus.Pending]: 'Pending',
-  [TransmissionStatus.Processing]: 'Processing',
-  [TransmissionStatus.Success]: 'Success',
-  [TransmissionStatus.Failed]: 'Failed',
-};
-
-export const BUSINESS_STATUS_LABELS: Record<BusinessStatus, string> = {
-  [BusinessStatus.Pending]: 'Pending',
-  [BusinessStatus.Accepted]: 'Accepted',
-  [BusinessStatus.Settled]: 'Settled',
-  [BusinessStatus.Rejected]: 'Rejected',
-  [BusinessStatus.Cancelled]: 'Cancelled',
-};
-
-export const BUSINESS_TYPE_LABELS: Record<BusinessType, string> = {
-  [BusinessType.Payment]: 'Payment',
-  [BusinessType.Query]: 'Query',
-  [BusinessType.Return]: 'Return',
-  [BusinessType.Other]: 'Other',
+export const MSG_RECV_STATUS_LABELS: Record<MsgRecvStatus, string> = {
+  [MsgRecvStatus.Created]: 'C01 - Task Created',
+  [MsgRecvStatus.Parsing]: 'P01 - Parsing',
+  [MsgRecvStatus.ParseFailed]: 'P02 - Parse Failed',
+  [MsgRecvStatus.Attributing]: 'B01 - Attribution',
+  [MsgRecvStatus.ManualAttribution]: 'B02 - Manual Attribution',
+  [MsgRecvStatus.AmlScanning]: 'L01 - AML Scanning',
+  [MsgRecvStatus.Distributing]: 'D01 - Distributing',
+  [MsgRecvStatus.DistributionCompleted]: 'D02 - Distribution Completed',
 };
 
 export enum Role {
@@ -73,7 +56,7 @@ export enum ResCode {
 }
 
 /** 报文列表允许用户触发的服务端排序字段。 */
-export type MessageSortField = 'messageTime' | 'createTime' | 'updateTime';
+export type MessageSortField = 'msgRecvDate' | 'msgSendDate' | 'createTime' | 'updateTime';
 
 /** 报文列表沿用 Ant Design 的排序方向。 */
 export type MessageSortOrder = 'ascend' | 'descend';

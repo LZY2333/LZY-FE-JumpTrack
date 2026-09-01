@@ -1,0 +1,147 @@
+{
+  "type": "object",
+  "properties": {
+    "billInfo": {
+      "type": "object",
+      "x-component": "MessageSection",
+      "x-component-props": {
+        "title": "Bill Summary"
+      },
+      "properties": {
+        "billGrid": {
+          "type": "void",
+          "x-component": "FormGrid",
+          "x-component-props": {
+            "minColumns": 4,
+            "maxColumns": 4,
+            "columnGap": 12,
+            "rowGap": 0
+          },
+          "properties": {
+            "billSec": {
+              "type": "string",
+              "title": "Reconciliation Session",
+              "$comment": "BILL_SEC：对账场次",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "billAccount": {
+              "type": "string",
+              "title": "Reconciliation Account",
+              "$comment": "BILL_ACCOUNT：对账账户",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "billDate": {
+              "type": "string",
+              "title": "Reconciliation Date",
+              "$comment": "BILL_DATE：对账日期",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "billCcy": {
+              "type": "string",
+              "title": "Currency",
+              "$comment": "BILL_CCY：币种",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "nettingAmount": {
+              "type": "string",
+              "title": "Netting Amount",
+              "$comment": "NETTING_AMOUNT：轧差净额",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "creditCount": {
+              "type": "string",
+              "title": "Credit Count",
+              "$comment": "CREDIT_COUNT：贷记总笔数",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "creditAmount": {
+              "type": "string",
+              "title": "Credit Amount",
+              "$comment": "CREDIT_AMOUNT：贷记总金额",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "debitCount": {
+              "type": "string",
+              "title": "Debit Count",
+              "$comment": "DEBIT_COUNT：借记总笔数",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "debitAmount": {
+              "type": "string",
+              "title": "Debit Amount",
+              "$comment": "DEBIT_AMOUNT：借记总金额",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createTime": {
+              "type": "string",
+              "title": "Record Created Time",
+              "$comment": "CREATE_TIME：记录创建时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
+          }
+        }
+      }
+    },
+    "billDetails": {
+      "type": "array",
+      "$comment": "PSSST_ENT_BILL_DETAIL：账单详情记录",
+      "x-component": "MessageBusinessTable",
+      "x-component-props": {
+        "title": "Bill Details",
+        "rowKey": "txnRef",
+        "columns": [
+          {
+            "dataIndex": "txnRef",
+            "title": "Transaction Reference",
+            "width": 190
+          },
+          {
+            "dataIndex": "seqNo",
+            "title": "Sequence No.",
+            "width": 140
+          },
+          {
+            "dataIndex": "remitBankBic",
+            "title": "Remitting Bank BIC",
+            "width": 180
+          },
+          {
+            "dataIndex": "remitCcy",
+            "title": "Remittance Currency",
+            "width": 160
+          },
+          {
+            "dataIndex": "remitAmt",
+            "title": "Remittance Amount",
+            "width": 170
+          },
+          {
+            "dataIndex": "creditType",
+            "title": "Credit / Debit Type",
+            "width": 160
+          },
+          {
+            "dataIndex": "valueDate",
+            "title": "Value Date",
+            "width": 140
+          },
+          {
+            "dataIndex": "createTime",
+            "title": "Record Created Time",
+            "width": 180
+          }
+        ]
+      }
+    }
+  }
+}

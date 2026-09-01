@@ -11,173 +11,239 @@
         "rowGap": 0
       },
       "properties": {
-        "msgId": {
-          "type": "string",
-          "title": "Message ID",
-          "$comment": "报文标识号",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
+        "primaryColumn": {
+          "type": "void",
+          "x-component": "FormGridColumn",
+          "properties": {
+            "msgId": {
+              "type": "string",
+              "title": "Message ID",
+              "$comment": "MSG_ID：报文标识号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgDirection": {
+              "type": "string",
+              "title": "Direction",
+              "$comment": "MSG_DIRECTION：报文收发标志",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgBusType": {
+              "type": "string",
+              "title": "Message Business Type",
+              "$comment": "MSG_BUS_TYPE：报文业务类型编码",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgType": {
+              "type": "string",
+              "title": "Message Type",
+              "$comment": "MSG_TYPE：报文类型编码",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgChannel": {
+              "type": "string",
+              "title": "Channel",
+              "$comment": "MSG_CHANNEL：收/发报通道",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgBusinessNo": {
+              "type": "string",
+              "title": "Business No.",
+              "$comment": "MSG_BUSINESS_NO：业务流水号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgUetr": {
+              "type": "string",
+              "title": "UETR",
+              "$comment": "MSG_UETR：UETR 唯一标识号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "refNo": {
+              "type": "string",
+              "title": "OurReference",
+              "$comment": "REF_NO：收发任务交易编号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
+          }
         },
-        "transmissionStatus": {
-          "type": "string",
-          "title": "Message Status",
-          "$comment": "报文状态",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
+        "processingColumn": {
+          "type": "void",
+          "x-component": "FormGridColumn",
+          "properties": {
+            "msgRecvStatus": {
+              "type": "string",
+              "title": "Received Status",
+              "$comment": "MSG_RECV_STATUS：收报状态",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgRecvDate": {
+              "type": "string",
+              "title": "Received Date",
+              "$comment": "MSG_RECV_DATE：收报日期",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgSendStatus": {
+              "type": "string",
+              "title": "Sent Status",
+              "$comment": "MSG_SEND_STATUS：发报状态",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgSendDate": {
+              "type": "string",
+              "title": "Sent Date",
+              "$comment": "MSG_SEND_DATE：发报日期",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgSendTime": {
+              "type": "string",
+              "title": "Message Send Time",
+              "$comment": "MSG_SEND_TIME：报文中记录的发送时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgOwnerDept": {
+              "type": "string",
+              "title": "Clearing Target Department",
+              "$comment": "MSG_OWNER_DEPT：收报归属部门",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgOwnerGroup": {
+              "type": "string",
+              "title": "Message Owner Group",
+              "$comment": "MSG_OWNER_GROUP：收报归属组",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "stpInd": {
+              "type": "string",
+              "title": "STP Indicator",
+              "$comment": "STP_IND：直通标记",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "nonStpCode": {
+              "type": "string",
+              "title": "Non-STP Reason Code",
+              "$comment": "NON_STP_CODE：非直通原因编号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "nonStpReason": {
+              "type": "string",
+              "title": "Non-STP Reason",
+              "$comment": "NON_STP_REASON：异常原因说明",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
+          }
         },
-        "msgBusinessNo": {
-          "type": "string",
-          "title": "Transaction No.",
-          "$comment": "交易流水号",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
+        "relationColumn": {
+          "type": "void",
+          "x-component": "FormGridColumn",
+          "properties": {
+            "msgSendInst": {
+              "type": "string",
+              "title": "Sending Institution",
+              "$comment": "MSG_SEND_INST：发报机构编号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgRecvInst": {
+              "type": "string",
+              "title": "Receiving Institution",
+              "$comment": "MSG_RECV_INST：收报机构编号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "mainMsgId": {
+              "type": "string",
+              "title": "Main Message ID",
+              "$comment": "MAIN_MSG_ID：主报文编号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgRelatedId": {
+              "type": "string",
+              "title": "Related Message ID",
+              "$comment": "MSG_RELATED_ID：关联流水号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "msgEndId": {
+              "type": "string",
+              "title": "End-to-End ID",
+              "$comment": "MSG_END_ID：报文端到端流水号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "remark": {
+              "type": "string",
+              "title": "Remark",
+              "$comment": "REMARK：备注",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
+          }
         },
-        "createTime": {
-          "type": "string",
-          "title": "Created At",
-          "$comment": "记录创建时间",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgSendInst": {
-          "type": "string",
-          "title": "Sending Institution",
-          "$comment": "发报机构",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "businessStatus": {
-          "type": "string",
-          "title": "Business Status",
-          "$comment": "业务状态",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "mainMsgId": {
-          "type": "string",
-          "title": "Main Message ID",
-          "$comment": "主报文编号",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "updateTime": {
-          "type": "string",
-          "title": "Updated At",
-          "$comment": "记录更新时间",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgRecvInst": {
-          "type": "string",
-          "title": "Receiving Institution",
-          "$comment": "收报机构",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "businessType": {
-          "type": "string",
-          "title": "Business Type",
-          "$comment": "业务类型",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgRelatedId": {
-          "type": "string",
-          "title": "Related Transaction No.",
-          "$comment": "关联流水号",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "createUser": {
-          "type": "string",
-          "title": "Created By",
-          "$comment": "创建人",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgType": {
-          "type": "string",
-          "title": "Message Type",
-          "$comment": "报文类型编码",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "messageTime": {
-          "type": "string",
-          "title": "Received/Sent Date",
-          "$comment": "收/发报文日期",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgEndId": {
-          "type": "string",
-          "title": "End-to-End ID",
-          "$comment": "端到端流水号",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "authorUser": {
-          "type": "string",
-          "title": "Approved By",
-          "$comment": "审批人",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgDirection": {
-          "type": "string",
-          "title": "Direction",
-          "$comment": "收发标志",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgRecvDate": {
-          "type": "string",
-          "title": "Received At",
-          "$comment": "收报日期",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgUetr": {
-          "type": "string",
-          "title": "UETR",
-          "$comment": "UETR 唯一标识号",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "createBrno": {
-          "type": "string",
-          "title": "Creator Department No.",
-          "$comment": "创建人部门号",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgChannel": {
-          "type": "string",
-          "title": "Channel",
-          "$comment": "收/发报通道",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "msgSendTime": {
-          "type": "string",
-          "title": "Sent At",
-          "$comment": "报文发出时间",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "remark": {
-          "type": "string",
-          "title": "Remarks",
-          "$comment": "备注",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
-        },
-        "authorBrno": {
-          "type": "string",
-          "title": "Approver Department No.",
-          "$comment": "审批人部门号",
-          "x-decorator": "MessageFormItem",
-          "x-component": "Input"
+        "auditColumn": {
+          "type": "void",
+          "x-component": "FormGridColumn",
+          "properties": {
+            "createUser": {
+              "type": "string",
+              "title": "Created By",
+              "$comment": "CREATE_USER：创建人",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createBrno": {
+              "type": "string",
+              "title": "Creator Department No.",
+              "$comment": "CREATE_BRNO：创建人部门号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "authorUser": {
+              "type": "string",
+              "title": "Approved By",
+              "$comment": "AUTHOR_USER：审批人",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "authorBrno": {
+              "type": "string",
+              "title": "Approver Department No.",
+              "$comment": "AUTHOR_BRNO：审批人部门号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createTime": {
+              "type": "string",
+              "title": "Record Created Time",
+              "$comment": "CREATE_TIME：记录创建时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "updateTime": {
+              "type": "string",
+              "title": "Record Updated Time",
+              "$comment": "UPDATE_TIME：记录更新时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
+          }
         }
       }
     }

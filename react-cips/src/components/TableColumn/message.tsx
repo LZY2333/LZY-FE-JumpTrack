@@ -2,12 +2,10 @@ import type { TableColumnType } from 'antd';
 import dayjs from 'dayjs';
 import type { MessageRecord } from '@/types';
 import {
-  BUSINESS_TYPE_LABELS,
-  BusinessType,
   MESSAGE_DIRECTION_LABELS,
+  MSG_RECV_STATUS_LABELS,
   MessageDirection,
-  TRANSMISSION_STATUS_LABELS,
-  TransmissionStatus,
+  MsgRecvStatus,
 } from '@/types/enums';
 
 const AMOUNT_FORMATTER = new Intl.NumberFormat('en-US', {
@@ -55,14 +53,6 @@ export const msgDirection: TableColumnType<MessageRecord> = {
   render: (value: MessageDirection) => MESSAGE_DIRECTION_LABELS[value] ?? renderMessageText(value),
 };
 
-/** 业务类型 */
-export const businessType: TableColumnType<MessageRecord> = {
-  title: 'Business Type',
-  dataIndex: 'businessType',
-  width: 110,
-  render: (value: BusinessType) => BUSINESS_TYPE_LABELS[value] ?? renderMessageText(value),
-};
-
 /** 收发报通道 */
 export const msgChannel: TableColumnType<MessageRecord> = {
   title: 'Channel',
@@ -81,42 +71,50 @@ export const msgType: TableColumnType<MessageRecord> = {
 
 /** 交易流水号 */
 export const msgBusinessNo: TableColumnType<MessageRecord> = {
-  title: 'Transaction No.',
+  title: 'Business No.',
   dataIndex: 'msgBusinessNo',
   width: 180,
   render: renderMessageText,
 };
 
-/** 金额 */
-export const amount: TableColumnType<MessageRecord> = {
-  title: 'Amount',
-  dataIndex: 'amount',
+/** 支付类报文汇付金额 */
+export const remitAmount: TableColumnType<MessageRecord> = {
+  title: 'Remittance Amount',
+  dataIndex: 'remitAmount',
   width: 140,
   align: 'right',
   render: renderMessageAmount,
 };
 
-/** 币种 */
-export const currency: TableColumnType<MessageRecord> = {
-  title: 'Currency',
-  dataIndex: 'currency',
-  width: 100,
+/** 支付类报文汇付币种 */
+export const remitCcy: TableColumnType<MessageRecord> = {
+  title: 'Remittance Currency',
+  dataIndex: 'remitCcy',
+  width: 150,
   render: renderMessageText,
 };
 
-/** 外部交易参考号 */
-export const refTxn20: TableColumnType<MessageRecord> = {
+/** TRAN_ID：显示名沿用 refTxn20 */
+export const tranId: TableColumnType<MessageRecord> = {
   title: 'refTxn20',
-  dataIndex: 'refTxn20',
+  dataIndex: 'tranId',
   width: 180,
   render: renderMessageText,
 };
 
-/** 本方参考号 */
-export const ourReference: TableColumnType<MessageRecord> = {
+/** REF_NO：显示名沿用 OurReference */
+export const refNo: TableColumnType<MessageRecord> = {
   title: 'OurReference',
-  dataIndex: 'ourReference',
+  dataIndex: 'refNo',
   width: 180,
+  render: renderMessageText,
+};
+
+/** MSG_OWNER_DEPT：显示名沿用 Clearing Target Department */
+export const msgOwnerDept: TableColumnType<MessageRecord> = {
+  title: 'Clearing Target Department',
+  dataIndex: 'msgOwnerDept',
+  width: 210,
   render: renderMessageText,
 };
 
@@ -130,7 +128,7 @@ export const mainMsgId: TableColumnType<MessageRecord> = {
 
 /** 关联流水号 */
 export const msgRelatedId: TableColumnType<MessageRecord> = {
-  title: 'Related Transaction No.',
+  title: 'Related Message ID',
   dataIndex: 'msgRelatedId',
   width: 180,
   render: renderMessageText,
@@ -168,18 +166,35 @@ export const msgRecvInst: TableColumnType<MessageRecord> = {
   render: renderMessageText,
 };
 
-/** 报文状态 */
-export const transmissionStatus: TableColumnType<MessageRecord> = {
-  title: 'Message Status',
-  dataIndex: 'transmissionStatus',
-  width: 110,
-  render: (value: TransmissionStatus) => TRANSMISSION_STATUS_LABELS[value] ?? renderMessageText(value),
+/** 收报状态 */
+export const msgRecvStatus: TableColumnType<MessageRecord> = {
+  title: 'Received Status',
+  dataIndex: 'msgRecvStatus',
+  width: 130,
+  render: (value: MsgRecvStatus) => MSG_RECV_STATUS_LABELS[value] ?? renderMessageText(value),
 };
 
-/** 收发报文日期 */
-export const messageTime: TableColumnType<MessageRecord> = {
-  title: 'Received/Sent Date',
-  dataIndex: 'messageTime',
+/** 发报状态 */
+export const msgSendStatus: TableColumnType<MessageRecord> = {
+  title: 'Sent Status',
+  dataIndex: 'msgSendStatus',
+  width: 130,
+  render: renderMessageText,
+};
+
+/** 收报日期 */
+export const msgRecvDate: TableColumnType<MessageRecord> = {
+  title: 'Received Date',
+  dataIndex: 'msgRecvDate',
+  width: 150,
+  sorter: true,
+  render: renderMessageDate,
+};
+
+/** 发报日期 */
+export const msgSendDate: TableColumnType<MessageRecord> = {
+  title: 'Sent Date',
+  dataIndex: 'msgSendDate',
   width: 150,
   sorter: true,
   render: renderMessageDate,
@@ -187,7 +202,7 @@ export const messageTime: TableColumnType<MessageRecord> = {
 
 /** 记录创建时间 */
 export const createTime: TableColumnType<MessageRecord> = {
-  title: 'Created At',
+  title: 'Created Time',
   dataIndex: 'createTime',
   width: 180,
   sorter: true,
@@ -196,7 +211,7 @@ export const createTime: TableColumnType<MessageRecord> = {
 
 /** 记录更新时间 */
 export const updateTime: TableColumnType<MessageRecord> = {
-  title: 'Updated At',
+  title: 'Updated Time',
   dataIndex: 'updateTime',
   width: 180,
   sorter: true,
@@ -205,7 +220,7 @@ export const updateTime: TableColumnType<MessageRecord> = {
 
 /** 备注 */
 export const remark: TableColumnType<MessageRecord> = {
-  title: 'Remarks',
+  title: 'Remark',
   dataIndex: 'remark',
   width: 200,
   render: renderMessageText,

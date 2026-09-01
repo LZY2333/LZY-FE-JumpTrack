@@ -78,15 +78,15 @@ export const MessageBusinessInfoPanel = ({ detail, className }: MessageBusinessI
   </Card>
 );
 
-/** 业务信息内容：按报文类型选择结构化 Schema。 */
+/** 业务信息内容：按 BUSINESS_TYPE 选择对应类型信息表和属性表 Schema。 */
 export const MessageBusinessContent = ({ detail }: MessageBusinessContentProps) => {
-  const schema = getMessageSchema(detail?.msgType);
+  const schema = getMessageSchema(detail?.businessType);
   if (!schema) {
     return (
       <Alert
         type='info'
         showIcon
-        message='No business information template is available for this message type. View or download the raw message instead.'
+        message='No business information template is available for this business type. View or download the raw message instead.'
       />
     );
   }

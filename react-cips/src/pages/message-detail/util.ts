@@ -1,11 +1,6 @@
 import dayjs from 'dayjs';
 import type { MessageDetail, MessageRaw, MessageRecord } from '@/types';
-import {
-  BUSINESS_STATUS_LABELS,
-  BUSINESS_TYPE_LABELS,
-  MESSAGE_DIRECTION_LABELS,
-  TRANSMISSION_STATUS_LABELS,
-} from '@/types/enums';
+import { MESSAGE_DIRECTION_LABELS, MSG_RECV_STATUS_LABELS } from '@/types/enums';
 
 // #region ==================== 报文原文打印 Util ====================
 
@@ -103,18 +98,17 @@ export const isRawContentActionDisabled = (raw: MessageRaw | null, rawLoading: b
 // #region ==================== 报文基础信息展示值 ====================
 
 const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-const DATE_FORMAT = 'YYYY-MM-DD';
 
 /** 将详情公共字段转换为只读表单值；只转换展示格式，不补空值。 */
 export const toMessageBasicFormData = (record: MessageRecord): Record<string, unknown> => ({
   ...record,
   msgDirection: resolveLabel(MESSAGE_DIRECTION_LABELS, record.msgDirection),
-  businessType: resolveLabel(BUSINESS_TYPE_LABELS, record.businessType),
-  transmissionStatus: resolveLabel(TRANSMISSION_STATUS_LABELS, record.transmissionStatus),
-  businessStatus: resolveLabel(BUSINESS_STATUS_LABELS, record.businessStatus),
+  msgRecvStatus: record.msgRecvStatus
+    ? resolveLabel(MSG_RECV_STATUS_LABELS, record.msgRecvStatus)
+    : record.msgRecvStatus,
   msgRecvDate: formatDateTime(record.msgRecvDate),
+  msgSendDate: formatDateTime(record.msgSendDate),
   msgSendTime: formatDateTime(record.msgSendTime),
-  messageTime: formatDate(record.messageTime),
   createTime: formatDateTime(record.createTime),
   updateTime: formatDateTime(record.updateTime),
 });
@@ -124,13 +118,6 @@ const formatDateTime = (value: string | null) => {
   if (!value) return value;
   const parsed = dayjs(value);
   return parsed.isValid() ? parsed.format(DATE_TIME_FORMAT) : value;
-};
-
-/** 将有效日期转换为详情展示格式，空值和非法日期保持原值。 */
-const formatDate = (value: string | null) => {
-  if (!value) return value;
-  const parsed = dayjs(value);
-  return parsed.isValid() ? parsed.format(DATE_FORMAT) : value;
 };
 
 // #endregion ==================== 报文基础信息展示值 ====================

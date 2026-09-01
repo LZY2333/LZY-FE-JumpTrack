@@ -1,0 +1,346 @@
+{
+  "type": "object",
+  "properties": {
+    "paymentInfo": {
+      "type": "object",
+      "x-component": "MessageSection",
+      "x-component-props": {
+        "title": "Payment Information"
+      },
+      "properties": {
+        "paymentGrid": {
+          "type": "void",
+          "x-component": "FormGrid",
+          "x-component-props": {
+            "minColumns": 4,
+            "maxColumns": 4,
+            "columnGap": 12,
+            "rowGap": 0
+          },
+          "properties": {
+            "settlementMethod": {
+              "type": "string",
+              "title": "Settlement Method",
+              "$comment": "SETTLEMENT_METHOD：结算方式",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "categoryPurpose": {
+              "type": "string",
+              "title": "Category Purpose",
+              "$comment": "CATEGORY_PURPOSE：业务种类编码",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "tranId": {
+              "type": "string",
+              "title": "refTxn20",
+              "$comment": "TRAN_ID：交易标识号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "settlePriority": {
+              "type": "string",
+              "title": "Settlement Priority",
+              "$comment": "SETTLE_PRIORITY：业务优先级",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "remitCcy": {
+              "type": "string",
+              "title": "Remittance Currency",
+              "$comment": "REMIT_CCY：汇付币种",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "remitAmount": {
+              "type": "string",
+              "title": "Remittance Amount",
+              "$comment": "REMIT_AMOUNT：汇付金额",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "valueDate": {
+              "type": "string",
+              "title": "Value Date",
+              "$comment": "VALUE_DATE：起息日",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "settlemtnTime": {
+              "type": "string",
+              "title": "Settlement Time",
+              "$comment": "SETTLEMTN_TIME：结算时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "instructedCcy": {
+              "type": "string",
+              "title": "Instructed Currency",
+              "$comment": "INSTRUCTED_CCY：原始币种",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "instructedAmt": {
+              "type": "string",
+              "title": "Instructed Amount",
+              "$comment": "INSTRUCTED_AMT：原始金额",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "exchangeRate": {
+              "type": "string",
+              "title": "Exchange Rate",
+              "$comment": "EXCHANGE_RATE：汇率",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "chargeType": {
+              "type": "string",
+              "title": "Charge Type",
+              "$comment": "CHARGE_TYPE：手续费收取方式",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "remitInfo": {
+              "type": "string",
+              "title": "Remittance Information",
+              "$comment": "REMIT_INFO：汇款人给收款人的备注信息",
+              "x-decorator": "MessageFormItem",
+              "x-component": "TextArea",
+              "x-decorator-props": {
+                "gridSpan": 4
+              },
+              "x-component-props": {
+                "autoSize": {
+                  "minRows": 2,
+                  "maxRows": 4
+                }
+              }
+            },
+            "instrForCdtrAgt": {
+              "type": "string",
+              "title": "Instruction for Creditor Agent",
+              "$comment": "INSTR_FOR_CDTR_AGT：致收款人银行附言",
+              "x-decorator": "MessageFormItem",
+              "x-component": "TextArea",
+              "x-decorator-props": {
+                "gridSpan": 4
+              },
+              "x-component-props": {
+                "autoSize": {
+                  "minRows": 2,
+                  "maxRows": 4
+                }
+              }
+            },
+            "instrForNextAgt": {
+              "type": "string",
+              "title": "Instruction for Next Agent",
+              "$comment": "INSTR_FOR_NEXT_AGT：致下一家银行附言",
+              "x-decorator": "MessageFormItem",
+              "x-component": "TextArea",
+              "x-decorator-props": {
+                "gridSpan": 4
+              },
+              "x-component-props": {
+                "autoSize": {
+                  "minRows": 2,
+                  "maxRows": 4
+                }
+              }
+            },
+            "createUser": {
+              "type": "string",
+              "title": "Created By",
+              "$comment": "CREATE_USER：创建人",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createBrno": {
+              "type": "string",
+              "title": "Creator Department No.",
+              "$comment": "CREATE_BRNO：创建人部门号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "authorUser": {
+              "type": "string",
+              "title": "Approved By",
+              "$comment": "AUTHOR_USER：审批人",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "authorBrno": {
+              "type": "string",
+              "title": "Approver Department No.",
+              "$comment": "AUTHOR_BRNO：审批人部门号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createTime": {
+              "type": "string",
+              "title": "Record Created Time",
+              "$comment": "CREATE_TIME：记录创建时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "updateTime": {
+              "type": "string",
+              "title": "Record Updated Time",
+              "$comment": "UPDATE_TIME：记录更新时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
+          }
+        }
+      }
+    },
+    "paymentParties": {
+      "type": "array",
+      "$comment": "PSSST_ENT_MSG_PAY_PARTY：支付交易对象记录",
+      "x-component": "MessageBusinessTable",
+      "x-component-props": {
+        "title": "Payment Parties",
+        "rowKey": "partyType",
+        "columns": [
+          {
+            "dataIndex": "partyType",
+            "title": "Party Type",
+            "width": 150
+          },
+          {
+            "dataIndex": "partyAcct",
+            "title": "Party Account",
+            "width": 180
+          },
+          {
+            "dataIndex": "partyName",
+            "title": "Party Name",
+            "width": 220
+          },
+          {
+            "dataIndex": "idType",
+            "title": "ID Type",
+            "width": 150
+          },
+          {
+            "dataIndex": "idNum",
+            "title": "ID Number",
+            "width": 180
+          },
+          {
+            "dataIndex": "agentBic",
+            "title": "Agent BIC",
+            "width": 150
+          },
+          {
+            "dataIndex": "agentLei",
+            "title": "Agent LEI",
+            "width": 150
+          },
+          {
+            "dataIndex": "agentClrSys",
+            "title": "Agent Clearing System",
+            "width": 190
+          },
+          {
+            "dataIndex": "agentClrMmBid",
+            "title": "Agent Clearing Member ID",
+            "width": 210
+          },
+          {
+            "dataIndex": "agentBranchId",
+            "title": "Agent Branch ID",
+            "width": 180
+          },
+          {
+            "dataIndex": "addrDept",
+            "title": "Address Department",
+            "width": 190
+          },
+          {
+            "dataIndex": "addrSubDept",
+            "title": "Address Sub-department",
+            "width": 210
+          },
+          {
+            "dataIndex": "addrStrNm",
+            "title": "Street Name",
+            "width": 180
+          },
+          {
+            "dataIndex": "addrBidgNb",
+            "title": "Building Number",
+            "width": 170
+          },
+          {
+            "dataIndex": "addrBidgNm",
+            "title": "Building Name",
+            "width": 180
+          },
+          {
+            "dataIndex": "addrFloor",
+            "title": "Floor",
+            "width": 120
+          },
+          {
+            "dataIndex": "addrPstBx",
+            "title": "Post Box",
+            "width": 140
+          },
+          {
+            "dataIndex": "addrRoom",
+            "title": "Room",
+            "width": 120
+          },
+          {
+            "dataIndex": "addrPstCd",
+            "title": "Post Code",
+            "width": 140
+          },
+          {
+            "dataIndex": "addrTwnNm",
+            "title": "Town Name",
+            "width": 170
+          },
+          {
+            "dataIndex": "addrTwnLctNm",
+            "title": "Town Location",
+            "width": 180
+          },
+          {
+            "dataIndex": "addrDstrctNm",
+            "title": "District Name",
+            "width": 180
+          },
+          {
+            "dataIndex": "addrCtrySubDvsn",
+            "title": "Country Subdivision",
+            "width": 200
+          },
+          {
+            "dataIndex": "addrCtryCode",
+            "title": "Country Code",
+            "width": 150
+          },
+          {
+            "dataIndex": "addrLine",
+            "title": "Address Line",
+            "width": 260
+          },
+          {
+            "dataIndex": "createTime",
+            "title": "Record Created Time",
+            "width": 180
+          },
+          {
+            "dataIndex": "updateTime",
+            "title": "Record Updated Time",
+            "width": 180
+          }
+        ]
+      }
+    }
+  }
+}

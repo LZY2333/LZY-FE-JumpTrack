@@ -1,0 +1,217 @@
+{
+  "type": "object",
+  "properties": {
+    "queryInfo": {
+      "type": "object",
+      "x-component": "MessageSection",
+      "x-component-props": {
+        "title": "Query / Response Information"
+      },
+      "properties": {
+        "queryGrid": {
+          "type": "void",
+          "x-component": "FormGrid",
+          "x-component-props": {
+            "minColumns": 4,
+            "maxColumns": 4,
+            "columnGap": 12,
+            "rowGap": 0
+          },
+          "properties": {
+            "content": {
+              "type": "string",
+              "title": "Query / Response Content",
+              "$comment": "CONTENT：查询查复内容",
+              "x-decorator": "MessageFormItem",
+              "x-component": "TextArea",
+              "x-decorator-props": {
+                "gridSpan": 4
+              },
+              "x-component-props": {
+                "autoSize": {
+                  "minRows": 2,
+                  "maxRows": 4
+                }
+              }
+            },
+            "createUser": {
+              "type": "string",
+              "title": "Created By",
+              "$comment": "CREATE_USER：创建人",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createBrno": {
+              "type": "string",
+              "title": "Creator Department No.",
+              "$comment": "CREATE_BRNO：创建人部门号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "authorUser": {
+              "type": "string",
+              "title": "Approved By",
+              "$comment": "AUTHOR_USER：审批人",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "authorBrno": {
+              "type": "string",
+              "title": "Approver Department No.",
+              "$comment": "AUTHOR_BRNO：审批人部门号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createTime": {
+              "type": "string",
+              "title": "Record Created Time",
+              "$comment": "CREATE_TIME：记录创建时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "updateTime": {
+              "type": "string",
+              "title": "Record Updated Time",
+              "$comment": "UPDATE_TIME：记录更新时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
+          }
+        }
+      }
+    },
+    "queryGpi": {
+      "type": "object",
+      "x-component": "MessageSection",
+      "x-component-props": {
+        "title": "GPI Information"
+      },
+      "properties": {
+        "gpiGrid": {
+          "type": "void",
+          "x-component": "FormGrid",
+          "x-component-props": {
+            "minColumns": 4,
+            "maxColumns": 4,
+            "columnGap": 12,
+            "rowGap": 0
+          },
+          "properties": {
+            "msgUetr": {
+              "type": "string",
+              "title": "UETR",
+              "$comment": "MSG_UETR：发报行生成的唯一编号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiMsgDate": {
+              "type": "string",
+              "title": "Original Message Date",
+              "$comment": "GPI_MSG_DATE：原报文处理时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiMsgStatus": {
+              "type": "string",
+              "title": "Original GPI Status",
+              "$comment": "GPI_MSG_STATUS：原报文 GPI 状态码",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiMsgStatusReson": {
+              "type": "string",
+              "title": "Original GPI Status Reason",
+              "$comment": "GPI_MSG_STATUS_RESON：原报文 GPI 状态原因码",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiOriginatorBic": {
+              "type": "string",
+              "title": "Originator BIC",
+              "$comment": "GPI_ORIGINATOR_BIC：原报文发起银行 BIC",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiForwardedBic": {
+              "type": "string",
+              "title": "Forwarded BIC",
+              "$comment": "GPI_FORWARDED_BIC：原报文目标银行 BIC",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiSettleMethod": {
+              "type": "string",
+              "title": "Settlement Method",
+              "$comment": "GPI_SETTLE_METHOD：原报文偿付方式",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiClearingSys": {
+              "type": "string",
+              "title": "Clearing System",
+              "$comment": "GPI_CLEARING_SYS：原报文清算系统",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiCcy": {
+              "type": "string",
+              "title": "Currency",
+              "$comment": "GPI_CCY：原报文币种",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiAmount": {
+              "type": "string",
+              "title": "Amount",
+              "$comment": "GPI_AMOUNT：原报文金额",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiChargeDetails": {
+              "type": "string",
+              "title": "Charge Details",
+              "$comment": "GPI_CHARGE_DETAILS：原报文费用详情",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiOriginalCcy": {
+              "type": "string",
+              "title": "Original Currency",
+              "$comment": "GPI_ORIGINAL_CCY：原报文原始货币",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiTargetCcy": {
+              "type": "string",
+              "title": "Target Currency",
+              "$comment": "GPI_TARGET_CCY：原报文目标货币",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiExchangeRate": {
+              "type": "string",
+              "title": "Exchange Rate",
+              "$comment": "GPI_EXCHANGE_RATE：原报文汇率",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "gpiChargeFee": {
+              "type": "string",
+              "title": "Charge Fee",
+              "$comment": "GPI_CHARGE_FEE：原报文费用",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createTime": {
+              "type": "string",
+              "title": "Record Created Time",
+              "$comment": "CREATE_TIME：记录创建时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,7 @@
 import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
-import { ArrowLeftOutlined, CopyOutlined, DownloadOutlined, PrinterOutlined } from '@ant-design/icons';
-import { downloadMessage } from '@/api/messages';
+import { ArrowLeftOutlined, PrinterOutlined } from '@ant-design/icons';
 import useMessageDetail from './useMessageDetail';
 import useMessageRaw from './useMessageRaw';
 import TabProcessing from './TabProcessing';
@@ -16,7 +15,6 @@ import {
   printTextDocument,
   resolveDisplayMessageId,
 } from './util';
-import { copyText, saveBlobResponse } from '@/utils/fileUtil';
 
 const SCROLLABLE_TAB_CONTENT_CLASS_NAME = 'h-full overflow-auto';
 const FLEX_TAB_CONTENT_CLASS_NAME = 'flex h-full min-h-0 flex-col overflow-hidden';
@@ -30,17 +28,8 @@ const MessageDetailPage = () => {
   const navigate = useNavigate();
   const { detail, detailError } = useMessageDetail(messageId);
   const { raw, rawLoading, rawError } = useMessageRaw(messageId);
-  const [downloading, setDownloading] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState(DEFAULT_TAB_KEY);
   const rawViewerContentRef = useRef<HTMLDivElement>(null);
-
-  /** 复制当前报文原文。 */
-  const handleCopy = () => {
-    if (!raw?.content) return;
-    copyText(raw.content)
-      .then(() => message.success('Raw message copied'))
-      .catch(() => message.error('Failed to copy raw message'));
-  };
 
   /** 打开只包含当前报文原文的打印窗口。 */
   const handlePrint = () => {
@@ -51,15 +40,6 @@ const MessageDetailPage = () => {
       ? printElementDocument(title, currentViewElement)
       : printTextDocument(title, raw.content);
     if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
-  };
-
-  /** 下载当前报文原始文件。 */
-  const handleDownload = () => {
-    if (!messageId || downloading) return;
-    setDownloading(true);
-    downloadMessage(messageId)
-      .then((response) => saveBlobResponse(response, raw?.fileName || `${messageId}.xml`))
-      .finally(() => setDownloading(false));
   };
 
   const rawContentActionDisabled = isRawContentActionDisabled(raw, rawLoading);
@@ -107,20 +87,8 @@ const MessageDetailPage = () => {
           <Typography.Text strong>Message {resolveDisplayMessageId(detail, messageId)} Details</Typography.Text>
         </Space>
         <Space size={8} wrap>
-          <Button size='small' icon={<CopyOutlined />} disabled={rawContentActionDisabled} onClick={handleCopy}>
-            Copy Raw
-          </Button>
           <Button size='small' icon={<PrinterOutlined />} disabled={rawContentActionDisabled} onClick={handlePrint}>
             Print Raw
-          </Button>
-          <Button
-            size='small'
-            icon={<DownloadOutlined />}
-            loading={downloading}
-            disabled={!messageId}
-            onClick={handleDownload}
-          >
-            Download Raw
           </Button>
         </Space>
       </div>

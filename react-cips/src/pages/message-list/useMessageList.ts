@@ -2,32 +2,57 @@ import { useCallback, useEffect, useState } from 'react';
 import type { MessageRecord } from '@/types';
 import { getMessages } from '@/api/messages';
 import type { MessageQuery, MessageQueryConditions, MessageQuerySortOrder } from '@/api/messages';
-import type {
-  BusinessType,
-  MessageDirection,
-  MessageSortField,
-  MessageSortOrder,
-  TransmissionStatus,
-} from '@/types/enums';
+import type { MessageDirection, MessageSortField, MessageSortOrder, MsgRecvStatus } from '@/types/enums';
 
 export interface MessageListFilterValues {
+  /** MSG_ID：报文标识号。 */
   msgId?: string;
+  /** MSG_BUSINESS_NO：业务流水号。 */
   msgBusinessNo?: string;
+  /** MSG_TYPE：报文类型编码。 */
   msgType?: string;
+  /** MSG_BUS_TYPE：报文业务类型编码。 */
+  msgBusType?: string;
+  /** MSG_DIRECTION：报文收发标志。 */
   msgDirection?: MessageDirection;
-  transmissionStatus?: TransmissionStatus;
-  messageTimeRange?: [string, string] | null;
-  businessType?: BusinessType;
+  /** MSG_RECV_STATUS：收报状态。 */
+  msgRecvStatus?: MsgRecvStatus;
+  /** MSG_SEND_STATUS：发报状态。 */
+  msgSendStatus?: string;
+  /** MSG_RECV_DATE：收报日期范围。 */
+  msgRecvDateRange?: [string, string] | null;
+  /** MSG_SEND_DATE：发报日期范围。 */
+  msgSendDateRange?: [string, string] | null;
+  /** MSG_CHANNEL：收发报通道。 */
   msgChannel?: string;
+  /** MAIN_MSG_ID：主报文编号。 */
   mainMsgId?: string;
+  /** MSG_RELATED_ID：关联流水号。 */
   msgRelatedId?: string;
+  /** MSG_END_ID：端到端流水号。 */
   msgEndId?: string;
+  /** MSG_UETR：UETR唯一标识号。 */
   msgUetr?: string;
+  /** MSG_SEND_INST：发报机构编号。 */
   msgSendInst?: string;
+  /** MSG_RECV_INST：收报机构编号。 */
   msgRecvInst?: string;
-  amountFrom?: number | null;
-  amountTo?: number | null;
-  clearingTargetDepartment?: string;
+  /** REF_NO：收发任务交易编号。 */
+  refNo?: string;
+  /** TRAN_ID：支付类报文交易标识号。 */
+  tranId?: string;
+  /** REMIT_AMOUNT：汇付金额范围起点。 */
+  remitAmountFrom?: number | null;
+  /** REMIT_AMOUNT：汇付金额范围终点。 */
+  remitAmountTo?: number | null;
+  /** MSG_OWNER_DEPT：收报归属部门。 */
+  msgOwnerDept?: string;
+  /** MSG_OWNER_GROUP：收报归属组。 */
+  msgOwnerGroup?: string;
+  /** STP_IND：直通标记。 */
+  stpInd?: string;
+  /** NON_STP_CODE：非直通原因编号。 */
+  nonStpCode?: string;
 }
 
 const PAGE_SIZE_STORAGE_KEY = 'message-list-page-size';
@@ -124,11 +149,14 @@ const buildQueryConditions = (
     msgId: filters?.msgId,
     msgBusinessNo: filters?.msgBusinessNo,
     msgType: filters?.msgType,
+    msgBusType: filters?.msgBusType,
     msgDirection: filters?.msgDirection,
-    transmissionStatus: filters?.transmissionStatus,
-    messageTimeFrom: filters?.messageTimeRange?.[0],
-    messageTimeTo: filters?.messageTimeRange?.[1],
-    businessType: filters?.businessType,
+    msgRecvStatus: filters?.msgRecvStatus,
+    msgSendStatus: filters?.msgSendStatus,
+    msgRecvDateFrom: filters?.msgRecvDateRange?.[0],
+    msgRecvDateTo: filters?.msgRecvDateRange?.[1],
+    msgSendDateFrom: filters?.msgSendDateRange?.[0],
+    msgSendDateTo: filters?.msgSendDateRange?.[1],
     msgChannel: filters?.msgChannel,
     mainMsgId: filters?.mainMsgId,
     msgRelatedId: filters?.msgRelatedId,
@@ -136,9 +164,14 @@ const buildQueryConditions = (
     msgUetr: filters?.msgUetr,
     msgSendInst: filters?.msgSendInst,
     msgRecvInst: filters?.msgRecvInst,
-    amountFrom: filters?.amountFrom ?? undefined,
-    amountTo: filters?.amountTo ?? undefined,
-    clearingTargetDepartment: filters?.clearingTargetDepartment,
+    refNo: filters?.refNo,
+    tranId: filters?.tranId,
+    remitAmountFrom: filters?.remitAmountFrom ?? undefined,
+    remitAmountTo: filters?.remitAmountTo ?? undefined,
+    msgOwnerDept: filters?.msgOwnerDept,
+    msgOwnerGroup: filters?.msgOwnerGroup,
+    stpInd: filters?.stpInd,
+    nonStpCode: filters?.nonStpCode,
     sortField,
     sortOrder: sortOrder ? querySortOrder : undefined,
   });
