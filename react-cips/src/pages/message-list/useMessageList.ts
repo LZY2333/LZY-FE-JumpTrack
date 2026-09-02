@@ -41,10 +41,10 @@ export interface MessageListFilterValues {
   refNo?: string;
   /** TRAN_ID：支付类报文交易标识号。 */
   tranId?: string;
-  /** REMIT_AMOUNT：汇付金额范围起点。 */
-  remitAmountFrom?: number | null;
-  /** REMIT_AMOUNT：汇付金额范围终点。 */
-  remitAmountTo?: number | null;
+  /** 统一金额范围起点。 */
+  amountFrom?: number | null;
+  /** 统一金额范围终点。 */
+  amountTo?: number | null;
   /** MSG_OWNER_DEPT：收报归属部门。 */
   msgOwnerDept?: string;
   /** MSG_OWNER_GROUP：收报归属组。 */
@@ -166,8 +166,8 @@ const buildQueryConditions = (
     msgRecvInst: filters?.msgRecvInst,
     refNo: filters?.refNo,
     tranId: filters?.tranId,
-    remitAmountFrom: filters?.remitAmountFrom ?? undefined,
-    remitAmountTo: filters?.remitAmountTo ?? undefined,
+    amountFrom: filters?.amountFrom ?? undefined,
+    amountTo: filters?.amountTo ?? undefined,
     msgOwnerDept: filters?.msgOwnerDept,
     msgOwnerGroup: filters?.msgOwnerGroup,
     stpInd: filters?.stpInd,

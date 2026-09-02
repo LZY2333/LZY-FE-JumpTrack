@@ -1,6 +1,6 @@
 import type { MessageQuery, MessageQueryConditions } from '@/api/messages';
-import type { MessageDetail, MessageProcessingRecord, MessageRecord } from '@/types';
-import { BusinessStatus, MessageBusinessType, MessageDirection, MsgRecvStatus, ResCode } from '@/types/enums';
+import type { MessageAuditTrailRecord, MessageDetail, MessageRecord } from '@/types';
+import { MessageBusinessType, MessageDirection, MsgRecvStatus, ResCode } from '@/types/enums';
 
 // 报文类型用于模拟多种 CIPS 报文，BUSINESS_TYPE 决定三类业务信息 Schema。
 const MESSAGE_TYPES = ['pacs.008.001.01', 'pacs.009.001.01', 'camt.054.001.08', 'admi.002.001.01'];
@@ -17,7 +17,6 @@ const MSG_OWNER_GROUPS = ['GROUP-A', 'GROUP-B', 'GROUP-C'];
 const MSG_RECV_STATUSES = Object.values(MsgRecvStatus);
 // 发报状态代码表在当前数据库设计中仍为“枚举待定”，Mock 暂时保留通用状态值。
 const MSG_SEND_STATUSES = ['PENDING', 'PROCESSING', 'SUCCESS', 'FAILED'];
-const BUSINESS_STATUSES = Object.values(BusinessStatus);
 const MESSAGE_COUNT = 40;
 const RELATED_MESSAGE_GROUP_SIZE = 2;
 
@@ -32,7 +31,7 @@ const createMessageId = (index: number) => {
 
 // 一条记录代表一份物理报文；固定 40 条便于验证分页、筛选、排序和空值展示。
 interface MockMessageDetail extends MessageDetail {
-  processingRecords: MessageProcessingRecord[];
+  processingRecords: MessageAuditTrailRecord[];
 }
 
 const messages: MockMessageDetail[] = Array.from({ length: MESSAGE_COUNT }, (_, index) => createMessage(index));
@@ -66,8 +65,8 @@ function createMessage(index: number): MockMessageDetail {
     msgBusType,
     msgType,
     msgBusinessNo: `TXN20260822${sequence}`,
-    remitAmount: choose(hasPaymentDetail, amount.toFixed(2), null),
-    remitCcy: choose(hasPaymentDetail, 'CNY', null),
+    amount: amount.toFixed(2),
+    currency: 'CNY',
     tranId: choose(hasPaymentDetail, `REF20-${sequence}`, null),
     refNo: choose(index % 4 === 0, null, `OUR-${sequence}`),
     msgOwnerDept: choose(received, MSG_OWNER_DEPTS[index % MSG_OWNER_DEPTS.length], null),
@@ -93,28 +92,40 @@ function createMessage(index: number): MockMessageDetail {
     formData: createFormData({ index, msgId, businessType, messageTime }),
     processingRecords: [
       {
-        recordId: `${msgId}-01`,
-        processTime: messageTime,
-        node: choose(msgDirection === MessageDirection.In, 'Message Receipt', 'Message Generation'),
-        status: 'Success',
-        resultSummary: 'Message entered the processing queue',
-        operator: 'SYSTEM',
+        logId: `LOGS20260822${String(index * 3 + 1).padStart(6, '0')}`,
+        refNo: msgId,
+        taskId: `TASK20260822${sequence}`,
+        serviceModule: choose(msgDirection === MessageDirection.In, 'RECEVICE_SERVICE', 'SEND_SERVICE'),
+        eventCode: 'M0001',
+        eventDetail: choose(msgDirection === MessageDirection.In, 'Message received', 'Message generated'),
+        remark: null,
+        eventUser: 'SYSTEM',
+        eventTime: messageTime,
+        createTime: messageTime,
       },
       {
-        recordId: `${msgId}-02`,
-        processTime: new Date(Date.parse(messageTime) + 30_000).toISOString(),
-        node: 'Format Validation',
-        status: choose(index % 9 === 0, 'Failed', 'Success'),
-        resultSummary: choose(index % 9 === 0, 'Mock: field format validation failed', 'CIPS message format validated'),
-        operator: 'SYSTEM',
+        logId: `LOGS20260822${String(index * 3 + 2).padStart(6, '0')}`,
+        refNo: msgId,
+        taskId: `TASK20260822${sequence}`,
+        serviceModule: choose(msgDirection === MessageDirection.In, 'RECEVICE_SERVICE', 'SEND_SERVICE'),
+        eventCode: choose(index % 9 === 0, 'M0003', 'M0002'),
+        eventDetail: choose(index % 9 === 0, 'Message format validation failed', 'Message format validated'),
+        remark: null,
+        eventUser: 'SYSTEM',
+        eventTime: new Date(Date.parse(messageTime) + 30_000).toISOString(),
+        createTime: new Date(Date.parse(messageTime) + 30_000).toISOString(),
       },
       {
-        recordId: `${msgId}-03`,
-        processTime: new Date(Date.parse(messageTime) + 90_000).toISOString(),
-        node: 'Business Processing',
-        status: BUSINESS_STATUSES[index % BUSINESS_STATUSES.length],
-        resultSummary: 'Business status updated',
-        operator: choose(index % 3 === 0, null, `A${String(90000 + index)}`),
+        logId: `LOGS20260822${String(index * 3 + 3).padStart(6, '0')}`,
+        refNo: msgId,
+        taskId: `TASK20260822${sequence}`,
+        serviceModule: 'TASK_SERVICE',
+        eventCode: 'M0004',
+        eventDetail: 'Business processing completed',
+        remark: null,
+        eventUser: choose(index % 3 === 0, 'SYSTEM', `A${String(90000 + index)}`),
+        eventTime: new Date(Date.parse(messageTime) + 90_000).toISOString(),
+        createTime: new Date(Date.parse(messageTime) + 90_000).toISOString(),
       },
     ],
   };
@@ -324,7 +335,7 @@ const filterMessages = (query: MessageQueryConditions = {}) => {
   list = filterByText(list, 'msgOwnerDept', query.msgOwnerDept);
   list = filterByText(list, 'msgOwnerGroup', query.msgOwnerGroup);
   list = filterByText(list, 'nonStpCode', query.nonStpCode);
-  list = filterByAmountRange(list, query.remitAmountFrom, query.remitAmountTo);
+  list = filterByAmountRange(list, query.amountFrom, query.amountTo);
   list = filterByDateRange(list, {
     field: 'msgRecvDate',
     dateFrom: query.msgRecvDateFrom,
@@ -360,9 +371,9 @@ const filterByAmountRange = (records: MockMessageDetail[], amountFrom?: number, 
   if (amountFrom === undefined && amountTo === undefined) return records;
 
   return records.filter((record) => {
-    if (record.remitAmount === null) return false;
+    if (record.amount === null) return false;
 
-    const amount = Number(record.remitAmount);
+    const amount = Number(record.amount);
     if (!Number.isFinite(amount)) return false;
     if (amountFrom !== undefined && amount < amountFrom) return false;
     if (amountTo !== undefined && amount > amountTo) return false;

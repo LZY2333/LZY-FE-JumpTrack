@@ -77,19 +77,19 @@ export const msgBusinessNo: TableColumnType<MessageRecord> = {
   render: renderMessageText,
 };
 
-/** 支付类报文汇付金额 */
-export const remitAmount: TableColumnType<MessageRecord> = {
-  title: 'Remittance Amount',
-  dataIndex: 'remitAmount',
+/** 统一金额：支付类 → REMIT_AMOUNT，GPI 类 → GPI_AMOUNT，账单类 → NETTING_AMOUNT。 */
+export const amount: TableColumnType<MessageRecord> = {
+  title: 'Amount',
+  dataIndex: 'amount',
   width: 140,
   align: 'right',
   render: renderMessageAmount,
 };
 
-/** 支付类报文汇付币种 */
-export const remitCcy: TableColumnType<MessageRecord> = {
-  title: 'Remittance Currency',
-  dataIndex: 'remitCcy',
+/** 统一币种：支付类 → REMIT_CCY，GPI 类 → GPI_CCY，账单类 → BILL_CCY。 */
+export const currency: TableColumnType<MessageRecord> = {
+  title: 'Currency',
+  dataIndex: 'currency',
   width: 150,
   render: renderMessageText,
 };

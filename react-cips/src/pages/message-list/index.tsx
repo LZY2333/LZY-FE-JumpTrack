@@ -30,7 +30,7 @@ import {
   NonStpCodeFilter,
   RefNoFilter,
   RelatedMessageIdFilter,
-  RemitAmountRangeFilter,
+  AmountRangeFilter,
   StpIndFilter,
   TranIdFilter,
 } from '@/components/FormItem';
@@ -53,8 +53,8 @@ import {
   msgType,
   msgUetr,
   refNo,
-  remitAmount,
-  remitCcy,
+  amount,
+  currency,
   remark,
   tranId,
   updateTime,
@@ -103,8 +103,8 @@ const MessageList = () => {
     msgChannel,
     msgType,
     msgBusinessNo,
-    remitAmount,
-    remitCcy,
+    amount,
+    currency,
     tranId,
     refNo,
     msgOwnerDept,
@@ -140,13 +140,13 @@ const MessageList = () => {
       >
         <Row gutter={[16, 8]}>
           <Col span={8}>
+            <MessageDirectionFilter />
+          </Col>
+          <Col span={8}>
             <MessageRecvDateRangeFilter />
           </Col>
           <Col span={8}>
             <MessageSendDateRangeFilter />
-          </Col>
-          <Col span={8}>
-            <MessageDirectionFilter />
           </Col>
           <Col span={8}>
             <MessageTypeFilter />
@@ -208,7 +208,7 @@ const MessageList = () => {
                 <MessageUetrFilter />
               </Col>
               <Col span={8}>
-                <RemitAmountRangeFilter />
+                <AmountRangeFilter />
               </Col>
             </>
           )}
@@ -232,7 +232,7 @@ const MessageList = () => {
         rowKey='msgId'
         size='small'
         columns={columns}
-        storageKey='message-list-v2'
+        storageKey='message-list-v3'
         defaultHiddenColumnIds={DEFAULT_HIDDEN_COLUMN_IDS}
         dataSource={messages}
         loading={loading}

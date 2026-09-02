@@ -4,11 +4,11 @@ import type { TableColumnsType } from 'antd';
 import { getMessageProcessingRecords } from '@/api/messages';
 import { renderMessageDateTime } from '@/components/TableColumn/message';
 import TableViewport from '@/components/TableViewport';
-import type { MessageProcessingRecord } from '@/types';
+import type { MessageAuditTrailRecord } from '@/types';
 
-/** 处理记录 Tab：独立加载报文经过各处理节点的时间、状态、结果及操作人。 */
+/** 处理记录 Tab：按审计轨迹表展示报文处理过程中产生的事件。 */
 const TabProcessing = ({ messageId }: { messageId?: string }) => {
-  const [records, setRecords] = useState<MessageProcessingRecord[]>([]);
+  const [records, setRecords] = useState<MessageAuditTrailRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -43,26 +43,28 @@ const TabProcessing = ({ messageId }: { messageId?: string }) => {
     };
   }, [messageId]);
 
-  const columns: TableColumnsType<MessageProcessingRecord> = [
-    /** 处理时间 */
-    { title: 'Processed At', dataIndex: 'processTime', width: 180, render: renderMessageDateTime },
-    /** 处理节点 */
-    { title: 'Processing Node', dataIndex: 'node', width: 160 },
-    /** 处理状态 */
-    { title: 'Status', dataIndex: 'status', width: 120, render: (value: string) => value || '--' },
-    /** 处理结果摘要 */
-    { title: 'Result Summary', dataIndex: 'resultSummary' },
-    /** 操作人 */
-    { title: 'Operator', dataIndex: 'operator', width: 140, render: (value: string | null) => value || '--' },
+  const columns: TableColumnsType<MessageAuditTrailRecord> = [
+    /** 事件发生时间 */
+    { title: 'Event Time', dataIndex: 'eventTime', width: 180, render: renderMessageDateTime },
+    /** 服务模块 */
+    { title: 'Service Module', dataIndex: 'serviceModule', width: 180 },
+    /** 事件编号 */
+    { title: 'Event Code', dataIndex: 'eventCode', width: 110 },
+    /** 事件详细内容 */
+    { title: 'Event Detail', dataIndex: 'eventDetail' },
+    /** 备注 */
+    { title: 'Remark', dataIndex: 'remark', width: 160, render: (value: string | null) => value || '--' },
+    /** 事件关联用户 */
+    { title: 'Event User', dataIndex: 'eventUser', width: 140 },
   ];
 
   return (
     <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
       {error && <Alert className='mb-2 shrink-0' type='error' showIcon message={error} />}
       <TableViewport>
-        <Table<MessageProcessingRecord>
+        <Table<MessageAuditTrailRecord>
           size='small'
-          rowKey='recordId'
+          rowKey='logId'
           columns={columns}
           dataSource={records}
           loading={loading}

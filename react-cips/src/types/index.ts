@@ -36,10 +36,10 @@ export interface MessageRecord {
   msgBusType: string;
   /** MSG_BUSINESS_NO：交易流水号。 */
   msgBusinessNo: NullableText;
-  /** REMIT_AMOUNT：支付类报文汇付金额。 */
-  remitAmount: NullableText;
-  /** REMIT_CCY：支付类报文汇付币种。 */
-  remitCcy: NullableText;
+  /** 统一金额：支付类 → REMIT_AMOUNT，GPI 类 → GPI_AMOUNT，账单类 → NETTING_AMOUNT。 */
+  amount: NullableText;
+  /** 统一币种：支付类 → REMIT_CCY，GPI 类 → GPI_CCY，账单类 → BILL_CCY。 */
+  currency: NullableText;
   /** TRAN_ID：支付类报文交易标识号，列表显示名沿用 refTxn20。 */
   tranId: NullableText;
   /** REF_NO：收发任务交易编号，列表显示名沿用 OurReference。 */

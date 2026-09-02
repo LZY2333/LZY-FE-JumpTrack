@@ -167,15 +167,15 @@ export const TranIdFilter = (props: MessageFilterFormItemProps) => (
   </Form.Item>
 );
 
-/** 支付类报文汇付金额区间 */
-export const RemitAmountRangeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} label='Remittance Amount'>
+/** 统一金额区间，由后端按业务类型转换后查询 */
+export const AmountRangeFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} label='Amount'>
     <Space.Compact block>
-      <Form.Item name='remitAmountFrom' noStyle>
+      <Form.Item name='amountFrom' noStyle>
         <InputNumber className='min-w-0 flex-1' controls={false} placeholder='Minimum' />
       </Form.Item>
       <span className='flex shrink-0 items-center px-2'>-</span>
-      <Form.Item name='remitAmountTo' noStyle>
+      <Form.Item name='amountTo' noStyle>
         <InputNumber className='min-w-0 flex-1' controls={false} placeholder='Maximum' />
       </Form.Item>
     </Space.Compact>

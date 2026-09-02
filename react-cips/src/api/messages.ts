@@ -1,6 +1,6 @@
 import type { Pagination } from './request';
 import { get, post } from './request';
-import type { MessageDetail, MessageProcessingRecord, MessageRaw, MessageRecord } from '@/types';
+import type { MessageAuditTrailRecord, MessageDetail, MessageRaw, MessageRecord } from '@/types';
 import type { MessageDirection, MessageSortField, MsgRecvStatus } from '@/types/enums';
 
 const MESSAGE_API = '/api/example/v1/messages';
@@ -48,10 +48,10 @@ export interface MessageQueryConditions {
   refNo?: string;
   /** TRAN_ID：支付类报文交易标识号。 */
   tranId?: string;
-  /** REMIT_AMOUNT：汇付金额范围起点。 */
-  remitAmountFrom?: number;
-  /** REMIT_AMOUNT：汇付金额范围终点。 */
-  remitAmountTo?: number;
+  /** 统一金额范围起点，由后端按 BUSINESS_TYPE 映射业务金额字段。 */
+  amountFrom?: number;
+  /** 统一金额范围终点，由后端按 BUSINESS_TYPE 映射业务金额字段。 */
+  amountTo?: number;
   /** MSG_OWNER_DEPT：收报归属部门。 */
   msgOwnerDept?: string;
   /** MSG_OWNER_GROUP：收报归属组。 */
@@ -89,7 +89,7 @@ export const getMessageRaw = (msgId: string) => get<MessageRaw>(`${MESSAGE_API}/
 
 /** 异步加载指定报文的处理轨迹。 */
 export const getMessageProcessingRecords = (msgId: string) =>
-  get<MessageProcessingRecord[]>(`${MESSAGE_API}/${encodeURIComponent(msgId)}/processing-records`);
+  get<MessageAuditTrailRecord[]>(`${MESSAGE_API}/${encodeURIComponent(msgId)}/processing-records`);
 
 /** 异步加载与指定报文处于同一业务链路的关联报文。 */
 export const getRelatedMessages = (msgId: string) =>
