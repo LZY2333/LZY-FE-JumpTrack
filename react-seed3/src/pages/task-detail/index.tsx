@@ -151,7 +151,7 @@ export default function TaskDetail() {
   };
 
   return (
-    <div>
+    <div className='[&_.ant-input-disabled]:!text-gray-800 [&_.ant-input-number-disabled]:!text-gray-800 [&_.ant-input-number-disabled_input]:!text-gray-800 [&_.ant-picker-disabled_input]:!text-gray-800 [&_.ant-radio-disabled+span]:!text-gray-800'>
       <div className='mb-4 flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(RoutePath.TaskPool)}>
