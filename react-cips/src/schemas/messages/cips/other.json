@@ -1,0 +1,5 @@
+{
+  "type": "object",
+  "$comment": "其他业务类型：BUSINESS_TYPE=OTHER，暂无专用结构化业务字段",
+  "properties": {}
+}

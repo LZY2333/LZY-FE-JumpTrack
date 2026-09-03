@@ -1,51 +1,28 @@
 import type { TableColumnType } from 'antd';
-import dayjs from 'dayjs';
 import type { MessageRecord } from '@/types';
 import {
   MESSAGE_DIRECTION_LABELS,
+  MESSAGE_BUSINESS_TYPE_LABELS,
   MSG_RECV_STATUS_LABELS,
+  MSG_SEND_STATUS_LABELS,
   MessageDirection,
+  MessageBusinessType,
   MsgRecvStatus,
+  MsgSendStatus,
 } from '@/types/enums';
+import { renderMessageAmount, renderMessageDate, renderMessageDateTime, renderMessageText } from './messageColumnUtil';
 
-const AMOUNT_FORMATTER = new Intl.NumberFormat('en-US', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
+// 字段顺序与报文列表的默认列顺序一致。
 
-/** 表格空值统一展示为 --，但不修改数据本身。 */
-export const renderMessageText = (value: unknown) =>
-  value === undefined || value === null || value === '' ? '--' : String(value);
-
-/** 接口时间统一转换为页面格式；非法时间保留原值，便于定位数据问题。 */
-export const renderMessageDateTime = (value: unknown) => {
-  if (value === undefined || value === null || value === '') return '--';
-  const date = dayjs(String(value));
-  return date.isValid() ? date.format('YYYY-MM-DD HH:mm:ss') : String(value);
-};
-
-/** 报文收发时间只展示日期；非法时间保留原值，便于定位数据问题。 */
-export const renderMessageDate = (value: unknown) => {
-  if (value === undefined || value === null || value === '') return '--';
-  const date = dayjs(String(value));
-  return date.isValid() ? date.format('YYYY-MM-DD') : String(value);
-};
-
-/** 金额统一保留两位小数并使用英文千分位格式。 */
-export const renderMessageAmount = (value: unknown) => {
-  if (value === undefined || value === null || value === '') return '--';
-  const amount = Number(value);
-  return Number.isFinite(amount) ? AMOUNT_FORMATTER.format(amount) : String(value);
-};
-
-/** 报文标识号 */
+/** 报文标识号：MSG_ID */
 export const msgId: TableColumnType<MessageRecord> = {
   title: 'Message ID',
   dataIndex: 'msgId',
   width: 210,
+  render: renderMessageText,
 };
 
-/** 收发标志 */
+/** 收发方向：MSG_DIRECTION */
 export const msgDirection: TableColumnType<MessageRecord> = {
   title: 'Direction',
   dataIndex: 'msgDirection',
@@ -53,7 +30,15 @@ export const msgDirection: TableColumnType<MessageRecord> = {
   render: (value: MessageDirection) => MESSAGE_DIRECTION_LABELS[value] ?? renderMessageText(value),
 };
 
-/** 收发报通道 */
+/** 业务类型：BUSINESS_TYPE */
+export const businessType: TableColumnType<MessageRecord> = {
+  title: 'Business Type',
+  dataIndex: 'businessType',
+  width: 160,
+  render: (value: MessageBusinessType) => MESSAGE_BUSINESS_TYPE_LABELS[value] ?? renderMessageText(value),
+};
+
+/** 收发报通道：MSG_CHANNEL */
 export const msgChannel: TableColumnType<MessageRecord> = {
   title: 'Channel',
   dataIndex: 'msgChannel',
@@ -61,7 +46,7 @@ export const msgChannel: TableColumnType<MessageRecord> = {
   render: renderMessageText,
 };
 
-/** 报文类型编码 */
+/** 报文类型：MSG_TYPE */
 export const msgType: TableColumnType<MessageRecord> = {
   title: 'Message Type',
   dataIndex: 'msgType',
@@ -69,7 +54,7 @@ export const msgType: TableColumnType<MessageRecord> = {
   render: renderMessageText,
 };
 
-/** 交易流水号 */
+/** 业务流水号：MSG_BUSINESS_NO */
 export const msgBusinessNo: TableColumnType<MessageRecord> = {
   title: 'Business No.',
   dataIndex: 'msgBusinessNo',
@@ -77,7 +62,7 @@ export const msgBusinessNo: TableColumnType<MessageRecord> = {
   render: renderMessageText,
 };
 
-/** 统一金额：支付类 → REMIT_AMOUNT，GPI 类 → GPI_AMOUNT，账单类 → NETTING_AMOUNT。 */
+/** 金额：REMIT_AMOUNT / GPI_AMOUNT / NETTING_AMOUNT */
 export const amount: TableColumnType<MessageRecord> = {
   title: 'Amount',
   dataIndex: 'amount',
@@ -86,7 +71,7 @@ export const amount: TableColumnType<MessageRecord> = {
   render: renderMessageAmount,
 };
 
-/** 统一币种：支付类 → REMIT_CCY，GPI 类 → GPI_CCY，账单类 → BILL_CCY。 */
+/** 币种：REMIT_CCY / GPI_CCY / BILL_CCY */
 export const currency: TableColumnType<MessageRecord> = {
   title: 'Currency',
   dataIndex: 'currency',
@@ -94,7 +79,7 @@ export const currency: TableColumnType<MessageRecord> = {
   render: renderMessageText,
 };
 
-/** TRAN_ID：显示名沿用 refTxn20 */
+/** 交易标识号：TRAN_ID */
 export const tranId: TableColumnType<MessageRecord> = {
   title: 'refTxn20',
   dataIndex: 'tranId',
@@ -102,71 +87,7 @@ export const tranId: TableColumnType<MessageRecord> = {
   render: renderMessageText,
 };
 
-/** REF_NO：显示名沿用 OurReference */
-export const refNo: TableColumnType<MessageRecord> = {
-  title: 'OurReference',
-  dataIndex: 'refNo',
-  width: 180,
-  render: renderMessageText,
-};
-
-/** MSG_OWNER_DEPT：显示名沿用 Clearing Target Department */
-export const msgOwnerDept: TableColumnType<MessageRecord> = {
-  title: 'Clearing Target Department',
-  dataIndex: 'msgOwnerDept',
-  width: 210,
-  render: renderMessageText,
-};
-
-/** 主报文编号 */
-export const mainMsgId: TableColumnType<MessageRecord> = {
-  title: 'Main Message ID',
-  dataIndex: 'mainMsgId',
-  width: 180,
-  render: renderMessageText,
-};
-
-/** 关联流水号 */
-export const msgRelatedId: TableColumnType<MessageRecord> = {
-  title: 'Related Message ID',
-  dataIndex: 'msgRelatedId',
-  width: 180,
-  render: renderMessageText,
-};
-
-/** 端到端流水号 */
-export const msgEndId: TableColumnType<MessageRecord> = {
-  title: 'End-to-End ID',
-  dataIndex: 'msgEndId',
-  width: 190,
-  render: renderMessageText,
-};
-
-/** UETR 唯一标识号 */
-export const msgUetr: TableColumnType<MessageRecord> = {
-  title: 'UETR',
-  dataIndex: 'msgUetr',
-  width: 280,
-  render: renderMessageText,
-};
-
-/** 发报机构 */
-export const msgSendInst: TableColumnType<MessageRecord> = {
-  title: 'Sending Institution',
-  dataIndex: 'msgSendInst',
-  width: 140,
-  render: renderMessageText,
-};
-
-/** 收报机构 */
-export const msgRecvInst: TableColumnType<MessageRecord> = {
-  title: 'Receiving Institution',
-  dataIndex: 'msgRecvInst',
-  width: 140,
-  render: renderMessageText,
-};
-
-/** 收报状态 */
+/** 收报状态：MSG_RECV_STATUS */
 export const msgRecvStatus: TableColumnType<MessageRecord> = {
   title: 'Received Status',
   dataIndex: 'msgRecvStatus',
@@ -174,33 +95,72 @@ export const msgRecvStatus: TableColumnType<MessageRecord> = {
   render: (value: MsgRecvStatus) => MSG_RECV_STATUS_LABELS[value] ?? renderMessageText(value),
 };
 
-/** 发报状态 */
+/** 发报状态：MSG_SEND_STATUS */
 export const msgSendStatus: TableColumnType<MessageRecord> = {
   title: 'Sent Status',
   dataIndex: 'msgSendStatus',
   width: 130,
+  render: (value: MsgSendStatus) => MSG_SEND_STATUS_LABELS[value] ?? renderMessageText(value),
+};
+
+/** 收发日期：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE */
+export const msgDate: TableColumnType<MessageRecord> = {
+  title: 'Message Date',
+  dataIndex: 'msgDate',
+  width: 150,
+  sorter: true,
+  render: renderMessageDate,
+};
+
+/** UETR 唯一标识号：MSG_UETR */
+export const msgUetr: TableColumnType<MessageRecord> = {
+  title: 'UETR',
+  dataIndex: 'msgUetr',
+  width: 280,
   render: renderMessageText,
 };
 
-/** 收报日期 */
-export const msgRecvDate: TableColumnType<MessageRecord> = {
-  title: 'Received Date',
-  dataIndex: 'msgRecvDate',
-  width: 150,
-  sorter: true,
-  render: renderMessageDate,
+/** 报文归属部门：MSG_OWNER_DEPT */
+export const msgOwnerDept: TableColumnType<MessageRecord> = {
+  title: 'Owner Department',
+  dataIndex: 'msgOwnerDept',
+  width: 180,
+  render: renderMessageText,
 };
 
-/** 发报日期 */
-export const msgSendDate: TableColumnType<MessageRecord> = {
-  title: 'Sent Date',
-  dataIndex: 'msgSendDate',
+/** 报文归属组：MSG_OWNER_GROUP */
+export const msgOwnerGroup: TableColumnType<MessageRecord> = {
+  title: 'Owner Group',
+  dataIndex: 'msgOwnerGroup',
   width: 150,
-  sorter: true,
-  render: renderMessageDate,
+  render: renderMessageText,
 };
 
-/** 记录创建时间 */
+/** 主报文编号：MAIN_MSG_ID */
+export const mainMsgId: TableColumnType<MessageRecord> = {
+  title: 'Main Message ID',
+  dataIndex: 'mainMsgId',
+  width: 180,
+  render: renderMessageText,
+};
+
+/** 关联流水号：MSG_RELATED_ID */
+export const msgRelatedId: TableColumnType<MessageRecord> = {
+  title: 'Related Message ID',
+  dataIndex: 'msgRelatedId',
+  width: 180,
+  render: renderMessageText,
+};
+
+/** 端到端流水号：MSG_END_ID */
+export const msgEndId: TableColumnType<MessageRecord> = {
+  title: 'End-to-End ID',
+  dataIndex: 'msgEndId',
+  width: 190,
+  render: renderMessageText,
+};
+
+/** 记录创建时间：CREATE_TIME */
 export const createTime: TableColumnType<MessageRecord> = {
   title: 'Created Time',
   dataIndex: 'createTime',
@@ -209,7 +169,7 @@ export const createTime: TableColumnType<MessageRecord> = {
   render: renderMessageDateTime,
 };
 
-/** 记录更新时间 */
+/** 记录更新时间：UPDATE_TIME */
 export const updateTime: TableColumnType<MessageRecord> = {
   title: 'Updated Time',
   dataIndex: 'updateTime',
@@ -218,7 +178,7 @@ export const updateTime: TableColumnType<MessageRecord> = {
   render: renderMessageDateTime,
 };
 
-/** 备注 */
+/** 备注：REMARK */
 export const remark: TableColumnType<MessageRecord> = {
   title: 'Remark',
   dataIndex: 'remark',

@@ -1,5 +1,6 @@
 import { Alert, Card, Modal, Spin } from 'antd';
 import type { MessageDetail } from '@/types';
+import { MessageBusinessType } from '@/types/enums';
 import MessageSchemaForm from '@/components/MessageSchemaForm';
 import { getMessageSchema, messageBasicInfoSchema } from '@/schemas/messages';
 import useMessageDetail from './useMessageDetail';
@@ -80,6 +81,15 @@ export const MessageBusinessInfoPanel = ({ detail, className }: MessageBusinessI
 
 /** 业务信息内容：按 BUSINESS_TYPE 选择对应类型信息表和属性表 Schema。 */
 export const MessageBusinessContent = ({ detail }: MessageBusinessContentProps) => {
+  if (detail?.businessType === MessageBusinessType.Other) {
+    return (
+      <Alert
+        type='info'
+        showIcon
+        message='No structured business information for Other messages. The raw message remains available.'
+      />
+    );
+  }
   const schema = getMessageSchema(detail?.businessType);
   if (!schema) {
     return (

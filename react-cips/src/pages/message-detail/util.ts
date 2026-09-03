@@ -1,6 +1,11 @@
 import dayjs from 'dayjs';
 import type { MessageDetail, MessageRaw, MessageRecord } from '@/types';
-import { MESSAGE_DIRECTION_LABELS, MSG_RECV_STATUS_LABELS } from '@/types/enums';
+import {
+  MESSAGE_DIRECTION_LABELS,
+  MESSAGE_BUSINESS_TYPE_LABELS,
+  MSG_RECV_STATUS_LABELS,
+  MSG_SEND_STATUS_LABELS,
+} from '@/types/enums';
 
 // #region ==================== 报文原文打印 Util ====================
 
@@ -103,11 +108,16 @@ const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 export const toMessageBasicFormData = (record: MessageRecord): Record<string, unknown> => ({
   ...record,
   msgDirection: resolveLabel(MESSAGE_DIRECTION_LABELS, record.msgDirection),
+  businessType: record.businessType
+    ? resolveLabel(MESSAGE_BUSINESS_TYPE_LABELS, record.businessType)
+    : record.businessType,
   msgRecvStatus: record.msgRecvStatus
     ? resolveLabel(MSG_RECV_STATUS_LABELS, record.msgRecvStatus)
     : record.msgRecvStatus,
-  msgRecvDate: formatDateTime(record.msgRecvDate),
-  msgSendDate: formatDateTime(record.msgSendDate),
+  msgSendStatus: record.msgSendStatus
+    ? resolveLabel(MSG_SEND_STATUS_LABELS, record.msgSendStatus)
+    : record.msgSendStatus,
+  msgDate: formatDateTime(record.msgDate),
   msgSendTime: formatDateTime(record.msgSendTime),
   createTime: formatDateTime(record.createTime),
   updateTime: formatDateTime(record.updateTime),

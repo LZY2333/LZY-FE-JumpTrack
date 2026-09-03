@@ -1,222 +1,375 @@
-import type { PropsWithChildren } from 'react';
-import { DatePicker, Form, Input, InputNumber, Select, Space } from 'antd';
+import { useEffect, useRef } from 'react';
+import { DatePicker, Form, Input, InputNumber, Select, Space, Tooltip } from 'antd';
 import type { FormItemProps } from 'antd';
-import { FormItem as FormilyFormItem, PreviewText } from '@formily/antd-v5';
-import type { IFormItemProps } from '@formily/antd-v5';
+import type { FeedbackIcons } from 'antd/es/form/FormItem';
+import { CloseCircleFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
-import { MESSAGE_DIRECTION_LABELS, MSG_RECV_STATUS_LABELS, MessageDirection, MsgRecvStatus } from '@/types/enums';
+import { isMessageDateDisabled, messageDatePresets } from './messageDateUtil';
+import {
+  MESSAGE_DIRECTION_LABELS,
+  MESSAGE_BUSINESS_TYPE_LABELS,
+  MSG_RECV_STATUS_LABELS,
+  MSG_SEND_STATUS_LABELS,
+  MessageDirection,
+  MessageBusinessType,
+  MsgRecvStatus,
+  MsgSendStatus,
+} from '@/types/enums';
 
+/** 查询字段的布局配置，字段名称和业务标签由组件维护。 */
 type MessageFilterFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
+/** 收发日期查询使用的完整日期区间。 */
 type MessageTimeRange = [string, string] | null;
 
-/** 将字符串枚举转换为 Ant Design 下拉选项。 */
-const enumOptions = <Value extends string>(values: Record<string, Value>, labels: Record<Value, string>) =>
-  Object.values(values).map((value) => ({ value, label: labels[value] ?? value }));
-
 const DATE_FORMAT = 'YYYY-MM-DD';
-const directionOptions = enumOptions(MessageDirection, MESSAGE_DIRECTION_LABELS);
-const msgRecvStatusOptions = enumOptions(MsgRecvStatus, MSG_RECV_STATUS_LABELS);
-const stpIndicatorOptions = [
-  { value: 'Y', label: 'Y - STP' },
-  { value: 'N', label: 'N - Non-STP' },
-];
+const directionOptions = Object.values(MessageDirection).map((value) => ({
+  value,
+  label: MESSAGE_DIRECTION_LABELS[value],
+}));
+const businessTypeOptions = Object.values(MessageBusinessType).map((value) => ({
+  value,
+  label: MESSAGE_BUSINESS_TYPE_LABELS[value],
+}));
+const msgRecvStatusOptions = Object.values(MsgRecvStatus).map((value) => ({
+  value,
+  label: MSG_RECV_STATUS_LABELS[value],
+}));
+// 发报状态暂用当前枚举，正式代码待后端确认。
+const msgSendStatusOptions = Object.values(MsgSendStatus).map((value) => ({
+  value,
+  label: MSG_SEND_STATUS_LABELS[value],
+}));
 
-/** Formily 详情字段装饰器：空值只在展示层转换为 --，不污染表单数据。 */
-export const MessageFormItem = ({ children, ...props }: PropsWithChildren<IFormItemProps>) => (
-  <PreviewText.Placeholder value='--'>
-    <FormilyFormItem {...props}>{children}</FormilyFormItem>
-  </PreviewText.Placeholder>
-);
+/** 收发方向：MSG_DIRECTION */
+export const MessageDirectionFilter = (props: MessageFilterFormItemProps) => {
+  const form = Form.useFormInstance();
+  const department = Form.useWatch<string>('msgOwnerDept', { form, preserve: true });
+  const group = Form.useWatch<string>('msgOwnerGroup', { form, preserve: true });
 
-/** 报文标识号 */
-export const MessageIdFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgId' label='Message ID' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter message ID' />
+  // Owner 输入后选择 IN；只响应 Owner 值的变化，避免手动切到 OU 时被旧值切回 IN。
+  useEffect(() => {
+    const hasOwner = department?.trim() || group?.trim();
+    if (!hasOwner) return;
+    form.setFieldValue('msgDirection', MessageDirection.In);
+  }, [form, department, group]);
+
+  return (
+    <Form.Item
+      {...props}
+      name='msgDirection'
+      label='Direction'
+      rules={[{ required: true, message: 'Please select Direction.' }]}
+      help={false}
+      hasFeedback={{ icons: renderFilterFeedback }}
+    >
+      <Select className='w-full' placeholder='Select direction' options={directionOptions} />
+    </Form.Item>
+  );
+};
+
+/** 业务类型：BUSINESS_TYPE */
+export const MessageBusinessTypeFilter = (props: MessageFilterFormItemProps) => {
+  const form = Form.useFormInstance();
+  const tranId = Form.useWatch<string>('tranId', { form, preserve: true });
+  const amountFrom = Form.useWatch<number | null>('amountFrom', { form, preserve: true });
+  const amountTo = Form.useWatch<number | null>('amountTo', { form, preserve: true });
+  const currency = Form.useWatch<string>('currency', { form, preserve: true });
+  // 交易标识、金额或币种有值时，由本字段 Rule 要求必填；金额 0 也属于已填写。
+  const required = Boolean(tranId || currency) || typeof amountFrom === 'number' || typeof amountTo === 'number';
+
+  // 监听交易标识的变化，将自身业务类型切到 PAY。
+  useEffect(() => {
+    if (!tranId?.trim()) return;
+    form.setFieldValue('businessType', MessageBusinessType.Payment);
+  }, [form, tranId]);
+
+  return (
+    <Form.Item
+      {...props}
+      name='businessType'
+      label='Business Type'
+      dependencies={['tranId', 'amountFrom', 'amountTo', 'currency']}
+      rules={[{ required, message: 'Select Business Type for refTxn20, amount or currency.' }]}
+      help={false}
+      hasFeedback={{ icons: renderFilterFeedback }}
+      tooltip='Required when refTxn20, amount or currency is entered.'
+    >
+      <Select className='w-full' allowClear placeholder='All' options={businessTypeOptions} />
+    </Form.Item>
+  );
+};
+
+/** 收发状态：MSG_RECV_STATUS / MSG_SEND_STATUS */
+export const MessageStatusFilter = (props: MessageFilterFormItemProps) => {
+  const direction = Form.useWatch<MessageDirection>('msgDirection');
+  return (
+    <>
+      {!direction && (
+        <Form.Item {...props} label='Status'>
+          <Select className='w-full' disabled placeholder='Select direction first' />
+        </Form.Item>
+      )}
+      <MessageRecvStatusFilter {...props} />
+      <MessageSendStatusFilter {...props} />
+    </>
+  );
+};
+
+/** 收发日期：MSG_RECV_DATE / MSG_SEND_DATE */
+export const MessageDateRangeFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item
+    {...props}
+    name='msgDateRange'
+    label='Message Date'
+    // 控件选值转为覆盖整日的 ISO 字符串，直接存入 Form。
+    getValueFromEvent={(dates: [Dayjs, Dayjs] | null): MessageTimeRange => {
+      return dates ? [dates[0].startOf('day').toISOString(), dates[1].endOf('day').toISOString()] : null;
+    }}
+    // Form 中的字符串转回 Dayjs，供日期控件显示。
+    getValueProps={(value?: MessageTimeRange) => ({
+      value: value ? [dayjs(value[0]), dayjs(value[1])] : null,
+    })}
+  >
+    <DatePicker.RangePicker
+      className='w-full'
+      format={DATE_FORMAT}
+      disabledDate={isMessageDateDisabled}
+      presets={messageDatePresets}
+    />
   </Form.Item>
 );
 
-/** 交易流水号 */
-export const MessageBusinessNoFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgBusinessNo' label='Business No.' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter business number' />
-  </Form.Item>
-);
-
-/** 报文类型编码 */
+/** 报文类型：MSG_TYPE */
 export const MessageTypeFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item {...props} name='msgType' label='Message Type' normalize={trimWhitespace}>
     <Input allowClear placeholder='e.g. pacs.008.001.01' />
   </Form.Item>
 );
 
-/** 报文业务类型编码 */
-export const MessageBusTypeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgBusType' label='Message Business Type' normalize={trimWhitespace}>
-    <Input allowClear placeholder='e.g. pacs.008' />
+/** 业务流水号：MSG_BUSINESS_NO */
+export const MessageBusinessNoFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='msgBusinessNo' label='Business No.' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter business number' />
   </Form.Item>
 );
 
-/** 收发标志 */
-export const MessageDirectionFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgDirection' label='Direction'>
-    <Select allowClear placeholder='All' options={directionOptions} />
+/** 报文标识号：MSG_ID */
+export const MessageIdFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='msgId' label='Message ID' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter message ID' />
   </Form.Item>
 );
 
-/** 收报状态 */
-export const MessageRecvStatusFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgRecvStatus' label='Received Status'>
-    <Select allowClear placeholder='All' options={msgRecvStatusOptions} />
-  </Form.Item>
-);
+/** 交易标识号：TRAN_ID */
+export const TranIdFilter = (props: MessageFilterFormItemProps) => {
+  const form = Form.useFormInstance();
+  const businessType = Form.useWatch<MessageBusinessType>('businessType', form);
 
-/** 发报状态；状态码待后端代码表确定，当前按原值查询。 */
-export const MessageSendStatusFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgSendStatus' label='Sent Status' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter sent status' />
-  </Form.Item>
-);
+  // 类型变为非 PAY 时清空自身；未选择类型时保留输入，由条件必填 Rule 提示。
+  useEffect(() => {
+    if (!businessType || businessType === MessageBusinessType.Payment) return;
+    form.setFieldValue('tranId', '');
+  }, [form, businessType]);
 
-/** 收报日期 */
-export const MessageRecvDateRangeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item
-    {...props}
-    name='msgRecvDateRange'
-    label='Received Date'
-    getValueFromEvent={getIsoDateRange}
-    getValueProps={getDateRangeValueProps}
-  >
-    <DatePicker.RangePicker className='w-full' format={DATE_FORMAT} />
-  </Form.Item>
-);
+  return (
+    <Form.Item
+      {...props}
+      name='tranId'
+      label='refTxn20'
+      normalize={trimWhitespace}
+      tooltip='Entering a transaction ID selects PAY.'
+    >
+      <Input allowClear placeholder='Enter transaction ID' />
+    </Form.Item>
+  );
+};
 
-/** 发报日期 */
-export const MessageSendDateRangeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item
-    {...props}
-    name='msgSendDateRange'
-    label='Sent Date'
-    getValueFromEvent={getIsoDateRange}
-    getValueProps={getDateRangeValueProps}
-  >
-    <DatePicker.RangePicker className='w-full' format={DATE_FORMAT} />
-  </Form.Item>
-);
+/** 金额与币种：REMIT_AMOUNT/REMIT_CCY、NETTING_AMOUNT/BILL_CCY、GPI_AMOUNT/GPI_CCY */
+export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) => {
+  const form = Form.useFormInstance();
+  const businessType = Form.useWatch<MessageBusinessType>('businessType', form);
+  const previousBusinessTypeRef = useRef(businessType);
+  const disabled = businessType === MessageBusinessType.Other;
 
-/** 收发报通道 */
+  useEffect(() => {
+    const previousType = previousBusinessTypeRef.current;
+    previousBusinessTypeRef.current = businessType;
+    if (!businessType) return;
+    const meaningChanged = Boolean(previousType) && previousType !== businessType;
+    if (!disabled && !meaningChanged) return;
+    form.setFieldValue('amountFrom', null);
+    form.setFieldValue('amountTo', null);
+    form.setFieldValue('currency', undefined);
+  }, [form, businessType, disabled]);
+
+  return (
+    <Form.Item {...props} label='Amount' tooltip={getAmountCurrencyHint(businessType)}>
+      <div className='flex items-center gap-1'>
+        <div className='w-28 shrink-0'>
+          <Form.Item name='currency' noStyle>
+            <Select
+              className='w-full'
+              disabled={disabled}
+              allowClear
+              placeholder='Currency'
+              options={['USD', 'HKD', 'CNY', 'EUR', 'GBP', 'JPY'].map((value) => ({ value, label: value }))}
+            />
+          </Form.Item>
+        </div>
+        <span className='shrink-0'>:</span>
+        <Form.Item
+          name='amountFrom'
+          noStyle
+          help={false}
+          hasFeedback={{ icons: renderFilterFeedback }}
+          dependencies={['amountTo']}
+          rules={[
+            () => ({
+              validator: (_, amountFrom?: number | null) => {
+                const amountTo = form.getFieldValue('amountTo');
+                if (typeof amountFrom !== 'number' || typeof amountTo !== 'number') return Promise.resolve();
+                if (amountFrom <= amountTo) return Promise.resolve();
+                return Promise.reject(new Error('Minimum amount must not exceed maximum amount.'));
+              },
+            }),
+          ]}
+        >
+          <InputNumber className='min-w-0 flex-1' disabled={disabled} controls={false} placeholder='Minimum' />
+        </Form.Item>
+        <span className='shrink-0'>-</span>
+        <Form.Item name='amountTo' noStyle>
+          <InputNumber className='min-w-0 flex-1' disabled={disabled} controls={false} placeholder='Maximum' />
+        </Form.Item>
+      </div>
+    </Form.Item>
+  );
+};
+
+/** 收发报通道：MSG_CHANNEL */
 export const MessageChannelFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item {...props} name='msgChannel' label='Channel' normalize={trimWhitespace}>
     <Input allowClear placeholder='Enter channel' />
   </Form.Item>
 );
 
-/** 主报文编号 */
+/** 报文归属：MSG_OWNER_DEPT / MSG_OWNER_GROUP */
+export const MessageOwnerByFilter = (props: MessageFilterFormItemProps) => {
+  const form = Form.useFormInstance();
+  const direction = Form.useWatch<MessageDirection>('msgDirection', form);
+
+  // Direction 切到 OU 时，清空本组件拥有的部门和组。
+  useEffect(() => {
+    if (direction !== MessageDirection.Out) return;
+    form.setFieldValue('msgOwnerDept', '');
+    form.setFieldValue('msgOwnerGroup', '');
+  }, [form, direction]);
+
+  return (
+    <Form.Item {...props} label='Owner By' tooltip='Entering a department or group selects Received direction.'>
+      <Space.Compact block>
+        <Form.Item name='msgOwnerDept' noStyle normalize={trimWhitespace}>
+          <Input className='min-w-0 flex-1' allowClear placeholder='Department' />
+        </Form.Item>
+        <Form.Item name='msgOwnerGroup' noStyle normalize={trimWhitespace}>
+          <Input className='min-w-0 flex-1' allowClear placeholder='Group' />
+        </Form.Item>
+      </Space.Compact>
+    </Form.Item>
+  );
+};
+
+/** 主报文编号：MAIN_MSG_ID */
 export const MainMessageIdFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item {...props} name='mainMsgId' label='Main Message ID' normalize={trimWhitespace}>
     <Input allowClear placeholder='Enter main message ID' />
   </Form.Item>
 );
 
-/** 关联流水号 */
+/** 关联流水号：MSG_RELATED_ID */
 export const RelatedMessageIdFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item {...props} name='msgRelatedId' label='Related Message ID' normalize={trimWhitespace}>
     <Input allowClear placeholder='Enter related message ID' />
   </Form.Item>
 );
 
-/** 端到端流水号 */
+/** 端到端流水号：MSG_END_ID */
 export const EndToEndMessageIdFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item {...props} name='msgEndId' label='End-to-End ID' normalize={trimWhitespace}>
     <Input allowClear placeholder='Enter end-to-end ID' />
   </Form.Item>
 );
 
-/** UETR 唯一标识号 */
+/** UETR 唯一标识号：MSG_UETR */
 export const MessageUetrFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item {...props} name='msgUetr' label='UETR' normalize={trimWhitespace}>
     <Input allowClear placeholder='Enter UETR' />
   </Form.Item>
 );
 
-/** 发报机构 */
-export const MessageSendInstFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgSendInst' label='Sending Institution' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter institution code' />
-  </Form.Item>
-);
+/** 收报状态：MSG_RECV_STATUS */
+const MessageRecvStatusFilter = (props: MessageFilterFormItemProps) => {
+  const form = Form.useFormInstance();
+  const direction = Form.useWatch<MessageDirection>('msgDirection', form);
+  const hidden = direction !== MessageDirection.In;
 
-/** 收报机构 */
-export const MessageRecvInstFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgRecvInst' label='Receiving Institution' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter institution code' />
-  </Form.Item>
-);
+  // 切到发报方向时清空自身；等待 useWatch 取得方向，避免初始化时误清空已有收报状态。
+  useEffect(() => {
+    if (direction !== MessageDirection.Out) return;
+    form.setFieldValue('msgRecvStatus', undefined);
+  }, [form, direction]);
 
-/** REF_NO：显示名沿用 OurReference */
-export const RefNoFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='refNo' label='OurReference' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter reference number' />
-  </Form.Item>
-);
+  if (hidden) return null;
+  return (
+    <Form.Item {...props} name='msgRecvStatus' label='Received Status'>
+      <Select className='w-full' allowClear placeholder='All' options={msgRecvStatusOptions} />
+    </Form.Item>
+  );
+};
 
-/** TRAN_ID：显示名沿用 refTxn20 */
-export const TranIdFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='tranId' label='refTxn20' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter transaction ID' />
-  </Form.Item>
-);
+/** 发报状态：MSG_SEND_STATUS */
+const MessageSendStatusFilter = (props: MessageFilterFormItemProps) => {
+  const form = Form.useFormInstance();
+  const direction = Form.useWatch<MessageDirection>('msgDirection', form);
+  const hidden = direction !== MessageDirection.Out;
 
-/** 统一金额区间，由后端按业务类型转换后查询 */
-export const AmountRangeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} label='Amount'>
-    <Space.Compact block>
-      <Form.Item name='amountFrom' noStyle>
-        <InputNumber className='min-w-0 flex-1' controls={false} placeholder='Minimum' />
-      </Form.Item>
-      <span className='flex shrink-0 items-center px-2'>-</span>
-      <Form.Item name='amountTo' noStyle>
-        <InputNumber className='min-w-0 flex-1' controls={false} placeholder='Maximum' />
-      </Form.Item>
-    </Space.Compact>
-  </Form.Item>
-);
+  // 切到收报方向时清空自身；等待 useWatch 取得方向，避免初始化时误清空已有发报状态。
+  useEffect(() => {
+    if (direction !== MessageDirection.In) return;
+    form.setFieldValue('msgSendStatus', undefined);
+  }, [form, direction]);
 
-/** MSG_OWNER_DEPT：显示名沿用 Clearing Target Department */
-export const MsgOwnerDeptFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgOwnerDept' label='Clearing Target Department' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter department' />
-  </Form.Item>
-);
-
-/** 报文归属组 */
-export const MsgOwnerGroupFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgOwnerGroup' label='Message Owner Group' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter owner group' />
-  </Form.Item>
-);
-
-/** 直通标记 */
-export const StpIndFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='stpInd' label='STP Indicator'>
-    <Select allowClear placeholder='All' options={stpIndicatorOptions} />
-  </Form.Item>
-);
-
-/** 非直通原因编号 */
-export const NonStpCodeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='nonStpCode' label='Non-STP Reason Code' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter reason code' />
-  </Form.Item>
-);
+  if (hidden) return null;
+  return (
+    <Form.Item {...props} name='msgSendStatus' label='Sent Status'>
+      <Select className='w-full' allowClear placeholder='All' options={msgSendStatusOptions} />
+    </Form.Item>
+  );
+};
 
 const trimWhitespace = (value?: string) => value?.trim() ?? '';
 
-/** 将日期组件选中的 Dayjs 区间转换为覆盖整日的 ISO 时间区间，供表单查询使用。 */
-const getIsoDateRange = (dates: [Dayjs, Dayjs] | null): MessageTimeRange =>
-  dates ? [dates[0].startOf('day').toISOString(), dates[1].endOf('day').toISOString()] : null;
+/** 业务类型确定金额和币种的含义，说明只面向业务使用者。 */
+const getAmountCurrencyHint = (businessType?: MessageBusinessType) => {
+  if (businessType === MessageBusinessType.Query)
+    return 'Amount and currency apply only to messages with GPI information.';
+  if (businessType === MessageBusinessType.Other) return 'Amount and currency are not available for OTHER.';
+  return 'Select Business Type before searching with an amount or currency.';
+};
 
-/** 将表单中的 ISO 时间区间转换为日期组件可识别的 Dayjs 区间，用于回显。 */
-const getDateRangeValueProps = (value?: MessageTimeRange) => ({
-  value: value ? [dayjs(value[0]), dayjs(value[1])] : null,
+/** 筛选校验错误通过反馈图标展示 Tooltip，其他校验状态不显示图标。 */
+const renderFilterFeedback: FeedbackIcons = ({ errors }) => ({
+  error: (
+    <Tooltip
+      title={errors?.map((error, index) => (
+        <div key={index}>{error}</div>
+      ))}
+      trigger={['hover', 'focus']}
+    >
+      <CloseCircleFilled className='pointer-events-auto' tabIndex={0} />
+    </Tooltip>
+  ),
+  success: false,
+  warning: false,
+  validating: false,
 });

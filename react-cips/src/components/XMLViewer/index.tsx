@@ -143,7 +143,6 @@ const XMLViewer = forwardRef<HTMLDivElement, XMLViewerProps>(
         >
           <div className='absolute right-6 top-2 z-10'>
             <Segmented<XMLViewerThemeName>
-              aria-label='XML viewer theme'
               size='small'
               options={THEME_OPTIONS}
               value={activeTheme}

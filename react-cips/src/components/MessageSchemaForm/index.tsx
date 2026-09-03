@@ -6,9 +6,9 @@ import { createSchemaField, FormProvider } from '@formily/react';
 import type { ISchema } from '@formily/react';
 import { App, Card, ConfigProvider, Table, theme } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { FormGrid, FormLayout, Input } from '@formily/antd-v5';
+import { FormGrid, FormItem as FormilyFormItem, FormLayout, Input, PreviewText } from '@formily/antd-v5';
+import type { IFormItemProps } from '@formily/antd-v5';
 import cn from 'classnames';
-import { MessageFormItem } from '@/components/FormItem';
 import { copyText } from '@/utils/fileUtil';
 
 const COPY_TARGET_SELECTOR = '.ant-formily-item-label-content, .ant-formily-item-control-content-component';
@@ -82,6 +82,14 @@ const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSc
     </div>
   );
 };
+
+/** Formily 详情字段装饰器 */
+const MessageFormItem = ({ children, ...props }: PropsWithChildren<IFormItemProps>) => (
+  // 空值只在展示层转换为 --，不污染表单数据。
+  <PreviewText.Placeholder value='--'>
+    <FormilyFormItem {...props}>{children}</FormilyFormItem>
+  </PreviewText.Placeholder>
+);
 
 /** 详情输入框统一展示空态；禁用时让指针事件落到字段容器，以支持双击复制。 */
 const MessageInput = ({ className, disabled, placeholder = '--', ...props }: ComponentProps<typeof Input>) => (

@@ -16,12 +16,37 @@ export enum MsgRecvStatus {
   DistributionCompleted = 'D02',
 }
 
-/** BUSINESS_TYPE：业务信息表分类；正式代码值待后端代码表确认。 */
-export enum MessageBusinessType {
-  Query = 'QURY',
-  Bill = 'BILL',
-  Payment = 'PAYM',
+/** 发报状态：MSG_SEND_STATUS；临时代码，待后端确认。 */
+export enum MsgSendStatus {
+  Pending = 'S01',
+  Sending = 'S02',
+  Sent = 'S03',
+  Failed = 'S04',
 }
+
+/** 业务类型：BUSINESS_TYPE，数据库长度为 CHAR(5)。 */
+export enum MessageBusinessType {
+  Payment = 'PAY',
+  Bill = 'BILL',
+  Query = 'QUERY',
+  Other = 'OTHER',
+}
+
+/** 业务类型展示文案：BUSINESS_TYPE。 */
+export const MESSAGE_BUSINESS_TYPE_LABELS: Record<MessageBusinessType, string> = {
+  [MessageBusinessType.Payment]: 'Payment',
+  [MessageBusinessType.Bill]: 'Bill',
+  [MessageBusinessType.Query]: 'Query',
+  [MessageBusinessType.Other]: 'Other',
+};
+
+/** 发报状态展示文案：MSG_SEND_STATUS。 */
+export const MSG_SEND_STATUS_LABELS: Record<MsgSendStatus, string> = {
+  [MsgSendStatus.Pending]: 'S01 - Pending',
+  [MsgSendStatus.Sending]: 'S02 - Sending',
+  [MsgSendStatus.Sent]: 'S03 - Sent',
+  [MsgSendStatus.Failed]: 'S04 - Failed',
+};
 
 export const MESSAGE_DIRECTION_LABELS: Record<MessageDirection, string> = {
   [MessageDirection.In]: 'Received',
@@ -56,7 +81,7 @@ export enum ResCode {
 }
 
 /** 报文列表允许用户触发的服务端排序字段。 */
-export type MessageSortField = 'msgRecvDate' | 'msgSendDate' | 'createTime' | 'updateTime';
+export type MessageSortField = 'msgDate' | 'createTime' | 'updateTime';
 
 /** 报文列表沿用 Ant Design 的排序方向。 */
 export type MessageSortOrder = 'ascend' | 'descend';

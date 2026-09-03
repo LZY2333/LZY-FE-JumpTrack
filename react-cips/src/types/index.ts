@@ -1,4 +1,4 @@
-import type { MessageBusinessType, MessageDirection, MsgRecvStatus, Role } from './enums';
+import type { MessageBusinessType, MessageDirection, MsgRecvStatus, MsgSendStatus, Role } from './enums';
 
 export interface UserIdentity {
   /** 用户 ID */
@@ -16,74 +16,62 @@ export interface User extends UserIdentity {
 
 export type NullableText = string | null;
 
-/** 列表和详情共用的报文基本信息。 */
+/** 列表和详情共用的报文基本信息，前半部分按默认表格列顺序声明。 */
 export interface MessageRecord {
-  /** MSG_ID：系统内部主键，同时作为用户可见的报文标识号。 */
+  /** 报文标识号：MSG_ID。 */
   msgId: string;
-  /** MSG_DIRECTION：报文收发标志。 */
+  /** 收发方向：MSG_DIRECTION。 */
   msgDirection: MessageDirection;
-  /** MSG_RECV_DATE：收报日期。 */
-  msgRecvDate: NullableText;
-  /** MSG_SEND_DATE：发报日期。 */
-  msgSendDate: NullableText;
-  /** MAIN_MSG_ID：主报文编号。 */
-  mainMsgId: NullableText;
-  /** MSG_CHANNEL：收/发报通道。 */
+  /** 业务类型：BUSINESS_TYPE；尚未完成分类时为 null，不等同于 OTHER。 */
+  businessType: MessageBusinessType | null;
+  /** 收发报通道：MSG_CHANNEL。 */
   msgChannel: NullableText;
-  /** MSG_TYPE：包含版本号的报文类型编码，同时作为 Formily Schema 注册键。 */
+  /** 报文类型：MSG_TYPE。 */
   msgType: string;
-  /** MSG_BUS_TYPE：不含版本号的报文业务类型编码。 */
-  msgBusType: string;
-  /** MSG_BUSINESS_NO：交易流水号。 */
+  /** 业务流水号：MSG_BUSINESS_NO。 */
   msgBusinessNo: NullableText;
-  /** 统一金额：支付类 → REMIT_AMOUNT，GPI 类 → GPI_AMOUNT，账单类 → NETTING_AMOUNT。 */
+  /** 金额：REMIT_AMOUNT / GPI_AMOUNT / NETTING_AMOUNT。 */
   amount: NullableText;
-  /** 统一币种：支付类 → REMIT_CCY，GPI 类 → GPI_CCY，账单类 → BILL_CCY。 */
+  /** 币种：REMIT_CCY / GPI_CCY / BILL_CCY。 */
   currency: NullableText;
-  /** TRAN_ID：支付类报文交易标识号，列表显示名沿用 refTxn20。 */
+  /** 交易标识号：TRAN_ID。 */
   tranId: NullableText;
-  /** REF_NO：收发任务交易编号，列表显示名沿用 OurReference。 */
-  refNo: NullableText;
-  /** MSG_OWNER_DEPT：收报归属部门，列表显示名沿用 Clearing Target Department。 */
-  msgOwnerDept: NullableText;
-  /** MSG_OWNER_GROUP：收报归属组。 */
-  msgOwnerGroup: NullableText;
-  /** STP_IND：直通标记。 */
-  stpInd: NullableText;
-  /** NON_STP_CODE：非直通原因编号。 */
-  nonStpCode: NullableText;
-  /** NON_STP_REASON：非直通异常原因说明。 */
-  nonStpReason: NullableText;
-  /** MSG_RELATED_ID：关联流水号。 */
-  msgRelatedId: NullableText;
-  /** MSG_END_ID：报文端到端流水号。 */
-  msgEndId: NullableText;
-  /** MSG_UETR：UETR 唯一标识号。 */
-  msgUetr: NullableText;
-  /** MSG_SEND_TIME：报文发出时间。 */
-  msgSendTime: NullableText;
-  /** MSG_SEND_INST：发报机构编号。 */
-  msgSendInst: NullableText;
-  /** MSG_RECV_INST：收报机构编号。 */
-  msgRecvInst: NullableText;
-  /** MSG_RECV_STATUS：收报状态。 */
+  /** 收报状态：MSG_RECV_STATUS。 */
   msgRecvStatus: MsgRecvStatus | null;
-  /** MSG_SEND_STATUS：发报状态。 */
-  msgSendStatus: NullableText;
-  /** REMARK：备注。 */
-  remark: NullableText;
-  /** CREATE_USER：创建人。 */
-  createUser: NullableText;
-  /** CREATE_BRNO：创建人部门号。 */
-  createBrno: NullableText;
-  /** AUTHOR_USER：审批人。 */
-  authorUser: NullableText;
-  /** AUTHOR_BRNO：审批人部门号。 */
-  authorBrno: NullableText;
-  /** CREATE_TIME：记录创建时间。 */
+  /** 发报状态：MSG_SEND_STATUS。 */
+  msgSendStatus: MsgSendStatus | null;
+  /** 收发日期：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE。 */
+  msgDate: NullableText;
+  /** UETR 唯一标识号：MSG_UETR。 */
+  msgUetr: NullableText;
+  /** 报文归属部门：MSG_OWNER_DEPT。 */
+  msgOwnerDept: NullableText;
+  /** 报文归属组：MSG_OWNER_GROUP。 */
+  msgOwnerGroup: NullableText;
+  /** 主报文编号：MAIN_MSG_ID。 */
+  mainMsgId: NullableText;
+  /** 关联流水号：MSG_RELATED_ID。 */
+  msgRelatedId: NullableText;
+  /** 端到端流水号：MSG_END_ID。 */
+  msgEndId: NullableText;
+  /** 记录创建时间：CREATE_TIME。 */
   createTime: string;
-  /** UPDATE_TIME：记录更新时间。 */
+  /** 记录更新时间：UPDATE_TIME。 */
   updateTime: string;
+  /** 备注：REMARK。 */
+  remark: NullableText;
+  /** 报文发出时间：MSG_SEND_TIME，报文原文中记录的发送时间。 */
+  msgSendTime: NullableText;
+  /** 非直通异常原因说明：NON_STP_REASON。 */
+  nonStpReason: NullableText;
+  /** 创建人：CREATE_USER。 */
+  createUser: NullableText;
+  /** 创建人部门号：CREATE_BRNO。 */
+  createBrno: NullableText;
+  /** 审批人：AUTHOR_USER。 */
+  authorUser: NullableText;
+  /** 审批人部门号：AUTHOR_BRNO。 */
+  authorBrno: NullableText;
 }
 
 /** PSSST_LOG_AUDIT_TRAIL：报文处理历史审计轨迹。 */
@@ -112,8 +100,6 @@ export interface MessageAuditTrailRecord {
 
 /** 报文明细；结构化字段值由后端解析，Schema 由前端静态维护。 */
 export interface MessageDetail extends MessageRecord {
-  /** BUSINESS_TYPE：仅供详情选择对应业务信息表，不直接向用户展示。 */
-  businessType: MessageBusinessType;
   /** 类型信息表和属性表按表关系组合后的业务数据。 */
   formData: Record<string, unknown>;
 }

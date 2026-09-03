@@ -3,78 +3,89 @@ import type { CSSProperties } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 import type { MessageRecord } from '@/types';
-import type { MessageSortField, MessageSortOrder } from '@/types/enums';
+import type { MessageSortOrder } from '@/types/enums';
+import { MessageDirection } from '@/types/enums';
 import { RoutePath } from '@/router/paths';
-import useMessageList, { PAGE_SIZE_OPTIONS, type MessageListFilterValues } from './useMessageList';
+import useMessageList, { PAGE_SIZE_OPTIONS } from './useMessageList';
+import { isMessageSortField, type MessageListFilterValues } from './messageListUtil';
 import ResizableTable from '@/components/ResizableTable';
 import {
-  EndToEndMessageIdFilter,
-  MainMessageIdFilter,
-  MessageBusTypeFilter,
-  MessageBusinessNoFilter,
-  MessageChannelFilter,
   MessageDirectionFilter,
-  MessageIdFilter,
-  MessageRecvDateRangeFilter,
-  MessageRecvInstFilter,
-  MessageRecvStatusFilter,
-  MessageSendDateRangeFilter,
-  MessageSendInstFilter,
-  MessageSendStatusFilter,
+  MessageBusinessTypeFilter,
+  MessageStatusFilter,
+  MessageDateRangeFilter,
   MessageTypeFilter,
-  MessageUetrFilter,
-  MsgOwnerGroupFilter,
-  MsgOwnerDeptFilter,
-  NonStpCodeFilter,
-  RefNoFilter,
-  RelatedMessageIdFilter,
-  AmountRangeFilter,
-  StpIndFilter,
+  MessageBusinessNoFilter,
+  MessageIdFilter,
   TranIdFilter,
+  MessageAmountCurrencyFilter,
+  MessageChannelFilter,
+  MessageOwnerByFilter,
+  MainMessageIdFilter,
+  RelatedMessageIdFilter,
+  EndToEndMessageIdFilter,
+  MessageUetrFilter,
 } from '@/components/FormItem';
 import {
-  createTime,
-  mainMsgId,
-  msgBusinessNo,
-  msgChannel,
-  msgDirection,
-  msgEndId,
   msgId,
-  msgOwnerDept,
-  msgRecvDate,
-  msgRecvInst,
-  msgRecvStatus,
-  msgRelatedId,
-  msgSendDate,
-  msgSendInst,
-  msgSendStatus,
+  msgDirection,
+  businessType,
+  msgChannel,
   msgType,
-  msgUetr,
-  refNo,
+  msgBusinessNo,
   amount,
   currency,
-  remark,
   tranId,
+  msgRecvStatus,
+  msgSendStatus,
+  msgDate,
+  msgUetr,
+  msgOwnerDept,
+  msgOwnerGroup,
+  mainMsgId,
+  msgRelatedId,
+  msgEndId,
+  createTime,
   updateTime,
+  remark,
 } from '@/components/TableColumn';
 
-// 默认筛选：页面上下边距 48px + Card 边框/内边距 26px + 表单 120px + 表单下间距 16px
-// + 表头 42px + 分页上间距 16px + 分页器 24px = 292px。
+// 页面边距 48 + Card 26 + 表单 120 + 表单下间距 16 + 表头 42 + 分页间距 16 + 分页器 24。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 292px)';
-// 展开筛选后比默认筛选多四行，共增加 128px。
-const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 420px)';
-const DEFAULT_FILTER_VALUES: MessageListFilterValues = {};
-const DEFAULT_HIDDEN_COLUMN_IDS = ['mainMsgId', 'msgRelatedId', 'msgEndId', 'createTime', 'updateTime', 'remark'];
+// 当前布局展开后多两行，每行 32px。
+const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 356px)';
+const DEFAULT_FILTER_VALUES: MessageListFilterValues = { msgDirection: MessageDirection.In };
+const DEFAULT_HIDDEN_COLUMN_IDS = [
+  'msgOwnerDept',
+  'msgOwnerGroup',
+  'mainMsgId',
+  'msgRelatedId',
+  'msgEndId',
+  'createTime',
+  'updateTime',
+  'remark',
+];
 
 /** 报文查询与列表页面。 */
 const MessageList = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm<MessageListFilterValues>();
   const [advancedVisible, setAdvancedVisible] = useState(false);
-  const { messages, total, loading, current, pageSize, setCurrent, setPageSize, setSort, query, reset } =
-    useMessageList(DEFAULT_FILTER_VALUES);
+  const {
+    messages,
+    total,
+    loading,
+    current,
+    pageSize,
+    setCurrent,
+    setPageSize,
+    setSort,
+    query,
+    reset,
+    queryDirection,
+  } = useMessageList(DEFAULT_FILTER_VALUES);
 
   const handleReset = () => {
     form.resetFields();
@@ -88,10 +99,8 @@ const MessageList = () => {
     // 排序字段
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
     const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
-    const isSortableField =
-      field === 'msgRecvDate' || field === 'msgSendDate' || field === 'createTime' || field === 'updateTime';
     const order: MessageSortOrder | undefined = activeSorter.order ?? undefined;
-    setSort(isSortableField ? (field as MessageSortField) : undefined, order);
+    setSort(isMessageSortField(field) ? field : undefined, order);
   };
 
   const openDetail = (record: MessageRecord) =>
@@ -100,21 +109,18 @@ const MessageList = () => {
   const columns: TableColumnsType<MessageRecord> = [
     msgId,
     msgDirection,
+    businessType,
     msgChannel,
     msgType,
     msgBusinessNo,
     amount,
     currency,
     tranId,
-    refNo,
-    msgOwnerDept,
-    msgSendInst,
-    msgRecvInst,
-    msgRecvStatus,
-    msgSendStatus,
-    msgRecvDate,
-    msgSendDate,
+    queryDirection === MessageDirection.Out ? msgSendStatus : msgRecvStatus,
+    msgDate,
     msgUetr,
+    msgOwnerDept,
+    msgOwnerGroup,
     mainMsgId,
     msgRelatedId,
     msgEndId,
@@ -124,6 +130,7 @@ const MessageList = () => {
   ];
 
   const tableBodyHeight = advancedVisible ? EXPANDED_TABLE_BODY_HEIGHT : DEFAULT_TABLE_BODY_HEIGHT;
+  const advancedClassName = advancedVisible ? 'visible h-16 pt-2 opacity-100' : 'invisible h-0 pt-0 opacity-0';
 
   return (
     <Card size='small'>
@@ -143,10 +150,13 @@ const MessageList = () => {
             <MessageDirectionFilter />
           </Col>
           <Col span={8}>
-            <MessageRecvDateRangeFilter />
+            <MessageBusinessTypeFilter />
           </Col>
           <Col span={8}>
-            <MessageSendDateRangeFilter />
+            <MessageStatusFilter />
+          </Col>
+          <Col span={8}>
+            <MessageDateRangeFilter />
           </Col>
           <Col span={8}>
             <MessageTypeFilter />
@@ -155,66 +165,48 @@ const MessageList = () => {
             <MessageBusinessNoFilter />
           </Col>
           <Col span={8}>
-            <MessageRecvStatusFilter />
-          </Col>
-          <Col span={8}>
-            <MessageSendStatusFilter />
-          </Col>
-          <Col span={8}>
             <MessageIdFilter />
           </Col>
           <Col span={8}>
-            <MsgOwnerDeptFilter />
+            <TranIdFilter />
           </Col>
-          {advancedVisible && (
-            <>
-              <Col span={8}>
-                <MessageBusTypeFilter />
-              </Col>
-              <Col span={8}>
-                <RefNoFilter />
-              </Col>
-              <Col span={8}>
-                <TranIdFilter />
-              </Col>
-              <Col span={8}>
-                <MessageSendInstFilter />
-              </Col>
-              <Col span={8}>
-                <MessageRecvInstFilter />
-              </Col>
-              <Col span={8}>
-                <MessageChannelFilter />
-              </Col>
-              <Col span={8}>
-                <MsgOwnerGroupFilter />
-              </Col>
-              <Col span={8}>
-                <StpIndFilter />
-              </Col>
-              <Col span={8}>
-                <NonStpCodeFilter />
-              </Col>
-              <Col span={8}>
-                <MainMessageIdFilter />
-              </Col>
-              <Col span={8}>
-                <RelatedMessageIdFilter />
-              </Col>
-              <Col span={8}>
-                <EndToEndMessageIdFilter />
-              </Col>
-              <Col span={8}>
-                <MessageUetrFilter />
-              </Col>
-              <Col span={8}>
-                <AmountRangeFilter />
-              </Col>
-            </>
-          )}
+          <Col span={8}>
+            <MessageAmountCurrencyFilter />
+          </Col>
+        </Row>
+        {/* 两行高级筛选及顶部间距共 64px，与现有表格高度扣减保持一致。 */}
+        <Row
+          gutter={[16, 8]}
+          className={`box-border content-start overflow-hidden transition-all duration-200 ease-in-out motion-reduce:transition-none ${advancedClassName}`}
+        >
+          <Col span={8}>
+            <MessageChannelFilter />
+          </Col>
+          <Col span={8}>
+            <MessageOwnerByFilter />
+          </Col>
+          <Col span={8}>
+            <MainMessageIdFilter />
+          </Col>
+          <Col span={8}>
+            <RelatedMessageIdFilter />
+          </Col>
+          <Col span={8}>
+            <EndToEndMessageIdFilter />
+          </Col>
+          <Col span={8}>
+            <MessageUetrFilter />
+          </Col>
+        </Row>
+        <Row gutter={[16, 8]} className='mt-2'>
           <Col span={8} className='ml-auto flex items-center justify-end'>
             <Button size='small' type='link' onClick={() => setAdvancedVisible((visible) => !visible)}>
-              More Filters {advancedVisible ? <UpOutlined /> : <DownOutlined />}
+              More Filters
+              <DownOutlined
+                className={`transition-transform duration-200 motion-reduce:transition-none ${
+                  advancedVisible ? 'rotate-180' : 'rotate-0'
+                }`}
+              />
             </Button>
             <Button size='small' htmlType='submit' color='primary' variant='solid'>
               Search
@@ -232,10 +224,11 @@ const MessageList = () => {
         rowKey='msgId'
         size='small'
         columns={columns}
-        storageKey='message-list-v3'
+        storageKey='message-list-v4'
         defaultHiddenColumnIds={DEFAULT_HIDDEN_COLUMN_IDS}
         dataSource={messages}
         loading={loading}
+        locale={{ emptyText: 'No messages found' }}
         onChange={handleTableChange}
         onRow={(record) => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}
         scroll={{ y: tableBodyHeight }}

@@ -26,10 +26,13 @@ body,
 /* scroll.y 默认是 max-height；让报文列表在可用页面高度内保持填充。 */
 .message-list-table .ant-table-body {
   height: var(--message-list-table-body-height);
+  /* 与高级筛选同步伸缩，避免表格提前增高而短暂撑出页面滚动条。 */
+  transition: height 200ms cubic-bezier(0.4, 0, 0.2, 1), max-height 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .message-list-table .ant-table-placeholder {
   height: var(--message-list-table-body-height);
+  transition: height 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* rc-table 会内联 overflow-x: auto；空表格只隐藏横向滚动条，纵向滚动槽仍保留。 */
@@ -121,7 +124,7 @@ body,
   color: var(--ant-color-primary-text);
 }
 
-/* antd 5 的 variant disabled 选择器优先级更高，统一强制使用默认箭头。 */
+/* 覆盖 antd 5 禁用样式，包含控件内部及挂载到 body 的下拉浮层，统一使用默认箭头。 */
 .ant-input-disabled,
 .ant-input[disabled],
 .ant-input-affix-wrapper-disabled,
@@ -130,8 +133,17 @@ body,
 .ant-input-number-disabled .ant-input-number-input,
 .ant-picker-disabled,
 .ant-picker-disabled input,
+.ant-picker-disabled .ant-picker-separator,
+.ant-picker-input > input[disabled],
+.ant-picker-cell-disabled,
+.ant-picker-cell-disabled .ant-picker-cell-inner,
+.ant-picker-time-panel-cell-disabled .ant-picker-time-panel-cell-inner,
 .ant-select-disabled,
 .ant-select-disabled .ant-select-selector,
+.ant-select-disabled input,
+.ant-select-disabled .ant-select-arrow,
+.ant-select-disabled .ant-select-selection-item,
+.ant-select-item-option-disabled,
 .ant-radio-disabled,
 .ant-radio-disabled .ant-radio-input,
 .ant-radio-disabled + span,

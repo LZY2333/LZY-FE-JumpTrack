@@ -39,7 +39,6 @@ interface HeaderNodeProps extends HTMLAttributes<HTMLElement> {
 
 interface HeaderActions {
   draggable: boolean;
-  sortTooltip: string;
   onDragStart: (event: DragEvent<HTMLElement>) => void;
   onSelectTitle: (element: HTMLElement) => void;
   onSort?: (event: ReactMouseEvent<HTMLElement>) => void;
@@ -87,7 +86,6 @@ const renderHeaderContent = (children: ReactNode, actions: HeaderActions): React
         className: cn(child.props.className, 'relative z-10 cursor-pointer'),
         role: 'button',
         tabIndex: 0,
-        'aria-label': actions.sortTooltip,
         onClick: (event: ReactMouseEvent<HTMLElement>) => {
           event.stopPropagation();
           child.props.onClick?.(event);
@@ -222,17 +220,9 @@ export default function ResizableTitle(props: ResizableHeaderCellProps) {
     if (sourceId && columnId) onColumnReorder?.(sourceId, columnId);
   };
 
-  // 无障碍文案跟随 antd 注入的 aria-sort，保持与下一次排序动作一致。
-  let sortTooltip = 'Click to sort ascending';
-  // 已升序时，下一次点击进入降序。
-  if (cellProps['aria-sort'] === 'ascending') sortTooltip = 'Click to sort descending';
-  // 已降序时，下一次点击取消排序。
-  if (cellProps['aria-sort'] === 'descending') sortTooltip = 'Click to cancel sorting';
-
   // 将当前表头能力集中传给 antd children 转换函数，避免各节点自行读取外层状态。
   const actions: HeaderActions = {
     draggable: Boolean(draggableColumn),
-    sortTooltip,
     onDragStart: handleDragStart,
     onSelectTitle: handleSelectTitle,
     onSort: triggerSort ? (event) => triggerSort(event as unknown as ReactMouseEvent<HTMLTableCellElement>) : undefined,

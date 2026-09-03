@@ -3,21 +3,20 @@ import basicInfoSchema from './common/basic-info.json';
 import billSchema from './cips/bill.json';
 import paymentSchema from './cips/payment.json';
 import querySchema from './cips/query.json';
+import otherSchema from './cips/other.json';
 import { MessageBusinessType } from '@/types/enums';
 
 /** 公共基本信息 Schema，不随具体报文类型变化。 */
 export const messageBasicInfoSchema = basicInfoSchema as ISchema;
 
-/**
- * BUSINESS_TYPE 到静态 Formily Schema 的注册表。
- * BUSINESS_TYPE 仅用于系统判断解析结果对应的业务信息表，不作为用户展示字段。
- */
-const messageSchemaRegistry: Readonly<Record<string, ISchema>> = {
-  [MessageBusinessType.Query]: querySchema as ISchema,
-  [MessageBusinessType.Bill]: billSchema as ISchema,
+/** 业务类型：BUSINESS_TYPE；四类均为已知类型，基础信息中同时展示分类。 */
+const messageSchemaRegistry: Readonly<Record<MessageBusinessType, ISchema>> = {
   [MessageBusinessType.Payment]: paymentSchema as ISchema,
+  [MessageBusinessType.Bill]: billSchema as ISchema,
+  [MessageBusinessType.Query]: querySchema as ISchema,
+  [MessageBusinessType.Other]: otherSchema as ISchema,
 };
 
 /** 根据数据库 BUSINESS_TYPE 选择业务信息 Schema。 */
-export const getMessageSchema = (businessType?: string) =>
-  businessType ? messageSchemaRegistry[businessType.toUpperCase()] : undefined;
+export const getMessageSchema = (businessType?: MessageBusinessType | null) =>
+  businessType ? messageSchemaRegistry[businessType] : undefined;

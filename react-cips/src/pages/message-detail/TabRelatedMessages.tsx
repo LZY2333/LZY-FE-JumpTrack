@@ -5,12 +5,10 @@ import { getRelatedMessages } from '@/api/messages';
 import {
   msgBusinessNo,
   msgDirection,
+  businessType,
   msgId,
-  msgRecvDate,
-  msgRecvInst,
+  msgDate,
   msgRecvStatus,
-  msgSendDate,
-  msgSendInst,
   msgSendStatus,
   msgType,
 } from '@/components/TableColumn';
@@ -69,14 +67,12 @@ const TabRelatedMessages = ({ messageId }: TabRelatedMessagesProps) => {
   const columns: TableColumnsType<MessageRecord> = [
     msgId,
     msgDirection,
+    businessType,
     msgType,
     msgBusinessNo,
-    msgSendInst,
-    msgRecvInst,
     msgRecvStatus,
     msgSendStatus,
-    { ...msgRecvDate, sorter: undefined },
-    { ...msgSendDate, sorter: undefined },
+    { ...msgDate, sorter: undefined },
     {
       /** 操作 */
       title: 'Action',

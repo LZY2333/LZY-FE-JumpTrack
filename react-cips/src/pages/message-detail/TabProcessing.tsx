@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { getMessageProcessingRecords } from '@/api/messages';
-import { renderMessageDateTime } from '@/components/TableColumn/message';
+import { renderMessageDateTime } from '@/components/TableColumn/messageColumnUtil';
 import TableViewport from '@/components/TableViewport';
 import type { MessageAuditTrailRecord } from '@/types';
 
