@@ -1,0 +1,48 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: cips-message-manager
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${CIPS_DB_URL:jdbc:mysql://127.0.0.1:3306/cips?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia%2FShanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${CIPS_DB_USERNAME:cips}
+    password: ${CIPS_DB_PASSWORD:}
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      pool-name: CipsHikariPool
+      minimum-idle: 0
+      maximum-pool-size: ${CIPS_DB_POOL_MAX_SIZE:20}
+      connection-timeout: 30000
+      validation-timeout: 5000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      initialization-fail-timeout: -1
+  jackson:
+    default-property-inclusion: always
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    jdbc-type-for-null: 'NULL'
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+cips:
+  business-zone-id: ${CIPS_BUSINESS_ZONE_ID:Asia/Shanghai}
+  xml-max-characters: ${CIPS_XML_MAX_CHARACTERS:2097152}
+
+logging:
+  level:
+    root: INFO
+    com.wlbcmbchina.manager: INFO

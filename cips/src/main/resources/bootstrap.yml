@@ -1,0 +1,2 @@
+# 预留给后续 Spring Cloud Config / Nacos 等外部配置中心。
+# Spring Boot 2.7 单独运行时不主动加载 bootstrap 上下文，运行配置统一放在 application.yml。

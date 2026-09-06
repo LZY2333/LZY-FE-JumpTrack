@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wlbcmbchina.manager.infrastructure.message.dao.mapper.MessageMapper">
+
+    <resultMap id="MessageResultMap"
+               type="com.wlbcmbchina.manager.infrastructure.message.dao.po.MessagePO">
+        <id property="msgId" column="MSG_ID"/>
+        <result property="msgDirection" column="MSG_DIRECTION"/>
+        <result property="businessType" column="BUSINESS_TYPE"/>
+        <result property="msgChannel" column="MSG_CHANNEL"/>
+        <result property="msgType" column="MSG_TYPE"/>
+        <result property="msgBusinessNo" column="MSG_BUSINESS_NO"/>
+        <result property="msgRecvStatus" column="MSG_RECV_STATUS"/>
+        <result property="msgSendStatus" column="MSG_SEND_STATUS"/>
+        <result property="msgDate" column="MSG_DATE"/>
+        <result property="msgUetr" column="MSG_UETR"/>
+        <result property="msgOwnerDept" column="MSG_OWNER_DEPT"/>
+        <result property="msgOwnerGroup" column="MSG_OWNER_GROUP"/>
+        <result property="mainMsgId" column="MAIN_MSG_ID"/>
+        <result property="msgRelatedId" column="MSG_RELATED_ID"/>
+        <result property="msgEndId" column="MSG_END_ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="remark" column="REMARK"/>
+        <result property="msgSendTime" column="MSG_SEND_TIME"/>
+        <result property="nonStpReason" column="NON_STP_REASON"/>
+        <result property="createUser" column="CREATE_USER"/>
+        <result property="createBrno" column="CREATE_BRNO"/>
+        <result property="authorUser" column="AUTHOR_USER"/>
+        <result property="authorBrno" column="AUTHOR_BRNO"/>
+    </resultMap>
+
+    <resultMap id="BusinessSummaryResultMap"
+               type="com.wlbcmbchina.manager.infrastructure.message.dao.po.MessageBusinessSummaryPO">
+        <id property="msgId" column="MSG_ID"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="currency" column="CURRENCY"/>
+        <result property="tranId" column="TRAN_ID"/>
+    </resultMap>
+
+    <!--
+      金额字段现为 VARCHAR。正则保护用于避免脏值被 MySQL 隐式转换成 0；
+      建库时应优先改为 DECIMAL，再为各类型建立与查询条件匹配的组合索引。
+    -->
+    <sql id="BusinessDataFilter">
+        <if test="criteria.businessDataFilter">
+            <choose>
+                <when test='criteria.businessType.name() == "PAY"'>
+                    AND EXISTS (
+                        SELECT 1
+                        FROM PSSST_ENT_PAY_INFO pay
+                        WHERE pay.MSG_ID = basic.MSG_ID
+                        <if test="criteria.tranId != null">
+                            AND pay.TRAN_ID = #{criteria.tranId}
+                        </if>
+                        <if test="criteria.currency != null">
+                            AND pay.REMIT_CCY = #{criteria.currency}
+                        </if>
+                        <if test="criteria.amountFrom != null or criteria.amountTo != null">
+                            AND TRIM(pay.REMIT_AMOUNT) REGEXP '^[0-9]{1,16}[.][0-9]{2}$'
+                        </if>
+                        <if test="criteria.amountFrom != null">
+                            AND CAST(TRIM(pay.REMIT_AMOUNT) AS DECIMAL(18, 2)) &gt;= #{criteria.amountFrom}
+                        </if>
+                        <if test="criteria.amountTo != null">
+                            AND CAST(TRIM(pay.REMIT_AMOUNT) AS DECIMAL(18, 2)) &lt;= #{criteria.amountTo}
+                        </if>
+                    )
+                </when>
+                <when test='criteria.businessType.name() == "BILL"'>
+                    AND EXISTS (
+                        SELECT 1
+                        FROM PSSST_ENT_BILL_INFO bill
+                        WHERE bill.MSG_ID = basic.MSG_ID
+                        <if test="criteria.currency != null">
+                            AND bill.BILL_CCY = #{criteria.currency}
+                        </if>
+                        <if test="criteria.amountFrom != null or criteria.amountTo != null">
+                            AND TRIM(bill.NETTING_AMOUNT) REGEXP '^[0-9]{1,16}[.][0-9]{2}$'
+                        </if>
+                        <if test="criteria.amountFrom != null">
+                            AND CAST(TRIM(bill.NETTING_AMOUNT) AS DECIMAL(18, 2)) &gt;= #{criteria.amountFrom}
+                        </if>
+                        <if test="criteria.amountTo != null">
+                            AND CAST(TRIM(bill.NETTING_AMOUNT) AS DECIMAL(18, 2)) &lt;= #{criteria.amountTo}
+                        </if>
+                    )
+                </when>
+                <when test='criteria.businessType.name() == "QUERY"'>
+                    AND EXISTS (
+                        SELECT 1
+                        FROM PSSST_ENT_QUERY_GPI query_gpi
+                        WHERE query_gpi.MSG_ID = basic.MSG_ID
+                        <if test="criteria.currency != null">
+                            AND query_gpi.GPI_CCY = #{criteria.currency}
+                        </if>
+                        <if test="criteria.amountFrom != null or criteria.amountTo != null">
+                            AND TRIM(query_gpi.GPI_AMOUNT) REGEXP '^[0-9]{1,16}[.][0-9]{2}$'
+                        </if>
+                        <if test="criteria.amountFrom != null">
+                            AND CAST(TRIM(query_gpi.GPI_AMOUNT) AS DECIMAL(18, 2)) &gt;= #{criteria.amountFrom}
+                        </if>
+                        <if test="criteria.amountTo != null">
+                            AND CAST(TRIM(query_gpi.GPI_AMOUNT) AS DECIMAL(18, 2)) &lt;= #{criteria.amountTo}
+                        </if>
+                    )
+                </when>
+                <otherwise>
+                    AND 1 = 0
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <!--
+      【9:基础分页 SQL】MyBatis 先根据 criteria 动态生成 SQL；MyBatis-Plus 分页拦截器再生成 count 查询并追加 LIMIT。
+      choose 保证一次请求只连接收报或发报主表；排序字段由枚举白名单映射，不能把客户端文本直接拼进 ORDER BY。
+    -->
+    <select id="selectMessagePage" resultMap="MessageResultMap">
+        SELECT basic.MSG_ID,
+               basic.MSG_DIRECTION,
+               basic.BUSINESS_TYPE,
+               basic.MSG_CHANNEL,
+               basic.MSG_TYPE,
+               basic.MSG_BUSINESS_NO,
+               <choose>
+                   <when test='criteria.msgDirection.name() == "IN"'>
+                       master.MSG_RECV_STATUS AS MSG_RECV_STATUS,
+                       NULL AS MSG_SEND_STATUS,
+                       master.MSG_RECV_DATE AS MSG_DATE,
+                       master.MSG_OWNER_DEPT AS MSG_OWNER_DEPT,
+                       master.MSG_OWNER_GROUP AS MSG_OWNER_GROUP,
+                   </when>
+                   <otherwise>
+                       NULL AS MSG_RECV_STATUS,
+                       master.MSG_SEND_STATUS AS MSG_SEND_STATUS,
+                       master.MSG_SEND_DATE AS MSG_DATE,
+                       NULL AS MSG_OWNER_DEPT,
+                       NULL AS MSG_OWNER_GROUP,
+                   </otherwise>
+               </choose>
+               basic.MSG_UETR,
+               basic.MAIN_MSG_ID,
+               basic.MSG_RELATED_ID,
+               basic.MSG_END_ID,
+               basic.CREATE_TIME,
+               basic.UPDATE_TIME,
+               basic.REMARK,
+               basic.MSG_SEND_TIME,
+               master.NON_STP_REASON,
+               basic.CREATE_USER,
+               basic.CREATE_BRNO,
+               basic.AUTHOR_USER,
+               basic.AUTHOR_BRNO
+        FROM PSSST_ENT_BASIC_INFO basic
+        <choose>
+            <when test='criteria.msgDirection.name() == "IN"'>
+                INNER JOIN PSSST_TRN_IN_MASTER master ON master.MSG_ID = basic.MSG_ID
+            </when>
+            <otherwise>
+                INNER JOIN PSSST_TRN_OU_MASTER master ON master.MSG_ID = basic.MSG_ID
+            </otherwise>
+        </choose>
+        <where>
+            basic.MSG_DIRECTION = #{criteria.msgDirection}
+            <if test="criteria.businessType != null">
+                AND basic.BUSINESS_TYPE = #{criteria.businessType}
+            </if>
+            <if test="criteria.msgType != null">
+                AND basic.MSG_TYPE = #{criteria.msgType}
+            </if>
+            <if test="criteria.msgBusinessNo != null">
+                AND basic.MSG_BUSINESS_NO = #{criteria.msgBusinessNo}
+            </if>
+            <if test="criteria.msgId != null">
+                AND basic.MSG_ID = #{criteria.msgId}
+            </if>
+            <if test="criteria.msgChannel != null">
+                AND basic.MSG_CHANNEL = #{criteria.msgChannel}
+            </if>
+            <if test="criteria.mainMsgId != null">
+                AND basic.MAIN_MSG_ID = #{criteria.mainMsgId}
+            </if>
+            <if test="criteria.msgRelatedId != null">
+                AND basic.MSG_RELATED_ID = #{criteria.msgRelatedId}
+            </if>
+            <if test="criteria.msgEndId != null">
+                AND basic.MSG_END_ID = #{criteria.msgEndId}
+            </if>
+            <if test="criteria.msgUetr != null">
+                AND basic.MSG_UETR = #{criteria.msgUetr}
+            </if>
+            <if test="criteria.msgDateFrom != null">
+                AND master.<choose><when test='criteria.msgDirection.name() == "IN"'>MSG_RECV_DATE</when><otherwise>MSG_SEND_DATE</otherwise></choose>
+                    &gt;= #{criteria.msgDateFrom}
+            </if>
+            <if test="criteria.msgDateTo != null">
+                AND master.<choose><when test='criteria.msgDirection.name() == "IN"'>MSG_RECV_DATE</when><otherwise>MSG_SEND_DATE</otherwise></choose>
+                    &lt;= #{criteria.msgDateTo}
+            </if>
+            <choose>
+                <when test='criteria.msgDirection.name() == "IN"'>
+                    <if test="criteria.msgRecvStatus != null">
+                        AND master.MSG_RECV_STATUS = #{criteria.msgRecvStatus}
+                    </if>
+                    <if test="criteria.msgOwnerDept != null">
+                        AND master.MSG_OWNER_DEPT LIKE CONCAT('%', #{criteria.msgOwnerDept}, '%')
+                    </if>
+                    <if test="criteria.msgOwnerGroup != null">
+                        AND master.MSG_OWNER_GROUP LIKE CONCAT('%', #{criteria.msgOwnerGroup}, '%')
+                    </if>
+                </when>
+                <otherwise>
+                    <if test="criteria.msgSendStatus != null">
+                        AND master.MSG_SEND_STATUS = #{criteria.msgSendStatus}
+                    </if>
+                </otherwise>
+            </choose>
+            <include refid="BusinessDataFilter"/>
+        </where>
+        ORDER BY
+        <choose>
+            <when test='criteria.sortField.name() == "MSG_DATE"'>MSG_DATE</when>
+            <when test='criteria.sortField.name() == "UPDATE_TIME"'>basic.UPDATE_TIME</when>
+            <otherwise>basic.CREATE_TIME</otherwise>
+        </choose>
+        <choose>
+            <when test='criteria.sortOrder.name() == "ASC"'>ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>,
+        basic.MSG_ID
+        <choose>
+            <when test='criteria.sortOrder.name() == "ASC"'>ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+    </select>
+
+    <!-- 【12:业务摘要 SQL】三个 IN 查询都只接收第 9 步当前页的 ID，因此查询规模受 pageSize <= 100 约束。 -->
+    <select id="selectPaymentSummaries" resultMap="BusinessSummaryResultMap">
+        SELECT MSG_ID, REMIT_AMOUNT AS AMOUNT, REMIT_CCY AS CURRENCY, TRAN_ID
+        FROM PSSST_ENT_PAY_INFO
+        WHERE MSG_ID IN
+        <foreach collection="messageIds" item="messageId" open="(" separator="," close=")">
+            #{messageId}
+        </foreach>
+    </select>
+
+    <select id="selectBillSummaries" resultMap="BusinessSummaryResultMap">
+        SELECT MSG_ID, NETTING_AMOUNT AS AMOUNT, BILL_CCY AS CURRENCY, NULL AS TRAN_ID
+        FROM PSSST_ENT_BILL_INFO
+        WHERE MSG_ID IN
+        <foreach collection="messageIds" item="messageId" open="(" separator="," close=")">
+            #{messageId}
+        </foreach>
+    </select>
+
+    <select id="selectQuerySummaries" resultMap="BusinessSummaryResultMap">
+        SELECT MSG_ID, GPI_AMOUNT AS AMOUNT, GPI_CCY AS CURRENCY, NULL AS TRAN_ID
+        FROM PSSST_ENT_QUERY_GPI
+        WHERE MSG_ID IN
+        <foreach collection="messageIds" item="messageId" open="(" separator="," close=")">
+            #{messageId}
+        </foreach>
+    </select>
+</mapper>
