@@ -3,6 +3,7 @@ import KeepAlive from 'react-activation';
 import { Navigate } from 'react-router-dom';
 import MessageList from '@/pages/message-list';
 import MessageDetail from '@/pages/message-detail';
+import LcwList from '@/pages/lcw-list';
 import { Role } from '@/types/enums';
 import { RoutePath } from './paths';
 
@@ -34,5 +35,14 @@ export const routes: AppRoute[] = [
     path: RoutePath.MessageDetail,
     element: <MessageDetail />,
     meta: { title: 'Message Details' },
+  },
+  {
+    path: RoutePath.LcwList,
+    element: (
+      <KeepAlive name='lcw-list'>
+        <LcwList />
+      </KeepAlive>
+    ),
+    meta: { title: 'LCW Tasks' },
   },
 ];

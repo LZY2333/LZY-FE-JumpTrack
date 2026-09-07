@@ -1,10 +1,13 @@
+import { Tag } from 'antd';
 import type { TableColumnType } from 'antd';
-import type { MessageRecord } from '@/types';
+import type { LcwRecord, MessageRecord } from '@/types';
 import {
+  LCW_INITIAL_STATUS_LABELS,
   MESSAGE_DIRECTION_LABELS,
   MESSAGE_BUSINESS_TYPE_LABELS,
   MSG_RECV_STATUS_LABELS,
   MSG_SEND_STATUS_LABELS,
+  LcwInitialStatus,
   MessageDirection,
   MessageBusinessType,
   MsgRecvStatus,
@@ -14,8 +17,16 @@ import { renderMessageAmount, renderMessageDate, renderMessageDateTime, renderMe
 
 // 字段顺序与报文列表的默认列顺序一致。
 
+const LCW_STATUS_COLORS: Partial<Record<LcwInitialStatus, string>> = {
+  [LcwInitialStatus.Timeout]: 'orange',
+  [LcwInitialStatus.Unavailable]: 'red',
+  [LcwInitialStatus.DataMissing]: 'gold',
+  [LcwInitialStatus.InvocationFailed]: 'red',
+  [LcwInitialStatus.ManualRetry]: 'blue',
+};
+
 /** 报文标识号：MSG_ID */
-export const msgId: TableColumnType<MessageRecord> = {
+export const msgId = {
   title: 'Message ID',
   dataIndex: 'msgId',
   width: 210,
@@ -23,7 +34,7 @@ export const msgId: TableColumnType<MessageRecord> = {
 };
 
 /** 收发方向：MSG_DIRECTION */
-export const msgDirection: TableColumnType<MessageRecord> = {
+export const msgDirection = {
   title: 'Direction',
   dataIndex: 'msgDirection',
   width: 100,
@@ -39,7 +50,7 @@ export const businessType: TableColumnType<MessageRecord> = {
 };
 
 /** 收发报通道：MSG_CHANNEL */
-export const msgChannel: TableColumnType<MessageRecord> = {
+export const msgChannel = {
   title: 'Channel',
   dataIndex: 'msgChannel',
   width: 140,
@@ -104,7 +115,7 @@ export const msgSendStatus: TableColumnType<MessageRecord> = {
 };
 
 /** 收发日期：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE */
-export const msgDate: TableColumnType<MessageRecord> = {
+export const msgDate = {
   title: 'Message Date',
   dataIndex: 'msgDate',
   width: 150,
@@ -185,3 +196,36 @@ export const remark: TableColumnType<MessageRecord> = {
   width: 200,
   render: renderMessageText,
 };
+
+/* =================== LCW 任务专用 TableColumn =================== */
+
+/** LCW 初次判定状态：LCW_INITIAL_STATUS */
+export const lcwInitialStatus = {
+  title: 'LCW Status',
+  dataIndex: 'lcwInitialStatus',
+  width: 210,
+  render: (value: LcwInitialStatus) => (
+    <Tag color={LCW_STATUS_COLORS[value]}>{LCW_INITIAL_STATUS_LABELS[value] ?? renderMessageText(value)}</Tag>
+  ),
+};
+
+/** LCW 接口失败信息：RES_CODE / RES_MESSAGE */
+export const lcwFailureInfo = {
+  title: 'LCW Failure Info',
+  key: 'lcwFailureInfo',
+  width: 320,
+  ellipsis: { showTitle: false },
+  render: (_: unknown, record: LcwRecord) =>
+    `${renderMessageText(record.resCode)} : ${renderMessageText(record.resMessage)}`,
+};
+
+/** LCW 初次判定完成时间：LCW_INITIAL_TIME */
+export const lcwInitialTime = {
+  title: 'Exception Time',
+  dataIndex: 'lcwInitialTime',
+  width: 180,
+  sorter: true,
+  render: renderMessageDateTime,
+};
+
+/* ================= LCW 任务专用 TableColumn 结束 ================= */

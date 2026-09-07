@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { MessageRecord } from '@/types';
 import { getMessages } from '@/api/messages';
-import type { MessageQuery } from '@/api/messages';
-import type { MessageSortField, MessageSortOrder } from '@/types/enums';
+import type { MessageQuery, MessageSortField } from '@/api/messages';
+import type { SortOrder } from '@/types/enums';
 import { buildQueryConditions, type MessageListFilterValues } from './messageListUtil';
 
 const PAGE_SIZE_STORAGE_KEY = 'message-list-page-size';
@@ -21,7 +21,7 @@ const useMessageList = (initialFilters: MessageListFilterValues) => {
   });
   const [filters, setFilters] = useState<MessageListFilterValues>(() => ({ ...initialFilters }));
   const [sortField, setSortField] = useState<MessageSortField>();
-  const [sortOrder, setSortOrder] = useState<MessageSortOrder>();
+  const [sortOrder, setSortOrder] = useState<SortOrder>();
 
   useEffect(() => {
     // 路由离开或条件快速变化时忽略旧请求结果，避免覆盖较新的列表状态。
@@ -54,7 +54,7 @@ const useMessageList = (initialFilters: MessageListFilterValues) => {
     setCurrent(1);
   }, []);
 
-  const setSort = useCallback((field?: MessageSortField, order?: MessageSortOrder) => {
+  const setSort = useCallback((field?: MessageSortField, order?: SortOrder) => {
     setSortField(field);
     setSortOrder(order);
     setCurrent(1);

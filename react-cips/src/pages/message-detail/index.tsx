@@ -44,6 +44,14 @@ const MessageDetailPage = () => {
 
   const rawContentActionDisabled = isRawContentActionDisabled(raw, rawLoading);
 
+  const handleBack = () => {
+    if ((window.history.state?.idx ?? 0) > 0) {
+      navigate(-1);
+      return;
+    }
+    navigate(RoutePath.MessageList, { replace: true });
+  };
+
   const tabs = [
     {
       key: 'structured',
@@ -80,7 +88,7 @@ const MessageDetailPage = () => {
             color='primary'
             variant='solid'
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(RoutePath.MessageList)}
+            onClick={handleBack}
           >
             Back
           </Button>

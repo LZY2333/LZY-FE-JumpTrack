@@ -5,8 +5,7 @@ import { Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import type { MessageRecord } from '@/types';
-import type { MessageSortOrder } from '@/types/enums';
-import { MessageDirection } from '@/types/enums';
+import { MessageDirection, SortOrder } from '@/types/enums';
 import { RoutePath } from '@/router/paths';
 import useMessageList, { PAGE_SIZE_OPTIONS } from './useMessageList';
 import { isMessageSortField, type MessageListFilterValues } from './messageListUtil';
@@ -99,7 +98,9 @@ const MessageList = () => {
     // 排序字段
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
     const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
-    const order: MessageSortOrder | undefined = activeSorter.order ?? undefined;
+    let order: SortOrder | undefined;
+    if (activeSorter.order === 'ascend') order = SortOrder.Ascend;
+    if (activeSorter.order === 'descend') order = SortOrder.Descend;
     setSort(isMessageSortField(field) ? field : undefined, order);
   };
 

@@ -7,6 +7,8 @@ import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { isMessageDateDisabled, messageDatePresets } from './messageDateUtil';
 import {
+  LCW_STATUSES,
+  LCW_INITIAL_STATUS_LABELS,
   MESSAGE_DIRECTION_LABELS,
   MESSAGE_BUSINESS_TYPE_LABELS,
   MSG_RECV_STATUS_LABELS,
@@ -15,6 +17,7 @@ import {
   MessageBusinessType,
   MsgRecvStatus,
   MsgSendStatus,
+  MessageChannel,
 } from '@/types/enums';
 
 /** 查询字段的布局配置，字段名称和业务标签由组件维护。 */
@@ -39,6 +42,11 @@ const msgRecvStatusOptions = Object.values(MsgRecvStatus).map((value) => ({
 const msgSendStatusOptions = Object.values(MsgSendStatus).map((value) => ({
   value,
   label: MSG_SEND_STATUS_LABELS[value],
+}));
+const messageChannelOptions = Object.values(MessageChannel).map((value) => ({ value, label: value }));
+const lcwInitialStatusOptions = LCW_STATUSES.map((value) => ({
+  value,
+  label: LCW_INITIAL_STATUS_LABELS[value],
 }));
 
 /** 收发方向：MSG_DIRECTION */
@@ -248,8 +256,15 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
 
 /** 收发报通道：MSG_CHANNEL */
 export const MessageChannelFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgChannel' label='Channel' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter channel' />
+  <Form.Item {...props} name='channel' label='Channel'>
+    <Select
+      className='w-full'
+      allowClear
+      mode='multiple'
+      maxTagCount='responsive'
+      placeholder='All'
+      options={messageChannelOptions}
+    />
   </Form.Item>
 );
 
@@ -346,6 +361,31 @@ const MessageSendStatusFilter = (props: MessageFilterFormItemProps) => {
     </Form.Item>
   );
 };
+
+/* ==================== LCW 任务专用 FormItem ==================== */
+
+/** LCW 初次判定异常状态：LCW_INITIAL_STATUS */
+export const LcwInitialStatusFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='lcwInitialStatuses' label='LCW Status'>
+    <Select
+      className='w-full'
+      allowClear
+      mode='multiple'
+      maxTagCount='responsive'
+      placeholder='All'
+      options={lcwInitialStatusOptions}
+    />
+  </Form.Item>
+);
+
+/** LCW 接口响应编码：RES_CODE */
+export const LcwResponseCodeFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='resCode' label='Response Code' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter response code' />
+  </Form.Item>
+);
+
+/* ================== LCW 任务专用 FormItem 结束 ================== */
 
 const trimWhitespace = (value?: string) => value?.trim() ?? '';
 

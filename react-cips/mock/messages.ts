@@ -314,7 +314,6 @@ const filterMessages = (query: Partial<MessageQueryConditions>) => {
     ['msgType', query.msgType],
     ['msgDirection', query.msgDirection],
     ['businessType', query.businessType],
-    ['msgChannel', query.msgChannel],
     ['mainMsgId', query.mainMsgId],
     ['msgRelatedId', query.msgRelatedId],
     ['msgEndId', query.msgEndId],
@@ -329,6 +328,9 @@ const filterMessages = (query: Partial<MessageQueryConditions>) => {
     list = list.filter((record) => String(record[field] ?? '').toLowerCase() === normalized);
   });
 
+  if (query.channel?.length) {
+    list = list.filter((record) => query.channel?.some((channel) => channel === record.msgChannel));
+  }
   list = filterByDirectionStatus(list, query);
   list = filterByText(list, 'msgOwnerDept', query.msgOwnerDept);
   list = filterByText(list, 'msgOwnerGroup', query.msgOwnerGroup);

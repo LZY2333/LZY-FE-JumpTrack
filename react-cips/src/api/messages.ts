@@ -2,17 +2,18 @@ import type { Pagination } from './request';
 import { get, post } from './request';
 import type { MessageAuditTrailRecord, MessageDetail, MessageRaw, MessageRecord } from '@/types';
 import type {
+  MessageChannel,
   MessageBusinessType,
   MessageDirection,
-  MessageSortField,
   MsgRecvStatus,
   MsgSendStatus,
+  QuerySortOrder,
 } from '@/types/enums';
 
 const MESSAGE_API = '/api/example/v1/messages';
 
-/** 报文查询排序方向。 */
-export type MessageQuerySortOrder = 'asc' | 'desc';
+/** 报文列表允许用户触发的服务端排序字段。 */
+export type MessageSortField = 'msgDate' | 'createTime' | 'updateTime';
 
 /** 报文查询条件，按页面从左到右、从上到下的字段顺序声明。 */
 export interface MessageQueryConditions {
@@ -43,7 +44,7 @@ export interface MessageQueryConditions {
   /** 金额上限：REMIT_AMOUNT / GPI_AMOUNT / NETTING_AMOUNT。 */
   amountTo?: number;
   /** 收发报通道：MSG_CHANNEL。 */
-  msgChannel?: string;
+  channel?: MessageChannel[];
   /** 报文归属部门：MSG_OWNER_DEPT。 */
   msgOwnerDept?: string;
   /** 报文归属组：MSG_OWNER_GROUP。 */
@@ -59,7 +60,7 @@ export interface MessageQueryConditions {
   /** 服务端排序字段。 */
   sortField?: MessageSortField;
   /** 服务端排序方向。 */
-  sortOrder?: MessageQuerySortOrder;
+  sortOrder?: QuerySortOrder;
 }
 
 /** 带分页的报文查询请求。 */

@@ -47,6 +47,22 @@ export default defineConfig(({ command, mode }) => {
             '/api': {
               target: apiProxyTarget,
               changeOrigin: true,
+              configure: (proxy) => {
+                proxy.on('proxyReq', (proxyRequest, request) => {
+                  const targetUrl = new URL(proxyRequest.path, apiProxyTarget).toString();
+                  console.info(`[proxy] ${request.method} ${request.url} -> ${targetUrl}`);
+                });
+              },
+            },
+            '/cips': {
+              target: apiProxyTarget,
+              changeOrigin: true,
+              configure: (proxy) => {
+                proxy.on('proxyReq', (proxyRequest, request) => {
+                  const targetUrl = new URL(proxyRequest.path, apiProxyTarget).toString();
+                  console.info(`[proxy] ${request.method} ${request.url} -> ${targetUrl}`);
+                });
+              },
             },
           },
     },

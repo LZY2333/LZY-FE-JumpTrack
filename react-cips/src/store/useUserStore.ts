@@ -9,7 +9,7 @@ interface AuthStore {
   user?: User;
   authStatus: AuthStatus;
   setUser: (user: User) => void;
-  login: () => Promise<void>;
+  login: () => Promise<undefined>;
 }
 
 const useUserStore = create<AuthStore>((set) => ({
