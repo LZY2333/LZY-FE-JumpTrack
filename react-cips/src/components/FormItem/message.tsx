@@ -7,8 +7,6 @@ import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { isMessageDateDisabled, messageDatePresets } from './messageDateUtil';
 import {
-  LCW_STATUSES,
-  LCW_INITIAL_STATUS_LABELS,
   MESSAGE_DIRECTION_LABELS,
   MESSAGE_BUSINESS_TYPE_LABELS,
   MSG_RECV_STATUS_LABELS,
@@ -44,10 +42,6 @@ const msgSendStatusOptions = Object.values(MsgSendStatus).map((value) => ({
   label: MSG_SEND_STATUS_LABELS[value],
 }));
 const messageChannelOptions = Object.values(MessageChannel).map((value) => ({ value, label: value }));
-const lcwInitialStatusOptions = LCW_STATUSES.map((value) => ({
-  value,
-  label: LCW_INITIAL_STATUS_LABELS[value],
-}));
 
 /** 收发方向：MSG_DIRECTION */
 export const MessageDirectionFilter = (props: MessageFilterFormItemProps) => {
@@ -256,7 +250,7 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
 
 /** 收发报通道：MSG_CHANNEL */
 export const MessageChannelFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='channel' label='Channel'>
+  <Form.Item {...props} name='channel' label='Channel' normalize={normalizeMultipleValues}>
     <Select
       className='w-full'
       allowClear
@@ -268,10 +262,27 @@ export const MessageChannelFilter = (props: MessageFilterFormItemProps) => (
   </Form.Item>
 );
 
+/** 报文归属或来源系统：MSG_OWNER_DEPT / MSG_OWNER_GROUP / OU.FROM_SYSTEM */
+export const MessageOwnerFilter = (props: MessageFilterFormItemProps) => {
+  const direction = Form.useWatch<MessageDirection>('msgDirection');
+  return (
+    <>
+      {!direction && (
+        <Form.Item {...props} label='Owner / Source'>
+          <Input disabled placeholder='Select direction first' />
+        </Form.Item>
+      )}
+      <MessageOwnerByFilter {...props} />
+      <MessageFromSystemFilter {...props} />
+    </>
+  );
+};
+
 /** 报文归属：MSG_OWNER_DEPT / MSG_OWNER_GROUP */
-export const MessageOwnerByFilter = (props: MessageFilterFormItemProps) => {
+const MessageOwnerByFilter = (props: MessageFilterFormItemProps) => {
   const form = Form.useFormInstance();
   const direction = Form.useWatch<MessageDirection>('msgDirection', form);
+  const hidden = direction !== MessageDirection.In;
 
   // Direction 切到 OU 时，清空本组件拥有的部门和组。
   useEffect(() => {
@@ -280,8 +291,9 @@ export const MessageOwnerByFilter = (props: MessageFilterFormItemProps) => {
     form.setFieldValue('msgOwnerGroup', '');
   }, [form, direction]);
 
+  if (hidden) return null;
   return (
-    <Form.Item {...props} label='Owner By' tooltip='Entering a department or group selects Received direction.'>
+    <Form.Item {...props} label='Owner By' tooltip='Available for Received direction.'>
       <Space.Compact block>
         <Form.Item name='msgOwnerDept' noStyle normalize={trimWhitespace}>
           <Input className='min-w-0 flex-1' allowClear placeholder='Department' />
@@ -290,6 +302,32 @@ export const MessageOwnerByFilter = (props: MessageFilterFormItemProps) => {
           <Input className='min-w-0 flex-1' allowClear placeholder='Group' />
         </Form.Item>
       </Space.Compact>
+    </Form.Item>
+  );
+};
+
+/** 发报来源系统：OU.FROM_SYSTEM */
+const MessageFromSystemFilter = (props: MessageFilterFormItemProps) => {
+  const form = Form.useFormInstance();
+  const direction = Form.useWatch<MessageDirection>('msgDirection', form);
+  const hidden = direction !== MessageDirection.Out;
+
+  // Direction 切到 IN 时，清空仅属于 OU 表的来源系统。
+  useEffect(() => {
+    if (direction !== MessageDirection.In) return;
+    form.setFieldValue('fromSystem', '');
+  }, [form, direction]);
+
+  if (hidden) return null;
+  return (
+    <Form.Item
+      {...props}
+      name='fromSystem'
+      label='From System'
+      normalize={trimWhitespace}
+      tooltip='Available for Sent direction.'
+    >
+      <Input allowClear placeholder='Enter source system' />
     </Form.Item>
   );
 };
@@ -336,8 +374,15 @@ const MessageRecvStatusFilter = (props: MessageFilterFormItemProps) => {
 
   if (hidden) return null;
   return (
-    <Form.Item {...props} name='msgRecvStatus' label='Received Status'>
-      <Select className='w-full' allowClear placeholder='All' options={msgRecvStatusOptions} />
+    <Form.Item {...props} name='msgRecvStatus' label='Received Status' normalize={normalizeMultipleValues}>
+      <Select
+        className='w-full'
+        allowClear
+        mode='multiple'
+        maxTagCount='responsive'
+        placeholder='All'
+        options={msgRecvStatusOptions}
+      />
     </Form.Item>
   );
 };
@@ -356,38 +401,23 @@ const MessageSendStatusFilter = (props: MessageFilterFormItemProps) => {
 
   if (hidden) return null;
   return (
-    <Form.Item {...props} name='msgSendStatus' label='Sent Status'>
-      <Select className='w-full' allowClear placeholder='All' options={msgSendStatusOptions} />
+    <Form.Item {...props} name='msgSendStatus' label='Sent Status' normalize={normalizeMultipleValues}>
+      <Select
+        className='w-full'
+        allowClear
+        mode='multiple'
+        maxTagCount='responsive'
+        placeholder='All'
+        options={msgSendStatusOptions}
+      />
     </Form.Item>
   );
 };
 
-/* ==================== LCW 任务专用 FormItem ==================== */
-
-/** LCW 初次判定异常状态：LCW_INITIAL_STATUS */
-export const LcwInitialStatusFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='lcwInitialStatuses' label='LCW Status'>
-    <Select
-      className='w-full'
-      allowClear
-      mode='multiple'
-      maxTagCount='responsive'
-      placeholder='All'
-      options={lcwInitialStatusOptions}
-    />
-  </Form.Item>
-);
-
-/** LCW 接口响应编码：RES_CODE */
-export const LcwResponseCodeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='resCode' label='Response Code' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter response code' />
-  </Form.Item>
-);
-
-/* ================== LCW 任务专用 FormItem 结束 ================== */
-
 const trimWhitespace = (value?: string) => value?.trim() ?? '';
+
+/** 多选字段持有独立数组，并将清空后的空数组统一转换为空值。 */
+const normalizeMultipleValues = <Value,>(values?: Value[]) => (values?.length ? [...values] : undefined);
 
 /** 业务类型确定金额和币种的含义，说明只面向业务使用者。 */
 const getAmountCurrencyHint = (businessType?: MessageBusinessType) => {

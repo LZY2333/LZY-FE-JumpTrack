@@ -5,7 +5,8 @@
       "type": "object",
       "x-component": "MessageSection",
       "x-component-props": {
-        "title": "Bill Summary"
+        "title": "Bill Summary",
+        "collapsible": true
       },
       "properties": {
         "billGrid": {
@@ -93,54 +94,82 @@
       }
     },
     "billDetails": {
-      "type": "array",
-      "$comment": "PSSST_ENT_BILL_DETAIL：账单详情记录",
-      "x-component": "MessageBusinessTable",
+      "type": "object",
+      "$comment": "PSSST_ENT_BILL_DETAIL：与账单信息一对一的详情记录",
+      "x-component": "MessageSection",
       "x-component-props": {
         "title": "Bill Details",
-        "rowKey": "txnRef",
-        "columns": [
-          {
-            "dataIndex": "txnRef",
-            "title": "Transaction Reference",
-            "width": 190
+        "collapsible": true
+      },
+      "properties": {
+        "billDetailsGrid": {
+          "type": "void",
+          "x-component": "FormGrid",
+          "x-component-props": {
+            "minColumns": 4,
+            "maxColumns": 4,
+            "columnGap": 12,
+            "rowGap": 0
           },
-          {
-            "dataIndex": "seqNo",
-            "title": "Sequence No.",
-            "width": 140
-          },
-          {
-            "dataIndex": "remitBankBic",
-            "title": "Remitting Bank BIC",
-            "width": 180
-          },
-          {
-            "dataIndex": "remitCcy",
-            "title": "Remittance Currency",
-            "width": 160
-          },
-          {
-            "dataIndex": "remitAmt",
-            "title": "Remittance Amount",
-            "width": 170
-          },
-          {
-            "dataIndex": "creditType",
-            "title": "Credit / Debit Type",
-            "width": 160
-          },
-          {
-            "dataIndex": "valueDate",
-            "title": "Value Date",
-            "width": 140
-          },
-          {
-            "dataIndex": "createTime",
-            "title": "Record Created Time",
-            "width": 180
+          "properties": {
+            "txnRef": {
+              "type": "string",
+              "title": "Transaction Reference",
+              "$comment": "TXN_REF：交易编号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "seqNo": {
+              "type": "string",
+              "title": "Sequence No.",
+              "$comment": "SEQ_NO：SEQ 编号",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "remitBankBic": {
+              "type": "string",
+              "title": "Remitting Bank BIC",
+              "$comment": "REMIT_BANK_BIC：汇款银行 BIC",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "remitCcy": {
+              "type": "string",
+              "title": "Remittance Currency",
+              "$comment": "REMIT_CCY：汇款币种",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "remitAmt": {
+              "type": "string",
+              "title": "Remittance Amount",
+              "$comment": "REMIT_AMT：汇款金额",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "creditType": {
+              "type": "string",
+              "title": "Credit / Debit Type",
+              "$comment": "CREDIT_TYPE：收款类型",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "valueDate": {
+              "type": "string",
+              "title": "Value Date",
+              "$comment": "VALUE_DATE：起息日",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "createTime": {
+              "type": "string",
+              "title": "Record Created Time",
+              "$comment": "CREATE_TIME：记录创建时间",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            }
           }
-        ]
+        }
       }
     }
   }

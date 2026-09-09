@@ -7,8 +7,8 @@ export interface MessageRecord {
   msgId: string;
   /** 收发方向：MSG_DIRECTION。 */
   msgDirection: MessageDirection;
-  /** 业务类型：BUSINESS_TYPE；尚未完成分类时为 null，不等同于 OTHER。 */
-  businessType: MessageBusinessType | null;
+  /** 业务类型：BUSINESS_TYPE。 */
+  businessType: MessageBusinessType;
   /** 收发报通道：MSG_CHANNEL。 */
   msgChannel: NullableText;
   /** 报文类型：MSG_TYPE。 */
@@ -33,6 +33,8 @@ export interface MessageRecord {
   msgOwnerDept: NullableText;
   /** 报文归属组：MSG_OWNER_GROUP。 */
   msgOwnerGroup: NullableText;
+  /** 发报来源系统：OU.FROM_SYSTEM。 */
+  fromSystem: NullableText;
   /** 主报文编号：MAIN_MSG_ID。 */
   mainMsgId: NullableText;
   /** 关联流水号：MSG_RELATED_ID。 */
@@ -83,10 +85,25 @@ export interface MessageAuditTrailRecord {
   createTime: string;
 }
 
-/** 报文明细；结构化字段值由后端解析，Schema 由前端静态维护。 */
-export interface MessageDetail extends MessageRecord {
-  /** 类型信息表和属性表按表关系组合后的业务数据。 */
-  formData: Record<string, unknown>;
+/** 单条实体表记录；字段结构由前端静态 Schema 约束。 */
+export type MessageEntityRecord = Record<string, unknown>;
+
+/** 报文明细；基础信息和各实体表记录在响应 body 中保持同级。 */
+export interface MessageDetail {
+  /** PSSST_ENT_BASIC_INFO：报文基础信息。 */
+  msgBasicInfo: MessageRecord;
+  /** PSSST_ENT_PAY_INFO：支付类报文详情，非支付类为 null。 */
+  paymentInfo: MessageEntityRecord | null;
+  /** PSSST_ENT_PAY_PARTY：支付交易对象，一条支付信息可对应多条记录。 */
+  paymentParties: MessageEntityRecord[];
+  /** PSSST_ENT_BILL_INFO：账单类报文信息，非账单类为 null。 */
+  billInfo: MessageEntityRecord | null;
+  /** PSSST_ENT_BILL_DETAIL：账单详情，与 billInfo 一对一，非账单类为 null。 */
+  billDetails: MessageEntityRecord | null;
+  /** PSSST_ENT_QUERY_INFO：查询查复详情，非查询类为 null。 */
+  queryInfo: MessageEntityRecord | null;
+  /** PSSST_ENT_QUERY_GPI：GPI 属性，与 queryInfo 一对一；无 GPI 数据时为 null。 */
+  queryGpi: MessageEntityRecord | null;
 }
 
 export interface MessageRaw {

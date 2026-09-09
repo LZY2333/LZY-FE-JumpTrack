@@ -5,7 +5,8 @@
       "type": "object",
       "x-component": "MessageSection",
       "x-component-props": {
-        "title": "Query / Response Information"
+        "title": "Query / Response Information",
+        "collapsible": true
       },
       "properties": {
         "queryGrid": {
@@ -84,7 +85,8 @@
       "type": "object",
       "x-component": "MessageSection",
       "x-component-props": {
-        "title": "GPI Information"
+        "title": "GPI Information",
+        "collapsible": true
       },
       "properties": {
         "gpiGrid": {

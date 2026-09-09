@@ -23,6 +23,20 @@ body,
   background: var(--ant-color-primary);
 }
 
+/* antd 5.29.3 的搜索模式 height: 100% 优先级高于多选搜索框的尺寸规则。
+ * 恢复对应 Token 高度，避免单行被撑高；不限制 Select 总高度，保留多行标签布局。 */
+.ant-app .ant-select.ant-select-multiple .ant-select-selector .ant-select-selection-search-input {
+  height: var(--ant-select-multiple-item-height);
+}
+
+.ant-app .ant-select.ant-select-multiple.ant-select-sm .ant-select-selector .ant-select-selection-search-input {
+  height: var(--ant-select-multiple-item-height-sm);
+}
+
+.ant-app .ant-select.ant-select-multiple.ant-select-lg .ant-select-selector .ant-select-selection-search-input {
+  height: var(--ant-select-multiple-item-height-lg);
+}
+
 /* scroll.y 默认是 max-height；让报文列表在可用页面高度内保持填充。 */
 .message-list-table .ant-table-body {
   height: var(--message-list-table-body-height);

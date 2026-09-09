@@ -1,5 +1,5 @@
 import type { MessageQueryConditions, MessageSortField } from '@/api/messages';
-import { QuerySortOrder, SortOrder } from '@/types/enums';
+import { MessageDirection, QuerySortOrder, SortOrder } from '@/types/enums';
 import { omitEmptyValues } from '@/utils';
 
 /** 报文筛选表单值；字段顺序沿用 API，仅替换日期区间和金额空值类型。 */
@@ -22,9 +22,13 @@ export const buildQueryConditions = (
   sortOrder?: SortOrder,
 ): MessageQueryConditions => {
   const { msgDateRange, ...filter } = filters;
+  const directionFilter =
+    filter.msgDirection === MessageDirection.In
+      ? { ...filter, msgSendStatus: undefined, fromSystem: undefined }
+      : { ...filter, msgRecvStatus: undefined, msgOwnerDept: undefined, msgOwnerGroup: undefined };
   const querySortOrder = sortOrder === SortOrder.Ascend ? QuerySortOrder.Asc : QuerySortOrder.Desc;
   return omitEmptyValues({
-    ...filter,
+    ...directionFilter,
     msgDateFrom: msgDateRange?.[0],
     msgDateTo: msgDateRange?.[1],
     sortField,

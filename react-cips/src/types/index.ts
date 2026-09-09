@@ -1,7 +1,7 @@
 import type { Role } from './enums';
 
 export type { LcwRecord } from './lcw';
-export type { MessageRecord, MessageAuditTrailRecord, MessageDetail, MessageRaw } from './message';
+export type { MessageRecord, MessageAuditTrailRecord, MessageDetail, MessageEntityRecord, MessageRaw } from './message';
 
 export interface UserIdentity {
   /** 用户 ID */

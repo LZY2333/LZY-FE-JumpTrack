@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getLcwTasks, retryLcwTasks } from '@/api/lcw';
-import type { LcwQuery, LcwSortField } from '@/api/lcw';
+import type { LcwQuery } from '@/api/lcw';
 import type { LcwRecord } from '@/types';
-import type { SortOrder } from '@/types/enums';
 import { buildLcwQueryConditions, type LcwListFilterValues } from './lcwListUtil';
 
 const PAGE_SIZE_STORAGE_KEY = 'lcw-list-page-size';
 export const LCW_PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const DEFAULT_PAGE_SIZE = LCW_PAGE_SIZE_OPTIONS[0];
 
-/** 编排 LCW 异常列表查询、分页、排序和批量重试。 */
+/** 编排 LCW 异常列表查询、分页和批量重试。 */
 const useLcwList = (initialFilters: LcwListFilterValues) => {
   const [records, setRecords] = useState<LcwRecord[]>([]);
   const [total, setTotal] = useState(0);
@@ -20,9 +19,7 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
     const storedPageSize = Number(localStorage.getItem(PAGE_SIZE_STORAGE_KEY));
     return LCW_PAGE_SIZE_OPTIONS.includes(storedPageSize) ? storedPageSize : DEFAULT_PAGE_SIZE;
   });
-  const [filters, setFilters] = useState<LcwListFilterValues>(() => cloneFilters(initialFilters));
-  const [sortField, setSortField] = useState<LcwSortField>();
-  const [sortOrder, setSortOrder] = useState<SortOrder>();
+  const [filters, setFilters] = useState<LcwListFilterValues>(() => ({ ...initialFilters }));
   const [refreshVersion, setRefreshVersion] = useState(0);
 
   useEffect(() => {
@@ -32,7 +29,7 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
     const request: LcwQuery = {
       current,
       pageSize,
-      ...buildLcwQueryConditions(filters, sortField, sortOrder),
+      ...buildLcwQueryConditions(filters),
     };
     getLcwTasks(request)
       .then((result) => {
@@ -52,16 +49,10 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
     return () => {
       active = false;
     };
-  }, [current, filters, pageSize, refreshVersion, sortField, sortOrder]);
+  }, [current, filters, pageSize, refreshVersion]);
 
   const query = useCallback((values: LcwListFilterValues) => {
-    setFilters(cloneFilters(values));
-    setCurrent(1);
-  }, []);
-
-  const setSort = useCallback((field?: LcwSortField, order?: SortOrder) => {
-    setSortField(field);
-    setSortOrder(order);
+    setFilters({ ...values });
     setCurrent(1);
   }, []);
 
@@ -71,9 +62,7 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
   }, []);
 
   const reset = useCallback(() => {
-    setFilters(cloneFilters(initialFilters));
-    setSortField(undefined);
-    setSortOrder(undefined);
+    setFilters({ ...initialFilters });
     setCurrent(1);
   }, [initialFilters]);
 
@@ -97,16 +86,10 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
     pageSize,
     setCurrent,
     setPageSize,
-    setSort,
     query,
     reset,
     retry,
   };
 };
-
-const cloneFilters = (filters: LcwListFilterValues): LcwListFilterValues => ({
-  ...filters,
-  lcwInitialStatuses: filters.lcwInitialStatuses ? [...filters.lcwInitialStatuses] : undefined,
-});
 
 export default useLcwList;

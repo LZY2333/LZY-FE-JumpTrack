@@ -10,7 +10,44 @@ import type {
   QuerySortOrder,
 } from '@/types/enums';
 
-const MESSAGE_API = '/api/example/v1/messages';
+/** 报文接口基础 URL。 */
+export const API_BASE_MESSAGE = '/api/example/v1/messages';
+
+/** 查询报文 list。 */
+export const API_MESSAGE_QUERY = `${API_BASE_MESSAGE}/query`;
+export const getMessages = (params: MessageQuery) => post<PagedMessages>(API_MESSAGE_QUERY, params);
+
+/** 查询报文明细。 */
+export const API_MESSAGE_DETAIL = `${API_BASE_MESSAGE}/:msgDirection/:businessType/:msgId`;
+export const getMessage = (params: MessageDetailParams) => get<MessageDetail>(buildMessageDetailApi(params));
+
+/** 查询报文原文。 */
+export const API_MESSAGE_RAW = `${API_BASE_MESSAGE}/raw/:msgId`;
+export const getMessageRaw = (msgId: string) => get<MessageRaw>(buildMessageIdApi(API_MESSAGE_RAW, msgId));
+
+/** 查询报文处理轨迹。 */
+export const API_MESSAGE_PROCESSING_RECORDS = `${API_BASE_MESSAGE}/processing-records/:msgId`;
+export const getMessageProcessingRecords = (msgId: string) =>
+  get<MessageAuditTrailRecord[]>(buildMessageIdApi(API_MESSAGE_PROCESSING_RECORDS, msgId));
+
+/** 将报文标识安全填充到接口 URL 的末段占位符。 */
+const buildMessageIdApi = (api: string, msgId: string) => api.replace(':msgId', encodeURIComponent(msgId));
+
+/** 将详情定位字段全部写入 URL，支持详情页刷新和直接访问。 */
+const buildMessageDetailApi = ({ msgId, msgDirection, businessType }: MessageDetailParams) =>
+  API_MESSAGE_DETAIL.replace(':msgDirection', encodeURIComponent(msgDirection))
+    .replace(':businessType', encodeURIComponent(businessType))
+    .replace(':msgId', encodeURIComponent(msgId));
+
+/** 查询报文明细所需的完整定位信息。 */
+export interface MessageDetailParams {
+  /** 报文标识号。 */
+  msgId: string;
+  /** 收发方向，用于确定收报或发报主表。 */
+  msgDirection: MessageDirection;
+  /** 业务类型，用于确定结构化业务表。 */
+  businessType: MessageBusinessType;
+}
 
 /** 报文列表允许用户触发的服务端排序字段。 */
 export type MessageSortField = 'msgDate' | 'createTime' | 'updateTime';
@@ -22,9 +59,9 @@ export interface MessageQueryConditions {
   /** 业务类型：BUSINESS_TYPE；交易标识、金额或币种有值时必填。 */
   businessType?: MessageBusinessType;
   /** 收报状态：MSG_RECV_STATUS，仅在 IN 时提交。 */
-  msgRecvStatus?: MsgRecvStatus;
+  msgRecvStatus?: MsgRecvStatus[];
   /** 发报状态：MSG_SEND_STATUS，仅在 OU 时提交；临时枚举待后端确认。 */
-  msgSendStatus?: MsgSendStatus;
+  msgSendStatus?: MsgSendStatus[];
   /** 收发日期起点：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE，由必填方向确定主表。 */
   msgDateFrom?: string;
   /** 收发日期终点：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE，包含边界。 */
@@ -49,6 +86,8 @@ export interface MessageQueryConditions {
   msgOwnerDept?: string;
   /** 报文归属组：MSG_OWNER_GROUP。 */
   msgOwnerGroup?: string;
+  /** 发报来源系统：OU.FROM_SYSTEM，仅在 OU 时提交。 */
+  fromSystem?: string;
   /** 主报文编号：MAIN_MSG_ID。 */
   mainMsgId?: string;
   /** 关联流水号：MSG_RELATED_ID。 */
@@ -76,20 +115,3 @@ export interface PagedMessages extends Pagination {
   /** 当前页报文列表。 */
   list: MessageRecord[];
 }
-
-/** 按筛选、分页和远程排序条件查询报文。 */
-export const getMessages = (params: MessageQuery) => post<PagedMessages>(`${MESSAGE_API}/query`, params);
-
-/** 查询指定报文的基本信息和结构化字段值。 */
-export const getMessage = (msgId: string) => get<MessageDetail>(`${MESSAGE_API}/${encodeURIComponent(msgId)}`);
-
-/** 异步加载原始报文文本，不阻塞基本明细。 */
-export const getMessageRaw = (msgId: string) => get<MessageRaw>(`${MESSAGE_API}/${encodeURIComponent(msgId)}/raw`);
-
-/** 异步加载指定报文的处理轨迹。 */
-export const getMessageProcessingRecords = (msgId: string) =>
-  get<MessageAuditTrailRecord[]>(`${MESSAGE_API}/${encodeURIComponent(msgId)}/processing-records`);
-
-/** 异步加载与指定报文处于同一业务链路的关联报文。 */
-export const getRelatedMessages = (msgId: string) =>
-  get<MessageRecord[]>(`${MESSAGE_API}/${encodeURIComponent(msgId)}/related-messages`);

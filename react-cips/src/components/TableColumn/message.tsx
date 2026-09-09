@@ -1,4 +1,3 @@
-import { Tag } from 'antd';
 import type { TableColumnType } from 'antd';
 import type { LcwRecord, MessageRecord } from '@/types';
 import {
@@ -16,14 +15,6 @@ import {
 import { renderMessageAmount, renderMessageDate, renderMessageDateTime, renderMessageText } from './messageColumnUtil';
 
 // 字段顺序与报文列表的默认列顺序一致。
-
-const LCW_STATUS_COLORS: Partial<Record<LcwInitialStatus, string>> = {
-  [LcwInitialStatus.Timeout]: 'orange',
-  [LcwInitialStatus.Unavailable]: 'red',
-  [LcwInitialStatus.DataMissing]: 'gold',
-  [LcwInitialStatus.InvocationFailed]: 'red',
-  [LcwInitialStatus.ManualRetry]: 'blue',
-};
 
 /** 报文标识号：MSG_ID */
 export const msgId = {
@@ -204,9 +195,7 @@ export const lcwInitialStatus = {
   title: 'LCW Status',
   dataIndex: 'lcwInitialStatus',
   width: 210,
-  render: (value: LcwInitialStatus) => (
-    <Tag color={LCW_STATUS_COLORS[value]}>{LCW_INITIAL_STATUS_LABELS[value] ?? renderMessageText(value)}</Tag>
-  ),
+  render: (value: LcwInitialStatus) => LCW_INITIAL_STATUS_LABELS[value] ?? renderMessageText(value),
 };
 
 /** LCW 接口失败信息：RES_CODE / RES_MESSAGE */
@@ -224,7 +213,6 @@ export const lcwInitialTime = {
   title: 'Exception Time',
   dataIndex: 'lcwInitialTime',
   width: 180,
-  sorter: true,
   render: renderMessageDateTime,
 };
 

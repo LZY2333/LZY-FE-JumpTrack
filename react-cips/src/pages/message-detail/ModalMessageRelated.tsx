@@ -1,6 +1,8 @@
 import { Alert, Card, Modal, Spin } from 'antd';
 import type { MessageDetail } from '@/types';
 import { MessageBusinessType } from '@/types/enums';
+import type { MessageDirection } from '@/types/enums';
+import CardCollapse from '@/components/CardCollapse';
 import MessageSchemaForm from '@/components/MessageSchemaForm';
 import { getMessageSchema, messageBasicInfoSchema } from '@/schemas/messages';
 import useMessageDetail from './useMessageDetail';
@@ -9,6 +11,10 @@ import { resolveDisplayMessageId, toMessageBasicFormData } from './util';
 interface ModalMessageRelatedProps {
   /** 要展示的关联报文标识号。 */
   messageId: string;
+  /** 关联报文收发方向。 */
+  msgDirection: MessageDirection;
+  /** 关联报文业务类型。 */
+  businessType: MessageBusinessType;
   /** 控制弹窗显示状态。 */
   open: boolean;
   /** 关闭弹窗并清理当前选择。 */
@@ -33,8 +39,8 @@ interface MessageBusinessInfoPanelProps extends MessageBusinessContentProps {
 }
 
 /** 关联报文简化明细弹窗：展示基础信息和结构化业务信息。 */
-const ModalMessageRelated = ({ messageId, open, onClose }: ModalMessageRelatedProps) => {
-  const { detail, detailError } = useMessageDetail(messageId);
+const ModalMessageRelated = ({ messageId, msgDirection, businessType, open, onClose }: ModalMessageRelatedProps) => {
+  const { detail, detailError } = useMessageDetail(messageId, msgDirection, businessType);
 
   return (
     <Modal
@@ -63,13 +69,13 @@ const ModalMessageRelated = ({ messageId, open, onClose }: ModalMessageRelatedPr
 
 /** 基础信息面板：使用禁用 Input 保留表单形态和字段边界。 */
 export const MessageBasicInfoPanel = ({ detail, className }: MessageBasicInfoPanelProps) => (
-  <Card className={className} size='small' title='Basic Information'>
+  <CardCollapse className={className} size='small' title='Basic Information'>
     <MessageSchemaForm
       schema={messageBasicInfoSchema}
-      values={detail ? toMessageBasicFormData(detail) : {}}
+      values={detail ? toMessageBasicFormData(detail.msgBasicInfo) : {}}
       pattern='disabled'
     />
-  </Card>
+  </CardCollapse>
 );
 
 /** 业务信息面板：供弹窗等无 Tab 容器的简化明细复用。 */
@@ -81,7 +87,7 @@ export const MessageBusinessInfoPanel = ({ detail, className }: MessageBusinessI
 
 /** 业务信息内容：按 BUSINESS_TYPE 选择对应类型信息表和属性表 Schema。 */
 export const MessageBusinessContent = ({ detail }: MessageBusinessContentProps) => {
-  if (detail?.businessType === MessageBusinessType.Other) {
+  if (detail?.msgBasicInfo.businessType === MessageBusinessType.Other) {
     return (
       <Alert
         type='info'
@@ -90,7 +96,7 @@ export const MessageBusinessContent = ({ detail }: MessageBusinessContentProps) 
       />
     );
   }
-  const schema = getMessageSchema(detail?.businessType);
+  const schema = getMessageSchema(detail?.msgBasicInfo.businessType);
   if (!schema) {
     return (
       <Alert
@@ -100,7 +106,7 @@ export const MessageBusinessContent = ({ detail }: MessageBusinessContentProps) 
       />
     );
   }
-  return <MessageSchemaForm schema={schema} values={detail?.formData ?? {}} pattern='disabled' />;
+  return <MessageSchemaForm schema={schema} values={detail ? { ...detail } : {}} pattern='disabled' />;
 };
 
 export default ModalMessageRelated;

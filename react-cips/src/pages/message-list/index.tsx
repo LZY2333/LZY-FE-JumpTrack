@@ -21,7 +21,7 @@ import {
   TranIdFilter,
   MessageAmountCurrencyFilter,
   MessageChannelFilter,
-  MessageOwnerByFilter,
+  MessageOwnerFilter,
   MainMessageIdFilter,
   RelatedMessageIdFilter,
   EndToEndMessageIdFilter,
@@ -105,7 +105,13 @@ const MessageList = () => {
   };
 
   const openDetail = (record: MessageRecord) =>
-    navigate(generatePath(RoutePath.MessageDetail, { messageId: encodeURIComponent(record.msgId) }));
+    navigate(
+      generatePath(RoutePath.MessageDetail, {
+        msgId: encodeURIComponent(record.msgId),
+        msgDirection: record.msgDirection,
+        businessType: record.businessType,
+      }),
+    );
 
   const columns: TableColumnsType<MessageRecord> = [
     msgId,
@@ -184,7 +190,7 @@ const MessageList = () => {
             <MessageChannelFilter />
           </Col>
           <Col span={8}>
-            <MessageOwnerByFilter />
+            <MessageOwnerFilter />
           </Col>
           <Col span={8}>
             <MainMessageIdFilter />
@@ -201,7 +207,12 @@ const MessageList = () => {
         </Row>
         <Row gutter={[16, 8]} className='mt-2'>
           <Col span={8} className='ml-auto flex items-center justify-end'>
-            <Button size='small' type='link' onClick={() => setAdvancedVisible((visible) => !visible)}>
+            <Button
+              size='small'
+              color='primary'
+              variant='link'
+              onClick={() => setAdvancedVisible((visible) => !visible)}
+            >
               More Filters
               <DownOutlined
                 className={`transition-transform duration-200 motion-reduce:transition-none ${

@@ -5,12 +5,9 @@ import { App as AntdApp, Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import type { LcwRecord } from '@/types';
-import { MessageDirection, SortOrder } from '@/types/enums';
 import { RoutePath } from '@/router/paths';
 import ResizableTable from '@/components/ResizableTable';
 import {
-  LcwInitialStatusFilter,
-  LcwResponseCodeFilter,
   MessageChannelFilter,
   MessageDateRangeFilter,
   MessageDirectionFilter,
@@ -26,18 +23,16 @@ import {
   msgId,
 } from '@/components/TableColumn';
 import useLcwList, { LCW_PAGE_SIZE_OPTIONS } from './useLcwList';
-import { isLcwSortField, type LcwListFilterValues } from './lcwListUtil';
+import { buildDefaultLcwFilters, type LcwListFilterValues } from './lcwListUtil';
 
 // 页面边距 48 + Card 内边距与边框 26 + Card 标题 38 + 表单 88（两行筛选 56 + 按钮上间距 8 + 按钮 24）
 // + 表单下间距 16 + 表头 42 + 分页间距 16 + 分页器 24 = 298px。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 298px)';
-const DEFAULT_FILTER_VALUES: LcwListFilterValues = {
-  msgDirection: MessageDirection.In,
-};
+const DEFAULT_FILTER_VALUES = buildDefaultLcwFilters();
 const columns: TableColumnsType<LcwRecord> = [
   msgId,
   msgDirection,
-  msgDate,
+  { ...msgDate, sorter: false },
   msgChannel,
   lcwInitialStatus,
   lcwFailureInfo,
@@ -59,7 +54,6 @@ const LcwList = () => {
     pageSize,
     setCurrent,
     setPageSize,
-    setSort,
     query,
     reset,
     retry,
@@ -74,19 +68,6 @@ const LcwList = () => {
     form.resetFields();
     setSelectedRowKeys([]);
     reset();
-  };
-
-  const handleTableChange: NonNullable<TableProps<LcwRecord>['onChange']> = (...args) => {
-    const [, , sorter, extra] = args;
-    if (extra.action !== 'sort') return;
-
-    const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
-    const field = typeof activeSorter.field === 'string' ? activeSorter.field : undefined;
-    let order: SortOrder | undefined;
-    if (activeSorter.order === 'ascend') order = SortOrder.Ascend;
-    if (activeSorter.order === 'descend') order = SortOrder.Descend;
-    setSelectedRowKeys([]);
-    setSort(isLcwSortField(field) ? field : undefined, order);
   };
 
   const handleRetrySelected = () => {
@@ -110,7 +91,13 @@ const LcwList = () => {
   };
 
   const openMessageDetail = (record: LcwRecord) =>
-    navigate(generatePath(RoutePath.MessageDetail, { messageId: encodeURIComponent(record.msgId) }));
+    navigate(
+      generatePath(RoutePath.MessageDetail, {
+        msgId: encodeURIComponent(record.msgId),
+        msgDirection: record.msgDirection,
+        businessType: record.businessType,
+      }),
+    );
 
   const rowSelection: NonNullable<TableProps<LcwRecord>['rowSelection']> = {
     selectedRowKeys,
@@ -145,12 +132,6 @@ const LcwList = () => {
           </Col>
           <Col span={8}>
             <MessageIdFilter />
-          </Col>
-          <Col span={8}>
-            <LcwInitialStatusFilter />
-          </Col>
-          <Col span={8}>
-            <LcwResponseCodeFilter />
           </Col>
         </Row>
         <Row gutter={[16, 8]} className='mt-2'>
@@ -187,7 +168,6 @@ const LcwList = () => {
         dataSource={records}
         loading={loading}
         locale={{ emptyText: 'No LCW tasks found' }}
-        onChange={handleTableChange}
         onRow={(record) => ({ onDoubleClick: () => openMessageDetail(record), className: 'cursor-pointer' })}
         scroll={{ y: DEFAULT_TABLE_BODY_HEIGHT }}
         pagination={{

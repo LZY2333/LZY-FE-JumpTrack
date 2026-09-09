@@ -1,11 +1,12 @@
-import type {
-  LcwBatchRetryRequest,
-  LcwQuery,
-  LcwSortField,
-  PagedLcwRecords,
-} from '@/api/lcw';
+import type { LcwBatchRetryRequest, LcwQuery, PagedLcwRecords } from '@/api/lcw';
 import type { LcwRecord } from '@/types';
-import { LcwInitialStatus, MessageChannel, MessageDirection, QuerySortOrder, ResCode } from '@/types/enums';
+import {
+  LcwInitialStatus,
+  MessageBusinessType,
+  MessageChannel,
+  MessageDirection,
+  ResCode,
+} from '@/types/enums';
 
 interface MockRequestOption<Body> {
   /** vite-plugin-mock 解析后的 JSON 请求体。 */
@@ -20,8 +21,7 @@ interface MockStatusDetail {
 }
 
 const MOCK_RECORD_COUNT = 28;
-const MOCK_BASE_TIME = Date.parse('2026-09-06T12:00:00.000Z');
-const SIX_HOURS_IN_MILLISECONDS = 6 * 60 * 60 * 1000;
+const MOCK_MESSAGE_ID_DATE = '20260822';
 const DEFAULT_CURRENT = 1;
 const DEFAULT_PAGE_SIZE = 10;
 const MOCK_EXCEPTION_STATUSES = [
@@ -32,6 +32,7 @@ const MOCK_EXCEPTION_STATUSES = [
 ] as const;
 const MOCK_EXCEPTION_STATUS_SET = new Set<LcwInitialStatus>(MOCK_EXCEPTION_STATUSES);
 const MOCK_CHANNELS = Object.values(MessageChannel);
+const MOCK_BUSINESS_TYPES = Object.values(MessageBusinessType);
 const MOCK_STATUS_DETAILS: Record<(typeof MOCK_EXCEPTION_STATUSES)[number], MockStatusDetail> = {
   [LcwInitialStatus.Timeout]: {
     resCode: 'AML_TIMEOUT',
@@ -61,13 +62,12 @@ const handleQuery = ({ body: query }: MockRequestOption<LcwQuery>) => {
   const current = normalizePositiveInteger(query.current, DEFAULT_CURRENT);
   const pageSize = normalizePositiveInteger(query.pageSize, DEFAULT_PAGE_SIZE);
   const filteredRecords = filterRecords(getLcwRecords(), query);
-  const sortedRecords = sortRecords(filteredRecords, query.sortField, query.sortOrder);
   const pageStart = (current - 1) * pageSize;
   const body: PagedLcwRecords = {
-    list: sortedRecords.slice(pageStart, pageStart + pageSize).map(cloneRecord),
+    list: filteredRecords.slice(pageStart, pageStart + pageSize).map(cloneRecord),
     current,
     pageSize,
-    total: sortedRecords.length,
+    total: filteredRecords.length,
   };
 
   return { returnCode: ResCode.Success, body };
@@ -107,13 +107,15 @@ const createLcwRecords = (): LcwRecord[] =>
     const directionPairIndex = Math.floor(index / 2);
     const lcwInitialStatus = MOCK_EXCEPTION_STATUSES[directionPairIndex % MOCK_EXCEPTION_STATUSES.length];
     const statusDetail = MOCK_STATUS_DETAILS[lcwInitialStatus];
-    const msgDate = new Date(MOCK_BASE_TIME - index * SIX_HOURS_IN_MILLISECONDS).toISOString();
-    const dateSegment = msgDate.slice(0, 10).replace(/-/g, '');
+    const msgDate = new Date(
+      Date.UTC(2026, 7, 22 - Math.floor(index / 6), 9 + (index % 8), index % 60, 0),
+    ).toISOString();
     const sequence = String(index + 1).padStart(6, '0');
 
     return {
-      msgId: `CIPS${msgDirection}${dateSegment}${sequence}`,
+      msgId: `CIPS${msgDirection}${MOCK_MESSAGE_ID_DATE}${sequence}`,
       msgDirection,
+      businessType: MOCK_BUSINESS_TYPES[directionPairIndex % MOCK_BUSINESS_TYPES.length],
       msgDate,
       msgChannel: MOCK_CHANNELS[directionPairIndex % MOCK_CHANNELS.length],
       lcwInitialStatus,
@@ -125,30 +127,13 @@ const createLcwRecords = (): LcwRecord[] =>
 
 /** 应用 LCW 页面全部精确条件和日期闭区间。 */
 const filterRecords = (records: LcwRecord[], query: LcwQuery) => {
-  const requestedStatuses = query.lcwInitialStatuses?.length ? new Set(query.lcwInitialStatuses) : undefined;
   return records.filter((record) => {
     if (record.msgDirection !== query.msgDirection) return false;
     if (!MOCK_EXCEPTION_STATUS_SET.has(record.lcwInitialStatus)) return false;
-    if (requestedStatuses && !requestedStatuses.has(record.lcwInitialStatus)) return false;
     if (!matchesExactText(record.msgId, query.msgId)) return false;
     if (query.channel?.length && !query.channel.includes(record.msgChannel)) return false;
-    if (!matchesExactText(record.resCode, query.resCode)) return false;
     if (!matchesDateRange(record.msgDate, query.msgDateFrom, query.msgDateTo)) return false;
     return true;
-  });
-};
-
-/** 按收发报时间或异常时间排序，默认最新异常优先。 */
-const sortRecords = (
-  records: LcwRecord[],
-  sortField: LcwSortField = 'lcwInitialTime',
-  sortOrder: QuerySortOrder = QuerySortOrder.Desc,
-) => {
-  const direction = sortOrder === QuerySortOrder.Asc ? 1 : -1;
-  return [...records].sort((left, right) => {
-    const compared = compareNullableText(left[sortField], right[sortField]);
-    if (compared !== 0) return compared * direction;
-    return left.msgId.localeCompare(right.msgId);
   });
 };
 
@@ -173,14 +158,6 @@ const matchesDateRange = (actual: string | null, dateFrom?: string, dateTo?: str
   if (dateFrom && actual < dateFrom) return false;
   if (dateTo && actual > dateTo) return false;
   return true;
-};
-
-/** 可空文本排序时始终把空值放到末尾。 */
-const compareNullableText = (left: string | null, right: string | null) => {
-  if (left === right) return 0;
-  if (left === null) return 1;
-  if (right === null) return -1;
-  return left.localeCompare(right);
 };
 
 /** 分页参数异常时回退默认值。 */

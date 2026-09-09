@@ -9,6 +9,7 @@ import type { TableColumnsType } from 'antd';
 import { FormGrid, FormItem as FormilyFormItem, FormLayout, Input, PreviewText } from '@formily/antd-v5';
 import type { IFormItemProps } from '@formily/antd-v5';
 import cn from 'classnames';
+import CardCollapse from '@/components/CardCollapse';
 import { copyText } from '@/utils/fileUtil';
 
 const COPY_TARGET_SELECTOR = '.ant-formily-item-label-content, .ant-formily-item-control-content-component';
@@ -67,7 +68,7 @@ const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSc
             layout='horizontal'
             size='small'
             labelAlign='left'
-            labelWidth={112}
+            labelWidth={128}
             labelWrap={false}
             wrapperWrap={false}
             spaceGap={4}
@@ -119,14 +120,26 @@ const MessageTextArea = ({
 interface MessageSectionProps {
   /** 当前业务信息区块标题。 */
   title: string;
+  /** 是否使用可收起 Card。 */
+  collapsible?: boolean;
 }
 
 /** 带标题的业务信息区块。 */
-const MessageSection = ({ title, children }: PropsWithChildren<MessageSectionProps>) => (
-  <Card className='mb-3 last:mb-0' size='small' title={title}>
-    {children}
-  </Card>
-);
+const MessageSection = ({ title, collapsible = false, children }: PropsWithChildren<MessageSectionProps>) => {
+  if (collapsible) {
+    return (
+      <CardCollapse className='mb-3 last:mb-0' size='small' title={title}>
+        {children}
+      </CardCollapse>
+    );
+  }
+
+  return (
+    <Card className='mb-3 last:mb-0' size='small' title={title}>
+      {children}
+    </Card>
+  );
+};
 
 interface MessageBusinessTableColumn {
   /** 数据库字段对应的 camelCase 属性名。 */
@@ -146,26 +159,45 @@ interface MessageBusinessTableProps {
   rowKey: string;
   /** 子表字段列定义。 */
   columns: MessageBusinessTableColumn[];
+  /** 是否使用可收起 Card。 */
+  collapsible?: boolean;
 }
 
 /** 一对多业务属性表，保持数据库字段列顺序并提供横向滚动。 */
-const MessageBusinessTable = ({ value = [], title, rowKey, columns }: MessageBusinessTableProps) => {
+const MessageBusinessTable = ({
+  value = [],
+  title,
+  rowKey,
+  columns,
+  collapsible = false,
+}: MessageBusinessTableProps) => {
   const tableColumns: TableColumnsType<Record<string, unknown>> = columns.map((column) => ({
     ...column,
     render: renderBusinessTableCell,
   }));
+  const table = (
+    <Table<Record<string, unknown>>
+      bordered
+      size='small'
+      rowKey={(record, index) => String(record[rowKey] ?? index)}
+      columns={tableColumns}
+      dataSource={value}
+      pagination={false}
+      scroll={{ x: 'max-content' }}
+    />
+  );
+
+  if (collapsible) {
+    return (
+      <CardCollapse className='mb-3 last:mb-0' size='small' title={title}>
+        {table}
+      </CardCollapse>
+    );
+  }
 
   return (
     <Card className='mb-3 last:mb-0' size='small' title={title}>
-      <Table<Record<string, unknown>>
-        bordered
-        size='small'
-        rowKey={(record, index) => String(record[rowKey] ?? index)}
-        columns={tableColumns}
-        dataSource={value}
-        pagination={false}
-        scroll={{ x: 'max-content' }}
-      />
+      {table}
     </Card>
   );
 };

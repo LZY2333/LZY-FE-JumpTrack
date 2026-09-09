@@ -5,7 +5,8 @@
       "type": "object",
       "x-component": "MessageSection",
       "x-component-props": {
-        "title": "Payment Information"
+        "title": "Payment Information",
+        "collapsible": true
       },
       "properties": {
         "paymentGrid": {
@@ -202,6 +203,7 @@
       "x-component": "MessageBusinessTable",
       "x-component-props": {
         "title": "Payment Parties",
+        "collapsible": true,
         "rowKey": "partyType",
         "columns": [
           {

@@ -3,25 +3,6 @@ import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import { ResCode } from '@/types/enums';
 
-// 后端响应体DTO
-export interface ApiResult<T = unknown> {
-  /** 状态码,SUC0000为成功,其他为失败 */
-  returnCode: string;
-  /** 返回数据，含分页信息(如果有)；无响应数据时可能缺省或为 null */
-  body?: T;
-  /** 异常信息 */
-  errorMsg?: string;
-}
-
-export interface Pagination {
-  /** 当前页码 */
-  current: number;
-  /** 页容量 */
-  pageSize: number;
-  /** 总数 */
-  total: number;
-}
-
 const request = axios.create({
   timeout: import.meta.env.DEV ? 0 : 20000,
 });
@@ -58,3 +39,22 @@ export const post = <T>(url: string, data?: unknown) =>
   request.post<ApiResult<T>, ApiResult<T>>(url, data).then((res) => res.body);
 
 export default request;
+
+// 后端响应体 DTO。
+export interface ApiResult<T = unknown> {
+  /** 状态码,SUC0000为成功,其他为失败 */
+  returnCode: string;
+  /** 返回数据，含分页信息(如果有)；无响应数据时可能缺省或为 null */
+  body?: T;
+  /** 异常信息 */
+  errorMsg?: string;
+}
+
+export interface Pagination {
+  /** 当前页码 */
+  current: number;
+  /** 页容量 */
+  pageSize: number;
+  /** 总数 */
+  total: number;
+}

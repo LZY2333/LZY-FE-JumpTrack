@@ -2,6 +2,6 @@
 export enum RoutePath {
   Root = '/',
   MessageList = '/messages',
-  MessageDetail = '/messages/:messageId',
+  MessageDetail = '/messages/:msgDirection/:businessType/:msgId',
   LcwList = '/lcw',
 }

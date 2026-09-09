@@ -1,12 +1,18 @@
 import type { Pagination } from './request';
 import { post } from './request';
 import type { LcwRecord } from '@/types';
-import type { LcwInitialStatus, MessageChannel, MessageDirection, QuerySortOrder } from '@/types/enums';
+import type { MessageChannel, MessageDirection } from '@/types/enums';
 
-const LCW_PATCH_STATUS_API = '/cips/amlPatchStatus';
+/** LCW 接口基础 URL。 */
+export const API_BASE_LCW = '/cips/amlPatchStatus';
 
-/** LCW 列表服务端排序字段。 */
-export type LcwSortField = 'msgDate' | 'lcwInitialTime';
+/** 查询 LCW 任务 list。 */
+export const API_LCW_TASK_QUERY = `${API_BASE_LCW}/getAmlMsgByInitialStatus`;
+export const getLcwTasks = (params: LcwQuery) => post<PagedLcwRecords>(API_LCW_TASK_QUERY, params);
+
+/** 重试 LCW 任务。 */
+export const API_LCW_TASK_RETRY = `${API_BASE_LCW}/pushPatchAmlMsgByMsgid`;
+export const retryLcwTasks = (request: LcwBatchRetryRequest) => post<undefined>(API_LCW_TASK_RETRY, request);
 
 /** LCW 列表查询条件。 */
 export interface LcwQueryConditions {
@@ -20,14 +26,6 @@ export interface LcwQueryConditions {
   msgId?: string;
   /** 收发报通道。 */
   channel?: MessageChannel[];
-  /** 需要查询的 LCW 初次判定状态。 */
-  lcwInitialStatuses?: LcwInitialStatus[];
-  /** LCW 接口响应编码。 */
-  resCode?: string;
-  /** 服务端排序字段。 */
-  sortField?: LcwSortField;
-  /** 服务端排序方向。 */
-  sortOrder?: QuerySortOrder;
 }
 
 /** LCW 列表分页查询请求。 */
@@ -49,11 +47,3 @@ export interface LcwBatchRetryRequest {
   /** 去重后的报文标识号。 */
   msgIds: string[];
 }
-
-/** 分页查询 LCW 任务。 */
-export const getLcwTasks = (params: LcwQuery) =>
-  post<PagedLcwRecords>(`${LCW_PATCH_STATUS_API}/getAmlMsgByInitialStatus`, params);
-
-/** 批量提交 LCW 任务重试。 */
-export const retryLcwTasks = (request: LcwBatchRetryRequest) =>
-  post<undefined>(`${LCW_PATCH_STATUS_API}/pushPatchAmlMsgByMsgid`, request);

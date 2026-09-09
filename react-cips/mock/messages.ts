@@ -14,6 +14,7 @@ const SEND_INSTS = ['CMBCCNBJ', 'ICBKCNBJ', 'PCBCCNBJ', 'ABOCCNBJ'];
 const RECV_INSTS = ['WUBAHKHH', 'BKCHCNBJ', 'CITIUS33', 'HSBCHKHH'];
 const MSG_OWNER_DEPTS = ['CIPS-OPS', 'PAYMENT-OPS', 'TREASURY', 'COMPLIANCE'];
 const MSG_OWNER_GROUPS = ['GROUP-A', 'GROUP-B', 'GROUP-C'];
+const FROM_SYSTEMS = ['PAYMENT-HUB', 'TREASURY-HUB', 'SWIFT-GATEWAY'];
 const MSG_RECV_STATUSES = Object.values(MsgRecvStatus);
 // 发报状态采用前端临时枚举，等待正式后端代码表确认。
 const MSG_SEND_STATUSES = Object.values(MsgSendStatus);
@@ -30,17 +31,18 @@ const createMessageId = (index: number) => {
 };
 
 // 一条记录代表一份物理报文；固定 40 条便于验证分页、筛选、排序和空值展示。
-interface MockMessageDetail extends MessageDetail {
-  /** 原文中的机构信息，只用于生成原始 XML，不进入查询或详情响应。 */
-  rawInstitutions: {
-    /** 原文发起机构。 */
-    sender: string;
-    /** 原文接收机构。 */
-    receiver: string;
+type MockMessageDetail = MessageRecord &
+  Omit<MessageDetail, 'msgBasicInfo'> & {
+    /** 原文中的机构信息，只用于生成原始 XML，不进入查询或详情响应。 */
+    rawInstitutions: {
+      /** 原文发起机构。 */
+      sender: string;
+      /** 原文接收机构。 */
+      receiver: string;
+    };
+    /** 报文处理轨迹。 */
+    processingRecords: MessageAuditTrailRecord[];
   };
-  /** 报文处理轨迹。 */
-  processingRecords: MessageAuditTrailRecord[];
-}
 
 const messages: MockMessageDetail[] = Array.from({ length: MESSAGE_COUNT }, (_, index) => createMessage(index));
 
@@ -49,9 +51,8 @@ function createMessage(index: number): MockMessageDetail {
   const sequence = String(index + 1).padStart(6, '0');
   const msgDirection = choose(index % 2 === 0, MessageDirection.In, MessageDirection.Out);
   const typeIndex = Math.floor(index / 2) % MESSAGE_BUSINESS_TYPES.length;
-  // 保留尚未分类的记录，验证未指定业务类型时不会遗漏这类报文。
-  const businessType = choose(index >= MESSAGE_COUNT - 2, null, MESSAGE_BUSINESS_TYPES[typeIndex]);
-  const msgType = choose(businessType === null, '', MESSAGE_TYPES[typeIndex]);
+  const businessType = MESSAGE_BUSINESS_TYPES[typeIndex];
+  const msgType = MESSAGE_TYPES[typeIndex];
   const relatedGroupStartIndex = index - (index % RELATED_MESSAGE_GROUP_SIZE);
   const relatedMessageIndex = index === relatedGroupStartIndex ? index + 1 : relatedGroupStartIndex;
   const messageTime = new Date(
@@ -78,6 +79,7 @@ function createMessage(index: number): MockMessageDetail {
     tranId: choose(hasPaymentDetail, `REF20-${sequence}`, null),
     msgOwnerDept: choose(received, MSG_OWNER_DEPTS[index % MSG_OWNER_DEPTS.length], null),
     msgOwnerGroup: choose(received, MSG_OWNER_GROUPS[index % MSG_OWNER_GROUPS.length], null),
+    fromSystem: choose(received, null, FROM_SYSTEMS[index % FROM_SYSTEMS.length]),
     nonStpReason: choose(index % 4 === 0, 'Manual processing required', null),
     msgRelatedId: createMessageId(relatedMessageIndex),
     msgEndId: choose(index % 3 === 0, `E2E20260822${sequence}`, null),
@@ -96,7 +98,7 @@ function createMessage(index: number): MockMessageDetail {
     authorBrno: choose(index % 4 === 0, null, 'SYSTEM'),
     createTime: messageTime,
     updateTime: new Date(Date.parse(messageTime) + 90_000).toISOString(),
-    formData: createFormData({ index, msgId, businessType, messageTime }),
+    ...createBusinessData({ index, msgId, businessType, messageTime }),
     processingRecords: [
       {
         logId: `LOGS20260822${String(index * 3 + 1).padStart(6, '0')}`,
@@ -138,15 +140,20 @@ function createMessage(index: number): MockMessageDetail {
   };
 }
 
-interface MockFormDataContext {
+interface MockBusinessDataContext {
   index: number;
   msgId: string;
-  businessType: MessageBusinessType | null;
+  businessType: MessageBusinessType;
   messageTime: string;
 }
 
 /** 按 BUSINESS_TYPE 生成与数据库类型信息表、属性表一一对应的结构化值。 */
-function createFormData({ index, msgId, businessType, messageTime }: MockFormDataContext): Record<string, unknown> {
+function createBusinessData({
+  index,
+  msgId,
+  businessType,
+  messageTime,
+}: MockBusinessDataContext): Omit<MessageDetail, 'msgBasicInfo'> {
   const sequence = String(index + 1).padStart(8, '0');
   const amount = Number((1000 + index * 238.75).toFixed(2));
   const businessDate = messageTime.slice(0, 10);
@@ -158,10 +165,19 @@ function createFormData({ index, msgId, businessType, messageTime }: MockFormDat
     createTime: messageTime,
     updateTime: new Date(Date.parse(messageTime) + 90_000).toISOString(),
   };
+  const emptyBusinessData: Omit<MessageDetail, 'msgBasicInfo'> = {
+    paymentInfo: null,
+    paymentParties: [],
+    billInfo: null,
+    billDetails: null,
+    queryInfo: null,
+    queryGpi: null,
+  };
 
   switch (businessType) {
     case MessageBusinessType.Query:
       return {
+        ...emptyBusinessData,
         queryInfo: {
           content: `Query / response content for ${msgId}`,
           ...auditFields,
@@ -186,11 +202,12 @@ function createFormData({ index, msgId, businessType, messageTime }: MockFormDat
             gpiChargeFee: '10.00',
             createTime: messageTime,
           },
-          undefined,
+          null,
         ),
       };
     case MessageBusinessType.Bill:
       return {
+        ...emptyBusinessData,
         billInfo: {
           billSec: choose(index % 2 === 0, 'CIPS_01', 'CIPS_02'),
           billAccount: `CIPS-ACCT-${String(100000 + index)}`,
@@ -203,19 +220,20 @@ function createFormData({ index, msgId, businessType, messageTime }: MockFormDat
           debitAmount: (amount * 0.7).toFixed(2),
           createTime: messageTime,
         },
-        billDetails: [0, 1].map((detailIndex) => ({
-          txnRef: `BILL-TXN-${sequence}-${detailIndex + 1}`,
-          seqNo: String(detailIndex + 1),
-          remitBankBic: SEND_INSTS[(index + detailIndex) % SEND_INSTS.length],
+        billDetails: {
+          txnRef: `BILL-TXN-${sequence}`,
+          seqNo: '1',
+          remitBankBic: SEND_INSTS[index % SEND_INSTS.length],
           remitCcy: 'CNY',
-          remitAmt: (amount + detailIndex * 100).toFixed(2),
-          creditType: choose(detailIndex === 0, 'C', 'D'),
+          remitAmt: amount.toFixed(2),
+          creditType: choose(index % 2 === 0, 'C', 'D'),
           valueDate: businessDate,
           createTime: messageTime,
-        })),
+        },
       };
     case MessageBusinessType.Payment:
       return {
+        ...emptyBusinessData,
         paymentInfo: {
           settlementMethod: choose(index % 2 === 0, 'CLRG', 'INDA'),
           categoryPurpose: 'SUPP',
@@ -296,7 +314,7 @@ function createFormData({ index, msgId, businessType, messageTime }: MockFormDat
         ],
       };
     default:
-      return {};
+      return emptyBusinessData;
   }
 }
 
@@ -334,6 +352,7 @@ const filterMessages = (query: Partial<MessageQueryConditions>) => {
   list = filterByDirectionStatus(list, query);
   list = filterByText(list, 'msgOwnerDept', query.msgOwnerDept);
   list = filterByText(list, 'msgOwnerGroup', query.msgOwnerGroup);
+  list = filterByText(list, 'fromSystem', query.fromSystem);
   list = filterByAmountRange(list, query.amountFrom, query.amountTo);
   list = filterByDateRange(list, query.msgDateFrom, query.msgDateTo);
 
@@ -348,15 +367,19 @@ const filterMessages = (query: Partial<MessageQueryConditions>) => {
 const filterByDirectionStatus = (records: MockMessageDetail[], query: Partial<MessageQueryConditions>) =>
   records.filter((record) => {
     const received = record.msgDirection === MessageDirection.In;
-    const expected = received ? query.msgRecvStatus : query.msgSendStatus;
-    if (!expected) return true;
+    const expectedStatuses = received ? query.msgRecvStatus : query.msgSendStatus;
+    if (!expectedStatuses?.length) return true;
 
     const actual = received ? record.msgRecvStatus : record.msgSendStatus;
-    return actual?.toLowerCase() === expected.toLowerCase();
+    return actual ? expectedStatuses.some((status) => status.toLowerCase() === actual.toLowerCase()) : false;
   });
 
 /** 对指定文本字段执行不区分大小写的包含查询。 */
-const filterByText = (records: MockMessageDetail[], field: 'msgOwnerDept' | 'msgOwnerGroup', keyword?: string) => {
+const filterByText = (
+  records: MockMessageDetail[],
+  field: 'msgOwnerDept' | 'msgOwnerGroup' | 'fromSystem',
+  keyword?: string,
+) => {
   if (!keyword) return records;
 
   const normalized = keyword.toLowerCase();
@@ -396,24 +419,22 @@ const lastPathSegment = (url: string) => {
   return decodeURIComponent(segments[segments.length - 1] || '');
 };
 
-const messageIdBeforeAction = (url = '') => {
+/** 从详情接口 URL 末尾读取方向、业务类型和报文号。 */
+const messageDetailParams = (url: string) => {
   const segments = url.split('?')[0].split('/').filter(Boolean);
-  return decodeURIComponent(segments[segments.length - 2] || '');
+  const [msgDirection = '', businessType = '', msgId = ''] = segments.slice(-3).map(decodeURIComponent);
+  return { msgDirection, businessType, msgId };
 };
 
 const findMessage = (msgId: string) => messages.find((record) => record.msgId === msgId);
 
-/** 根据报文号、主报文号和关联流水号的交集查找同一业务链路中的其他报文。 */
-const findRelatedMessages = (record: MessageRecord) => {
-  const relationKeys = new Set(messageRelationKeys(record));
-  return messages.filter(
-    (candidate) =>
-      candidate.msgId !== record.msgId && messageRelationKeys(candidate).some((key) => relationKeys.has(key)),
+/** 按详情接口的三个必填定位参数查找报文。 */
+const findMessageDetail = (url: string) => {
+  const { msgDirection, businessType, msgId } = messageDetailParams(url);
+  return messages.find(
+    (record) => record.msgId === msgId && record.msgDirection === msgDirection && record.businessType === businessType,
   );
 };
-
-const messageRelationKeys = ({ msgId, mainMsgId, msgRelatedId }: MessageRecord) =>
-  [msgId, mainMsgId, msgRelatedId].filter((value): value is string => Boolean(value));
 
 const cloneMessage = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
@@ -438,8 +459,8 @@ const findPaymentParty = (parties: Array<Record<string, unknown>>, partyType: st
 const toXmlText = (value: unknown) => escapeXml(String(value ?? ''));
 
 const createRawXml = (message: MockMessageDetail) => {
-  const paymentInfo = asBusinessRecord(message.formData.paymentInfo);
-  const paymentParties = asBusinessRecords(message.formData.paymentParties);
+  const paymentInfo = asBusinessRecord(message.paymentInfo);
+  const paymentParties = asBusinessRecords(message.paymentParties);
   const debtor = findPaymentParty(paymentParties, 'DBTR');
   const creditor = findPaymentParty(paymentParties, 'CDTR');
 
@@ -467,7 +488,7 @@ const createRawXml = (message: MockMessageDetail) => {
 };
 
 /** 原文创建时间优先取方向对应的业务日期，再回退记录创建时间。 */
-const resolveMessageCreationTime = ({ msgDate, createTime }: MessageDetail) => msgDate || createTime;
+const resolveMessageCreationTime = ({ msgDate, createTime }: MessageRecord) => msgDate || createTime;
 
 const escapeXml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -499,36 +520,21 @@ export default [
     },
   },
   {
-    url: '/api/example/v1/messages/:messageId/processing-records',
+    url: '/api/example/v1/messages/processing-records/:msgId',
     method: 'get',
     timeout: 500,
     response: (option: { url: string }) => {
-      const msgId = messageIdBeforeAction(option.url);
+      const msgId = lastPathSegment(option.url);
       const record = findMessage(msgId);
       return record ? { returnCode: ResCode.Success, body: cloneMessage(record.processingRecords) } : notFound(msgId);
     },
   },
   {
-    url: '/api/example/v1/messages/:messageId/related-messages',
-    method: 'get',
-    timeout: 500,
-    response: (option: { url: string }) => {
-      const msgId = messageIdBeforeAction(option.url);
-      const record = findMessage(msgId);
-      return record
-        ? {
-            returnCode: ResCode.Success,
-            body: cloneMessage(findRelatedMessages(record).map(stripDetail)),
-          }
-        : notFound(msgId);
-    },
-  },
-  {
-    url: '/api/example/v1/messages/:messageId/raw',
+    url: '/api/example/v1/messages/raw/:msgId',
     method: 'get',
     timeout: 800,
     response: (option: { url: string }) => {
-      const msgId = messageIdBeforeAction(option.url);
+      const msgId = lastPathSegment(option.url);
       const record = findMessage(msgId);
       return record
         ? {
@@ -539,28 +545,36 @@ export default [
     },
   },
   {
-    url: '/api/example/v1/messages/:messageId',
+    url: '/api/example/v1/messages/:msgDirection/:businessType/:msgId',
     method: 'get',
     timeout: 300,
     response: (option: { url: string }) => {
       const msgId = lastPathSegment(option.url);
-      const record = findMessage(msgId);
-      return record
-        ? { returnCode: ResCode.Success, body: cloneMessage(stripProcessingRecords(record)) }
-        : notFound(msgId);
+      const record = findMessageDetail(option.url);
+      return record ? { returnCode: ResCode.Success, body: cloneMessage(toMessageDetail(record)) } : notFound(msgId);
     },
   },
 ];
 
 const stripDetail = ({
   rawInstitutions: _rawInstitutions,
-  formData: _formData,
   processingRecords: _processingRecords,
+  paymentInfo: _paymentInfo,
+  paymentParties: _paymentParties,
+  billInfo: _billInfo,
+  billDetails: _billDetails,
+  queryInfo: _queryInfo,
+  queryGpi: _queryGpi,
   ...record
 }: MockMessageDetail): MessageRecord => record;
 
-const stripProcessingRecords = ({
-  rawInstitutions: _rawInstitutions,
-  processingRecords: _processingRecords,
-  ...detail
-}: MockMessageDetail): MessageDetail => detail;
+/** 组装详情响应，七个数据库实体节点直接位于 body 下。 */
+const toMessageDetail = (record: MockMessageDetail): MessageDetail => ({
+  msgBasicInfo: stripDetail(record),
+  paymentInfo: record.paymentInfo,
+  paymentParties: record.paymentParties,
+  billInfo: record.billInfo,
+  billDetails: record.billDetails,
+  queryInfo: record.queryInfo,
+  queryGpi: record.queryGpi,
+});

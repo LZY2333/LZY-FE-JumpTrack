@@ -123,14 +123,6 @@ export const LCW_INITIAL_STATUS_LABELS: Record<LcwInitialStatus, string> = {
   [LcwInitialStatus.ManualRetry]: 'M - Manual Retry Submitted',
 };
 
-/** LCW 列表默认查询的初次判定状态。 */
-export const LCW_STATUSES = [
-  LcwInitialStatus.Timeout,
-  LcwInitialStatus.Unavailable,
-  LcwInitialStatus.DataMissing,
-  LcwInitialStatus.InvocationFailed,
-] as const;
-
 /* ==================== 权限与响应枚举 ==================== */
 
 /** 用户角色。 */
