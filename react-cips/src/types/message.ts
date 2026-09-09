@@ -67,7 +67,7 @@ export interface MessageAuditTrailRecord {
   logId: string;
   /** REF_NO：关联报文 MSG_ID 的业务参考号。 */
   refNo: string;
-  /** TASK_ID：可选关联 Task表 的任务编号。 */
+  /** TASK_ID：可选关联任务编号。 */
   taskId: NullableText;
   /** SERVICE_MODULE：产生事件的服务模块编号。 */
   serviceModule: string;
@@ -85,24 +85,24 @@ export interface MessageAuditTrailRecord {
   createTime: string;
 }
 
-/** 单条实体表记录；字段结构由前端静态 Schema 约束。 */
+/** 单条业务实体记录；字段结构由前端静态 Schema 约束。 */
 export type MessageEntityRecord = Record<string, unknown>;
 
-/** 报文明细；基础信息和各实体表记录在响应 body 中保持同级。 */
+/** 报文明细；基础信息和各业务实体记录在响应 body 中保持同级。 */
 export interface MessageDetail {
-  /** PSSST_ENT_BASIC_INFO：报文基础信息。 */
+  /** 报文基础信息。 */
   msgBasicInfo: MessageRecord;
-  /** PSSST_ENT_PAY_INFO：支付类报文详情，非支付类为 null。 */
+  /** 支付类报文详情，非支付类为 null。 */
   paymentInfo: MessageEntityRecord | null;
-  /** PSSST_ENT_PAY_PARTY：支付交易对象，一条支付信息可对应多条记录。 */
+  /** 支付交易对象，一条支付信息可对应多条记录。 */
   paymentParties: MessageEntityRecord[];
-  /** PSSST_ENT_BILL_INFO：账单类报文信息，非账单类为 null。 */
+  /** 账单类报文信息，非账单类为 null。 */
   billInfo: MessageEntityRecord | null;
-  /** PSSST_ENT_BILL_DETAIL：账单详情，与 billInfo 一对一，非账单类为 null。 */
-  billDetails: MessageEntityRecord | null;
-  /** PSSST_ENT_QUERY_INFO：查询查复详情，非查询类为 null。 */
+  /** 账单详情，一条账单信息可对应多条记录，非账单类为空数组。 */
+  billDetails: MessageEntityRecord[];
+  /** 查询查复详情，非查询类为 null。 */
   queryInfo: MessageEntityRecord | null;
-  /** PSSST_ENT_QUERY_GPI：GPI 属性，与 queryInfo 一对一；无 GPI 数据时为 null。 */
+  /** GPI 属性，与查询查复详情一对一；无 GPI 数据时为 null。 */
   queryGpi: MessageEntityRecord | null;
 }
 

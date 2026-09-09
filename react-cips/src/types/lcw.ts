@@ -6,7 +6,7 @@ export interface LcwRecord {
   msgId: string;
   /** 报文收发标志：MSG_DIRECTION。 */
   msgDirection: MessageDirection;
-  /** 业务类型：PSSST_ENT_BASIC_INFO.BUSINESS_TYPE，用于打开可刷新的详情地址。 */
+  /** 报文业务类型，用于打开可刷新的详情地址。 */
   businessType: MessageBusinessType;
   /** 收发报时间：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE。 */
   msgDate: string | null;

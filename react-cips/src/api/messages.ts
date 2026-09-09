@@ -18,12 +18,12 @@ export const API_MESSAGE_QUERY = `${API_BASE_MESSAGE}/query`;
 export const getMessages = (params: MessageQuery) => post<PagedMessages>(API_MESSAGE_QUERY, params);
 
 /** 查询报文明细。 */
-export const API_MESSAGE_DETAIL = `${API_BASE_MESSAGE}/:msgDirection/:businessType/:msgId`;
+export const API_MESSAGE_DETAIL = `${API_BASE_MESSAGE}/detail/:msgDirection/:businessType/:msgId`;
 export const getMessage = (params: MessageDetailParams) => get<MessageDetail>(buildMessageDetailApi(params));
 
 /** 查询报文原文。 */
-export const API_MESSAGE_RAW = `${API_BASE_MESSAGE}/raw/:msgId`;
-export const getMessageRaw = (msgId: string) => get<MessageRaw>(buildMessageIdApi(API_MESSAGE_RAW, msgId));
+export const API_MESSAGE_RAW = `${API_BASE_MESSAGE}/raw/:msgDirection/:msgId`;
+export const getMessageRaw = (params: MessageRawParams) => get<MessageRaw>(buildMessageRawApi(params));
 
 /** 查询报文处理轨迹。 */
 export const API_MESSAGE_PROCESSING_RECORDS = `${API_BASE_MESSAGE}/processing-records/:msgId`;
@@ -39,6 +39,13 @@ const buildMessageDetailApi = ({ msgId, msgDirection, businessType }: MessageDet
     .replace(':businessType', encodeURIComponent(businessType))
     .replace(':msgId', encodeURIComponent(msgId));
 
+/** 将原文定位字段全部写入 URL。 */
+const buildMessageRawApi = ({ msgId, msgDirection }: MessageRawParams) =>
+  API_MESSAGE_RAW.replace(':msgDirection', encodeURIComponent(msgDirection)).replace(
+    ':msgId',
+    encodeURIComponent(msgId),
+  );
+
 /** 查询报文明细所需的完整定位信息。 */
 export interface MessageDetailParams {
   /** 报文标识号。 */
@@ -47,6 +54,14 @@ export interface MessageDetailParams {
   msgDirection: MessageDirection;
   /** 业务类型，用于确定结构化业务表。 */
   businessType: MessageBusinessType;
+}
+
+/** 查询报文原文所需的完整定位信息。 */
+export interface MessageRawParams {
+  /** 报文标识号。 */
+  msgId: string;
+  /** 收发方向，用于确定收报或发报主表。 */
+  msgDirection: MessageDirection;
 }
 
 /** 报文列表允许用户触发的服务端排序字段。 */

@@ -51,11 +51,11 @@ const useMessageDetail = (msgId?: string, msgDirection?: string, businessType?: 
   return { detail, detailError };
 };
 
-/** 校验 URL 中的方向参数，避免使用非法值调用详情接口。 */
+/** 校验 URL 中的 IN / OU */
 const isMessageDirection = (value?: string): value is MessageDirection =>
   value !== undefined && Object.values<string>(MessageDirection).includes(value);
 
-/** 校验 URL 中的业务类型参数，确保后端能够选择对应实体表。 */
+/** 校验 URL 中的 BusinessType */
 const isMessageBusinessType = (value?: string): value is MessageBusinessType =>
   value !== undefined && Object.values<string>(MessageBusinessType).includes(value);
 

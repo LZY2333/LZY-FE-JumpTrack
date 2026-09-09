@@ -67,9 +67,9 @@ const ModalMessageRelated = ({ messageId, msgDirection, businessType, open, onCl
   );
 };
 
-/** 基础信息面板：使用禁用 Input 保留表单形态和字段边界。 */
+/** Basic Info Card */
 export const MessageBasicInfoPanel = ({ detail, className }: MessageBasicInfoPanelProps) => (
-  <CardCollapse className={className} size='small' title='Basic Information'>
+  <CardCollapse className={className} size='small' title='Basic Info'>
     <MessageSchemaForm
       schema={messageBasicInfoSchema}
       values={detail ? toMessageBasicFormData(detail.msgBasicInfo) : {}}
@@ -78,14 +78,14 @@ export const MessageBasicInfoPanel = ({ detail, className }: MessageBasicInfoPan
   </CardCollapse>
 );
 
-/** 业务信息面板：供弹窗等无 Tab 容器的简化明细复用。 */
+/** Business Info Card */
 export const MessageBusinessInfoPanel = ({ detail, className }: MessageBusinessInfoPanelProps) => (
-  <Card className={className} size='small' title='Business Information'>
+  <Card className={className} size='small' title='Business Info'>
     <MessageBusinessContent detail={detail} />
   </Card>
 );
 
-/** 业务信息内容：按 BUSINESS_TYPE 选择对应类型信息表和属性表 Schema。 */
+/** Business Info Card Content */
 export const MessageBusinessContent = ({ detail }: MessageBusinessContentProps) => {
   if (detail?.msgBasicInfo.businessType === MessageBusinessType.Other) {
     return (

@@ -21,7 +21,6 @@ interface MockStatusDetail {
 }
 
 const MOCK_RECORD_COUNT = 28;
-const MOCK_MESSAGE_ID_DATE = '20260822';
 const DEFAULT_CURRENT = 1;
 const DEFAULT_PAGE_SIZE = 10;
 const MOCK_EXCEPTION_STATUSES = [
@@ -101,19 +100,19 @@ const getLcwRecords = () => {
 };
 
 /** 生成方向、通道和四种异常状态交错分布的 LCW 记录。 */
-const createLcwRecords = (): LcwRecord[] =>
-  Array.from({ length: MOCK_RECORD_COUNT }, (_, index) => {
+const createLcwRecords = (): LcwRecord[] => {
+  const today = new Date();
+  return Array.from({ length: MOCK_RECORD_COUNT }, (_, index) => {
     const msgDirection = index % 2 === 0 ? MessageDirection.In : MessageDirection.Out;
     const directionPairIndex = Math.floor(index / 2);
     const lcwInitialStatus = MOCK_EXCEPTION_STATUSES[directionPairIndex % MOCK_EXCEPTION_STATUSES.length];
     const statusDetail = MOCK_STATUS_DETAILS[lcwInitialStatus];
-    const msgDate = new Date(
-      Date.UTC(2026, 7, 22 - Math.floor(index / 6), 9 + (index % 8), index % 60, 0),
-    ).toISOString();
+    const messageDate = createMockMessageDate(today, index);
+    const msgDate = messageDate.toISOString();
     const sequence = String(index + 1).padStart(6, '0');
 
     return {
-      msgId: `CIPS${msgDirection}${MOCK_MESSAGE_ID_DATE}${sequence}`,
+      msgId: `CIPS${msgDirection}${formatMessageIdDate(messageDate)}${sequence}`,
       msgDirection,
       businessType: MOCK_BUSINESS_TYPES[directionPairIndex % MOCK_BUSINESS_TYPES.length],
       msgDate,
@@ -124,6 +123,7 @@ const createLcwRecords = (): LcwRecord[] =>
       lcwInitialTime: new Date(Date.parse(msgDate) + ((index % 5) + 1) * 60_000).toISOString(),
     };
   });
+};
 
 /** 应用 LCW 页面全部精确条件和日期闭区间。 */
 const filterRecords = (records: LcwRecord[], query: LcwQuery) => {
@@ -165,6 +165,20 @@ const normalizePositiveInteger = (value: number, fallback: number) => {
   if (!Number.isFinite(value) || value < 1) return fallback;
   return Math.floor(value);
 };
+
+/** 按本地自然日生成当天及此前数日的 Mock 报文时间。 */
+const createMockMessageDate = (today: Date, index: number) => {
+  const messageDate = new Date(today);
+  messageDate.setDate(today.getDate() - Math.floor(index / 6));
+  messageDate.setHours(9 + (index % 8), index % 60, 0, 0);
+  return messageDate;
+};
+
+/** 将报文日期格式化为报文标识中的 yyyyMMdd 片段。 */
+const formatMessageIdDate = (date: Date) =>
+  [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+    .map((value) => String(value).padStart(2, '0'))
+    .join('');
 
 /** 隔离响应对象，避免调用方意外修改 Mock 内部状态。 */
 const cloneRecord = (record: LcwRecord): LcwRecord => ({ ...record });

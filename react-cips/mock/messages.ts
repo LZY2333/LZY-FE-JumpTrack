@@ -147,7 +147,7 @@ interface MockBusinessDataContext {
   messageTime: string;
 }
 
-/** 按 BUSINESS_TYPE 生成与数据库类型信息表、属性表一一对应的结构化值。 */
+/** 按 BUSINESS_TYPE 生成对应的结构化业务数据。 */
 function createBusinessData({
   index,
   msgId,
@@ -169,7 +169,7 @@ function createBusinessData({
     paymentInfo: null,
     paymentParties: [],
     billInfo: null,
-    billDetails: null,
+    billDetails: [],
     queryInfo: null,
     queryGpi: null,
   };
@@ -220,16 +220,28 @@ function createBusinessData({
           debitAmount: (amount * 0.7).toFixed(2),
           createTime: messageTime,
         },
-        billDetails: {
-          txnRef: `BILL-TXN-${sequence}`,
-          seqNo: '1',
-          remitBankBic: SEND_INSTS[index % SEND_INSTS.length],
-          remitCcy: 'CNY',
-          remitAmt: amount.toFixed(2),
-          creditType: choose(index % 2 === 0, 'C', 'D'),
-          valueDate: businessDate,
-          createTime: messageTime,
-        },
+        billDetails: [
+          {
+            txnRef: `BILL-TXN-${sequence}-01`,
+            seqNo: '1',
+            remitBankBic: SEND_INSTS[index % SEND_INSTS.length],
+            remitCcy: 'CNY',
+            remitAmt: (amount * 0.6).toFixed(2),
+            creditType: choose(index % 2 === 0, 'C', 'D'),
+            valueDate: businessDate,
+            createTime: messageTime,
+          },
+          {
+            txnRef: `BILL-TXN-${sequence}-02`,
+            seqNo: '2',
+            remitBankBic: RECV_INSTS[index % RECV_INSTS.length],
+            remitCcy: 'CNY',
+            remitAmt: (amount * 0.4).toFixed(2),
+            creditType: choose(index % 2 === 0, 'D', 'C'),
+            valueDate: businessDate,
+            createTime: messageTime,
+          },
+        ],
       };
     case MessageBusinessType.Payment:
       return {
@@ -426,6 +438,13 @@ const messageDetailParams = (url: string) => {
   return { msgDirection, businessType, msgId };
 };
 
+/** 从原文接口 URL 末尾读取方向和报文号。 */
+const messageRawParams = (url: string) => {
+  const segments = url.split('?')[0].split('/').filter(Boolean);
+  const [msgDirection = '', msgId = ''] = segments.slice(-2).map(decodeURIComponent);
+  return { msgDirection, msgId };
+};
+
 const findMessage = (msgId: string) => messages.find((record) => record.msgId === msgId);
 
 /** 按详情接口的三个必填定位参数查找报文。 */
@@ -434,6 +453,12 @@ const findMessageDetail = (url: string) => {
   return messages.find(
     (record) => record.msgId === msgId && record.msgDirection === msgDirection && record.businessType === businessType,
   );
+};
+
+/** 按原文接口的两个必填定位参数查找报文。 */
+const findMessageRaw = (url: string) => {
+  const { msgDirection, msgId } = messageRawParams(url);
+  return messages.find((record) => record.msgId === msgId && record.msgDirection === msgDirection);
 };
 
 const cloneMessage = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -530,12 +555,12 @@ export default [
     },
   },
   {
-    url: '/api/example/v1/messages/raw/:msgId',
+    url: '/api/example/v1/messages/raw/:msgDirection/:msgId',
     method: 'get',
     timeout: 800,
     response: (option: { url: string }) => {
       const msgId = lastPathSegment(option.url);
-      const record = findMessage(msgId);
+      const record = findMessageRaw(option.url);
       return record
         ? {
             returnCode: ResCode.Success,
@@ -545,7 +570,7 @@ export default [
     },
   },
   {
-    url: '/api/example/v1/messages/:msgDirection/:businessType/:msgId',
+    url: '/api/example/v1/messages/detail/:msgDirection/:businessType/:msgId',
     method: 'get',
     timeout: 300,
     response: (option: { url: string }) => {

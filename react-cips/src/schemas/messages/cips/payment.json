@@ -199,7 +199,7 @@
     },
     "paymentParties": {
       "type": "array",
-      "$comment": "PSSST_ENT_MSG_PAY_PARTY：支付交易对象记录",
+      "$comment": "支付交易对象记录",
       "x-component": "MessageBusinessTable",
       "x-component-props": {
         "title": "Payment Parties",

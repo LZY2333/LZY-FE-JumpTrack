@@ -26,7 +26,7 @@ const MessageDetailPage = () => {
   }>();
   const navigate = useNavigate();
   const { detail, detailError } = useMessageDetail(msgId, msgDirection, businessType);
-  const { raw, rawLoading, rawError } = useMessageRaw(msgId);
+  const { raw, rawLoading, rawError } = useMessageRaw(msgId, msgDirection);
   const [activeTabKey, setActiveTabKey] = useState(DEFAULT_TAB_KEY);
   const rawViewerContentRef = useRef<HTMLDivElement>(null);
 

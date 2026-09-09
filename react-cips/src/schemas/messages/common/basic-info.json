@@ -112,10 +112,10 @@
               "x-decorator": "MessageFormItem",
               "x-component": "Input"
             },
-            "nonStpReason": {
+            "fromSystem": {
               "type": "string",
-              "title": "Non-STP Reason",
-              "$comment": "异常原因说明：NON_STP_REASON",
+              "title": "From System",
+              "$comment": "发报来源系统：OU.FROM_SYSTEM",
               "x-decorator": "MessageFormItem",
               "x-component": "Input"
             }
@@ -143,6 +143,13 @@
               "type": "string",
               "title": "End-to-End ID",
               "$comment": "报文端到端流水号：MSG_END_ID",
+              "x-decorator": "MessageFormItem",
+              "x-component": "Input"
+            },
+            "nonStpReason": {
+              "type": "string",
+              "title": "Non-STP Reason",
+              "$comment": "异常原因说明：NON_STP_REASON",
               "x-decorator": "MessageFormItem",
               "x-component": "Input"
             },
