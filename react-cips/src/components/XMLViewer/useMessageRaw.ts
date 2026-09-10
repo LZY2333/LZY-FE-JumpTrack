@@ -3,7 +3,7 @@ import { getMessageRaw } from '@/api/messages';
 import type { MessageRaw } from '@/types';
 import { MessageDirection } from '@/types/enums';
 
-/** 加载当前报文原文，供详情页操作区和原文 Tab 共享。 */
+/** 加载 Raw Message。 */
 const useMessageRaw = (messageId?: string, msgDirection?: string) => {
   const [raw, setRaw] = useState<MessageRaw | null>(null);
   const [rawLoading, setRawLoading] = useState(false);
@@ -49,7 +49,7 @@ const useMessageRaw = (messageId?: string, msgDirection?: string) => {
   return { raw, rawLoading, rawError };
 };
 
-/** 校验 URL 中的方向参数，避免使用非法值调用原文接口。 */
+/** 校验报文方向。 */
 const isMessageDirection = (value?: string): value is MessageDirection =>
   value !== undefined && Object.values<string>(MessageDirection).includes(value);
 

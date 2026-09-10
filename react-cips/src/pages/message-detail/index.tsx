@@ -2,13 +2,15 @@ import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
 import { ArrowLeftOutlined, CopyOutlined, PrinterOutlined } from '@ant-design/icons';
-import useMessageDetail from './useMessageDetail';
-import useMessageRaw from './useMessageRaw';
+import { CardMessageBasicInfo } from '@/components/MessageInfo/CardMessageBasicInfo';
+import { ContentMessageBusinessInfo } from '@/components/MessageInfo/CardMessageBusinessInfo';
+import { resolveDisplayMessageId } from '@/components/MessageInfo/messageDetailUtil';
+import useMessageDetail from '@/components/MessageInfo/useMessageDetail';
+import RawViewer from '@/components/XMLViewer/RawViewer';
+import useMessageRaw from '@/components/XMLViewer/useMessageRaw';
 import TabProcessing from './TabProcessing';
-import TabRaw from './TabRaw';
 import { RoutePath } from '@/router/paths';
-import { MessageBasicInfoPanel, MessageBusinessContent } from './ModalMessageRelated';
-import { isRawContentActionDisabled, printElementDocument, printTextDocument, resolveDisplayMessageId } from './util';
+import { isRawContentActionDisabled, printElementDocument, printTextDocument } from './util';
 import { copyText } from '@/utils/fileUtil';
 
 const SCROLLABLE_TAB_CONTENT_CLASS_NAME = 'h-full overflow-auto';
@@ -66,13 +68,13 @@ const MessageDetailPage = () => {
       key: 'structured',
       label: 'Business Information',
       className: SCROLLABLE_TAB_CONTENT_CLASS_NAME,
-      children: <MessageBusinessContent detail={detail} />,
+      children: <ContentMessageBusinessInfo detail={detail} />,
     },
     {
       key: RAW_TAB_KEY,
       label: 'Raw Message',
       className: FLEX_TAB_CONTENT_CLASS_NAME,
-      children: <TabRaw ref={rawViewerContentRef} raw={raw} loading={rawLoading} error={rawError} />,
+      children: <RawViewer ref={rawViewerContentRef} raw={raw} loading={rawLoading} error={rawError} />,
     },
     {
       key: 'processing',
@@ -102,7 +104,7 @@ const MessageDetailPage = () => {
       </div>
 
       {detailError && <Alert className='mb-3 shrink-0' type='error' showIcon message={detailError} />}
-      <MessageBasicInfoPanel className='shrink-0' detail={detail} />
+      <CardMessageBasicInfo className='shrink-0' detail={detail} />
       <Card
         className='mt-3 flex min-h-0 flex-1 flex-col'
         classNames={{ body: 'min-h-0 flex-1 overflow-hidden' }}

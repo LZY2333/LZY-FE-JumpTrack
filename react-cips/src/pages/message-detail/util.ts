@@ -1,11 +1,4 @@
-import dayjs from 'dayjs';
-import type { MessageDetail, MessageRaw, MessageRecord } from '@/types';
-import {
-  MESSAGE_DIRECTION_LABELS,
-  MESSAGE_BUSINESS_TYPE_LABELS,
-  MSG_RECV_STATUS_LABELS,
-  MSG_SEND_STATUS_LABELS,
-} from '@/types/enums';
+import type { MessageRaw } from '@/types';
 
 // #region ==================== 报文原文打印 Util ====================
 
@@ -90,44 +83,5 @@ const triggerPrint = (printWindow: Window) => {
 
 // #endregion ==================== 报文原文打印 Util ====================
 
-/** 获取枚举展示文案；未登记的接口值直接回显，空值统一展示 --。 */
-export const resolveLabel = <T extends string>(labels: Record<T, string>, value: T) => labels[value] || value || '--';
-
-/** 优先展示详情返回的报文编号，其次使用路由编号，均为空时展示 --。 */
-export const resolveDisplayMessageId = (detail: MessageDetail | null, messageId?: string) =>
-  detail?.msgBasicInfo.msgId || messageId || '--';
-
 /** 原文加载中、请求未返回或内容为空时禁用依赖原文内容的操作。 */
 export const isRawContentActionDisabled = (raw: MessageRaw | null, rawLoading: boolean) => rawLoading || !raw?.content;
-
-// #region ==================== 报文基础信息展示值 ====================
-
-const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-
-/** 将详情公共字段转换为只读表单值；只转换展示格式，不补空值。 */
-export const toMessageBasicFormData = (record: MessageRecord): Record<string, unknown> => ({
-  ...record,
-  msgDirection: resolveLabel(MESSAGE_DIRECTION_LABELS, record.msgDirection),
-  businessType: record.businessType
-    ? resolveLabel(MESSAGE_BUSINESS_TYPE_LABELS, record.businessType)
-    : record.businessType,
-  msgRecvStatus: record.msgRecvStatus
-    ? resolveLabel(MSG_RECV_STATUS_LABELS, record.msgRecvStatus)
-    : record.msgRecvStatus,
-  msgSendStatus: record.msgSendStatus
-    ? resolveLabel(MSG_SEND_STATUS_LABELS, record.msgSendStatus)
-    : record.msgSendStatus,
-  msgDate: formatDateTime(record.msgDate),
-  msgSendTime: formatDateTime(record.msgSendTime),
-  createTime: formatDateTime(record.createTime),
-  updateTime: formatDateTime(record.updateTime),
-});
-
-/** 将有效时间转换为详情展示格式，空值和非法时间保持原值。 */
-const formatDateTime = (value: string | null) => {
-  if (!value) return value;
-  const parsed = dayjs(value);
-  return parsed.isValid() ? parsed.format(DATE_TIME_FORMAT) : value;
-};
-
-// #endregion ==================== 报文基础信息展示值 ====================

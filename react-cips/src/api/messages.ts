@@ -19,32 +19,27 @@ export const getMessages = (params: MessageQuery) => post<PagedMessages>(API_MES
 
 /** 查询报文明细。 */
 export const API_MESSAGE_DETAIL = `${API_BASE_MESSAGE}/detail/:msgDirection/:businessType/:msgId`;
-export const getMessage = (params: MessageDetailParams) => get<MessageDetail>(buildMessageDetailApi(params));
+export const getMessage = ({ msgId, msgDirection, businessType }: MessageDetailParams) =>
+  get<MessageDetail>(
+    API_MESSAGE_DETAIL.replace(':msgDirection', encodeURIComponent(msgDirection))
+      .replace(':businessType', encodeURIComponent(businessType))
+      .replace(':msgId', encodeURIComponent(msgId)),
+  );
 
 /** 查询报文原文。 */
 export const API_MESSAGE_RAW = `${API_BASE_MESSAGE}/raw/:msgDirection/:msgId`;
-export const getMessageRaw = (params: MessageRawParams) => get<MessageRaw>(buildMessageRawApi(params));
+export const getMessageRaw = ({ msgId, msgDirection }: MessageRawParams) =>
+  get<MessageRaw>(
+    API_MESSAGE_RAW.replace(':msgDirection', encodeURIComponent(msgDirection)).replace(
+      ':msgId',
+      encodeURIComponent(msgId),
+    ),
+  );
 
 /** 查询报文处理轨迹。 */
 export const API_MESSAGE_PROCESSING_RECORDS = `${API_BASE_MESSAGE}/processing-records/:msgId`;
 export const getMessageProcessingRecords = (msgId: string) =>
-  get<MessageAuditTrailRecord[]>(buildMessageIdApi(API_MESSAGE_PROCESSING_RECORDS, msgId));
-
-/** 将报文标识安全填充到接口 URL 的末段占位符。 */
-const buildMessageIdApi = (api: string, msgId: string) => api.replace(':msgId', encodeURIComponent(msgId));
-
-/** 将详情定位字段全部写入 URL，支持详情页刷新和直接访问。 */
-const buildMessageDetailApi = ({ msgId, msgDirection, businessType }: MessageDetailParams) =>
-  API_MESSAGE_DETAIL.replace(':msgDirection', encodeURIComponent(msgDirection))
-    .replace(':businessType', encodeURIComponent(businessType))
-    .replace(':msgId', encodeURIComponent(msgId));
-
-/** 将原文定位字段全部写入 URL。 */
-const buildMessageRawApi = ({ msgId, msgDirection }: MessageRawParams) =>
-  API_MESSAGE_RAW.replace(':msgDirection', encodeURIComponent(msgDirection)).replace(
-    ':msgId',
-    encodeURIComponent(msgId),
-  );
+  get<MessageAuditTrailRecord[]>(API_MESSAGE_PROCESSING_RECORDS.replace(':msgId', encodeURIComponent(msgId)));
 
 /** 查询报文明细所需的完整定位信息。 */
 export interface MessageDetailParams {

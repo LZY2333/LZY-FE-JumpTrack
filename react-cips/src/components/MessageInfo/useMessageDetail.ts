@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { getMessage } from '@/api/messages';
+import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 import type { MessageDetail } from '@/types';
 import { MessageBusinessType, MessageDirection } from '@/types/enums';
-import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 
-/** 加载报文基础信息和结构化字段，原文等独立资源由各自的 Hook 负责。 */
+/** 加载报文明细。 */
 const useMessageDetail = (msgId?: string, msgDirection?: string, businessType?: string) => {
   const [detail, setDetail] = useState<MessageDetail | null>(null);
   const [detailError, setDetailError] = useState<string>();
@@ -51,11 +51,11 @@ const useMessageDetail = (msgId?: string, msgDirection?: string, businessType?: 
   return { detail, detailError };
 };
 
-/** 校验 URL 中的 IN / OU */
+/** 校验报文方向。 */
 const isMessageDirection = (value?: string): value is MessageDirection =>
   value !== undefined && Object.values<string>(MessageDirection).includes(value);
 
-/** 校验 URL 中的 BusinessType */
+/** 校验业务类型。 */
 const isMessageBusinessType = (value?: string): value is MessageBusinessType =>
   value !== undefined && Object.values<string>(MessageBusinessType).includes(value);
 

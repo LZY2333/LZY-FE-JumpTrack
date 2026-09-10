@@ -1,19 +1,19 @@
 import { forwardRef } from 'react';
 import { Alert, Empty, Spin } from 'antd';
-import XMLViewer from '@/components/XMLViewer';
 import type { MessageRaw } from '@/types';
+import XMLViewer from './index';
 
-interface TabRawProps {
-  /** 当前报文原文。 */
+interface RawViewerProps {
+  /** Raw Message data. */
   raw: MessageRaw | null;
-  /** 原文是否正在加载。 */
+  /** Whether Raw Message is loading. */
   loading: boolean;
-  /** 原文加载错误。 */
+  /** Raw Message loading error. */
   error?: string;
 }
 
-/** 报文原文 Tab：展示报文系统接收或发送的原始 XML。 */
-const TabRaw = forwardRef<HTMLDivElement, TabRawProps>(({ raw, loading, error }, viewerContentRef) => {
+/** Raw Message Viewer */
+const RawViewer = forwardRef<HTMLDivElement, RawViewerProps>(({ raw, loading, error }, viewerContentRef) => {
   const content = raw?.content ? (
     <XMLViewer ref={viewerContentRef} className='min-h-0 flex-1 text-xs' xml={raw.content} />
   ) : (
@@ -39,6 +39,6 @@ const TabRaw = forwardRef<HTMLDivElement, TabRawProps>(({ raw, loading, error },
   );
 });
 
-TabRaw.displayName = 'TabRaw';
+RawViewer.displayName = 'RawViewer';
 
-export default TabRaw;
+export default RawViewer;
