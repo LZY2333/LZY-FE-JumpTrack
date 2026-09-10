@@ -9,7 +9,7 @@ import useMessageDetail from '@/components/MessageInfo/useMessageDetail';
 import RawViewer from '@/components/XMLViewer/RawViewer';
 import useMessageRaw from '@/components/XMLViewer/useMessageRaw';
 import TabProcessing from './TabProcessing';
-import { RoutePath } from '@/router/paths';
+import { RoutePath } from '@/router/routes';
 import { isRawContentActionDisabled, printElementDocument, printTextDocument } from './util';
 import { copyText } from '@/utils/fileUtil';
 
@@ -34,21 +34,21 @@ const MessageDetailPage = () => {
 
   /** 打开只包含当前报文原文的打印窗口。 */
   const handlePrint = () => {
-    if (!raw?.content) return;
-    const title = raw.fileName || `${msgId || 'message'}.xml`;
+    if (!raw?.msgContent) return;
+    const title = `${msgId || 'message'}.xml`;
     const currentViewElement = activeTabKey === RAW_TAB_KEY ? rawViewerContentRef.current : null;
     const opened = currentViewElement
       ? printElementDocument(title, currentViewElement)
-      : printTextDocument(title, raw.content);
+      : printTextDocument(title, raw.msgContent);
     if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
   };
 
   const rawContentActionDisabled = isRawContentActionDisabled(raw, rawLoading);
 
   const handleCopyRaw = async () => {
-    if (!raw?.content) return;
+    if (!raw?.msgContent) return;
     try {
-      await copyText(raw.content);
+      await copyText(raw.msgContent);
       message.success('Raw message copied');
     } catch {
       message.error('Failed to copy the raw message');

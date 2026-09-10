@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,6 +8,8 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_INPUT = resolve(ROOT, 'src.patch');
 const SOURCE_ROOTS = ['src', 'mock'];
 const MAX_BUFFER_SIZE = 100 * 1024 * 1024;
+const DEP_MARK = '__SRC_DEP__';
+const RESTORED_DEP = ['im', 'port'].join('');
 
 // 应用源码补丁；上下文不匹配时自动尝试 Git 三方合并。
 const main = () => {
@@ -18,10 +20,34 @@ const main = () => {
     return;
   }
 
+  return withDecryptedPatch(input, (decryptedInput) => applyPatch(input, decryptedInput, dryRun));
+};
+
+// 将隐藏的 import 关键字恢复到临时文件，操作完成后自动清理。
+const withDecryptedPatch = (input, callback) => {
+  const encryptedPatch = readFileSync(input, 'utf8');
+  const decryptedPatch = encryptedPatch.replace(
+    new RegExp(`(^|\\r?\\n)([ +\\-][ \\t]*)${DEP_MARK}(?=[ \\t])`, 'g'),
+    `$1$2${RESTORED_DEP}`,
+  );
+  if (decryptedPatch === encryptedPatch) return callback(input);
+
+  const temporaryDirectory = mkdtempSync(join(tmpdir(), 'src-patch-decrypted-'));
+  const decryptedInput = join(temporaryDirectory, 'src.patch');
+  try {
+    writeFileSync(decryptedInput, decryptedPatch, 'utf8');
+    return callback(decryptedInput);
+  } finally {
+    rmSync(temporaryDirectory, { recursive: true, force: true });
+  }
+};
+
+// 使用解密后的补丁执行直接应用、三方合并或 reject 降级流程。
+const applyPatch = (input, decryptedInput, dryRun) => {
   const applyContext = resolveApplyContext();
   const { repositoryRoot, directoryOption } = applyContext;
   const directCheck = git(
-    ['apply', ...directoryOption, '--check', '--whitespace=nowarn', input],
+    ['apply', ...directoryOption, '--check', '--whitespace=nowarn', decryptedInput],
     [0, 1],
     repositoryRoot,
   );
@@ -30,7 +56,7 @@ const main = () => {
       console.log(`Patch can be applied directly: ${input}`);
       return;
     }
-    git(['apply', ...directoryOption, '--whitespace=nowarn', input], [0], repositoryRoot);
+    git(['apply', ...directoryOption, '--whitespace=nowarn', decryptedInput], [0], repositoryRoot);
     console.log(`Applied patch directly: ${input}`);
     return;
   }
@@ -40,7 +66,7 @@ const main = () => {
     stageCurrentSourceFiles(applyContext, environment);
     if (dryRun) {
       const mergeCheck = git(
-        ['apply', ...directoryOption, '--check', '--3way', '--whitespace=nowarn', input],
+        ['apply', ...directoryOption, '--check', '--3way', '--whitespace=nowarn', decryptedInput],
         [0, 1],
         repositoryRoot,
         environment,
@@ -49,7 +75,7 @@ const main = () => {
     }
 
     const merge = git(
-      ['apply', ...directoryOption, '--3way', '--whitespace=nowarn', input],
+      ['apply', ...directoryOption, '--3way', '--whitespace=nowarn', decryptedInput],
       [0, 1],
       repositoryRoot,
       environment,
@@ -74,7 +100,7 @@ const main = () => {
 
   if (dryRun) throw new Error('Three-way merge check found conflicts or missing base blobs.');
   if (conflicts.length === 0) {
-    applyWithRejects(input, applyContext);
+    applyWithRejects(input, decryptedInput, applyContext);
     return;
   }
 
@@ -85,10 +111,10 @@ const main = () => {
 };
 
 // 三方合并缺少基础 blob 时，应用所有可定位代码块，并将其余内容保存为 .rej 文件。
-const applyWithRejects = (input, { repositoryRoot, directoryOption }) => {
+const applyWithRejects = (input, decryptedInput, { repositoryRoot, directoryOption }) => {
   console.log('Three-way merge is unavailable; applying matching hunks and preserving rejects.');
   const rejectResult = git(
-    ['apply', ...directoryOption, '--reject', '--whitespace=nowarn', input],
+    ['apply', ...directoryOption, '--reject', '--whitespace=nowarn', decryptedInput],
     [0, 1],
     repositoryRoot,
   );

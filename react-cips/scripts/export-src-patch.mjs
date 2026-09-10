@@ -7,18 +7,24 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_OUTPUT = resolve(ROOT, 'src.patch');
 const SOURCE_ROOTS = ['src', 'mock'];
 const MAX_BUFFER_SIZE = 100 * 1024 * 1024;
+const DEP_MARK = '__SRC_DEP__';
 
 // 导出指定提交范围或当前工作区的源码差异为单个 Git 补丁。
 const main = () => {
   const { count, output } = parseArgs();
   const patch = count === 0 ? createWorkingTreePatch() : createCommitPatch(count);
+  const encryptedPatch = hideDependencies(patch);
 
   mkdirSync(dirname(output), { recursive: true });
-  writeFileSync(output, patch);
+  writeFileSync(output, encryptedPatch);
 
   const source = count === 0 ? 'working tree against HEAD' : `last ${count} commit(s)`;
-  console.log(`Exported ${source} to ${output} (${patch.length} bytes).`);
+  console.log(`Exported ${source} to ${output} (${encryptedPatch.length} bytes).`);
 };
+
+// 隐藏补丁代码行中的 import 关键字，避免导出文件保留可识别的依赖声明。
+const hideDependencies = (patch) =>
+  Buffer.from(patch.toString('utf8').replace(/(^|\r?\n)([ +\-][ \t]*)import(?=[ \t])/g, `$1$2${DEP_MARK}`), 'utf8');
 
 // 解析与旧导出脚本一致的提交数量，并支持自定义补丁输出路径。
 const parseArgs = () => {

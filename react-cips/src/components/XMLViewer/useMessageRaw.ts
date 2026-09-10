@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getMessageRaw } from '@/api/messages';
-import type { MessageRaw } from '@/types';
+import type { MessageRaw } from '@/api/messages';
 import { MessageDirection } from '@/types/enums';
 
 /** 加载 Raw Message。 */

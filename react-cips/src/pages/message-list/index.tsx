@@ -6,7 +6,7 @@ import type { TableColumnsType, TableProps } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import type { MessageRecord } from '@/types';
 import { MessageDirection, SortOrder } from '@/types/enums';
-import { RoutePath } from '@/router/paths';
+import { RoutePath } from '@/router/routes';
 import useMessageList, { PAGE_SIZE_OPTIONS } from './useMessageList';
 import { isMessageSortField, type MessageListFilterValues } from './messageListUtil';
 import ResizableTable from '@/components/ResizableTable';

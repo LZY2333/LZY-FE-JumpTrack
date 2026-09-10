@@ -92,6 +92,7 @@ const headFile = (filePath) => {
   return result.status === 0 ? result.stdout : undefined;
 };
 
+// 将近期提交或工作区中的源码导出为可传递的 txt 文件。
 const main = () => {
   const { count, output } = parseArgs();
   const changes = count === 0 ? statusChanges() : commitChanges(count);

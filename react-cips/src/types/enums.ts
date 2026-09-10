@@ -131,13 +131,6 @@ export enum Role {
   Checker = 'checker',
 }
 
-/** 用户身份恢复状态。 */
-export enum AuthStatus {
-  Checking = 'checking',
-  Authenticated = 'authenticated',
-  Anonymous = 'anonymous',
-}
-
 /** 接口响应编码。 */
 export enum ResCode {
   Success = 'SUC0000',

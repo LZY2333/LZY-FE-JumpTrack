@@ -5,15 +5,13 @@ import MessageList from '@/pages/message-list';
 import MessageDetail from '@/pages/message-detail';
 import LcwList from '@/pages/lcw-list';
 import { Role } from '@/types/enums';
-import { RoutePath } from './paths';
 
-export { RoutePath } from './paths';
-
-export interface AppRoute {
-  path: string;
-  element: ReactElement;
-  meta: { title: string };
-  role?: Role;
+/** 应用页面路径；登录和用户权限继续沿用现有入口。 */
+export enum RoutePath {
+  Root = '/',
+  MessageList = '/messages',
+  MessageDetail = '/messages/:msgDirection/:businessType/:msgId',
+  LcwList = '/lcw',
 }
 
 export const routes: AppRoute[] = [
@@ -46,3 +44,10 @@ export const routes: AppRoute[] = [
     meta: { title: 'LCW Tasks' },
   },
 ];
+
+export interface AppRoute {
+  path: string;
+  element: ReactElement;
+  meta: { title: string };
+  role?: Role;
+}

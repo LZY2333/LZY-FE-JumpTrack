@@ -5,7 +5,7 @@ import { App as AntdApp, Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import type { LcwRecord } from '@/types';
-import { RoutePath } from '@/router/paths';
+import { RoutePath } from '@/router/routes';
 import ResizableTable from '@/components/ResizableTable';
 import {
   MessageChannelFilter,

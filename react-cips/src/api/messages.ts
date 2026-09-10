@@ -1,6 +1,6 @@
 import type { Pagination } from './request';
 import { get, post } from './request';
-import type { MessageAuditTrailRecord, MessageDetail, MessageRaw, MessageRecord } from '@/types';
+import type { MessageAuditTrailRecord, MessageDetail, MessageRecord } from '@/types';
 import type {
   MessageChannel,
   MessageBusinessType,
@@ -57,6 +57,16 @@ export interface MessageRawParams {
   msgId: string;
   /** 收发方向，用于确定收报或发报主表。 */
   msgDirection: MessageDirection;
+}
+
+/** 报文原文。 */
+export interface MessageRaw {
+  /** 报文标识号：MSG_ID。 */
+  msgId: string;
+  /** 报文原文：MSG_CONTENT。 */
+  msgContent: string;
+  /** 创建时间：CREATE_TIME。 */
+  createTime: string;
 }
 
 /** 报文列表允许用户触发的服务端排序字段。 */

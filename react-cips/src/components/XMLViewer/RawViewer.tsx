@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { Alert, Empty, Spin } from 'antd';
-import type { MessageRaw } from '@/types';
+import type { MessageRaw } from '@/api/messages';
 import XMLViewer from './index';
 
 interface RawViewerProps {
@@ -14,8 +14,8 @@ interface RawViewerProps {
 
 /** Raw Message Viewer */
 const RawViewer = forwardRef<HTMLDivElement, RawViewerProps>(({ raw, loading, error }, viewerContentRef) => {
-  const content = raw?.content ? (
-    <XMLViewer ref={viewerContentRef} className='min-h-0 flex-1 text-xs' xml={raw.content} />
+  const content = raw?.msgContent ? (
+    <XMLViewer ref={viewerContentRef} className='min-h-0 flex-1 text-xs' xml={raw.msgContent} />
   ) : (
     <div className='flex flex-1 items-center justify-center'>
       <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='No raw message' />

@@ -105,9 +105,3 @@ export interface MessageDetail {
   /** GPI 属性，与查询查复详情一对一；无 GPI 数据时为 null。 */
   queryGpi: MessageEntityRecord | null;
 }
-
-export interface MessageRaw {
-  content: string;
-  contentType: string;
-  fileName: string;
-}

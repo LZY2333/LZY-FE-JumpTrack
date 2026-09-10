@@ -564,7 +564,7 @@ export default [
       return record
         ? {
             returnCode: ResCode.Success,
-            body: { content: createRawXml(record), contentType: 'application/xml', fileName: `${msgId}.xml` },
+            body: { msgContent: createRawXml(record) },
           }
         : notFound(msgId);
     },

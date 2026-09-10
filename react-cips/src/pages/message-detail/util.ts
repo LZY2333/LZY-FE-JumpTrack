@@ -1,4 +1,4 @@
-import type { MessageRaw } from '@/types';
+import type { MessageRaw } from '@/api/messages';
 
 // #region ==================== 报文原文打印 Util ====================
 
@@ -84,4 +84,5 @@ const triggerPrint = (printWindow: Window) => {
 // #endregion ==================== 报文原文打印 Util ====================
 
 /** 原文加载中、请求未返回或内容为空时禁用依赖原文内容的操作。 */
-export const isRawContentActionDisabled = (raw: MessageRaw | null, rawLoading: boolean) => rawLoading || !raw?.content;
+export const isRawContentActionDisabled = (raw: MessageRaw | null, rawLoading: boolean) =>
+  rawLoading || !raw?.msgContent;
