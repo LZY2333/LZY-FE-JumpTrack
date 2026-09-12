@@ -520,7 +520,7 @@ const escapeXml = (value: string) =>
 
 export default [
   {
-    url: '/api/example/v1/messages/query',
+    url: '/cips/message/query',
     method: 'post',
     response: (option: { body: MockMessageQuery }) => {
       const { current = 1, pageSize = 10, ...conditions } = option.body || {};
@@ -545,7 +545,7 @@ export default [
     },
   },
   {
-    url: '/api/example/v1/messages/processing-records/:msgId',
+    url: '/cips/message/processing-records/:msgId',
     method: 'get',
     timeout: 500,
     response: (option: { url: string }) => {
@@ -555,7 +555,7 @@ export default [
     },
   },
   {
-    url: '/api/example/v1/messages/raw/:msgDirection/:msgId',
+    url: '/cips/message/raw/:msgDirection/:msgId',
     method: 'get',
     timeout: 800,
     response: (option: { url: string }) => {
@@ -570,7 +570,7 @@ export default [
     },
   },
   {
-    url: '/api/example/v1/messages/detail/:msgDirection/:businessType/:msgId',
+    url: '/cips/message/detail/:msgDirection/:businessType/:msgId',
     method: 'get',
     timeout: 300,
     response: (option: { url: string }) => {
