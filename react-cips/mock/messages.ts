@@ -420,8 +420,9 @@ const filterByDateRange = (records: MockMessageDetail[], dateFrom?: string, date
   return records.filter((record) => {
     const value = record.msgDate;
     if (!value) return false;
-    if (dateFrom && value < dateFrom) return false;
-    if (dateTo && value > dateTo) return false;
+    const date = value.slice(0, 10);
+    if (dateFrom && date < dateFrom) return false;
+    if (dateTo && date > dateTo) return false;
     return true;
   });
 };

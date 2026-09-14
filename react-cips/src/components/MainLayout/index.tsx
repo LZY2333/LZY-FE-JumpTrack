@@ -5,7 +5,7 @@ import { routes } from '@/router/routes';
 
 const { Content } = Layout;
 
-const APP_TITLE = 'Message Management System';
+const APP_TITLE = 'Message Management';
 const DevUserSwitcher = __MOCK_ENABLED__ ? lazy(() => import('@/components/DevUserSwitcher')) : undefined;
 
 export default function MainLayout() {

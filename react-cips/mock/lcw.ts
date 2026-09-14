@@ -1,12 +1,6 @@
 import type { LcwBatchRetryRequest, LcwQuery, PagedLcwRecords } from '@/api/lcw';
 import type { LcwRecord } from '@/types';
-import {
-  LcwInitialStatus,
-  MessageBusinessType,
-  MessageChannel,
-  MessageDirection,
-  ResCode,
-} from '@/types/enums';
+import { LcwInitialStatus, MessageBusinessType, MessageChannel, MessageDirection, ResCode } from '@/types/enums';
 
 interface MockRequestOption<Body> {
   /** vite-plugin-mock 解析后的 JSON 请求体。 */
@@ -81,12 +75,12 @@ const handleBatchRetry = ({ body: request }: MockRequestOption<LcwBatchRetryRequ
 
 export default [
   {
-    url: '/cips/amlPatchStatus/getAmlMsgByInitialStatus',
+    url: '/cips/manager/amlPatchStatus/getAmlMsgByInitialStatus',
     method: 'post',
     response: handleQuery,
   },
   {
-    url: '/cips/amlPatchStatus/pushPatchAmlMsgByMsgid',
+    url: '/cips/manager/amlPatchStatus/pushPatchAmlMsgByMsgid',
     method: 'post',
     response: handleBatchRetry,
   },
@@ -155,8 +149,9 @@ const matchesExactText = (actual: string | null, expected?: string) => {
 const matchesDateRange = (actual: string | null, dateFrom?: string, dateTo?: string) => {
   if (!dateFrom && !dateTo) return true;
   if (!actual) return false;
-  if (dateFrom && actual < dateFrom) return false;
-  if (dateTo && actual > dateTo) return false;
+  const actualDate = actual.slice(0, 10);
+  if (dateFrom && actualDate < dateFrom) return false;
+  if (dateTo && actualDate > dateTo) return false;
   return true;
 };
 
@@ -176,9 +171,7 @@ const createMockMessageDate = (today: Date, index: number) => {
 
 /** 将报文日期格式化为报文标识中的 yyyyMMdd 片段。 */
 const formatMessageIdDate = (date: Date) =>
-  [date.getFullYear(), date.getMonth() + 1, date.getDate()]
-    .map((value) => String(value).padStart(2, '0'))
-    .join('');
+  [date.getFullYear(), date.getMonth() + 1, date.getDate()].map((value) => String(value).padStart(2, '0')).join('');
 
 /** 隔离响应对象，避免调用方意外修改 Mock 内部状态。 */
 const cloneRecord = (record: LcwRecord): LcwRecord => ({ ...record });

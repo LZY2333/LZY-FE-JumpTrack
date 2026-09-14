@@ -39,21 +39,12 @@ export default defineConfig(({ command, mode }) => {
       outDir: path.resolve(__dirname, 'dist', env.APP_OUT_PATH || ''),
     },
     server: {
+      host: '0.0.0.0',
       port: 5173,
       open: true,
       proxy: mockEnabled
         ? undefined
         : {
-            '/api': {
-              target: apiProxyTarget,
-              changeOrigin: true,
-              configure: (proxy) => {
-                proxy.on('proxyReq', (proxyRequest, request) => {
-                  const targetUrl = new URL(proxyRequest.path, apiProxyTarget).toString();
-                  console.info(`[proxy] ${request.method} ${request.url} -> ${targetUrl}`);
-                });
-              },
-            },
             '/cips': {
               target: apiProxyTarget,
               changeOrigin: true,

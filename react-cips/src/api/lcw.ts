@@ -4,7 +4,7 @@ import type { LcwRecord } from '@/types';
 import type { MessageChannel, MessageDirection } from '@/types/enums';
 
 /** LCW 接口基础 URL。 */
-export const API_BASE_LCW = '/cips/amlPatchStatus';
+export const API_BASE_LCW = '/cips/manager/amlPatchStatus';
 
 /** 查询 LCW 任务 list。 */
 export const API_LCW_TASK_QUERY = `${API_BASE_LCW}/getAmlMsgByInitialStatus`;
@@ -18,9 +18,9 @@ export const retryLcwTasks = (request: LcwBatchRetryRequest) => post<undefined>(
 export interface LcwQueryConditions {
   /** 收发方向，决定收发报时间关联的主表。 */
   msgDirection: MessageDirection;
-  /** 收发报时间起点，包含边界。 */
+  /** 收发报日期起点，格式为 YYYY-MM-DD */
   msgDateFrom?: string;
-  /** 收发报时间终点，包含边界。 */
+  /** 收发报日期终点，格式为 YYYY-MM-DD */
   msgDateTo?: string;
   /** 报文标识号，按完整编号匹配。 */
   msgId?: string;

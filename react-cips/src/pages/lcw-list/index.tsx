@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import type { CSSProperties, Key } from 'react';
-import { generatePath, useNavigate } from 'react-router-dom';
 import { App as AntdApp, Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import type { LcwRecord } from '@/types';
-import { RoutePath } from '@/router/routes';
 import ResizableTable from '@/components/ResizableTable';
 import {
   MessageChannelFilter,
@@ -41,7 +39,6 @@ const columns: TableColumnsType<LcwRecord> = [
 
 /** 展示 LCW 任务并支持批量勾选重试。 */
 const LcwList = () => {
-  const navigate = useNavigate();
   const { message, modal } = AntdApp.useApp();
   const [form] = Form.useForm<LcwListFilterValues>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
@@ -89,15 +86,6 @@ const LcwList = () => {
       },
     });
   };
-
-  const openMessageDetail = (record: LcwRecord) =>
-    navigate(
-      generatePath(RoutePath.MessageDetail, {
-        msgId: encodeURIComponent(record.msgId),
-        msgDirection: record.msgDirection,
-        businessType: record.businessType,
-      }),
-    );
 
   const rowSelection: NonNullable<TableProps<LcwRecord>['rowSelection']> = {
     selectedRowKeys,
@@ -168,7 +156,6 @@ const LcwList = () => {
         dataSource={records}
         loading={loading}
         locale={{ emptyText: 'No LCW tasks found' }}
-        onRow={(record) => ({ onDoubleClick: () => openMessageDetail(record), className: 'cursor-pointer' })}
         scroll={{ y: DEFAULT_TABLE_BODY_HEIGHT }}
         pagination={{
           current,

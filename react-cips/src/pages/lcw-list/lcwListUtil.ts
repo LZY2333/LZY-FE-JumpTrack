@@ -5,16 +5,16 @@ import { omitEmptyValues } from '@/utils';
 
 /** LCW 异常筛选表单值。 */
 export type LcwListFilterValues = Omit<LcwQueryConditions, 'msgDateFrom' | 'msgDateTo'> & {
-  /** 收发报日期区间，控件内保存覆盖整日的 ISO 时间。 */
+  /** 收发报纯日期区间 */
   msgDateRange?: [string, string] | null;
 };
 
-/** 构造 LCW 页面默认筛选条件，Message Date 覆盖当天整日。 */
+/** 构造 LCW 页面默认筛选条件 */
 export const buildDefaultLcwFilters = (): LcwListFilterValues => {
-  const today = dayjs();
+  const today = dayjs().format('YYYY-MM-DD');
   return {
     msgDirection: MessageDirection.In,
-    msgDateRange: [today.startOf('day').toISOString(), today.endOf('day').toISOString()],
+    msgDateRange: [today, today],
     channel: [MessageChannel.Cips],
   };
 };

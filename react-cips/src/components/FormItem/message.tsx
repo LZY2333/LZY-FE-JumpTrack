@@ -20,8 +20,8 @@ import {
 
 /** 查询字段的布局配置，字段名称和业务标签由组件维护。 */
 type MessageFilterFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
-/** 收发日期查询使用的完整日期区间。 */
-type MessageTimeRange = [string, string] | null;
+/** 收发日期查询使用的纯日期区间。 */
+type MessageDateRange = [string, string] | null;
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const directionOptions = Object.values(MessageDirection).map((value) => ({
@@ -124,12 +124,11 @@ export const MessageDateRangeFilter = (props: MessageFilterFormItemProps) => (
     {...props}
     name='msgDateRange'
     label='Message Date'
-    // 控件选值转为覆盖整日的 ISO 字符串，直接存入 Form。
-    getValueFromEvent={(dates: [Dayjs, Dayjs] | null): MessageTimeRange => {
-      return dates ? [dates[0].startOf('day').toISOString(), dates[1].endOf('day').toISOString()] : null;
+    getValueFromEvent={(dates: [Dayjs, Dayjs] | null): MessageDateRange => {
+      return dates ? [dates[0].format(DATE_FORMAT), dates[1].format(DATE_FORMAT)] : null;
     }}
     // Form 中的字符串转回 Dayjs，供日期控件显示。
-    getValueProps={(value?: MessageTimeRange) => ({
+    getValueProps={(value?: MessageDateRange) => ({
       value: value ? [dayjs(value[0]), dayjs(value[1])] : null,
     })}
   >

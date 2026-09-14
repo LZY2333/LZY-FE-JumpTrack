@@ -28,7 +28,7 @@ export const ContentMessageBusinessInfo = ({ detail }: ContentMessageBusinessInf
       <Alert
         type='info'
         showIcon
-        message='No structured business information for Other messages. The raw message remains available.'
+        message='No structured business info for Other messages. The raw message remains available.'
       />
     );
   }
@@ -39,7 +39,7 @@ export const ContentMessageBusinessInfo = ({ detail }: ContentMessageBusinessInf
       <Alert
         type='info'
         showIcon
-        message='No business information template is available for this business type. View or download the raw message instead.'
+        message='No business info template is available for this business type. View or download the raw message instead.'
       />
     );
   }

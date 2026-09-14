@@ -82,9 +82,9 @@ export interface MessageQueryConditions {
   msgRecvStatus?: MsgRecvStatus[];
   /** 发报状态：MSG_SEND_STATUS，仅在 OU 时提交；临时枚举待后端确认。 */
   msgSendStatus?: MsgSendStatus[];
-  /** 收发日期起点：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE，由必填方向确定主表。 */
+  /** 收发日期起点：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE，格式为 YYYY-MM-DD。 */
   msgDateFrom?: string;
-  /** 收发日期终点：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE，包含边界。 */
+  /** 收发日期终点：IN.MSG_RECV_DATE / OU.MSG_SEND_DATE，格式为 YYYY-MM-DD。 */
   msgDateTo?: string;
   /** 报文类型：MSG_TYPE。 */
   msgType?: string;

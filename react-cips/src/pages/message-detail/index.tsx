@@ -66,7 +66,7 @@ const MessageDetailPage = () => {
   const tabs = [
     {
       key: 'structured',
-      label: 'Business Information',
+      label: 'Business Info',
       className: SCROLLABLE_TAB_CONTENT_CLASS_NAME,
       children: <ContentMessageBusinessInfo detail={detail} />,
     },
