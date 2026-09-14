@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getLcwTasks, retryLcwTasks } from '@/api/lcw';
-import type { LcwQuery } from '@/api/lcw';
-import type { LcwRecord } from '@/types';
+import type { LcwQuery, LcwRecord } from '@/api/lcw';
+import useUserStore from '@/store/useUserStore';
 import { buildLcwQueryConditions, type LcwListFilterValues } from './lcwListUtil';
 
 const PAGE_SIZE_STORAGE_KEY = 'lcw-list-page-size';
@@ -10,6 +10,7 @@ const DEFAULT_PAGE_SIZE = LCW_PAGE_SIZE_OPTIONS[0];
 
 /** 编排 LCW 异常列表查询、分页和批量重试。 */
 const useLcwList = (initialFilters: LcwListFilterValues) => {
+  const userId = useUserStore((state) => state.user?.userId);
   const [records, setRecords] = useState<LcwRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,13 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
   const [refreshVersion, setRefreshVersion] = useState(0);
 
   useEffect(() => {
+    if (!userId) {
+      setRecords([]);
+      setTotal(0);
+      setLoading(false);
+      return;
+    }
+
     let active = true;
     setLoading(true);
 
@@ -49,7 +57,7 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
     return () => {
       active = false;
     };
-  }, [current, filters, pageSize, refreshVersion]);
+  }, [userId, current, filters, pageSize, refreshVersion]);
 
   const query = useCallback((values: LcwListFilterValues) => {
     setFilters({ ...values });
@@ -66,18 +74,24 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
     setCurrent(1);
   }, [initialFilters]);
 
-  const retry = useCallback(async (msgIds: string[]) => {
-    setRetrying(true);
-    try {
-      await retryLcwTasks({ msgIds });
-      setCurrent(1);
-      setRefreshVersion((version) => version + 1);
-    } finally {
-      setRetrying(false);
-    }
-  }, []);
+  const retry = useCallback(
+    async (msgIds: string[]) => {
+      if (!userId) return;
+
+      setRetrying(true);
+      try {
+        await retryLcwTasks({ msgIds });
+        setCurrent(1);
+        setRefreshVersion((version) => version + 1);
+      } finally {
+        setRetrying(false);
+      }
+    },
+    [userId],
+  );
 
   return {
+    authenticated: Boolean(userId),
     records,
     total,
     loading,

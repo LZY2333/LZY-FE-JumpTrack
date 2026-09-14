@@ -3,7 +3,7 @@ import type { CSSProperties, Key } from 'react';
 import { App as AntdApp, Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
-import type { LcwRecord } from '@/types';
+import type { LcwRecord } from '@/api/lcw';
 import ResizableTable from '@/components/ResizableTable';
 import {
   MessageChannelFilter,
@@ -43,6 +43,7 @@ const LcwList = () => {
   const [form] = Form.useForm<LcwListFilterValues>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const {
+    authenticated,
     records,
     total,
     loading,
@@ -129,13 +130,14 @@ const LcwList = () => {
               type='primary'
               icon={<RedoOutlined />}
               loading={retrying}
+              disabled={!authenticated}
               onClick={handleRetrySelected}
             >
               Retry Selected
             </Button>
           </Col>
           <Col span={8} className='ml-auto flex items-center justify-end'>
-            <Button size='small' htmlType='submit' color='primary' variant='solid'>
+            <Button size='small' htmlType='submit' color='primary' variant='solid' disabled={!authenticated}>
               Search
             </Button>
             <Button size='small' htmlType='button' className='ml-2' onClick={handleReset}>
@@ -155,12 +157,13 @@ const LcwList = () => {
         storageKey='lcw-list-v1'
         dataSource={records}
         loading={loading}
-        locale={{ emptyText: 'No LCW tasks found' }}
+        locale={{ emptyText: authenticated ? 'No LCW tasks found' : 'Waiting for authentication...' }}
         scroll={{ y: DEFAULT_TABLE_BODY_HEIGHT }}
         pagination={{
           current,
           pageSize,
           total,
+          disabled: !authenticated,
           pageSizeOptions: LCW_PAGE_SIZE_OPTIONS,
           showSizeChanger: true,
           showQuickJumper: true,

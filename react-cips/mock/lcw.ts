@@ -1,5 +1,4 @@
-import type { LcwBatchRetryRequest, LcwQuery, PagedLcwRecords } from '@/api/lcw';
-import type { LcwRecord } from '@/types';
+import type { LcwBatchRetryRequest, LcwQuery, LcwRecord, PagedLcwRecords } from '@/api/lcw';
 import { LcwInitialStatus, MessageBusinessType, MessageChannel, MessageDirection, ResCode } from '@/types/enums';
 
 interface MockRequestOption<Body> {

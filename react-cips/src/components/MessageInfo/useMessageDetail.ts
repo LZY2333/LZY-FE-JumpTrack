@@ -1,15 +1,23 @@
 import { useEffect, useState } from 'react';
 import { getMessage } from '@/api/messages';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
+import useUserStore from '@/store/useUserStore';
 import type { MessageDetail } from '@/types';
 import { MessageBusinessType, MessageDirection } from '@/types/enums';
 
 /** 加载报文明细。 */
 const useMessageDetail = (msgId?: string, msgDirection?: string, businessType?: string) => {
+  const userId = useUserStore((state) => state.user?.userId);
   const [detail, setDetail] = useState<MessageDetail | null>(null);
   const [detailError, setDetailError] = useState<string>();
 
   useEffect(() => {
+    if (!userId) {
+      setDetail(null);
+      setDetailError(undefined);
+      return;
+    }
+
     if (!msgId) {
       setDetail(null);
       setDetailError('Message ID is required');
@@ -46,7 +54,7 @@ const useMessageDetail = (msgId?: string, msgDirection?: string, businessType?: 
       active = false;
       stopGlobalLoading();
     };
-  }, [businessType, msgDirection, msgId]);
+  }, [userId, businessType, msgDirection, msgId]);
 
   return { detail, detailError };
 };

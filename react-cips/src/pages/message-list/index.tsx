@@ -73,6 +73,7 @@ const MessageList = () => {
   const [form] = Form.useForm<MessageListFilterValues>();
   const [advancedVisible, setAdvancedVisible] = useState(false);
   const {
+    authenticated,
     messages,
     total,
     loading,
@@ -220,7 +221,7 @@ const MessageList = () => {
                 }`}
               />
             </Button>
-            <Button size='small' htmlType='submit' color='primary' variant='solid'>
+            <Button size='small' htmlType='submit' color='primary' variant='solid' disabled={!authenticated}>
               Search
             </Button>
             <Button size='small' htmlType='button' className='ml-2' onClick={handleReset}>
@@ -240,7 +241,7 @@ const MessageList = () => {
         defaultHiddenColumnIds={DEFAULT_HIDDEN_COLUMN_IDS}
         dataSource={messages}
         loading={loading}
-        locale={{ emptyText: 'No messages found' }}
+        locale={{ emptyText: authenticated ? 'No messages found' : 'Waiting for authentication...' }}
         onChange={handleTableChange}
         onRow={(record) => ({ onDoubleClick: () => openDetail(record), className: 'cursor-pointer' })}
         scroll={{ y: tableBodyHeight }}
@@ -248,6 +249,7 @@ const MessageList = () => {
           current,
           pageSize,
           total,
+          disabled: !authenticated,
           pageSizeOptions: PAGE_SIZE_OPTIONS,
           showSizeChanger: true,
           showQuickJumper: true,

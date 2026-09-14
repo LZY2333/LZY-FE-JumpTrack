@@ -1,5 +1,6 @@
 import type { TableColumnType } from 'antd';
-import type { LcwRecord, MessageRecord } from '@/types';
+import type { MessageRecord } from '@/types';
+import type { LcwRecord } from '@/api/lcw';
 import {
   LCW_INITIAL_STATUS_LABELS,
   MESSAGE_DIRECTION_LABELS,

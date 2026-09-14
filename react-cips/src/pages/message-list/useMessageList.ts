@@ -3,6 +3,7 @@ import type { MessageRecord } from '@/types';
 import { getMessages } from '@/api/messages';
 import type { MessageQuery, MessageSortField } from '@/api/messages';
 import type { SortOrder } from '@/types/enums';
+import useUserStore from '@/store/useUserStore';
 import { buildQueryConditions, type MessageListFilterValues } from './messageListUtil';
 
 const PAGE_SIZE_STORAGE_KEY = 'message-list-page-size';
@@ -11,6 +12,7 @@ const DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[0];
 
 /** 报文列表查询状态：保留现有分页、筛选和远程排序交互。 */
 const useMessageList = (initialFilters: MessageListFilterValues) => {
+  const userId = useUserStore((state) => state.user?.userId);
   const [messages, setMessages] = useState<MessageRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -24,6 +26,13 @@ const useMessageList = (initialFilters: MessageListFilterValues) => {
   const [sortOrder, setSortOrder] = useState<SortOrder>();
 
   useEffect(() => {
+    if (!userId) {
+      setMessages([]);
+      setTotal(0);
+      setLoading(false);
+      return;
+    }
+
     // 路由离开或条件快速变化时忽略旧请求结果，避免覆盖较新的列表状态。
     let active = true;
     setLoading(true);
@@ -47,7 +56,7 @@ const useMessageList = (initialFilters: MessageListFilterValues) => {
     return () => {
       active = false;
     };
-  }, [current, pageSize, filters, sortField, sortOrder]);
+  }, [userId, current, pageSize, filters, sortField, sortOrder]);
 
   const query = useCallback((values: MessageListFilterValues) => {
     setFilters({ ...values });
@@ -73,6 +82,7 @@ const useMessageList = (initialFilters: MessageListFilterValues) => {
   }, [initialFilters]);
 
   return {
+    authenticated: Boolean(userId),
     queryDirection: filters.msgDirection,
     messages,
     total,

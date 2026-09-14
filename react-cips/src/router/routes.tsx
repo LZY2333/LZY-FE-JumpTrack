@@ -6,9 +6,10 @@ import MessageDetail from '@/pages/message-detail';
 import LcwList from '@/pages/lcw-list';
 import { Role } from '@/types/enums';
 
-/** 应用页面路径；登录和用户权限继续沿用现有入口。 */
+/** 应用页面路径。 */
 export enum RoutePath {
   Root = '/',
+  IopRoot = '/iop',
   MessageList = '/messages',
   MessageDetail = '/messages/:msgDirection/:businessType/:msgId',
   LcwList = '/lcw',

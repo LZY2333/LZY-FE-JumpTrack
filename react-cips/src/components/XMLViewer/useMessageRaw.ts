@@ -1,15 +1,24 @@
 import { useEffect, useState } from 'react';
 import { getMessageRaw } from '@/api/messages';
 import type { MessageRaw } from '@/api/messages';
+import useUserStore from '@/store/useUserStore';
 import { MessageDirection } from '@/types/enums';
 
 /** 加载 Raw Message。 */
 const useMessageRaw = (messageId?: string, msgDirection?: string) => {
+  const userId = useUserStore((state) => state.user?.userId);
   const [raw, setRaw] = useState<MessageRaw | null>(null);
   const [rawLoading, setRawLoading] = useState(false);
   const [rawError, setRawError] = useState<string>();
 
   useEffect(() => {
+    if (!userId) {
+      setRaw(null);
+      setRawError(undefined);
+      setRawLoading(false);
+      return;
+    }
+
     if (!messageId) {
       setRaw(null);
       setRawError('Message ID is required');
@@ -44,7 +53,7 @@ const useMessageRaw = (messageId?: string, msgDirection?: string) => {
     return () => {
       active = false;
     };
-  }, [messageId, msgDirection]);
+  }, [userId, messageId, msgDirection]);
 
   return { raw, rawLoading, rawError };
 };

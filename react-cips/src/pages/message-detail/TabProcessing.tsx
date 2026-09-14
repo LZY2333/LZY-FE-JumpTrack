@@ -4,15 +4,24 @@ import type { TableColumnsType } from 'antd';
 import { getMessageProcessingRecords } from '@/api/messages';
 import { renderMessageDateTime } from '@/components/TableColumn/messageColumnUtil';
 import TableViewport from '@/components/TableViewport';
+import useUserStore from '@/store/useUserStore';
 import type { MessageAuditTrailRecord } from '@/types';
 
 /** 处理记录 Tab：按审计轨迹表展示报文处理过程中产生的事件。 */
 const TabProcessing = ({ messageId }: { messageId?: string }) => {
+  const userId = useUserStore((state) => state.user?.userId);
   const [records, setRecords] = useState<MessageAuditTrailRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
   useEffect(() => {
+    if (!userId) {
+      setRecords([]);
+      setError(undefined);
+      setLoading(false);
+      return;
+    }
+
     if (!messageId) {
       setRecords([]);
       setError('Message ID is required');
@@ -41,7 +50,7 @@ const TabProcessing = ({ messageId }: { messageId?: string }) => {
     return () => {
       active = false;
     };
-  }, [messageId]);
+  }, [userId, messageId]);
 
   const columns: TableColumnsType<MessageAuditTrailRecord> = [
     /** 事件发生时间 */
