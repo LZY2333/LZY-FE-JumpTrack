@@ -1,6 +1,7 @@
 import type { Role } from './enums';
 
 export type { MessageRecord, MessageAuditTrailRecord, MessageDetail, MessageEntityRecord } from './message';
+export type { IopTaskInfo } from './iopTask';
 
 export interface UserIdentity {
   /** 用户 ID */

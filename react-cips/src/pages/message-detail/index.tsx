@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
 import { ArrowLeftOutlined, CopyOutlined, PrinterOutlined } from '@ant-design/icons';
@@ -6,11 +6,12 @@ import { CardMessageBasicInfo } from '@/components/MessageInfo/CardMessageBasicI
 import { ContentMessageBusinessInfo } from '@/components/MessageInfo/CardMessageBusinessInfo';
 import { resolveDisplayMessageId } from '@/components/MessageInfo/messageDetailUtil';
 import useMessageDetail from '@/components/MessageInfo/useMessageDetail';
-import RawViewer from '@/components/XMLViewer/RawViewer';
-import useMessageRaw from '@/components/XMLViewer/useMessageRaw';
+import ContentMessageRaw from '@/components/ContentMessageRaw';
+import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
+import useMessageRaw from '@/components/ContentMessageRaw/useMessageRaw';
 import TabProcessing from './TabProcessing';
-import { RoutePath } from '@/router/routes';
-import { isRawContentActionDisabled, printElementDocument, printTextDocument } from './util';
+import { RoutePath } from '@/router/routePath';
+import { isRawContentActionDisabled, printXmlDocument } from './util';
 import { copyText } from '@/utils/fileUtil';
 
 const SCROLLABLE_TAB_CONTENT_CLASS_NAME = 'h-full overflow-auto';
@@ -27,19 +28,16 @@ const MessageDetailPage = () => {
     businessType: string;
   }>();
   const navigate = useNavigate();
-  const { detail, detailError } = useMessageDetail(msgId, msgDirection, businessType);
+  const { detail, detailError } = useMessageDetail({ msgId, msgDirection, businessType });
   const { raw, rawLoading, rawError } = useMessageRaw(msgId, msgDirection);
-  const [activeTabKey, setActiveTabKey] = useState(DEFAULT_TAB_KEY);
-  const rawViewerContentRef = useRef<HTMLDivElement>(null);
+  const messageRawRef = useRef<ContentMessageRawRef>(null);
 
-  /** 打开只包含当前报文原文的打印窗口。 */
+  /** 打开与当前折叠状态一致的报文打印窗口。 */
   const handlePrint = () => {
     if (!raw?.msgContent) return;
     const title = `${msgId || 'message'}.xml`;
-    const currentViewElement = activeTabKey === RAW_TAB_KEY ? rawViewerContentRef.current : null;
-    const opened = currentViewElement
-      ? printElementDocument(title, currentViewElement)
-      : printTextDocument(title, raw.msgContent);
+    const printContent = messageRawRef.current?.getPrintableValue() ?? raw.msgContent;
+    const opened = printXmlDocument(title, printContent);
     if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
   };
 
@@ -74,7 +72,7 @@ const MessageDetailPage = () => {
       key: RAW_TAB_KEY,
       label: 'Raw Message',
       className: FLEX_TAB_CONTENT_CLASS_NAME,
-      children: <RawViewer ref={rawViewerContentRef} raw={raw} loading={rawLoading} error={rawError} />,
+      children: <ContentMessageRaw ref={messageRawRef} raw={raw} loading={rawLoading} error={rawError} />,
     },
     {
       key: 'processing',
@@ -114,9 +112,8 @@ const MessageDetailPage = () => {
           className='flex h-full min-h-0 flex-col overflow-hidden [&_.ant-tabs-tab-btn]:font-semibold [&>.ant-tabs-content-holder>.ant-tabs-content]:h-full [&>.ant-tabs-content-holder]:min-h-0 [&>.ant-tabs-content-holder]:flex-1 [&>.ant-tabs-content-holder]:overflow-hidden'
           size='small'
           tabBarGutter={20}
-          activeKey={activeTabKey}
+          defaultActiveKey={DEFAULT_TAB_KEY}
           items={tabs}
-          onChange={setActiveTabKey}
         />
       </Card>
     </div>

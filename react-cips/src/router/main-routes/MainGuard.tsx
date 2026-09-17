@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import useUserStore from '@/store/useUserStore';
 
-/** 普通页面认证入口，在页面渲染后异步初始化用户。 */
-const AuthenticatedEntry = () => {
+/** 主页面路由守卫，在页面渲染后异步初始化用户。 */
+const MainGuard = () => {
   const login = useUserStore((state) => state.login);
   const loginStartedRef = useRef(false);
 
@@ -17,4 +17,4 @@ const AuthenticatedEntry = () => {
   return <Outlet />;
 };
 
-export default AuthenticatedEntry;
+export default MainGuard;

@@ -1,18 +1,22 @@
 import { useEffect, useState } from 'react';
 import { getMessageRaw } from '@/api/messages';
 import type { MessageRaw } from '@/api/messages';
-import useUserStore from '@/store/useUserStore';
 import { MessageDirection } from '@/types/enums';
 
-/** 加载 Raw Message。 */
-const useMessageRaw = (messageId?: string, msgDirection?: string) => {
-  const userId = useUserStore((state) => state.user?.userId);
+interface UseMessageRawOptions {
+  /** 是否发起 Raw Message 请求。 */
+  enabled?: boolean;
+}
+
+/** 加载 Raw Message 数据。 */
+const useMessageRaw = (messageId?: string, msgDirection?: string, options: UseMessageRawOptions = {}) => {
+  const { enabled = true } = options;
   const [raw, setRaw] = useState<MessageRaw | null>(null);
   const [rawLoading, setRawLoading] = useState(false);
   const [rawError, setRawError] = useState<string>();
 
   useEffect(() => {
-    if (!userId) {
+    if (!enabled) {
       setRaw(null);
       setRawError(undefined);
       setRawLoading(false);
@@ -53,7 +57,7 @@ const useMessageRaw = (messageId?: string, msgDirection?: string) => {
     return () => {
       active = false;
     };
-  }, [userId, messageId, msgDirection]);
+  }, [enabled, messageId, msgDirection]);
 
   return { raw, rawLoading, rawError };
 };

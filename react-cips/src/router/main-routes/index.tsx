@@ -1,26 +1,20 @@
-import type { ReactElement } from 'react';
 import KeepAlive from 'react-activation';
 import { Navigate } from 'react-router-dom';
-import MessageList from '@/pages/message-list';
-import MessageDetail from '@/pages/message-detail';
 import LcwList from '@/pages/lcw-list';
-import { Role } from '@/types/enums';
+import MessageDetail from '@/pages/message-detail';
+import MessageList from '@/pages/message-list';
+import { RoutePath } from '../routePath';
+import type { AppRoute } from '../routePath';
 
-/** 应用页面路径。 */
-export enum RoutePath {
-  Root = '/',
-  IopRoot = '/iop',
-  MessageList = '/messages',
-  MessageDetail = '/messages/:msgDirection/:businessType/:msgId',
-  LcwList = '/lcw',
-}
-
-export const routes: AppRoute[] = [
+/** 需要登录并使用主布局的业务路由。 */
+export const mainRoutes: AppRoute[] = [
+  /** 默认入口：跳转报文列表页。 */
   {
     path: RoutePath.Root,
     element: <Navigate to={RoutePath.MessageList} replace />,
     meta: { title: 'Message List' },
   },
+  /** 报文列表页。 */
   {
     path: RoutePath.MessageList,
     element: (
@@ -30,11 +24,13 @@ export const routes: AppRoute[] = [
     ),
     meta: { title: 'Message List' },
   },
+  /** 报文详情页。 */
   {
     path: RoutePath.MessageDetail,
     element: <MessageDetail />,
     meta: { title: 'Message Details' },
   },
+  /** 反洗钱任务列表页。 */
   {
     path: RoutePath.LcwList,
     element: (
@@ -46,9 +42,5 @@ export const routes: AppRoute[] = [
   },
 ];
 
-export interface AppRoute {
-  path: string;
-  element: ReactElement;
-  meta: { title: string };
-  role?: Role;
-}
+export { default as MainGuard } from './MainGuard';
+export { default as PrivateRoute } from './PrivateRoute';

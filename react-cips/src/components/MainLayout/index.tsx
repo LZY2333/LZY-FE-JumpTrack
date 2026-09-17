@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Layout } from 'antd';
 import { Outlet, matchRoutes, useLocation } from 'react-router-dom';
-import { routes } from '@/router/routes';
+import { mainRoutes } from '@/router/main-routes';
 
 const { Content } = Layout;
 
@@ -12,7 +12,7 @@ export default function MainLayout() {
   const location = useLocation();
 
   useEffect(() => {
-    const matched = matchRoutes(routes, location);
+    const matched = matchRoutes(mainRoutes, location);
     const title = matched?.[matched.length - 1]?.route.meta?.title;
     document.title = title ? `${title} - ${APP_TITLE}` : APP_TITLE;
   }, [location]);

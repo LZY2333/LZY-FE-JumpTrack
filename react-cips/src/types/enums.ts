@@ -153,3 +153,69 @@ export enum QuerySortOrder {
   /** 降序。 */
   Desc = 'desc',
 }
+
+/* ==================== IOP任务 ==================== */
+
+/** IOP任务中文名，处理内容(我们系统)，处理内容(IOP页) */
+/** IOP任务类型：TASK_FLOW_NO，同时也对应IOP流程ID(TASK_FLOW_NO) */
+export enum IopTaskType {
+  /** 手工补录，自动创建task，(IOP页)Maker修改报文原文 + Checker审批 */
+  manualEntry = 'ST10',
+  /** 手工归属(场景：清分未命中)，自动创建task，(IOP页)Maker修改dept group + Checker审批*/
+  manualAttribute = 'ST11',
+  /** 创建分发任务，手动创建task(detail页修改dept group)，(IOP页)Checker审批 */
+  distributeCreation = 'ST12',
+  /** 分发异常(场景：下游接口报错)，自动创建task，(IOP页)审批 */
+  distributeException = 'ST13',
+  /** 创建查询类报文(场景：基于支付类报文发起)，手动创建task(detail页填写content字段)，(IOP页)Checker二级审批 */
+  inquiryPayment = 'ST14',
+  /** 回复查询类报文，手动创建task(detail页填写content字段)，(IOP页)Checker二级审批 */
+  inquiryReply = 'ST15',
+  /** 发报异常，自动创建task，(IOP页)Maker选OUT_RETRY/OUT_CANCEL + Checker审批 */
+  exceptionOut = 'ST16',
+}
+
+/** IOP 任务类型展示名：TASK_FLOW_NO */
+export const IOP_TASK_TYPE_LABELS: Record<IopTaskType, string> = {
+  [IopTaskType.manualEntry]: 'PSSST Manual Entry',
+  [IopTaskType.manualAttribute]: 'PSSST Manual Attribute',
+  [IopTaskType.distributeCreation]: 'PSSST Distribute Creation',
+  [IopTaskType.distributeException]: 'PSSST Distribute Exception',
+  [IopTaskType.inquiryPayment]: 'PSSST Inquiry Payment',
+  [IopTaskType.inquiryReply]: 'PSSST Inquiry Reply',
+  [IopTaskType.exceptionOut]: 'PSSST Exception Out',
+};
+
+/** IOP 任务当前环节：TASK_NODE。 */
+export enum IopTaskNode {
+  /** 经办中。 */
+  MakerStage = '1',
+  /** 待一级审批。 */
+  Checker1Stage = '2',
+  /** 待二级审批。 */
+  Checker2Stage = '3',
+  /** 待经办更正。 */
+  MakerRework = '4',
+  /** 审批通过。 */
+  Approved = '5',
+  /** 取消。 */
+  Cancelled = '6',
+}
+
+/** IOP 任务当前环节展示文案：TASK_NODE。 */
+export const IOP_TASK_NODE_LABELS: Record<IopTaskNode, string> = {
+  [IopTaskNode.MakerStage]: 'Maker Stage',
+  [IopTaskNode.Checker1Stage]: 'Checker 1 Stage',
+  [IopTaskNode.Checker2Stage]: 'Checker 2 Stage',
+  [IopTaskNode.MakerRework]: 'Maker Rework',
+  [IopTaskNode.Approved]: 'Approved',
+  [IopTaskNode.Cancelled]: 'Cancelled',
+};
+
+/** IOP 审批结果。 */
+export enum ApprovalYesNo {
+  /** 审批通过。 */
+  Yes = 'Y',
+  /** 审批拒绝。 */
+  No = 'N',
+}

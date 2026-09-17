@@ -1,18 +1,33 @@
 import { useEffect, useState } from 'react';
 import { getMessage } from '@/api/messages';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
-import useUserStore from '@/store/useUserStore';
 import type { MessageDetail } from '@/types';
 import { MessageBusinessType, MessageDirection } from '@/types/enums';
 
+type UseMessageDetailOptions = {
+  /** 报文 ID。 */
+  msgId?: string;
+  /** 报文方向。 */
+  msgDirection?: string;
+  /** 业务类型。 */
+  businessType?: string;
+  /** 是否启用明细查询。 */
+  enabled?: boolean;
+};
+
 /** 加载报文明细。 */
-const useMessageDetail = (msgId?: string, msgDirection?: string, businessType?: string) => {
-  const userId = useUserStore((state) => state.user?.userId);
+const useMessageDetail = ({
+  msgId,
+  msgDirection,
+  businessType,
+  enabled = true,
+}: UseMessageDetailOptions) => {
   const [detail, setDetail] = useState<MessageDetail | null>(null);
   const [detailError, setDetailError] = useState<string>();
+  const [refreshVersion, setRefreshVersion] = useState(0);
 
   useEffect(() => {
-    if (!userId) {
+    if (!enabled) {
       setDetail(null);
       setDetailError(undefined);
       return;
@@ -54,9 +69,9 @@ const useMessageDetail = (msgId?: string, msgDirection?: string, businessType?: 
       active = false;
       stopGlobalLoading();
     };
-  }, [userId, businessType, msgDirection, msgId]);
+  }, [businessType, enabled, msgDirection, msgId, refreshVersion]);
 
-  return { detail, detailError };
+  return { detail, detailError, handleRefresh: () => setRefreshVersion((version) => version + 1) };
 };
 
 /** 校验报文方向。 */
