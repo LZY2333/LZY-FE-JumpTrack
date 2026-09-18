@@ -4,6 +4,7 @@ import { xml as xmlLanguage } from '@codemirror/lang-xml';
 import CodeMirror from '@uiw/react-codemirror';
 import type { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import cn from 'classnames';
+import { createXMLFoldExtensions } from './codeMirrorXMLFoldUtil';
 import { getPrintableCode } from './codeMirrorXMLUtil';
 import { XML_CODE_THEMES } from './codeMirrorXMLTheme';
 import type { XMLCodeThemeName } from './codeMirrorXMLTheme';
@@ -103,7 +104,11 @@ const CodeMirrorXML = forwardRef<CodeMirrorXMLRef, CodeMirrorXMLProps>((props, f
   const [internalTheme, setInternalTheme] = useState<XMLCodeThemeName>(() => readStoredTheme(defaultTheme));
   const activeTheme = theme ?? internalTheme;
   const preset = XML_CODE_THEMES[activeTheme];
-  const extensions = useMemo(() => [XML_LANGUAGE_EXTENSION, ...preset.extensions], [preset.extensions]);
+  const foldExtensions = useMemo(() => (collapsible ? createXMLFoldExtensions() : []), [collapsible]);
+  const extensions = useMemo(
+    () => [XML_LANGUAGE_EXTENSION, ...foldExtensions, ...preset.extensions],
+    [foldExtensions, preset.extensions],
+  );
 
   useImperativeHandle(
     forwardedRef,
@@ -152,7 +157,8 @@ const CodeMirrorXML = forwardRef<CodeMirrorXMLRef, CodeMirrorXMLProps>((props, f
           placeholder={placeholder}
           basicSetup={{
             lineNumbers: true,
-            foldGutter: collapsible,
+            foldGutter: false,
+            foldKeymap: collapsible,
             highlightActiveLine: !readOnly,
             highlightActiveLineGutter: !readOnly,
             autocompletion: !readOnly,

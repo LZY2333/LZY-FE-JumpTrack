@@ -3,14 +3,17 @@ import { getMessageRaw } from '@/api/messages';
 import type { MessageRaw } from '@/api/messages';
 import { MessageDirection } from '@/types/enums';
 
-interface UseMessageRawOptions {
+type UseMessageRawParams = {
+  /** 报文 ID。 */
+  msgId?: string;
+  /** 报文方向。 */
+  msgDirection?: string;
   /** 是否发起 Raw Message 请求。 */
   enabled?: boolean;
-}
+};
 
 /** 加载 Raw Message 数据。 */
-const useMessageRaw = (messageId?: string, msgDirection?: string, options: UseMessageRawOptions = {}) => {
-  const { enabled = true } = options;
+const useMessageRaw = ({ msgId, msgDirection, enabled = true }: UseMessageRawParams) => {
   const [raw, setRaw] = useState<MessageRaw | null>(null);
   const [rawLoading, setRawLoading] = useState(false);
   const [rawError, setRawError] = useState<string>();
@@ -23,7 +26,7 @@ const useMessageRaw = (messageId?: string, msgDirection?: string, options: UseMe
       return;
     }
 
-    if (!messageId) {
+    if (!msgId) {
       setRaw(null);
       setRawError('Message ID is required');
       setRawLoading(false);
@@ -41,7 +44,7 @@ const useMessageRaw = (messageId?: string, msgDirection?: string, options: UseMe
     setRawError(undefined);
     setRawLoading(true);
 
-    getMessageRaw({ msgId: messageId, msgDirection })
+    getMessageRaw({ msgId, msgDirection })
       .then((data) => {
         if (!active) return;
         setRaw(data ?? null);
@@ -57,7 +60,7 @@ const useMessageRaw = (messageId?: string, msgDirection?: string, options: UseMe
     return () => {
       active = false;
     };
-  }, [enabled, messageId, msgDirection]);
+  }, [enabled, msgDirection, msgId]);
 
   return { raw, rawLoading, rawError };
 };

@@ -24,8 +24,6 @@ interface CodeMirrorXMLThemePalette {
   cdataColor: string;
   /** 当前行背景色。 */
   activeLineColor: string;
-  /** 选择区域背景色。 */
-  selectionColor: string;
   /** 非法语法颜色。 */
   invalidColor: string;
 }
@@ -53,7 +51,6 @@ const LIGHT_PALETTE: CodeMirrorXMLThemePalette = {
   commentColor: '#6e7781',
   cdataColor: '#116329',
   activeLineColor: '#eef1f4',
-  selectionColor: '#b6d7ff',
   invalidColor: '#cf222e',
 };
 
@@ -67,7 +64,6 @@ const DARK_PALETTE: CodeMirrorXMLThemePalette = {
   commentColor: '#6272a4',
   cdataColor: '#8be9fd',
   activeLineColor: '#343746',
-  selectionColor: '#44475a',
   invalidColor: '#ff5555',
 };
 
@@ -93,14 +89,53 @@ const createXMLCodeTheme = (palette: CodeMirrorXMLThemePalette, dark: boolean): 
           borderRight: `1px solid ${palette.separatorColor}`,
           color: palette.separatorColor,
         },
+        '.cm-foldGutter .cm-gutterElement': {
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '0 2px',
+          width: '26px',
+        },
+        '.cm-foldGutter .cm-foldMarker': {
+          alignItems: 'center',
+          borderRadius: '4px',
+          boxSizing: 'border-box',
+          cursor: 'pointer',
+          display: 'inline-flex',
+          height: '100%',
+          justifyContent: 'center',
+          padding: '0',
+          width: '20px',
+        },
+        '.cm-foldGutter .cm-foldMarker:hover': {
+          backgroundColor: palette.activeLineColor,
+        },
+        '.cm-foldGutter .cm-foldMarkerIcon': {
+          borderBottom: '2px solid currentColor',
+          borderRight: '2px solid currentColor',
+          boxSizing: 'border-box',
+          height: '7px',
+          padding: '0',
+          transform: 'rotate(-45deg)',
+          transition: 'transform 120ms ease',
+          width: '7px',
+        },
+        '.cm-foldGutter .cm-foldMarker-expanded .cm-foldMarkerIcon': {
+          transform: 'rotate(45deg)',
+        },
         '.cm-activeLine, .cm-activeLineGutter': {
           backgroundColor: palette.activeLineColor,
         },
         '&.cm-focused .cm-cursor': {
           borderLeftColor: palette.textColor,
         },
-        '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection': {
-          backgroundColor: palette.selectionColor,
+        '& > .cm-scroller > .cm-selectionLayer .cm-selectionBackground': {
+          backgroundColor: 'var(--ant-color-primary) !important',
+          opacity: '0.3',
+        },
+        '&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground': {
+          backgroundColor: 'var(--ant-color-primary) !important',
+          opacity: '0.5',
         },
         '.cm-foldPlaceholder': {
           backgroundColor: palette.activeLineColor,

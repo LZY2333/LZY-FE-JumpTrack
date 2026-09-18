@@ -161,11 +161,11 @@ export enum QuerySortOrder {
 export enum IopTaskType {
   /** 手工补录，自动创建task，(IOP页)Maker修改报文原文 + Checker审批 */
   manualEntry = 'ST10',
-  /** 手工归属(场景：清分未命中)，自动创建task，(IOP页)Maker修改dept group + Checker审批*/
+  /** 手工归属(场景：清分未命中)，自动创建task，(IOP页)Maker修改归属后完成 */
   manualAttribute = 'ST11',
-  /** 创建分发任务，手动创建task(detail页修改dept group)，(IOP页)Checker审批 */
+  /** 创建分发任务(场景: 清分错了要修改)，手动创建task(detail页修改dept group)，(IOP页)Checker审批 */
   distributeCreation = 'ST12',
-  /** 分发异常(场景：下游接口报错)，自动创建task，(IOP页)审批 */
+  /** 分发异常(场景：下游接口报错)，自动创建task，(IOP页)Maker重新分发后完成 */
   distributeException = 'ST13',
   /** 创建查询类报文(场景：基于支付类报文发起)，手动创建task(detail页填写content字段)，(IOP页)Checker二级审批 */
   inquiryPayment = 'ST14',

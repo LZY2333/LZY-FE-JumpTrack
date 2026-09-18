@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
-import { ArrowLeftOutlined, CopyOutlined, PrinterOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CopyOutlined, PlusOutlined, PrinterOutlined } from '@ant-design/icons';
+import { postDCCreate } from '@/api/iop/iop-distribute-creation';
 import { CardMessageBasicInfo } from '@/components/MessageInfo/CardMessageBasicInfo';
 import { ContentMessageBusinessInfo } from '@/components/MessageInfo/CardMessageBusinessInfo';
 import { resolveDisplayMessageId } from '@/components/MessageInfo/messageDetailUtil';
@@ -9,6 +10,10 @@ import useMessageDetail from '@/components/MessageInfo/useMessageDetail';
 import ContentMessageRaw from '@/components/ContentMessageRaw';
 import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
 import useMessageRaw from '@/components/ContentMessageRaw/useMessageRaw';
+import useUserStore from '@/store/useUserStore';
+import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
+import { MessageDirection } from '@/types/enums';
+import { openModalDistribute } from './ModalDistribute';
 import TabProcessing from './TabProcessing';
 import { RoutePath } from '@/router/routePath';
 import { isRawContentActionDisabled, printXmlDocument } from './util';
@@ -22,6 +27,7 @@ const RAW_TAB_KEY = 'raw';
 /** 报文明细页：展示报文基础信息、结构化业务内容、原始报文和处理记录。 */
 const MessageDetailPage = () => {
   const { message } = App.useApp();
+  const user = useUserStore((state) => state.user);
   const { msgId, msgDirection, businessType } = useParams<{
     msgId: string;
     msgDirection: string;
@@ -29,7 +35,7 @@ const MessageDetailPage = () => {
   }>();
   const navigate = useNavigate();
   const { detail, detailError } = useMessageDetail({ msgId, msgDirection, businessType });
-  const { raw, rawLoading, rawError } = useMessageRaw(msgId, msgDirection);
+  const { raw, rawLoading, rawError } = useMessageRaw({ msgId, msgDirection });
   const messageRawRef = useRef<ContentMessageRawRef>(null);
 
   /** 打开与当前折叠状态一致的报文打印窗口。 */
@@ -42,6 +48,30 @@ const MessageDetailPage = () => {
   };
 
   const rawContentActionDisabled = isRawContentActionDisabled(raw, rawLoading);
+
+  /** 从当前收报创建分发任务。 */
+  const handleCreateDistribution = async () => {
+    if (!msgId || !user) {
+      message.warning('Message or current user information is unavailable');
+      return;
+    }
+
+    const fields = await openModalDistribute();
+    if (!fields) return;
+
+    const stopGlobalLoading = startGlobalLoading();
+    try {
+      await postDCCreate({
+        msgId,
+        userId: user.userId,
+        orgId: user.orgId,
+        ...fields,
+      });
+      message.success('Distribution task created');
+    } finally {
+      stopGlobalLoading();
+    }
+  };
 
   const handleCopyRaw = async () => {
     if (!raw?.msgContent) return;
@@ -92,6 +122,17 @@ const MessageDetailPage = () => {
           <Typography.Text strong>Message {resolveDisplayMessageId(detail, msgId)} Details</Typography.Text>
         </Space>
         <Space size={8} wrap>
+          {msgDirection === MessageDirection.In && (
+            <Button
+              size='small'
+              type='primary'
+              icon={<PlusOutlined />}
+              disabled={!user}
+              onClick={handleCreateDistribution}
+            >
+              Distribute
+            </Button>
+          )}
           <Button size='small' icon={<CopyOutlined />} disabled={rawContentActionDisabled} onClick={handleCopyRaw}>
             Copy Raw
           </Button>

@@ -10,11 +10,16 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { ApprovalYesNo } from '@/types/enums';
-import type { ManualEntryState } from './useManualEntry';
 
 /** 手工补录操作栏。 */
-const ManualEntryActions = ({
-  manualEntry,
+const PanelAction = ({
+  isMakerNode,
+  isCheckerNode,
+  approvalDisabled,
+  updated,
+  rawLoading,
+  currentRaw,
+  originRaw,
   onUpdate,
   onReset,
   onRedo,
@@ -22,30 +27,27 @@ const ManualEntryActions = ({
   onCopy,
   onPrint,
   onApproval,
-}: ManualEntryActionsProps) => {
-  const rawActionDisabled = manualEntry.rawLoading || !manualEntry.currentRaw;
+}: PanelActionProps) => {
+  /** 当前原文是否禁止更新。 */
+  const updateDisabled = rawLoading || !currentRaw.trim() || currentRaw === originRaw;
+  /** 当前原文是否禁止复制和打印。 */
+  const rawActionDisabled = rawLoading || !currentRaw;
 
   return (
     <div className='mb-3 flex shrink-0 items-center justify-between gap-3'>
       <div className='flex flex-wrap gap-2'>
-        {manualEntry.makerMode && !manualEntry.updated && (
+        {isMakerNode && !updated && (
           <>
-            <Button
-              size='small'
-              type='primary'
-              icon={<SaveOutlined />}
-              disabled={!manualEntry.canUpdate}
-              onClick={onUpdate}
-            >
+            <Button size='small' type='primary' icon={<SaveOutlined />} disabled={updateDisabled} onClick={onUpdate}>
               Update
             </Button>
-            <Button size='small' icon={<ReloadOutlined />} disabled={manualEntry.rawLoading} onClick={onReset}>
+            <Button size='small' icon={<ReloadOutlined />} disabled={rawLoading} onClick={onReset}>
               Reset
             </Button>
           </>
         )}
 
-        {manualEntry.makerMode && manualEntry.updated && (
+        {isMakerNode && updated && (
           <>
             <Button size='small' icon={<RollbackOutlined />} onClick={onRedo}>
               Redo
@@ -56,12 +58,13 @@ const ManualEntryActions = ({
           </>
         )}
 
-        {manualEntry.checkerMode && (
+        {isCheckerNode && (
           <>
             <Button
               size='small'
               type='primary'
               icon={<CheckOutlined />}
+              disabled={approvalDisabled}
               onClick={() => onApproval(ApprovalYesNo.Yes)}
             >
               Approve
@@ -70,6 +73,7 @@ const ManualEntryActions = ({
               size='small'
               danger
               icon={<CloseOutlined />}
+              disabled={approvalDisabled}
               onClick={() => onApproval(ApprovalYesNo.No)}
             >
               Reject
@@ -90,9 +94,21 @@ const ManualEntryActions = ({
   );
 };
 
-interface ManualEntryActionsProps {
-  /** 页面业务状态。 */
-  manualEntry: ManualEntryState;
+interface PanelActionProps {
+  /** 是否展示 Maker 操作。 */
+  isMakerNode: boolean;
+  /** 是否展示 Checker 1 操作。 */
+  isCheckerNode: boolean;
+  /** 审批操作是否禁用。 */
+  approvalDisabled: boolean;
+  /** Maker 是否已完成 Update。 */
+  updated: boolean;
+  /** 原文是否正在加载。 */
+  rawLoading: boolean;
+  /** 当前编辑或展示的原文。 */
+  currentRaw: string;
+  /** 首次查询的原文。 */
+  originRaw: string;
   /** 保存原文。 */
   onUpdate: () => void;
   /** 恢复原文。 */
@@ -109,4 +125,4 @@ interface ManualEntryActionsProps {
   onApproval: (next: ApprovalYesNo) => void;
 }
 
-export default ManualEntryActions;
+export default PanelAction;

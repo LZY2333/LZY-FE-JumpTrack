@@ -1,50 +1,81 @@
-import { useRef } from 'react';
-import { Alert, App as AntdApp, Typography } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, App as AntdApp } from 'antd';
 import { useOutletContext } from 'react-router-dom';
-import { postMEApprove, postMEConfirm, postMERedo, postMEUpdate } from '@/api/iop';
+import { postMEApprove, postMEConfirm, postMERedo, postMEUpdate } from '@/api/iop/iop-manual-entry';
 import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
+import useMessageRaw from '@/components/ContentMessageRaw/useMessageRaw';
 import { printXmlDocument } from '@/pages/message-detail/util';
 import type { IopTaskData } from '@/router/iop-routes/useIopGuard';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 import { ApprovalYesNo, IopTaskNode } from '@/types/enums';
 import { copyText } from '@/utils/fileUtil';
-import ManualEntryActions from './ManualEntryActions';
-import ManualEntryContent from './ManualEntryContent';
+import PanelAction from './PanelAction';
+import PanelContent from './PanelContent';
 import { openModalApprove, openModalReject } from './ModalApproval';
-import useManualEntry from './useManualEntry';
 
-/** 手工补录 IOP 页面入口。 */
+/** IOP手工补录 */
 const IopManualEntry = () => {
   const task = useOutletContext<IopTaskData>();
   const { message } = AntdApp.useApp();
-  const manualEntry = useManualEntry(task);
   const messageRawRef = useRef<ContentMessageRawRef>(null);
+  const [currentRaw, setCurrentRaw] = useState('');
+  const [originRaw, setOriginRaw] = useState('');
+  const [updated, setUpdated] = useState(false);
+  /** Maker节点 */
+  const isMakerNode = task.taskNode === IopTaskNode.MakerStage || task.taskNode === IopTaskNode.MakerRework;
+  /** Checker1节点 */
+  const isCheckerNode = task.taskNode === IopTaskNode.Checker1Stage || task.taskNode === IopTaskNode.Approved;
+  /** Approved节点 */
+  const approvalDisabled = task.taskNode === IopTaskNode.Approved;
+  // 报文原文加载
+  const {
+    raw: rawMessage,
+    rawLoading,
+    rawError,
+  } = useMessageRaw({
+    msgId: task.busRefNo,
+    msgDirection: task.msgDirection,
+  });
+  /** 当前编辑或展示的原文对象。 */
+  const currentRawMessage = {
+    msgId: rawMessage?.msgId ?? task.busRefNo,
+    msgContent: currentRaw,
+    createTime: rawMessage?.createTime ?? '',
+  };
 
-  /** 保存原文并展示解析结果。 */
+  useEffect(() => {
+    if (!rawMessage) return;
+
+    setOriginRaw(rawMessage.msgContent);
+    setCurrentRaw(rawMessage.msgContent);
+    setUpdated(false);
+  }, [rawMessage]);
+
+  // 【Update】
   const handleUpdate = async () => {
     const stopGlobalLoading = startGlobalLoading();
     try {
       await postMEUpdate({
         msgId: task.busRefNo,
         taskId: task.taskId,
-        msgContent: manualEntry.currentRaw,
+        msgContent: currentRaw,
         userId: task.userId,
         orgId: task.orgId,
       });
-      manualEntry.setUpdated(true);
+      setUpdated(true);
       message.success('Raw message updated');
     } finally {
       stopGlobalLoading();
     }
   };
 
-  /** 恢复首次加载的原文。 */
+  // 【Reset】
   const handleReset = () => {
-    manualEntry.setCurrentRaw(manualEntry.originRaw);
+    setCurrentRaw(originRaw);
     message.success('Raw message reset');
   };
 
-  /** 调用重做接口并返回编辑状态。 */
+  // 【Redo】
   const handleRedo = async () => {
     const stopGlobalLoading = startGlobalLoading();
     try {
@@ -54,14 +85,14 @@ const IopManualEntry = () => {
         userId: task.userId,
         orgId: task.orgId,
       });
-      manualEntry.setUpdated(false);
+      setUpdated(false);
       message.success('Ready to edit again');
     } finally {
       stopGlobalLoading();
     }
   };
 
-  /** 确认当前 Maker 处理结果。 */
+  // 【Confirm】
   const handleConfirm = async () => {
     const stopGlobalLoading = startGlobalLoading();
     try {
@@ -77,22 +108,7 @@ const IopManualEntry = () => {
     }
   };
 
-  /** 复制当前编辑或预览的原文。 */
-  const handleCopy = async () => {
-    if (!manualEntry.currentRaw) return;
-    await copyText(manualEntry.currentRaw);
-    message.success('Current message copied');
-  };
-
-  /** 打印当前编辑或预览的原文。 */
-  const handlePrint = () => {
-    if (!manualEntry.currentRaw) return;
-    const printContent = messageRawRef.current?.getPrintableValue() ?? manualEntry.currentRaw;
-    const opened = printXmlDocument(`${task.busRefNo || 'message'}.xml`, printContent);
-    if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
-  };
-
-  /** 打开审批弹窗并提交结果。 */
+  // 【Reject】 【Approve】
   const handleApproval = async (next: ApprovalYesNo) => {
     const rejecting = next === ApprovalYesNo.No;
     const approvalResult = rejecting ? await openModalReject() : await openModalApprove();
@@ -115,14 +131,33 @@ const IopManualEntry = () => {
     }
   };
 
+  // 【Copy current】
+  const handleCopy = async () => {
+    if (!currentRaw) return;
+    await copyText(currentRaw);
+    message.success('Current message copied');
+  };
+
+  // 【Print Current】
+  const handlePrint = () => {
+    if (!currentRaw) return;
+    const printContent = messageRawRef.current?.getPrintableValue() ?? currentRaw;
+    const opened = printXmlDocument(`${task.busRefNo || 'message'}.xml`, printContent);
+    if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
+  };
+
   return (
     <div className='flex h-full flex-col overflow-hidden p-4'>
-      <Typography.Title className='shrink-0' level={4}>
-        Manual Entry
-      </Typography.Title>
+      <h1 className='mb-3 mt-0 shrink-0 text-xl font-semibold leading-7'>Manual Entry</h1>
 
-      <ManualEntryActions
-        manualEntry={manualEntry}
+      <PanelAction
+        isMakerNode={isMakerNode}
+        isCheckerNode={isCheckerNode}
+        approvalDisabled={approvalDisabled}
+        updated={updated}
+        rawLoading={rawLoading}
+        currentRaw={currentRaw}
+        originRaw={originRaw}
         onUpdate={handleUpdate}
         onReset={handleReset}
         onRedo={handleRedo}
@@ -142,7 +177,20 @@ const IopManualEntry = () => {
         />
       )}
 
-      <ManualEntryContent ref={messageRawRef} taskNode={task.taskNode} manualEntry={manualEntry} />
+      <PanelContent
+        ref={messageRawRef}
+        taskNode={task.taskNode}
+        isMakerNode={isMakerNode}
+        isCheckerNode={isCheckerNode}
+        updated={updated}
+        msgId={task.busRefNo}
+        msgDirection={task.msgDirection}
+        businessType={task.businessType}
+        currentRawMessage={currentRawMessage}
+        rawLoading={rawLoading}
+        rawError={rawError}
+        onRawChange={setCurrentRaw}
+      />
     </div>
   );
 };

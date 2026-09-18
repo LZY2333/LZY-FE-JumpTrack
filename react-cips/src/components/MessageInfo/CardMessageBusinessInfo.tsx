@@ -1,4 +1,4 @@
-import { Alert, Card } from 'antd';
+import { Alert } from 'antd';
 import MessageSchemaForm from '@/components/MessageSchemaForm';
 import { getMessageSchema } from '@/schemas/messages';
 import type { MessageDetail } from '@/types';
@@ -14,11 +14,11 @@ interface CardMessageBusinessInfoProps extends ContentMessageBusinessInfoProps {
   className?: string;
 }
 
-/** Business Info Card */
+/** Business Info */
 export const CardMessageBusinessInfo = ({ detail, className }: CardMessageBusinessInfoProps) => (
-  <Card className={className} size='small' title='Business Info'>
+  <div className={className}>
     <ContentMessageBusinessInfo detail={detail} />
-  </Card>
+  </div>
 );
 
 /** Business Info Content */

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getIopTask } from '@/api/iop';
-import type { IopTaskResponse } from '@/api/iop';
+import { getIopTask } from '@/api/iop/iop';
+import type { IopTaskResponse } from '@/api/iop/iop';
 import type { RequestError } from '@/api/request';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 import useIopUrlParams from './useIopUrlParams';

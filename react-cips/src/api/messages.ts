@@ -26,6 +26,15 @@ export const getMessage = ({ msgId, msgDirection, businessType }: MessageDetailP
       .replace(':msgId', encodeURIComponent(msgId)),
   );
 
+/** 查询临时表报文明细。 */
+export const API_MESSAGE_DETAIL_TEMP = `${API_MESSAGE_DETAIL}/temp`;
+export const getMessageTemp = ({ msgId, msgDirection, businessType }: MessageDetailParams) =>
+  get<MessageDetail>(
+    API_MESSAGE_DETAIL_TEMP.replace(':msgDirection', encodeURIComponent(msgDirection))
+      .replace(':businessType', encodeURIComponent(businessType))
+      .replace(':msgId', encodeURIComponent(msgId)),
+  );
+
 /** 查询报文原文。 */
 export const API_MESSAGE_RAW = `${API_BASE_MESSAGE}/raw/:msgDirection/:msgId`;
 export const getMessageRaw = ({ msgId, msgDirection }: MessageRawParams) =>

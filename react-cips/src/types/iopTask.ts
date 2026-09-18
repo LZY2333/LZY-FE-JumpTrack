@@ -23,7 +23,7 @@ export interface IopTaskInfo {
   /** IOP 工作流节点编号：IOP_WKI_ID。 */
   iopWkiId?: string | null;
   /** IOP 工作流节点描述：IOP_NODNAM。 */
-  iopNodnam?: string | null;
+  iopNodNam?: string | null;
   /** IOP 返回编码：IOP_RETURN_CODE。 */
   iopReturnCode?: string | null;
   /** IOP 返回信息：IOP_RETURN_MSG。 */

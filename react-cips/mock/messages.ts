@@ -435,6 +435,7 @@ const lastPathSegment = (url: string) => {
 /** 从详情接口 URL 末尾读取方向、业务类型和报文号。 */
 const messageDetailParams = (url: string) => {
   const segments = url.split('?')[0].split('/').filter(Boolean);
+  if (segments[segments.length - 1] === 'temp') segments.pop();
   const [msgDirection = '', businessType = '', msgId = ''] = segments.slice(-3).map(decodeURIComponent);
   return { msgDirection, businessType, msgId };
 };
@@ -568,6 +569,16 @@ export default [
             body: { msgContent: createRawXml(record) },
           }
         : notFound(msgId);
+    },
+  },
+  {
+    url: '/cips/message/detail/:msgDirection/:businessType/:msgId/temp',
+    method: 'get',
+    timeout: 300,
+    response: (option: { url: string }) => {
+      const { msgId } = messageDetailParams(option.url);
+      const record = findMessageDetail(option.url);
+      return record ? { returnCode: ResCode.Success, body: cloneMessage(toMessageDetail(record)) } : notFound(msgId);
     },
   },
   {

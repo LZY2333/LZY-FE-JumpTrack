@@ -1,4 +1,4 @@
-import type { IopTaskResponse } from '@/api/iop';
+import type { IopTaskResponse } from '@/api/iop/iop';
 import {
   ApprovalYesNo,
   IOP_TASK_TYPE_LABELS,
@@ -53,6 +53,7 @@ const getLastPathSegment = (url: string) => {
 
 /** 根据 Mock 工作流任务编号切换经办、退回和审批页面状态。 */
 const resolveTaskNode = (iopWfTaskId: string) => {
+  if (iopWfTaskId.includes('APPROVED')) return IopTaskNode.Approved;
   if (iopWfTaskId.includes('CHECKER1')) return IopTaskNode.Checker1Stage;
   if (iopWfTaskId.includes('REWORK')) return IopTaskNode.MakerRework;
   return IopTaskNode.MakerStage;

@@ -23,6 +23,12 @@ body,
   background: var(--ant-color-primary);
 }
 
+/* antd Button 居中的是字体行盒；Windows 的 Segoe UI 字形视觉中心偏下，统一做 1px 光学对齐。 */
+.ant-app .ant-btn > span:not(.ant-btn-icon) {
+  position: relative;
+  inset-block-start: -1px;
+}
+
 /* antd 5.29.3 的搜索模式 height: 100% 优先级高于多选搜索框的尺寸规则。
  * 恢复对应 Token 高度，避免单行被撑高；不限制 Select 总高度，保留多行标签布局。 */
 .ant-app .ant-select.ant-select-multiple .ant-select-selector .ant-select-selection-search-input {

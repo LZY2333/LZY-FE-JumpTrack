@@ -13,7 +13,7 @@ const useIopUrlParams = (): IopUrlParams => {
       busRefNo: searchParams.get('applicationid') ?? '',
       iopWfTaskId: searchParams.get('taskid') ?? searchParams.get('wkiid') ?? '',
       iopFlwiId: searchParams.get('flwiid') ?? '',
-      iopNodnam: searchParams.get('nodnam') ?? '',
+      iopNodNam: searchParams.get('nodnam') ?? '',
       userId: searchParams.get('userid') ?? '',
       orgId: searchParams.get('orgid') ?? '',
       userName: searchParams.get('userName') ?? '',
@@ -31,7 +31,7 @@ export type IopUrlParams = {
   /** IOP 工作流实例编号 */
   readonly iopFlwiId: string;
   /** IOP 工作流节点code */
-  readonly iopNodnam: string;
+  readonly iopNodNam: string;
   /** 当前用户 ID */
   readonly userId: string;
   /** 当前用户机构号 */

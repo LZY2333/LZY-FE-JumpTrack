@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getMessage } from '@/api/messages';
+import { getMessage, getMessageTemp } from '@/api/messages';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 import type { MessageDetail } from '@/types';
 import { MessageBusinessType, MessageDirection } from '@/types/enums';
@@ -13,6 +13,8 @@ type UseMessageDetailOptions = {
   businessType?: string;
   /** 是否启用明细查询。 */
   enabled?: boolean;
+  /** 是否查询临时表。 */
+  temp?: boolean;
 };
 
 /** 加载报文明细。 */
@@ -21,6 +23,7 @@ const useMessageDetail = ({
   msgDirection,
   businessType,
   enabled = true,
+  temp = false,
 }: UseMessageDetailOptions) => {
   const [detail, setDetail] = useState<MessageDetail | null>(null);
   const [detailError, setDetailError] = useState<string>();
@@ -54,7 +57,8 @@ const useMessageDetail = ({
     setDetail(null);
     setDetailError(undefined);
 
-    getMessage({ msgId, msgDirection, businessType })
+    const requestMessageDetail = temp ? getMessageTemp : getMessage;
+    requestMessageDetail({ msgId, msgDirection, businessType })
       .then((data) => {
         if (!active) return;
         setDetail(data ?? null);
@@ -69,7 +73,7 @@ const useMessageDetail = ({
       active = false;
       stopGlobalLoading();
     };
-  }, [businessType, enabled, msgDirection, msgId, refreshVersion]);
+  }, [businessType, enabled, msgDirection, msgId, refreshVersion, temp]);
 
   return { detail, detailError, handleRefresh: () => setRefreshVersion((version) => version + 1) };
 };
