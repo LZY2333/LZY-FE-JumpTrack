@@ -154,24 +154,21 @@ export enum QuerySortOrder {
   Desc = 'desc',
 }
 
-/* ==================== IOP任务 ==================== */
+/* ==================== IOP 任务 ==================== */
 
-/** IOP任务中文名，处理内容(我们系统)，处理内容(IOP页) */
-/** IOP任务类型：TASK_FLOW_NO，同时也对应IOP流程ID(TASK_FLOW_NO) */
+/** IOP 任务类型：TASK_FLOW_NO，同时对应 IOP 流程编号。 */
 export enum IopTaskType {
-  /** 手工补录，自动创建task，(IOP页)Maker修改报文原文 + Checker审批 */
+  /** 手工补录：系统自动创建任务，Maker 修改报文原文，Checker 审批。 */
   manualEntry = 'ST10',
-  /** 手工归属(场景：清分未命中)，自动创建task，(IOP页)Maker修改归属后完成 */
+  /** 手工归属：清分未命中时自动创建任务，Maker 修改归属后完成。 */
   manualAttribute = 'ST11',
-  /** 创建分发任务(场景: 清分错了要修改)，手动创建task(detail页修改dept group)，(IOP页)Checker审批 */
+  /** 创建分发任务：从报文明细页创建并填写归属信息，IOP 页面完成经办和审批。 */
   distributeCreation = 'ST12',
-  /** 分发异常(场景：下游接口报错)，自动创建task，(IOP页)Maker重新分发后完成 */
+  /** 分发异常：下游接口报错时自动创建任务，Maker 重新分发后完成。 */
   distributeException = 'ST13',
-  /** 创建查询类报文(场景：基于支付类报文发起)，手动创建task(detail页填写content字段)，(IOP页)Checker二级审批 */
-  inquiryPayment = 'ST14',
-  /** 回复查询类报文，手动创建task(detail页填写content字段)，(IOP页)Checker二级审批 */
+  /** 查询查复：从报文明细页创建任务，IOP 页面完成经办和二级审批。 */
   inquiryReply = 'ST15',
-  /** 发报异常，自动创建task，(IOP页)Maker选OUT_RETRY/OUT_CANCEL + Checker审批 */
+  /** 发报异常：系统自动创建任务，Maker 选择重试或取消，Checker 审批。 */
   exceptionOut = 'ST16',
 }
 
@@ -181,7 +178,6 @@ export const IOP_TASK_TYPE_LABELS: Record<IopTaskType, string> = {
   [IopTaskType.manualAttribute]: 'PSSST Manual Attribute',
   [IopTaskType.distributeCreation]: 'PSSST Distribute Creation',
   [IopTaskType.distributeException]: 'PSSST Distribute Exception',
-  [IopTaskType.inquiryPayment]: 'PSSST Inquiry Payment',
   [IopTaskType.inquiryReply]: 'PSSST Inquiry Reply',
   [IopTaskType.exceptionOut]: 'PSSST Exception Out',
 };
@@ -211,11 +207,3 @@ export const IOP_TASK_NODE_LABELS: Record<IopTaskNode, string> = {
   [IopTaskNode.Approved]: 'Approved',
   [IopTaskNode.Cancelled]: 'Cancelled',
 };
-
-/** IOP 审批结果。 */
-export enum ApprovalYesNo {
-  /** 审批通过。 */
-  Yes = 'Y',
-  /** 审批拒绝。 */
-  No = 'N',
-}

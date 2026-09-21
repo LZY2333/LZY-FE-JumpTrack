@@ -1,6 +1,15 @@
-import type { IopTaskResponse } from '@/api/iop/iop';
+import type {
+  IopDistributeCreationCreateRequest,
+  IopDistributeCreationFormResponse,
+  IopInquiryReplyActionRequest,
+  IopInquiryReplyCreateRequest,
+  IopInquiryReplyFormResponse,
+  IopManualEntryRollbackRequest,
+  IopManualEntryUpdateRequest,
+  IopTaskActionRequest,
+  IopTaskResponse,
+} from '@/api/iop';
 import {
-  ApprovalYesNo,
   IOP_TASK_TYPE_LABELS,
   IopTaskNode,
   IopTaskType,
@@ -19,11 +28,12 @@ interface MockBodyOption<T> {
   body: T;
 }
 
-/** 在开发 Mock 模式按 ST10～ST16 工作流任务编号前缀返回任务表数据。 */
+/** 在开发 Mock 模式按工作流实例编号中的任务类型和节点标识返回任务表数据。 */
 const handleIopTaskQuery = ({ url }: MockRequestOption) => {
-  const iopWfTaskId = getLastPathSegment(url);
-  const taskFlowNo = iopWfTaskId.split('-')[0] as IopTaskType;
+  const iopFlwiId = getLastPathSegment(url);
+  const taskFlowNo = iopFlwiId.split('-')[0] as IopTaskType;
   const taskIndex = Object.values(IopTaskType).indexOf(taskFlowNo);
+  const isInquiryReply = taskFlowNo === IopTaskType.inquiryReply;
 
   if (taskIndex < 0) {
     return { returnCode: 'ERR0404', errorMsg: 'IOP task was not found.' };
@@ -33,73 +43,191 @@ const handleIopTaskQuery = ({ url }: MockRequestOption) => {
     taskId: `TASK20261231${String(taskIndex + 1).padStart(6, '0')}`,
     taskFlowNo,
     taskFlowName: IOP_TASK_TYPE_LABELS[taskFlowNo],
-    busRefNo: 'CIPSIN20260822000001',
+    busRefNo: isInquiryReply ? 'CIPSIN20260822000005' : 'CIPSIN20260822000001',
     taskHoldStatus: 'N',
-    taskNode: resolveTaskNode(iopWfTaskId),
-    iopWfTaskId,
-    businessType: MessageBusinessType.Payment,
+    taskNode: resolveTaskNode(iopFlwiId),
+    iopFlwiId,
+    businessType: isInquiryReply ? MessageBusinessType.Query : MessageBusinessType.Payment,
     msgDirection: MessageDirection.In,
-    rejectReason: iopWfTaskId.includes('REWORK') ? 'Message information is incomplete.' : null,
+    rejectReason: iopFlwiId.includes('REWORK') ? 'Message information is incomplete.' : null,
   };
 
   return { returnCode: ResCode.Success, body };
 };
 
-/** 从任务查询 URL 获取工作流任务编号。 */
+/** 从任务查询 URL 获取工作流实例编号。 */
 const getLastPathSegment = (url: string) => {
   const segments = url.split('?')[0].split('/').filter(Boolean);
   return decodeURIComponent(segments[segments.length - 1] ?? '');
 };
 
-/** 根据 Mock 工作流任务编号切换经办、退回和审批页面状态。 */
-const resolveTaskNode = (iopWfTaskId: string) => {
-  if (iopWfTaskId.includes('APPROVED')) return IopTaskNode.Approved;
-  if (iopWfTaskId.includes('CHECKER1')) return IopTaskNode.Checker1Stage;
-  if (iopWfTaskId.includes('REWORK')) return IopTaskNode.MakerRework;
+/** 根据 Mock 工作流实例编号中的节点标识切换页面状态。 */
+const resolveTaskNode = (iopFlwiId: string) => {
+  if (iopFlwiId.includes('APPROVED')) return IopTaskNode.Approved;
+  if (iopFlwiId.includes('CHECKER2')) return IopTaskNode.Checker2Stage;
+  if (iopFlwiId.includes('CHECKER1')) return IopTaskNode.Checker1Stage;
+  if (iopFlwiId.includes('REWORK')) return IopTaskNode.MakerRework;
   return IopTaskNode.MakerStage;
 };
 
-/** 校验 IOP Task 操作公共参数。 */
-const handleTaskAction = ({ body }: MockBodyOption<{ msgId?: string; taskId?: string }>) =>
-  body?.msgId && body.taskId
+/** 校验 IOP 经办与审批统一请求。 */
+const handleTaskAction = ({ body }: MockBodyOption<IopTaskActionRequest>) => {
+  const requiredFields = [
+    body?.taskId,
+    body?.taskNode,
+    body?.msgId,
+    body?.userId,
+    body?.orgId,
+    body?.iopWkiId,
+    body?.iopNodNam,
+    body?.iopWfTaskId,
+  ];
+  const hasRequiredFields = requiredFields.every(Boolean);
+
+  if (!hasRequiredFields || typeof body.next !== 'boolean') {
+    return { returnCode: 'ERR0400', errorMsg: 'IOP task action fields are required.' };
+  }
+  if (!Object.values(IopTaskNode).includes(body.taskNode)) {
+    return { returnCode: 'ERR0400', errorMsg: 'Task node is invalid.' };
+  }
+  if (!body.next && !body.rejectReason?.trim()) {
+    return { returnCode: 'ERR0400', errorMsg: 'Reject reason is required.' };
+  }
+  return { returnCode: ResCode.Success };
+};
+
+/** 校验手工补录经办请求。 */
+const handleManualEntryUpdate = ({ body }: MockBodyOption<IopManualEntryUpdateRequest>) => {
+  return body?.msgId && body.contentTemp?.trim()
     ? { returnCode: ResCode.Success }
-    : { returnCode: 'ERR0400', errorMsg: 'Message ID and task ID are required.' };
+    : { returnCode: 'ERR0400', errorMsg: 'Raw message content is required.' };
+};
+
+/** 校验手工补录回滚请求。 */
+const handleManualEntryRollback = ({ body }: MockBodyOption<IopManualEntryRollbackRequest>) =>
+  body?.msgId ? { returnCode: ResCode.Success } : { returnCode: 'ERR0400', errorMsg: 'Message ID is required.' };
+
+/** 校验从报文明细页创建分发任务的公共参数。 */
+const handleDistributeTaskCreate = ({ body }: MockBodyOption<IopDistributeCreationCreateRequest>) =>
+  body?.msgId && body.userId && body.orgId
+    ? { returnCode: ResCode.Success }
+    : { returnCode: 'ERR0400', errorMsg: 'Message ID, user ID and organization ID are required.' };
+
+/** 查询创建分发任务经办阶段提交的表单信息。 */
+const handleDistributeTaskFormQuery = ({
+  body: requestBody,
+}: MockBodyOption<Pick<IopDistributeCreationCreateRequest, 'msgId'>>) => {
+  if (!requestBody?.msgId) return { returnCode: 'ERR0400', errorMsg: 'Message ID is required.' };
+
+  const body: IopDistributeCreationFormResponse = {
+    targeSysId: 'CIPS',
+    msgOwnerDept: 'OPS',
+    msgOwnerGroup: 'PAYMENT',
+  };
+  return { returnCode: ResCode.Success, body };
+};
+
+/** 校验从报文明细页创建查询查复任务的请求。 */
+const handleInquiryReplyCreate = ({ body }: MockBodyOption<IopInquiryReplyCreateRequest>) =>
+  body?.msgId && body.userId && body.orgId && body.busData?.msgType && body.busData.content?.trim()
+    ? { returnCode: ResCode.Success }
+    : { returnCode: 'ERR0400', errorMsg: 'Inquiry reply task fields are required.' };
+
+/** 查询查复经办阶段提交的表单信息。 */
+const handleInquiryReplyFormQuery = ({ url }: MockRequestOption) => {
+  const taskId = getLastPathSegment(url);
+  if (!taskId) return { returnCode: 'ERR0400', errorMsg: 'Task ID is required.' };
+
+  const body: IopInquiryReplyFormResponse = {
+    msgType: '301',
+    content: 'Please confirm the payment status and provide the processing result.',
+  };
+  return { returnCode: ResCode.Success, body };
+};
+
+/** 校验查询查复经办与审批请求。 */
+const handleInquiryReplyAction = (option: MockBodyOption<IopInquiryReplyActionRequest>) => {
+  const taskActionResponse = handleTaskAction(option);
+  if (taskActionResponse.returnCode !== ResCode.Success) return taskActionResponse;
+
+  const { body } = option;
+  const isMakerNode = [IopTaskNode.MakerStage, IopTaskNode.MakerRework].includes(body.taskNode);
+  if (isMakerNode && (!body.busData?.msgType || !body.busData.content.trim())) {
+    return { returnCode: 'ERR0400', errorMsg: 'Message type and content are required.' };
+  }
+
+  return { returnCode: ResCode.Success };
+};
 
 export default [
   {
-    url: '/cips/api/task-info/getbywfid/:iopWfTaskId',
+    url: '/cips/api/task-info/getbyflwiid/:iopFlwiId',
     method: 'get',
     response: handleIopTaskQuery,
   },
   {
-    url: '/cips/api/task-info/manual-entry/update',
+    url: '/cips/patchIncomingMsg/updateContentMsg',
     method: 'post',
-    response: ({ body }: MockBodyOption<{ msgContent?: string }>) =>
-      body?.msgContent
-        ? { returnCode: ResCode.Success }
-        : { returnCode: 'ERR0400', errorMsg: 'Raw message content is required.' },
+    response: handleManualEntryUpdate,
   },
   {
-    url: '/cips/api/task-info/manual-entry/redo',
+    url: '/cips/patchIncomingMsg/confirmPatchContentToIOP',
     method: 'post',
     response: handleTaskAction,
   },
   {
-    url: '/cips/api/task-info/manual-entry/confirm',
+    url: '/cips/patchIncomingMsg/rollbackPatchContent',
+    method: 'post',
+    response: handleManualEntryRollback,
+  },
+  {
+    url: '/cips/patchIncomingMsg/approvePatchContentToIOP',
     method: 'post',
     response: handleTaskAction,
   },
   {
-    url: '/cips/api/task-info/approval',
+    url: '/cips/patchIncomingMsg/rejectPatchContentToIOP',
     method: 'post',
-    response: ({ body }: MockBodyOption<{ next?: ApprovalYesNo; rejectReason?: string }>) => {
-      if (!Object.values(ApprovalYesNo).includes(body?.next as ApprovalYesNo)) {
-        return { returnCode: 'ERR0400', errorMsg: 'Approval result is required.' };
-      }
-      if (body.next === ApprovalYesNo.No && !body.rejectReason?.trim()) {
-        return { returnCode: 'ERR0400', errorMsg: 'Reject reason is required.' };
-      }
-      return { returnCode: ResCode.Success };
-    },
+    response: handleTaskAction,
+  },
+  {
+    url: '/cips/attributeTask/handling',
+    method: 'post',
+    response: handleTaskAction,
+  },
+  {
+    url: '/cips/manualCrtDisTask/handling',
+    method: 'post',
+    response: handleTaskAction,
+  },
+  {
+    url: '/cips/manualCrtDisTask/query',
+    method: 'post',
+    response: handleDistributeTaskFormQuery,
+  },
+  {
+    url: '/cips/distributeTask/handling',
+    method: 'post',
+    response: handleTaskAction,
+  },
+  {
+    url: '/cips/manualCrtDisTask/create',
+    method: 'post',
+    response: handleDistributeTaskCreate,
+  },
+  {
+    url: '/cips/manager/manualCipsMsg/startProcess',
+    method: 'post',
+    response: handleInquiryReplyCreate,
+  },
+  {
+    url: '/cips/manager/manualCipsMsg/approve',
+    method: 'post',
+    response: handleInquiryReplyAction,
+  },
+  {
+    url: '/cips/manager/manualCipsMsg/form/:taskId',
+    method: 'get',
+    response: handleInquiryReplyFormQuery,
   },
 ];

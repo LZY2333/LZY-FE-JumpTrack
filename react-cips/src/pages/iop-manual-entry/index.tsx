@@ -1,66 +1,49 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, App as AntdApp } from 'antd';
+import { Alert, App as AntdApp, Card, Divider, Result } from 'antd';
 import { useOutletContext } from 'react-router-dom';
-import { postMEApprove, postMEConfirm, postMERedo, postMEUpdate } from '@/api/iop/iop-manual-entry';
+import { postMEApprove, postMEConfirm, postMEReject, postMEUpdate } from '@/api/iop';
+import ContentMessageRaw from '@/components/ContentMessageRaw';
 import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
-import useMessageRaw from '@/components/ContentMessageRaw/useMessageRaw';
-import { printXmlDocument } from '@/pages/message-detail/util';
+import IopPageShell from '@/components/IopPageCommon';
+import PanelMessageDetail from '@/components/MessageInfo/PanelMessageDetail';
 import type { IopTaskData } from '@/router/iop-routes/useIopGuard';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
-import { ApprovalYesNo, IopTaskNode } from '@/types/enums';
-import { copyText } from '@/utils/fileUtil';
+import { IOP_TASK_NODE_LABELS, IopTaskNode, MessageDirection } from '@/types/enums';
 import PanelAction from './PanelAction';
-import PanelContent from './PanelContent';
 import { openModalApprove, openModalReject } from './ModalApproval';
+
+const MAKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.MakerStage, IopTaskNode.MakerRework]);
+const CHECKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.Checker1Stage]);
+const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([
+  ...MAKER_TASK_NODES,
+  ...CHECKER_TASK_NODES,
+  IopTaskNode.Approved,
+]);
 
 /** IOP手工补录 */
 const IopManualEntry = () => {
   const task = useOutletContext<IopTaskData>();
-  const { message } = AntdApp.useApp();
+  const { message, modal } = AntdApp.useApp();
   const messageRawRef = useRef<ContentMessageRawRef>(null);
-  const [currentRaw, setCurrentRaw] = useState('');
-  const [originRaw, setOriginRaw] = useState('');
   const [updated, setUpdated] = useState(false);
-  /** Maker节点 */
-  const isMakerNode = task.taskNode === IopTaskNode.MakerStage || task.taskNode === IopTaskNode.MakerRework;
-  /** Checker1节点 */
-  const isCheckerNode = task.taskNode === IopTaskNode.Checker1Stage || task.taskNode === IopTaskNode.Approved;
-  /** Approved节点 */
-  const approvalDisabled = task.taskNode === IopTaskNode.Approved;
-  // 报文原文加载
-  const {
-    raw: rawMessage,
-    rawLoading,
-    rawError,
-  } = useMessageRaw({
-    msgId: task.busRefNo,
-    msgDirection: task.msgDirection,
-  });
-  /** 当前编辑或展示的原文对象。 */
-  const currentRawMessage = {
-    msgId: rawMessage?.msgId ?? task.busRefNo,
-    msgContent: currentRaw,
-    createTime: rawMessage?.createTime ?? '',
-  };
+  const isMakerNode = MAKER_TASK_NODES.has(task.taskNode);
+  const isCheckerNode = CHECKER_TASK_NODES.has(task.taskNode);
 
+  // 切换任务时重置当前页面的更新状态。
   useEffect(() => {
-    if (!rawMessage) return;
-
-    setOriginRaw(rawMessage.msgContent);
-    setCurrentRaw(rawMessage.msgContent);
     setUpdated(false);
-  }, [rawMessage]);
+  }, [task.iopWfTaskId]);
 
   // 【Update】
   const handleUpdate = async () => {
+    const contentTemp = messageRawRef.current!.getUpdatedContent();
+    if (!contentTemp) return;
+
     const stopGlobalLoading = startGlobalLoading();
     try {
       await postMEUpdate({
         msgId: task.busRefNo,
-        taskId: task.taskId,
-        msgContent: currentRaw,
-        userId: task.userId,
-        orgId: task.orgId,
+        contentTemp,
       });
       setUpdated(true);
       message.success('Raw message updated');
@@ -71,25 +54,13 @@ const IopManualEntry = () => {
 
   // 【Reset】
   const handleReset = () => {
-    setCurrentRaw(originRaw);
-    message.success('Raw message reset');
+    messageRawRef.current!.resetCurrent();
   };
 
-  // 【Redo】
-  const handleRedo = async () => {
-    const stopGlobalLoading = startGlobalLoading();
-    try {
-      await postMERedo({
-        msgId: task.busRefNo,
-        taskId: task.taskId,
-        userId: task.userId,
-        orgId: task.orgId,
-      });
-      setUpdated(false);
-      message.success('Ready to edit again');
-    } finally {
-      stopGlobalLoading();
-    }
+  // 【Rollback】
+  const handleRollback = () => {
+    setUpdated(false);
+    message.success('Raw message update rolled back');
   };
 
   // 【Confirm】
@@ -97,10 +68,15 @@ const IopManualEntry = () => {
     const stopGlobalLoading = startGlobalLoading();
     try {
       await postMEConfirm({
-        msgId: task.busRefNo,
         taskId: task.taskId,
+        taskNode: task.taskNode,
+        msgId: task.busRefNo,
         userId: task.userId,
         orgId: task.orgId,
+        iopWkiId: task.iopWkiId,
+        iopNodNam: task.iopNodNam,
+        iopWfTaskId: task.iopWfTaskId,
+        next: true,
       });
       message.success('Task confirmed');
     } finally {
@@ -109,21 +85,26 @@ const IopManualEntry = () => {
   };
 
   // 【Reject】 【Approve】
-  const handleApproval = async (next: ApprovalYesNo) => {
-    const rejecting = next === ApprovalYesNo.No;
-    const approvalResult = rejecting ? await openModalReject() : await openModalApprove();
+  const handleApproval = async (next: boolean) => {
+    const rejecting = !next;
+    const approvalResult = rejecting ? await openModalReject(modal) : await openModalApprove(modal);
     if (!approvalResult) return;
 
-    const rejectReason = typeof approvalResult === 'string' ? approvalResult : '';
+    const rejectReason = typeof approvalResult === 'string' ? approvalResult : undefined;
     const stopGlobalLoading = startGlobalLoading();
     try {
-      await postMEApprove({
-        msgId: task.busRefNo,
+      const postApproval = next ? postMEApprove : postMEReject;
+      await postApproval({
         taskId: task.taskId,
-        next,
-        rejectReason,
+        taskNode: task.taskNode,
+        msgId: task.busRefNo,
         userId: task.userId,
         orgId: task.orgId,
+        iopWkiId: task.iopWkiId,
+        iopNodNam: task.iopNodNam,
+        iopWfTaskId: task.iopWfTaskId,
+        next,
+        rejectReason,
       });
       message.success(rejecting ? 'Task rejected' : 'Task approved');
     } finally {
@@ -133,39 +114,42 @@ const IopManualEntry = () => {
 
   // 【Copy current】
   const handleCopy = async () => {
-    if (!currentRaw) return;
-    await copyText(currentRaw);
-    message.success('Current message copied');
+    await messageRawRef.current!.copyCurrent();
   };
 
   // 【Print Current】
   const handlePrint = () => {
-    if (!currentRaw) return;
-    const printContent = messageRawRef.current?.getPrintableValue() ?? currentRaw;
-    const opened = printXmlDocument(`${task.busRefNo || 'message'}.xml`, printContent);
-    if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
+    messageRawRef.current!.printCurrent();
   };
 
-  return (
-    <div className='flex h-full flex-col overflow-hidden p-4'>
-      <h1 className='mb-3 mt-0 shrink-0 text-xl font-semibold leading-7'>Manual Entry</h1>
+  if (!SUPPORTED_TASK_NODES.has(task.taskNode)) {
+    return (
+      <IopPageShell title='Manual Entry' taskNode={task.taskNode}>
+        <Result
+          status='warning'
+          title='Task unavailable at the current stage'
+          subTitle={`Current stage: ${IOP_TASK_NODE_LABELS[task.taskNode as IopTaskNode] ?? task.taskNode}`}
+        />
+      </IopPageShell>
+    );
+  }
 
-      <PanelAction
-        isMakerNode={isMakerNode}
-        isCheckerNode={isCheckerNode}
-        approvalDisabled={approvalDisabled}
-        updated={updated}
-        rawLoading={rawLoading}
-        currentRaw={currentRaw}
-        originRaw={originRaw}
-        onUpdate={handleUpdate}
-        onReset={handleReset}
-        onRedo={handleRedo}
-        onConfirm={handleConfirm}
-        onCopy={handleCopy}
-        onPrint={handlePrint}
-        onApproval={handleApproval}
-      />
+  return (
+    <IopPageShell title='Manual Entry' taskNode={task.taskNode}>
+      {(isMakerNode || isCheckerNode) && (
+        <PanelAction
+          isMakerNode={isMakerNode}
+          isCheckerNode={isCheckerNode}
+          updated={updated}
+          onUpdate={handleUpdate}
+          onReset={handleReset}
+          onRollback={handleRollback}
+          onConfirm={handleConfirm}
+          onCopy={handleCopy}
+          onPrint={handlePrint}
+          onApproval={handleApproval}
+        />
+      )}
 
       {task.taskNode === IopTaskNode.MakerRework && (
         <Alert
@@ -177,21 +161,38 @@ const IopManualEntry = () => {
         />
       )}
 
-      <PanelContent
-        ref={messageRawRef}
-        taskNode={task.taskNode}
-        isMakerNode={isMakerNode}
-        isCheckerNode={isCheckerNode}
-        updated={updated}
-        msgId={task.busRefNo}
-        msgDirection={task.msgDirection}
-        businessType={task.businessType}
-        currentRawMessage={currentRawMessage}
-        rawLoading={rawLoading}
-        rawError={rawError}
-        onRawChange={setCurrentRaw}
-      />
-    </div>
+      {task.taskNode === IopTaskNode.Approved && (
+        <Alert
+          className='mb-3 shrink-0'
+          type='success'
+          showIcon
+          message='Task Approved'
+          description='This task has been approved.'
+        />
+      )}
+
+      <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
+        Current Message
+      </Divider>
+
+      {isMakerNode && !updated ? (
+        <Card
+          className='flex h-full min-h-0 flex-col'
+          classNames={{ body: 'flex min-h-0 flex-1 flex-col overflow-hidden' }}
+          size='small'
+          title='Raw Message'
+        >
+          <ContentMessageRaw
+            ref={messageRawRef}
+            msgId={task.busRefNo}
+            msgDirection={MessageDirection.In}
+            editable
+          />
+        </Card>
+      ) : (
+        <PanelMessageDetail temp msgId={task.busRefNo} />
+      )}
+    </IopPageShell>
   );
 };
 
@@ -201,11 +202,11 @@ export default IopManualEntry;
  * ManualEntry 本地 Mock URL（使用 `npm run dev:mock` 启动）：
  *
  * Maker：
- * http://localhost:5173/iop?flwiid=FLWI-DEMO-001&applicationid=CIPSIN20260822000001&wkiid=ST10-MAKER-001&nodnam=MAKER&userid=USER001&orgid=ORG001&userName=Tester
+ * http://localhost:5173/iop?flwiid=ST10-MAKER-FLWI-001&applicationid=APP-DEMO-001&taskid=WFT-ST10-MAKER-001&wkiid=WKI-MAKER-001&nodnam=MAKER&userid=USER001&orgid=ORG001&userName=Tester
  *
  * Maker Rework：
- * http://localhost:5173/iop?flwiid=FLWI-DEMO-001&applicationid=CIPSIN20260822000001&wkiid=ST10-REWORK-001&nodnam=MAKER_REWORK&userid=USER001&orgid=ORG001&userName=Tester
+ * http://localhost:5173/iop?flwiid=ST10-REWORK-FLWI-001&applicationid=APP-DEMO-001&taskid=WFT-ST10-REWORK-001&wkiid=WKI-REWORK-001&nodnam=MAKER_REWORK&userid=USER001&orgid=ORG001&userName=Tester
  *
  * Checker 1：
- * http://localhost:5173/iop?flwiid=FLWI-DEMO-001&applicationid=CIPSIN20260822000001&wkiid=ST10-CHECKER1-001&nodnam=CHECKER1&userid=USER001&orgid=ORG001&userName=Tester
+ * http://localhost:5173/iop?flwiid=ST10-CHECKER1-FLWI-001&applicationid=APP-DEMO-001&taskid=WFT-ST10-CHECKER1-001&wkiid=WKI-CHECKER1-001&nodnam=CHECKER1&userid=USER001&orgid=ORG001&userName=Tester
  */

@@ -1,10 +1,12 @@
+import { lazy, Suspense } from 'react';
 import KeepAlive from 'react-activation';
 import { Navigate } from 'react-router-dom';
-import LcwList from '@/pages/lcw-list';
-import MessageDetail from '@/pages/message-detail';
-import MessageList from '@/pages/message-list';
 import { RoutePath } from '../routePath';
 import type { AppRoute } from '../routePath';
+
+const MessageList = lazy(() => import('@/pages/message-list'));
+const MessageDetail = lazy(() => import('@/pages/message-detail'));
+const LcwList = lazy(() => import('@/pages/lcw-list'));
 
 /** 需要登录并使用主布局的业务路由。 */
 export const mainRoutes: AppRoute[] = [
@@ -18,8 +20,10 @@ export const mainRoutes: AppRoute[] = [
   {
     path: RoutePath.MessageList,
     element: (
-      <KeepAlive name='message-list'>
-        <MessageList />
+      <KeepAlive name='message-list' cacheKey='main-message-list'>
+        <Suspense fallback={null}>
+          <MessageList />
+        </Suspense>
       </KeepAlive>
     ),
     meta: { title: 'Message List' },
@@ -27,15 +31,21 @@ export const mainRoutes: AppRoute[] = [
   /** 报文详情页。 */
   {
     path: RoutePath.MessageDetail,
-    element: <MessageDetail />,
+    element: (
+      <Suspense fallback={null}>
+        <MessageDetail />
+      </Suspense>
+    ),
     meta: { title: 'Message Details' },
   },
   /** 反洗钱任务列表页。 */
   {
     path: RoutePath.LcwList,
     element: (
-      <KeepAlive name='lcw-list'>
-        <LcwList />
+      <KeepAlive name='lcw-list' cacheKey='main-lcw-list'>
+        <Suspense fallback={null}>
+          <LcwList />
+        </Suspense>
       </KeepAlive>
     ),
     meta: { title: 'LCW Tasks' },

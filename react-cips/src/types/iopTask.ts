@@ -1,3 +1,5 @@
+import type { IopTaskNode } from './enums';
+
 /** IOP 任务表对前端返回的数据，字段对应 PSSST_TRN_TASK_INFO。 */
 export interface IopTaskInfo {
   /** 本系统任务编号：TASK_ID。 */
@@ -11,7 +13,7 @@ export interface IopTaskInfo {
   /** 挂起状态：TASK_HOLD_STATUS。 */
   taskHoldStatus: string;
   /** 当前环节：TASK_NODE。 */
-  taskNode: string;
+  taskNode: IopTaskNode;
   /** 期望完成日期：TARGET_COMPELETE_DATE。 */
   targetCompeleteDate?: string | null;
   /** 操作类型：OPERATION_CODE。 */
@@ -22,7 +24,7 @@ export interface IopTaskInfo {
   iopWfTaskId?: string | null;
   /** IOP 工作流节点编号：IOP_WKI_ID。 */
   iopWkiId?: string | null;
-  /** IOP 工作流节点描述：IOP_NODNAM。 */
+  /** IOP 工作流节点名称：IOP_NODNAM。 */
   iopNodNam?: string | null;
   /** IOP 返回编码：IOP_RETURN_CODE。 */
   iopReturnCode?: string | null;

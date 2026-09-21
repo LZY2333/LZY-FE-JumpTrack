@@ -432,12 +432,11 @@ const lastPathSegment = (url: string) => {
   return decodeURIComponent(segments[segments.length - 1] || '');
 };
 
-/** 从详情接口 URL 末尾读取方向、业务类型和报文号。 */
-const messageDetailParams = (url: string) => {
+/** 从详情接口 URL 末尾读取报文号。 */
+const messageDetailId = (url: string) => {
   const segments = url.split('?')[0].split('/').filter(Boolean);
-  if (segments[segments.length - 1] === 'temp') segments.pop();
-  const [msgDirection = '', businessType = '', msgId = ''] = segments.slice(-3).map(decodeURIComponent);
-  return { msgDirection, businessType, msgId };
+  if (['info', 'temp'].includes(segments[segments.length - 1])) segments.pop();
+  return decodeURIComponent(segments[segments.length - 1] || '');
 };
 
 /** 从原文接口 URL 末尾读取方向和报文号。 */
@@ -448,14 +447,6 @@ const messageRawParams = (url: string) => {
 };
 
 const findMessage = (msgId: string) => messages.find((record) => record.msgId === msgId);
-
-/** 按详情接口的三个必填定位参数查找报文。 */
-const findMessageDetail = (url: string) => {
-  const { msgDirection, businessType, msgId } = messageDetailParams(url);
-  return messages.find(
-    (record) => record.msgId === msgId && record.msgDirection === msgDirection && record.businessType === businessType,
-  );
-};
 
 /** 按原文接口的两个必填定位参数查找报文。 */
 const findMessageRaw = (url: string) => {
@@ -572,22 +563,22 @@ export default [
     },
   },
   {
-    url: '/cips/message/detail/:msgDirection/:businessType/:msgId/temp',
+    url: '/cips/message/detail/:msgId/temp',
     method: 'get',
     timeout: 300,
     response: (option: { url: string }) => {
-      const { msgId } = messageDetailParams(option.url);
-      const record = findMessageDetail(option.url);
+      const msgId = messageDetailId(option.url);
+      const record = findMessage(msgId);
       return record ? { returnCode: ResCode.Success, body: cloneMessage(toMessageDetail(record)) } : notFound(msgId);
     },
   },
   {
-    url: '/cips/message/detail/:msgDirection/:businessType/:msgId',
+    url: '/cips/message/detail/:msgId/info',
     method: 'get',
     timeout: 300,
     response: (option: { url: string }) => {
-      const msgId = lastPathSegment(option.url);
-      const record = findMessageDetail(option.url);
+      const msgId = messageDetailId(option.url);
+      const record = findMessage(msgId);
       return record ? { returnCode: ResCode.Success, body: cloneMessage(toMessageDetail(record)) } : notFound(msgId);
     },
   },

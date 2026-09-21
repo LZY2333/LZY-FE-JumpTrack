@@ -1,23 +1,20 @@
 import { useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
-import { ArrowLeftOutlined, CopyOutlined, PlusOutlined, PrinterOutlined } from '@ant-design/icons';
-import { postDCCreate } from '@/api/iop/iop-distribute-creation';
+import { ArrowLeftOutlined, CommentOutlined, CopyOutlined, PlusOutlined, PrinterOutlined } from '@ant-design/icons';
+import { postDCCreate, postIRCreate } from '@/api/iop';
 import { CardMessageBasicInfo } from '@/components/MessageInfo/CardMessageBasicInfo';
 import { ContentMessageBusinessInfo } from '@/components/MessageInfo/CardMessageBusinessInfo';
 import { resolveDisplayMessageId } from '@/components/MessageInfo/messageDetailUtil';
 import useMessageDetail from '@/components/MessageInfo/useMessageDetail';
 import ContentMessageRaw from '@/components/ContentMessageRaw';
 import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
-import useMessageRaw from '@/components/ContentMessageRaw/useMessageRaw';
 import useUserStore from '@/store/useUserStore';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
-import { MessageDirection } from '@/types/enums';
-import { openModalDistribute } from './ModalDistribute';
+import { MessageBusinessType, MessageDirection } from '@/types/enums';
+import { openModalDistribute, openModalInquiryReply } from './ModalIopTask';
 import TabProcessing from './TabProcessing';
 import { RoutePath } from '@/router/routePath';
-import { isRawContentActionDisabled, printXmlDocument } from './util';
-import { copyText } from '@/utils/fileUtil';
 
 const SCROLLABLE_TAB_CONTENT_CLASS_NAME = 'h-full overflow-auto';
 const FLEX_TAB_CONTENT_CLASS_NAME = 'flex h-full min-h-0 flex-col overflow-hidden';
@@ -26,37 +23,23 @@ const RAW_TAB_KEY = 'raw';
 
 /** 报文明细页：展示报文基础信息、结构化业务内容、原始报文和处理记录。 */
 const MessageDetailPage = () => {
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const user = useUserStore((state) => state.user);
-  const { msgId, msgDirection, businessType } = useParams<{
-    msgId: string;
-    msgDirection: string;
-    businessType: string;
-  }>();
+  const { msgId } = useParams<{ msgId: string }>();
   const navigate = useNavigate();
-  const { detail, detailError } = useMessageDetail({ msgId, msgDirection, businessType });
-  const { raw, rawLoading, rawError } = useMessageRaw({ msgId, msgDirection });
+  const { detail, detailError } = useMessageDetail({ msgId });
+  const msgDirection = detail?.msgBasicInfo.msgDirection;
+  const businessType = detail?.msgBasicInfo.businessType;
   const messageRawRef = useRef<ContentMessageRawRef>(null);
 
-  /** 打开与当前折叠状态一致的报文打印窗口。 */
-  const handlePrint = () => {
-    if (!raw?.msgContent) return;
-    const title = `${msgId || 'message'}.xml`;
-    const printContent = messageRawRef.current?.getPrintableValue() ?? raw.msgContent;
-    const opened = printXmlDocument(title, printContent);
-    if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
-  };
-
-  const rawContentActionDisabled = isRawContentActionDisabled(raw, rawLoading);
-
-  /** 从当前收报创建分发任务。 */
+  /** 【Distribute】 */
   const handleCreateDistribution = async () => {
     if (!msgId || !user) {
       message.warning('Message or current user information is unavailable');
       return;
     }
 
-    const fields = await openModalDistribute();
+    const fields = await openModalDistribute(modal);
     if (!fields) return;
 
     const stopGlobalLoading = startGlobalLoading();
@@ -65,7 +48,9 @@ const MessageDetailPage = () => {
         msgId,
         userId: user.userId,
         orgId: user.orgId,
-        ...fields,
+        targeSysId: normalizeOptionalText(fields.targeSysId),
+        msgOwnerDept: normalizeOptionalText(fields.msgOwnerDept),
+        msgOwnerGroup: normalizeOptionalText(fields.msgOwnerGroup),
       });
       message.success('Distribution task created');
     } finally {
@@ -73,16 +58,42 @@ const MessageDetailPage = () => {
     }
   };
 
-  const handleCopyRaw = async () => {
-    if (!raw?.msgContent) return;
+  /** 【Inquiry Reply】 */
+  const handleCreateInquiryReply = async () => {
+    if (!msgId || !user) {
+      message.warning('Message or current user information is unavailable');
+      return;
+    }
+
+    const fields = await openModalInquiryReply(modal);
+    if (!fields) return;
+
+    const stopGlobalLoading = startGlobalLoading();
     try {
-      await copyText(raw.msgContent);
-      message.success('Raw message copied');
-    } catch {
-      message.error('Failed to copy the raw message');
+      await postIRCreate({
+        msgId,
+        userId: user.userId,
+        orgId: user.orgId,
+        busData: {
+          msgType: fields.msgType,
+          content: fields.content.trim(),
+        },
+      });
+      message.success('Inquiry reply task created');
+    } finally {
+      stopGlobalLoading();
     }
   };
 
+  /** 【Print】 */
+  const handlePrint = () => {
+    messageRawRef.current!.printCurrent();
+  };
+  /** 【Copy】 */
+  const handleCopyRaw = async () => {
+    await messageRawRef.current!.copyCurrent();
+  };
+  /** 【Back】 */
   const handleBack = () => {
     if ((window.history.state?.idx ?? 0) > 0) {
       navigate(-1);
@@ -102,7 +113,8 @@ const MessageDetailPage = () => {
       key: RAW_TAB_KEY,
       label: 'Raw Message',
       className: FLEX_TAB_CONTENT_CLASS_NAME,
-      children: <ContentMessageRaw ref={messageRawRef} raw={raw} loading={rawLoading} error={rawError} />,
+      forceRender: true,
+      children: <ContentMessageRaw ref={messageRawRef} msgId={msgId} msgDirection={msgDirection} />,
     },
     {
       key: 'processing',
@@ -133,10 +145,21 @@ const MessageDetailPage = () => {
               Distribute
             </Button>
           )}
-          <Button size='small' icon={<CopyOutlined />} disabled={rawContentActionDisabled} onClick={handleCopyRaw}>
+          {isInquiryReplyAvailable(msgDirection, businessType) && (
+            <Button
+              size='small'
+              type='primary'
+              icon={<CommentOutlined />}
+              disabled={!user}
+              onClick={handleCreateInquiryReply}
+            >
+              Inquiry Reply
+            </Button>
+          )}
+          <Button size='small' icon={<CopyOutlined />} onClick={handleCopyRaw}>
             Copy Raw
           </Button>
-          <Button size='small' icon={<PrinterOutlined />} disabled={rawContentActionDisabled} onClick={handlePrint}>
+          <Button size='small' icon={<PrinterOutlined />} onClick={handlePrint}>
             Print Raw
           </Button>
         </Space>
@@ -162,3 +185,11 @@ const MessageDetailPage = () => {
 };
 
 export default MessageDetailPage;
+
+/** 将可选文本统一转换为接口空值。 */
+const normalizeOptionalText = (value?: string) => value?.trim() || undefined;
+
+/** 判断当前报文是否支持创建查询查复任务。 */
+const isInquiryReplyAvailable = (msgDirection?: string, businessType?: string) =>
+  (msgDirection === MessageDirection.In && businessType === MessageBusinessType.Query) ||
+  (msgDirection === MessageDirection.Out && businessType === MessageBusinessType.Payment);

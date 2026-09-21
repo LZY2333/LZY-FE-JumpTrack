@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
-import { getIopTask } from '@/api/iop/iop';
-import type { IopTaskResponse } from '@/api/iop/iop';
+import { getIopTask } from '@/api/iop';
+import type { IopTaskResponse } from '@/api/iop';
 import type { RequestError } from '@/api/request';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 import useIopUrlParams from './useIopUrlParams';
 import type { IopUrlParams } from './useIopUrlParams';
 
-const IOP_TASK_SESSION_KEY = 'iop-task';
+const IOP_TASK_SESSION_KEY = 'iop-task-v4';
 // 为具体 IOP 页面留出启动自身全局 Loading 的交接窗口。
 const LOADING_HANDOFF_DELAY_MS = 100;
 
 /** IOP 页面统一使用的 Task 与 URL 参数。 */
-export type IopTaskData = IopTaskResponse & IopUrlParams;
+export type IopTaskData = Omit<IopTaskResponse, keyof IopUrlParams> & IopUrlParams;
 
 export interface IopContext {
   /** 当前 Task 与 IOP URL 参数组成的页面数据。 */
@@ -48,26 +48,25 @@ const useIopGuard = (): IopContext => {
       window.clearTimeout(stopLoadingTimer);
       stopGlobalLoading();
     };
-    const iopWfTaskId = searchParams.iopWfTaskId.trim();
+    const iopFlwiId = searchParams.iopFlwiId.trim();
 
     setData(null);
     setError(undefined);
     setLoading(true);
 
-    // 1. 获取工作流任务编号
-    if (!iopWfTaskId) {
-      setError('IOP workflow task ID is missing from the URL.');
+    // 1. 获取工作流实例编号
+    if (!iopFlwiId) {
+      setError('IOP workflow instance ID is missing from the URL.');
       finishLoading();
       return cleanup;
     }
 
     // 2. 读取缓存
-    const cachedData = readIopTaskSession(iopWfTaskId);
+    const cachedData = readIopTaskSession(iopFlwiId);
     if (cachedData) {
       const nextData = {
         ...cachedData,
         ...searchParams,
-        busRefNo: cachedData.busRefNo || searchParams.busRefNo,
       };
       saveIopTaskSession(nextData);
       setData(nextData);
@@ -75,8 +74,8 @@ const useIopGuard = (): IopContext => {
       return cleanup;
     }
 
-    // 3. 获取task信息
-    getIopTask(iopWfTaskId, { silent: true })
+    // 3. 查询任务信息
+    getIopTask(iopFlwiId, { silent: true })
       .then((task) => {
         if (!active) return;
         if (!task) {
@@ -87,7 +86,6 @@ const useIopGuard = (): IopContext => {
         const nextData: IopTaskData = {
           ...task,
           ...searchParams,
-          busRefNo: task.busRefNo || searchParams.busRefNo,
         };
         saveIopTaskSession(nextData);
         setData(nextData);
@@ -110,14 +108,14 @@ const useIopGuard = (): IopContext => {
 
 export default useIopGuard;
 
-/** 从会话缓存读取当前工作流任务的最终页面数据。 */
-const readIopTaskSession = (iopWfTaskId: string): IopTaskData | null => {
+/** 按工作流实例编号从会话缓存读取最终页面数据。 */
+const readIopTaskSession = (iopFlwiId: string): IopTaskData | null => {
   try {
     const raw = sessionStorage.getItem(IOP_TASK_SESSION_KEY);
     if (!raw) return null;
 
     const cachedData = JSON.parse(raw) as IopTaskData;
-    return cachedData.iopWfTaskId === iopWfTaskId ? cachedData : null;
+    return cachedData.iopFlwiId === iopFlwiId ? cachedData : null;
   } catch {
     return null;
   }

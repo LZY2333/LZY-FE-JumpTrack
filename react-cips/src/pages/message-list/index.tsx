@@ -26,6 +26,7 @@ import {
   RelatedMessageIdFilter,
   EndToEndMessageIdFilter,
   MessageUetrFilter,
+  MessageSendBicFilter,
 } from '@/components/FormItem';
 import {
   msgId,
@@ -53,8 +54,8 @@ import {
 
 // 页面边距 48 + Card 26 + 表单 120 + 表单下间距 16 + 表头 42 + 分页间距 16 + 分页器 24。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 292px)';
-// 当前布局展开后多两行，每行 32px。
-const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 356px)';
+// 当前布局展开后多三行，每行 32px。
+const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 388px)';
 const DEFAULT_FILTER_VALUES: MessageListFilterValues = { msgDirection: MessageDirection.In };
 const DEFAULT_HIDDEN_COLUMN_IDS = [
   'msgOwnerDept',
@@ -109,8 +110,6 @@ const MessageList = () => {
     navigate(
       generatePath(RoutePath.MessageDetail, {
         msgId: encodeURIComponent(record.msgId),
-        msgDirection: record.msgDirection,
-        businessType: record.businessType,
       }),
     );
 
@@ -138,7 +137,7 @@ const MessageList = () => {
   ];
 
   const tableBodyHeight = advancedVisible ? EXPANDED_TABLE_BODY_HEIGHT : DEFAULT_TABLE_BODY_HEIGHT;
-  const advancedClassName = advancedVisible ? 'visible h-16 pt-2 opacity-100' : 'invisible h-0 pt-0 opacity-0';
+  const advancedClassName = advancedVisible ? 'visible h-24 pt-2 opacity-100' : 'invisible h-0 pt-0 opacity-0';
 
   return (
     <Card size='small'>
@@ -182,7 +181,7 @@ const MessageList = () => {
             <MessageAmountCurrencyFilter />
           </Col>
         </Row>
-        {/* 两行高级筛选及顶部间距共 64px，与现有表格高度扣减保持一致。 */}
+        {/* 三行高级筛选及顶部间距共 96px，与现有表格高度扣减保持一致。 */}
         <Row
           gutter={[16, 8]}
           className={`box-border content-start overflow-hidden transition-all duration-200 ease-in-out motion-reduce:transition-none ${advancedClassName}`}
@@ -204,6 +203,9 @@ const MessageList = () => {
           </Col>
           <Col span={8}>
             <MessageUetrFilter />
+          </Col>
+          <Col span={8}>
+            <MessageSendBicFilter />
           </Col>
         </Row>
         <Row gutter={[16, 8]} className='mt-2'>

@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo } from 'react';
 import type { ComponentProps, MouseEvent, PropsWithChildren } from 'react';
 import { createForm } from '@formily/core';
 import type { FormPatternTypes } from '@formily/core';
-import { createSchemaField, FormProvider } from '@formily/react';
+import { createSchemaField, FormProvider, useField } from '@formily/react';
 import type { ISchema } from '@formily/react';
 import { App, Card, ConfigProvider, Table, theme } from 'antd';
 import type { TableColumnsType } from 'antd';
@@ -13,6 +13,8 @@ import CardCollapse from '@/components/CardCollapse';
 import { copyText } from '@/utils/fileUtil';
 
 const COPY_TARGET_SELECTOR = '.ant-formily-item-label-content, .ant-formily-item-control-content-component';
+const EMPTY_HIGH_LIGHT_FIELDS: readonly string[] = [];
+const HighLightFieldsContext = createContext<ReadonlySet<string>>(new Set<string>());
 
 interface MessageSchemaFormProps {
   /** 描述字段结构和展示组件的静态 Schema。 */
@@ -21,19 +23,27 @@ interface MessageSchemaFormProps {
   values: Record<string, unknown>;
   /** 控制字段以纯文本或只读控件形式展示。 */
   pattern?: FormPatternTypes;
+  /** 高亮字段 */
+  highLightFields?: readonly string[];
 }
 
-/** 使用前端白名单组件渲染静态 Formily Schema，并保持紧凑详情模式。 */
-const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSchemaFormProps) => {
+/** Formily Schema 渲染组件 */
+const MessageSchemaForm = ({
+  schema,
+  values,
+  pattern = 'readPretty',
+  highLightFields = EMPTY_HIGH_LIGHT_FIELDS,
+}: MessageSchemaFormProps) => {
   const { message } = App.useApp();
   const { token } = theme.useToken();
   const form = useMemo(() => createForm({ pattern }), [pattern, schema]);
+  const highLightFieldSet = useMemo(() => new Set(highLightFields), [highLightFields]);
 
   useEffect(() => {
     form.setValues(normalizeInputValues(values), 'overwrite');
   }, [form, values]);
 
-  /** 通过事件委托覆盖动态 Schema 字段，复制被双击区域的完整文本而非省略后的视觉内容。 */
+  /** 双击复制 */
   const handleDoubleClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!(event.target instanceof HTMLElement)) return;
     const copyTarget = event.target.closest<HTMLElement>(COPY_TARGET_SELECTOR);
@@ -47,7 +57,7 @@ const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSc
       .catch(() => message.error('Failed to copy'));
   };
 
-  /** 省略区域悬浮时通过原生 title 展示完整内容，内容变化后无需额外同步状态。 */
+  /** hover展示完整title */
   const handleMouseOver = (event: MouseEvent<HTMLDivElement>) => {
     if (!(event.target instanceof HTMLElement)) return;
     const hoverTarget = event.target.closest<HTMLElement>(COPY_TARGET_SELECTOR);
@@ -62,35 +72,49 @@ const MessageSchemaForm = ({ schema, values, pattern = 'readPretty' }: MessageSc
       onDoubleClick={handleDoubleClick}
       onMouseOver={handleMouseOver}
     >
-      <ConfigProvider theme={{ token: { colorTextDisabled: token.colorText } }}>
-        <FormProvider form={form}>
-          <FormLayout
-            layout='horizontal'
-            size='small'
-            labelAlign='left'
-            labelWidth={128}
-            labelWrap={false}
-            wrapperWrap={false}
-            spaceGap={4}
-            gridColumnGap={12}
-            gridRowGap={0}
-            feedbackLayout='none'
-          >
-            <SchemaField schema={schema} />
-          </FormLayout>
-        </FormProvider>
-      </ConfigProvider>
+      <HighLightFieldsContext.Provider value={highLightFieldSet}>
+        <ConfigProvider theme={{ token: { colorTextDisabled: token.colorText } }}>
+          <FormProvider form={form}>
+            <FormLayout
+              layout='horizontal'
+              size='small'
+              labelAlign='left'
+              labelWidth={128}
+              labelWrap={false}
+              wrapperWrap={false}
+              spaceGap={4}
+              gridColumnGap={12}
+              gridRowGap={0}
+              feedbackLayout='none'
+            >
+              <SchemaField schema={schema} />
+            </FormLayout>
+          </FormProvider>
+        </ConfigProvider>
+      </HighLightFieldsContext.Provider>
     </div>
   );
 };
 
 /** Formily 详情字段装饰器 */
-const MessageFormItem = ({ children, ...props }: PropsWithChildren<IFormItemProps>) => (
-  // 空值只在展示层转换为 --，不污染表单数据。
-  <PreviewText.Placeholder value='--'>
-    <FormilyFormItem {...props}>{children}</FormilyFormItem>
-  </PreviewText.Placeholder>
-);
+const MessageFormItem = ({ children, className, ...props }: PropsWithChildren<IFormItemProps>) => {
+  const highlighted = useIsFieldHighlighted();
+
+  return (
+    // 空值只在展示层转换为 --，不污染表单数据。
+    <PreviewText.Placeholder value='--'>
+      <FormilyFormItem
+        {...props}
+        className={cn(
+          highlighted && '[&_.ant-input-disabled]:font-semibold [&_.ant-input-disabled]:!text-yellow-500',
+          className,
+        )}
+      >
+        {children}
+      </FormilyFormItem>
+    </PreviewText.Placeholder>
+  );
+};
 
 /** 详情输入框统一展示空态；禁用时让指针事件落到字段容器，以支持双击复制。 */
 const MessageInput = ({ className, disabled, placeholder = '--', ...props }: ComponentProps<typeof Input>) => (
@@ -107,15 +131,30 @@ const MessageTextArea = ({
   className,
   disabled,
   placeholder = '--',
+  status,
   ...props
-}: ComponentProps<typeof Input.TextArea>) => (
-  <Input.TextArea
-    {...props}
-    className={cn('mb-1', disabled && 'pointer-events-none', className)}
-    disabled={disabled}
-    placeholder={placeholder}
-  />
-);
+}: ComponentProps<typeof Input.TextArea>) => {
+  const highlighted = useIsFieldHighlighted();
+
+  return (
+    <Input.TextArea
+      {...props}
+      className={cn('mb-1', disabled && 'pointer-events-none', className)}
+      disabled={disabled}
+      placeholder={placeholder}
+      status={highlighted ? 'warning' : status}
+    />
+  );
+};
+
+/** 判断当前 Schema 字段是否需要高亮展示。 */
+const useIsFieldHighlighted = () => {
+  const field = useField();
+  const highLightFields = useContext(HighLightFieldsContext);
+  const fieldPath = field.path.toArr();
+  const fieldName = String(fieldPath[fieldPath.length - 1]);
+  return highLightFields.has(fieldName);
+};
 
 interface MessageSectionProps {
   /** 当前业务信息区块标题。 */
@@ -179,7 +218,7 @@ const MessageBusinessTable = ({
     <Table<Record<string, unknown>>
       bordered
       size='small'
-      rowKey={(record, index) => String(record[rowKey] ?? index)}
+      rowKey={rowKey}
       columns={tableColumns}
       dataSource={value}
       pagination={false}

@@ -7,6 +7,8 @@ import { MessageBusinessType } from '@/types/enums';
 interface ContentMessageBusinessInfoProps {
   /** Message detail. */
   detail: MessageDetail | null;
+  /** 高亮字段 */
+  highLightFields?: readonly string[];
 }
 
 interface CardMessageBusinessInfoProps extends ContentMessageBusinessInfoProps {
@@ -15,14 +17,14 @@ interface CardMessageBusinessInfoProps extends ContentMessageBusinessInfoProps {
 }
 
 /** Business Info */
-export const CardMessageBusinessInfo = ({ detail, className }: CardMessageBusinessInfoProps) => (
+export const CardMessageBusinessInfo = ({ detail, className, highLightFields }: CardMessageBusinessInfoProps) => (
   <div className={className}>
-    <ContentMessageBusinessInfo detail={detail} />
+    <ContentMessageBusinessInfo detail={detail} highLightFields={highLightFields} />
   </div>
 );
 
 /** Business Info Content */
-export const ContentMessageBusinessInfo = ({ detail }: ContentMessageBusinessInfoProps) => {
+export const ContentMessageBusinessInfo = ({ detail, highLightFields }: ContentMessageBusinessInfoProps) => {
   if (detail?.msgBasicInfo.businessType === MessageBusinessType.Other) {
     return (
       <Alert
@@ -44,5 +46,12 @@ export const ContentMessageBusinessInfo = ({ detail }: ContentMessageBusinessInf
     );
   }
 
-  return <MessageSchemaForm schema={schema} values={detail ? { ...detail } : {}} pattern='disabled' />;
+  return (
+    <MessageSchemaForm
+      schema={schema}
+      values={detail ? { ...detail } : {}}
+      pattern='disabled'
+      highLightFields={highLightFields}
+    />
+  );
 };

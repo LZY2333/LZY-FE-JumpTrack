@@ -207,7 +207,7 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
   return (
     <Form.Item {...props} label='Amount' tooltip={getAmountCurrencyHint(businessType)}>
       <div className='flex items-center gap-1'>
-        <div className='w-28 shrink-0'>
+        <div className='w-24 shrink-0'>
           <Form.Item name='currency' noStyle>
             <Select
               className='w-full'
@@ -236,11 +236,23 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
             }),
           ]}
         >
-          <InputNumber className='min-w-0 flex-1' disabled={disabled} controls={false} placeholder='Minimum' />
+          <InputNumber
+            className='min-w-0 flex-1'
+            disabled={disabled}
+            controls={false}
+            precision={2}
+            placeholder='Minimum'
+          />
         </Form.Item>
         <span className='shrink-0'>-</span>
         <Form.Item name='amountTo' noStyle>
-          <InputNumber className='min-w-0 flex-1' disabled={disabled} controls={false} placeholder='Maximum' />
+          <InputNumber
+            className='min-w-0 flex-1'
+            disabled={disabled}
+            controls={false}
+            precision={2}
+            placeholder='Maximum'
+          />
         </Form.Item>
       </div>
     </Form.Item>
@@ -356,6 +368,13 @@ export const EndToEndMessageIdFilter = (props: MessageFilterFormItemProps) => (
 export const MessageUetrFilter = (props: MessageFilterFormItemProps) => (
   <Form.Item {...props} name='msgUetr' label='UETR' normalize={trimWhitespace}>
     <Input allowClear placeholder='Enter UETR' />
+  </Form.Item>
+);
+
+/** 发送行 BIC：MSG_SEND_BIC */
+export const MessageSendBicFilter = (props: MessageFilterFormItemProps) => (
+  <Form.Item {...props} name='msgSendBic' label='Sender Bank' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter sender bank BIC' />
   </Form.Item>
 );
 

@@ -6,23 +6,25 @@ import useMessageDetail from './useMessageDetail';
 interface PanelMessageDetailProps {
   /** 报文 ID。 */
   msgId?: string;
-  /** 报文方向。 */
-  msgDirection?: string;
-  /** 业务类型。 */
-  businessType?: string;
-  /** 是否查询临时表。 */
+  /** 查临时表，目前 IOP Manual Entry、Inquiry Reply 使用。 */
   temp?: boolean;
+  /** 高亮字段。 */
+  highLightFields?: readonly string[];
 }
 
-/** 查询并展示报文基础信息和业务信息。 */
-const PanelMessageDetail = ({ msgId, msgDirection, businessType, temp = false }: PanelMessageDetailProps) => {
-  const { detail, detailError } = useMessageDetail({ msgId, msgDirection, businessType, temp });
+/** 报文信息 基础+业务，自动查询 纯展示组件 */
+const PanelMessageDetail = ({
+  msgId,
+  temp = false,
+  highLightFields,
+}: PanelMessageDetailProps) => {
+  const { detail, detailError } = useMessageDetail({ msgId, temp });
 
   return (
     <div className='h-full overflow-auto'>
       {detailError && <Alert className='mb-3' type='error' showIcon message={detailError} />}
       <CardMessageBasicInfo detail={detail} />
-      <CardMessageBusinessInfo className='mt-3' detail={detail} />
+      <CardMessageBusinessInfo className='mt-3' detail={detail} highLightFields={highLightFields} />
     </div>
   );
 };

@@ -37,6 +37,7 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       outDir: path.resolve(__dirname, 'dist', env.APP_OUT_PATH || ''),
+      chunkSizeWarningLimit: 700,
     },
     server: {
       host: '0.0.0.0',

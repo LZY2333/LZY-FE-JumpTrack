@@ -1,7 +1,3 @@
-import type { MessageRaw } from '@/api/messages';
-
-// #region ==================== 报文原文打印 Util ====================
-
 const PRINT_WINDOW_FEATURES = 'width=960,height=720';
 const PRINT_DOCUMENT_STYLES = `
   @page { margin: 16mm; }
@@ -20,7 +16,7 @@ export const printXmlDocument = (title: string, content: string, printWindow = o
   return true;
 };
 
-/** 创建独立文本打印文档，避免把详情页导航、Tab 和操作按钮一并打印。 */
+/** 创建独立文本打印文档，避免把当前页面结构一并打印。 */
 const openTextPrintWindow = () => {
   const printWindow = window.open('', '_blank', PRINT_WINDOW_FEATURES);
   if (printWindow) printWindow.opener = null;
@@ -53,9 +49,3 @@ const triggerPrint = (printWindow: Window) => {
   printWindow.focus();
   printWindow.print();
 };
-
-// #endregion ==================== 报文原文打印 Util ====================
-
-/** 原文加载中、请求未返回或内容为空时禁用依赖原文内容的操作。 */
-export const isRawContentActionDisabled = (raw: MessageRaw | null, rawLoading: boolean) =>
-  rawLoading || !raw?.msgContent;

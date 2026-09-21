@@ -5,7 +5,7 @@ import type { Role } from '@/types/enums';
 export enum RoutePath {
   Root = '/',
   MessageList = '/messages',
-  MessageDetail = '/messages/:msgDirection/:businessType/:msgId',
+  MessageDetail = '/messages/:msgId',
   LcwList = '/lcw',
 
   IopRoot = '/iop',
@@ -13,7 +13,6 @@ export enum RoutePath {
   IopManualAttribute = '/iop/manual-attribute',
   IopDistributeCreation = '/iop/distribute-creation',
   IopDistributeException = '/iop/distribute-exception',
-  IopInquiryPayment = '/iop/inquiry-payment',
   IopInquiryReply = '/iop/inquiry-reply',
   IopExceptionOut = '/iop/exception-out',
 }

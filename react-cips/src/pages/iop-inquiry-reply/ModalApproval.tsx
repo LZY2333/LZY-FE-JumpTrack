@@ -6,8 +6,8 @@ interface ModalApprovalApi {
   confirm: (config: ModalFuncProps) => unknown;
 }
 
-/** 审批同意 */
-export const openModalApprove = (modal: ModalApprovalApi): Promise<boolean> => {
+/** 查询查复审批同意。 */
+export const openModalInquiryReplyApprove = (modal: ModalApprovalApi): Promise<boolean> => {
   return new Promise((resolve) => {
     modal.confirm({
       title: 'Confirm Approval',
@@ -19,8 +19,8 @@ export const openModalApprove = (modal: ModalApprovalApi): Promise<boolean> => {
   });
 };
 
-/** 审批拒绝 */
-export const openModalReject = (modal: ModalApprovalApi): Promise<false | string> => {
+/** 查询查复审批拒绝。 */
+export const openModalInquiryReplyReject = (modal: ModalApprovalApi): Promise<false | string> => {
   return new Promise((resolve) => {
     let rejectReason = '';
 
