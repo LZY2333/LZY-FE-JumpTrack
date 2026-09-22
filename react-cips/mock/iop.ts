@@ -1,6 +1,7 @@
 import type {
   IopDistributeCreationCreateRequest,
   IopDistributeCreationFormResponse,
+  IopExceptionOutActionRequest,
   IopInquiryReplyActionRequest,
   IopInquiryReplyCreateRequest,
   IopInquiryReplyFormResponse,
@@ -34,6 +35,7 @@ const handleIopTaskQuery = ({ url }: MockRequestOption) => {
   const taskFlowNo = iopFlwiId.split('-')[0] as IopTaskType;
   const taskIndex = Object.values(IopTaskType).indexOf(taskFlowNo);
   const isInquiryReply = taskFlowNo === IopTaskType.inquiryReply;
+  const isExceptionOut = taskFlowNo === IopTaskType.exceptionOut;
 
   if (taskIndex < 0) {
     return { returnCode: 'ERR0404', errorMsg: 'IOP task was not found.' };
@@ -43,12 +45,17 @@ const handleIopTaskQuery = ({ url }: MockRequestOption) => {
     taskId: `TASK20261231${String(taskIndex + 1).padStart(6, '0')}`,
     taskFlowNo,
     taskFlowName: IOP_TASK_TYPE_LABELS[taskFlowNo],
-    busRefNo: isInquiryReply ? 'CIPSIN20260822000005' : 'CIPSIN20260822000001',
+    busRefNo: isExceptionOut
+      ? `CIPS${MessageDirection.Out}20260822000002`
+      : isInquiryReply
+        ? 'CIPSIN20260822000005'
+        : 'CIPSIN20260822000001',
     taskHoldStatus: 'N',
     taskNode: resolveTaskNode(iopFlwiId),
     iopFlwiId,
     businessType: isInquiryReply ? MessageBusinessType.Query : MessageBusinessType.Payment,
-    msgDirection: MessageDirection.In,
+    msgDirection: isExceptionOut ? MessageDirection.Out : MessageDirection.In,
+    operationCode: isExceptionOut ? resolveExceptionOutOperation(iopFlwiId) : null,
     rejectReason: iopFlwiId.includes('REWORK') ? 'Message information is incomplete.' : null,
   };
 
@@ -159,7 +166,40 @@ const handleInquiryReplyAction = (option: MockBodyOption<IopInquiryReplyActionRe
   return { returnCode: ResCode.Success };
 };
 
+/** 发报异常审批场景默认重发，工作流编号带 CANCEL 时展示取消发报。 */
+const resolveExceptionOutOperation = (iopFlwiId: string): IopExceptionOutActionRequest['operation'] => {
+  if (iopFlwiId.includes('CANCEL')) return 'OUT_CANCEL';
+  if (iopFlwiId.includes('RETRY')) return 'OUT_RETRY';
+  if (resolveTaskNode(iopFlwiId) === IopTaskNode.MakerStage) return undefined;
+  return 'OUT_RETRY';
+};
+
+/** 校验发报异常仅允许经办与一级审批，并要求经办提交有效操作。 */
+const handleExceptionOutAction = (option: MockBodyOption<IopExceptionOutActionRequest>) => {
+  const taskActionResponse = handleTaskAction(option);
+  if (taskActionResponse.returnCode !== ResCode.Success) return taskActionResponse;
+
+  const { body } = option;
+  const isMakerNode = [IopTaskNode.MakerStage, IopTaskNode.MakerRework].includes(body.taskNode);
+  if (isMakerNode) {
+    if (!body.next) return { returnCode: 'ERR0400', errorMsg: 'Maker must submit for approval.' };
+    if (body.operation !== 'OUT_CANCEL' && body.operation !== 'OUT_RETRY') {
+      return { returnCode: 'ERR0400', errorMsg: 'A valid outgoing operation is required.' };
+    }
+    return { returnCode: ResCode.Success };
+  }
+  if (body.taskNode !== IopTaskNode.Checker1Stage) {
+    return { returnCode: 'ERR0400', errorMsg: 'Only first-level approval is supported.' };
+  }
+  return { returnCode: ResCode.Success };
+};
+
 export default [
+  {
+    url: '/cips/manager/exception-out/check-in',
+    method: 'post',
+    response: handleExceptionOutAction,
+  },
   {
     url: '/cips/api/task-info/getbyflwiid/:iopFlwiId',
     method: 'get',

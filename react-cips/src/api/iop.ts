@@ -230,3 +230,17 @@ export interface IopInquiryReplyActionRequest extends IopTaskActionRequest {
   /** 查询查复业务数据，仅经办时传递。 */
   busData?: IopInquiryReplyBusData;
 }
+
+/* ==================== 7. 发报异常 ==================== */
+
+/** 发报异常 经办与一级审批。 */
+export const API_IOP_EXCEPTION_OUT_CHECK_IN = '/cips/manager/exception-out/check-in';
+/** 提交发报异常处理或审批结果。 */
+export const postEOCheckIn = (params: IopExceptionOutActionRequest) =>
+  post<undefined>(API_IOP_EXCEPTION_OUT_CHECK_IN, params);
+
+/** 发报异常经办与审批请求。 */
+export interface IopExceptionOutActionRequest extends IopTaskActionRequest {
+  /** 经办操作：取消发报或重发，仅经办时传递。 */
+  operation?: 'OUT_CANCEL' | 'OUT_RETRY';
+}

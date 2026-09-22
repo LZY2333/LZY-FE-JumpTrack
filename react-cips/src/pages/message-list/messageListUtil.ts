@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import type { MessageQueryConditions, MessageSortField } from '@/api/messages';
 import { MessageDirection, QuerySortOrder, SortOrder } from '@/types/enums';
 import { omitEmptyValues } from '@/utils';
@@ -13,6 +14,15 @@ export type MessageListFilterValues = Omit<
   amountFrom?: number | null;
   /** 金额上限：REMIT_AMOUNT / GPI_AMOUNT / NETTING_AMOUNT。 */
   amountTo?: number | null;
+};
+
+/** 构造报文列表默认筛选条件，默认查询当天收报。 */
+export const buildDefaultMessageFilters = (): MessageListFilterValues => {
+  const today = dayjs().format('YYYY-MM-DD');
+  return {
+    msgDirection: MessageDirection.In,
+    msgDateRange: [today, today],
+  };
 };
 
 /** 构造查询条件Object。 */

@@ -8,7 +8,7 @@ import type { MessageRecord } from '@/types';
 import { MessageDirection, SortOrder } from '@/types/enums';
 import { RoutePath } from '@/router/routePath';
 import useMessageList, { PAGE_SIZE_OPTIONS } from './useMessageList';
-import { isMessageSortField, type MessageListFilterValues } from './messageListUtil';
+import { buildDefaultMessageFilters, isMessageSortField, type MessageListFilterValues } from './messageListUtil';
 import ResizableTable from '@/components/ResizableTable';
 import {
   MessageDirectionFilter,
@@ -56,7 +56,6 @@ import {
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 292px)';
 // 当前布局展开后多三行，每行 32px。
 const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 388px)';
-const DEFAULT_FILTER_VALUES: MessageListFilterValues = { msgDirection: MessageDirection.In };
 const DEFAULT_HIDDEN_COLUMN_IDS = [
   'msgOwnerDept',
   'msgOwnerGroup',
@@ -72,6 +71,7 @@ const DEFAULT_HIDDEN_COLUMN_IDS = [
 const MessageList = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm<MessageListFilterValues>();
+  const [initialFilters] = useState(buildDefaultMessageFilters);
   const [advancedVisible, setAdvancedVisible] = useState(false);
   const {
     authenticated,
@@ -86,7 +86,7 @@ const MessageList = () => {
     query,
     reset,
     queryDirection,
-  } = useMessageList(DEFAULT_FILTER_VALUES);
+  } = useMessageList(initialFilters);
 
   const handleReset = () => {
     form.resetFields();
@@ -149,7 +149,7 @@ const MessageList = () => {
         labelCol={{ span: 9 }}
         wrapperCol={{ span: 15 }}
         className='mb-4'
-        initialValues={DEFAULT_FILTER_VALUES}
+        initialValues={initialFilters}
         onFinish={query}
       >
         <Row gutter={[16, 8]}>

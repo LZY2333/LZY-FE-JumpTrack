@@ -32,7 +32,6 @@ export const openModalInquiryReplyReject = (modal: ModalApprovalApi): Promise<fa
           <Input.TextArea
             maxLength={100}
             rows={3}
-            showCount
             placeholder='Enter reject reason'
             onChange={(event) => {
               rejectReason = event.target.value;

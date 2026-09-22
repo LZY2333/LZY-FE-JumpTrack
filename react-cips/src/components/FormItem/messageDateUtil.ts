@@ -7,6 +7,7 @@ const MESSAGE_DATE_YEAR_LIMIT = 1;
 /** 点击时计算快捷日期，避免页面长时间停留后仍使用旧日期。 */
 export const messageDatePresets: RangePickerProps['presets'] = [
   { label: '1 Day', value: () => getRecentMessageDates(0, 'day') },
+  { label: '2 Day', value: () => getRecentMessageDates(1, 'day') },
   { label: '1 Week', value: () => getRecentMessageDates(6, 'day') },
   { label: '2 Weeks', value: () => getRecentMessageDates(13, 'day') },
   { label: '1 Month', value: () => getRecentMessageDates(1, 'month') },

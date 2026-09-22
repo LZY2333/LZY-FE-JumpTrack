@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import type { MessageQuery, MessageQueryConditions } from '@/api/messages';
 import type { MessageAuditTrailRecord, MessageDetail, MessageRecord } from '@/types';
 import { MessageBusinessType, MessageDirection, MsgRecvStatus, MsgSendStatus, ResCode } from '@/types/enums';
@@ -18,7 +19,13 @@ const FROM_SYSTEMS = ['PAYMENT-HUB', 'TREASURY-HUB', 'SWIFT-GATEWAY'];
 const MSG_RECV_STATUSES = Object.values(MsgRecvStatus);
 // 发报状态采用前端临时枚举，等待正式后端代码表确认。
 const MSG_SEND_STATUSES = Object.values(MsgSendStatus);
-const MESSAGE_COUNT = 40;
+const MOCK_TODAY = dayjs().startOf('day');
+const MOCK_DATE_RANGE_DAYS = 30;
+const RECENT_DAYS = 5;
+const RECENT_DAILY_COUNT = 24;
+const OLDER_DAILY_COUNT = 4;
+const RECENT_MESSAGE_COUNT = RECENT_DAYS * RECENT_DAILY_COUNT;
+const MESSAGE_COUNT = RECENT_MESSAGE_COUNT + (MOCK_DATE_RANGE_DAYS - RECENT_DAYS) * OLDER_DAILY_COUNT;
 const RELATED_MESSAGE_GROUP_SIZE = 2;
 
 // 集中处理 Mock 数据的二选一规则，避免生成函数被大量条件表达式淹没。
@@ -30,7 +37,7 @@ const createMessageId = (index: number) => {
   return `CIPS${direction}20260822${String(index + 1).padStart(6, '0')}`;
 };
 
-// 一条记录代表一份物理报文；固定 40 条便于验证分页、筛选、排序和空值展示。
+// 一条记录代表一份物理报文；最近几天增加样本，便于验证当天查询和分页。
 type MockMessageDetail = MessageRecord &
   Omit<MessageDetail, 'msgBasicInfo'> & {
     /** 原文中的机构信息，只用于生成原始 XML，不进入查询或详情响应。 */
@@ -55,9 +62,19 @@ function createMessage(index: number): MockMessageDetail {
   const msgType = MESSAGE_TYPES[typeIndex];
   const relatedGroupStartIndex = index - (index % RELATED_MESSAGE_GROUP_SIZE);
   const relatedMessageIndex = index === relatedGroupStartIndex ? index + 1 : relatedGroupStartIndex;
-  const messageTime = new Date(
-    Date.UTC(2026, 7, 22 - Math.floor(index / 6), 9 + (index % 8), index % 60, 0),
-  ).toISOString();
+  const daysAgo =
+    index < RECENT_MESSAGE_COUNT
+      ? Math.floor(index / RECENT_DAILY_COUNT)
+      : RECENT_DAYS + Math.floor((index - RECENT_MESSAGE_COUNT) / OLDER_DAILY_COUNT);
+  const indexWithinDay =
+    index < RECENT_MESSAGE_COUNT
+      ? index % RECENT_DAILY_COUNT
+      : (index - RECENT_MESSAGE_COUNT) % OLDER_DAILY_COUNT;
+  // 时间按生成顺序递减，确保默认倒序下收报、发报的前四条分别覆盖四种类型。
+  const messageTime = MOCK_TODAY.subtract(daysAgo, 'day')
+    .hour(16)
+    .subtract(indexWithinDay, 'minute')
+    .format();
   const msgId = createMessageId(index);
   const amount = Number((1000 + index * 238.75).toFixed(2));
   const hasPaymentDetail = businessType === MessageBusinessType.Payment;
