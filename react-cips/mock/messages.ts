@@ -81,10 +81,12 @@ function createMessage(index: number): MockMessageDetail {
   const hasGpiDetail = businessType === MessageBusinessType.Query && Math.floor(index / 8) % 2 === 0;
   const hasAmount = hasPaymentDetail || businessType === MessageBusinessType.Bill || hasGpiDetail;
   const received = msgDirection === MessageDirection.In;
+  const msgSendBic = SEND_INSTS[index % SEND_INSTS.length];
 
   return {
     msgId,
     msgDirection,
+    msgSendBic,
     businessType,
     msgDate: messageTime,
     mainMsgId: choose(index === relatedGroupStartIndex, null, createMessageId(relatedGroupStartIndex)),
@@ -103,7 +105,7 @@ function createMessage(index: number): MockMessageDetail {
     msgUetr: choose(index % 6 === 0, null, `9f1c3f0e-${String(index + 1).padStart(4, '0')}-4b68-8e8a-9e6f8a1c2d3e`),
     msgSendTime: choose(msgDirection === MessageDirection.Out, messageTime, null),
     rawInstitutions: {
-      sender: SEND_INSTS[index % SEND_INSTS.length],
+      sender: msgSendBic,
       receiver: RECV_INSTS[index % RECV_INSTS.length],
     },
     msgRecvStatus: choose(received, MSG_RECV_STATUSES[index % MSG_RECV_STATUSES.length], null),
@@ -360,6 +362,7 @@ const filterMessages = (query: Partial<MessageQueryConditions>) => {
     ['msgBusinessNo', query.msgBusinessNo],
     ['msgType', query.msgType],
     ['msgDirection', query.msgDirection],
+    ['msgSendBic', query.msgSendBic],
     ['businessType', query.businessType],
     ['mainMsgId', query.mainMsgId],
     ['msgRelatedId', query.msgRelatedId],

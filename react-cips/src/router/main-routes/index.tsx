@@ -13,7 +13,7 @@ export const mainRoutes: AppRoute[] = [
   /** 默认入口：跳转报文列表页。 */
   {
     path: RoutePath.Root,
-    element: <Navigate to={RoutePath.MessageList} replace />,
+    element: <Navigate to={{ pathname: RoutePath.MessageList, search: window.location.search }} replace />,
     meta: { title: 'Message List' },
   },
   /** 报文列表页。 */

@@ -24,9 +24,11 @@ const useUserStore = create<AuthStore>((set, get) => ({
   user: undefined,
   setUser: (user) => set({ user }),
   login: async () => {
+    console.log('window.location.href: ', window.location.href);
     const searchParams = new URLSearchParams(window.location.search);
     const urlToken = searchParams.get(AUTH_TOKEN_KEY)?.trim();
     const token = urlToken || get().token?.trim() || sessionStorage.getItem(AUTH_TOKEN_KEY)?.trim();
+    console.log('login token: ', token);
 
     set({ user: undefined });
     if (!token) {
@@ -43,6 +45,7 @@ const useUserStore = create<AuthStore>((set, get) => ({
 
     try {
       const res = await getCurrentUserApi(token, { silent: true });
+      console.log('login res: ', res);
       if (!res?.user?.userId?.trim()) {
         Modal.warning({
           title: 'T24 Account Required',
@@ -56,19 +59,17 @@ const useUserStore = create<AuthStore>((set, get) => ({
         return undefined;
       }
 
-      const roles = res.roles ?? [];
-
-      set({
-        token,
-        user: {
-          ...res.user,
-          roles: CIES_ROLES.filter((role) => {
-            const rolePattern = new RegExp(`(?:cies.*${role}|${role}.*cies)`, 'i');
-            return roles.some((item) => rolePattern.test(item));
-          }),
-        },
+      /** 计算用户权限 */
+      const roles = CIES_ROLES.filter((role) => {
+        const rolePattern = new RegExp(`(?:cies.*${role}|${role}.*cies)`, 'i');
+        return (res.roles ?? []).some((item) => rolePattern.test(item));
       });
+      /** 系统使用的用户信息 */
+      const userTemp = { ...res.user, roles };
+      console.log('当前登录用户: ', userTemp);
+      set({ token, user: userTemp });
 
+      /** 储存session,同时清空searchParam */
       sessionStorage.setItem(AUTH_TOKEN_KEY, token);
       if (urlToken) {
         const url = new URL(window.location.href);
@@ -79,8 +80,7 @@ const useUserStore = create<AuthStore>((set, get) => ({
     } catch (error) {
       set({ user: undefined });
       const errorMsg =
-        (error as Partial<RequestError>)?.message?.trim() ||
-        'Unable to verify your identity. Please try again later.';
+        (error as Partial<RequestError>)?.message?.trim() || 'Unable to verify your identity. Please try again later.';
       Modal.error({
         title: 'Authentication Failed',
         content: errorMsg,

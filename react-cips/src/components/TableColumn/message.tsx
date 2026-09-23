@@ -13,7 +13,13 @@ import {
   MsgRecvStatus,
   MsgSendStatus,
 } from '@/types/enums';
-import { renderMessageAmount, renderMessageDate, renderMessageDateTime, renderMessageText } from './messageColumnUtil';
+import {
+  renderMessageAmount,
+  renderMessageDate,
+  renderMessageDateTime,
+  renderMessageOwnerBy,
+  renderMessageText,
+} from './messageColumnUtil';
 
 // 字段顺序与报文列表的默认列顺序一致。
 
@@ -31,6 +37,30 @@ export const msgDirection = {
   dataIndex: 'msgDirection',
   width: 100,
   render: (value: MessageDirection) => MESSAGE_DIRECTION_LABELS[value] ?? renderMessageText(value),
+};
+
+/** 报文归属：MSG_OWNER_DEPT / MSG_OWNER_GROUP */
+export const ownerBy: TableColumnType<MessageRecord> = {
+  title: 'Owner By',
+  key: 'ownerBy',
+  width: 220,
+  render: (_, record) => renderMessageOwnerBy(record.msgOwnerDept, record.msgOwnerGroup),
+};
+
+/** 发报来源系统：OU.FROM_SYSTEM */
+export const fromSystem: TableColumnType<MessageRecord> = {
+  title: 'From System',
+  dataIndex: 'fromSystem',
+  width: 180,
+  render: renderMessageText,
+};
+
+/** 发送行 BIC：MSG_SEND_BIC */
+export const msgSendBic: TableColumnType<MessageRecord> = {
+  title: 'Sender Bank',
+  dataIndex: 'msgSendBic',
+  width: 160,
+  render: renderMessageText,
 };
 
 /** 业务类型：BUSINESS_TYPE */
@@ -120,22 +150,6 @@ export const msgUetr: TableColumnType<MessageRecord> = {
   title: 'UETR',
   dataIndex: 'msgUetr',
   width: 280,
-  render: renderMessageText,
-};
-
-/** 报文归属部门：MSG_OWNER_DEPT */
-export const msgOwnerDept: TableColumnType<MessageRecord> = {
-  title: 'Owner Department',
-  dataIndex: 'msgOwnerDept',
-  width: 180,
-  render: renderMessageText,
-};
-
-/** 报文归属组：MSG_OWNER_GROUP */
-export const msgOwnerGroup: TableColumnType<MessageRecord> = {
-  title: 'Owner Group',
-  dataIndex: 'msgOwnerGroup',
-  width: 150,
   render: renderMessageText,
 };
 

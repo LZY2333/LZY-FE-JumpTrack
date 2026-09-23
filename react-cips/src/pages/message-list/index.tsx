@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { Button, Card, Col, Form, Row } from 'antd';
@@ -31,6 +31,9 @@ import {
 import {
   msgId,
   msgDirection,
+  ownerBy,
+  fromSystem,
+  msgSendBic,
   businessType,
   msgChannel,
   msgType,
@@ -42,8 +45,6 @@ import {
   msgSendStatus,
   msgDate,
   msgUetr,
-  msgOwnerDept,
-  msgOwnerGroup,
   mainMsgId,
   msgRelatedId,
   msgEndId,
@@ -57,8 +58,6 @@ const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 292px)';
 // 当前布局展开后多三行，每行 32px。
 const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 388px)';
 const DEFAULT_HIDDEN_COLUMN_IDS = [
-  'msgOwnerDept',
-  'msgOwnerGroup',
   'mainMsgId',
   'msgRelatedId',
   'msgEndId',
@@ -113,28 +112,31 @@ const MessageList = () => {
       }),
     );
 
-  const columns: TableColumnsType<MessageRecord> = [
-    msgId,
-    msgDirection,
-    businessType,
-    msgChannel,
-    msgType,
-    msgBusinessNo,
-    amount,
-    currency,
-    tranId,
-    queryDirection === MessageDirection.Out ? msgSendStatus : msgRecvStatus,
-    msgDate,
-    msgUetr,
-    msgOwnerDept,
-    msgOwnerGroup,
-    mainMsgId,
-    msgRelatedId,
-    msgEndId,
-    createTime,
-    updateTime,
-    remark,
-  ];
+  const columns = useMemo<TableColumnsType<MessageRecord>>(
+    () => [
+      msgId,
+      msgDirection,
+      queryDirection === MessageDirection.Out ? fromSystem : ownerBy,
+      msgSendBic,
+      businessType,
+      msgChannel,
+      msgType,
+      msgBusinessNo,
+      amount,
+      currency,
+      tranId,
+      queryDirection === MessageDirection.Out ? msgSendStatus : msgRecvStatus,
+      msgDate,
+      msgUetr,
+      mainMsgId,
+      msgRelatedId,
+      msgEndId,
+      createTime,
+      updateTime,
+      remark,
+    ],
+    [queryDirection],
+  );
 
   const tableBodyHeight = advancedVisible ? EXPANDED_TABLE_BODY_HEIGHT : DEFAULT_TABLE_BODY_HEIGHT;
   const advancedClassName = advancedVisible ? 'visible h-24 pt-2 opacity-100' : 'invisible h-0 pt-0 opacity-0';

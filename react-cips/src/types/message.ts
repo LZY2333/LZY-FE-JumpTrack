@@ -7,6 +7,14 @@ export interface MessageRecord {
   msgId: string;
   /** 收发方向：MSG_DIRECTION。 */
   msgDirection: MessageDirection;
+  /** 报文归属部门：MSG_OWNER_DEPT。 */
+  msgOwnerDept: NullableText;
+  /** 报文归属组：MSG_OWNER_GROUP。 */
+  msgOwnerGroup: NullableText;
+  /** 发报来源系统：OU.FROM_SYSTEM。 */
+  fromSystem: NullableText;
+  /** 发送行 BIC：MSG_SEND_BIC。 */
+  msgSendBic: NullableText;
   /** 业务类型：BUSINESS_TYPE。 */
   businessType: MessageBusinessType;
   /** 收发报通道：MSG_CHANNEL。 */
@@ -29,12 +37,6 @@ export interface MessageRecord {
   msgDate: NullableText;
   /** UETR 唯一标识号：MSG_UETR。 */
   msgUetr: NullableText;
-  /** 报文归属部门：MSG_OWNER_DEPT。 */
-  msgOwnerDept: NullableText;
-  /** 报文归属组：MSG_OWNER_GROUP。 */
-  msgOwnerGroup: NullableText;
-  /** 发报来源系统：OU.FROM_SYSTEM。 */
-  fromSystem: NullableText;
   /** 主报文编号：MAIN_MSG_ID。 */
   mainMsgId: NullableText;
   /** 关联流水号：MSG_RELATED_ID。 */
