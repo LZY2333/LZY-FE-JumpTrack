@@ -45,11 +45,7 @@ const handleIopTaskQuery = ({ url }: MockRequestOption) => {
     taskId: `TASK20261231${String(taskIndex + 1).padStart(6, '0')}`,
     taskFlowNo,
     taskFlowName: IOP_TASK_TYPE_LABELS[taskFlowNo],
-    busRefNo: isExceptionOut
-      ? `CIPS${MessageDirection.Out}20260822000002`
-      : isInquiryReply
-        ? 'CIPSIN20260822000005'
-        : 'CIPSIN20260822000001',
+    busRefNo: resolveBusRefNo(taskFlowNo),
     taskHoldStatus: 'N',
     taskNode: resolveTaskNode(iopFlwiId),
     iopFlwiId,
@@ -66,6 +62,13 @@ const handleIopTaskQuery = ({ url }: MockRequestOption) => {
 const getLastPathSegment = (url: string) => {
   const segments = url.split('?')[0].split('/').filter(Boolean);
   return decodeURIComponent(segments[segments.length - 1] ?? '');
+};
+
+/** 根据任务类型返回对应的 Mock 报文编号。 */
+const resolveBusRefNo = (taskFlowNo: IopTaskType) => {
+  if (taskFlowNo === IopTaskType.exceptionOut) return `CIPS${MessageDirection.Out}20260822000002`;
+  if (taskFlowNo === IopTaskType.inquiryReply) return 'CIPSIN20260822000005';
+  return 'CIPSIN20260822000001';
 };
 
 /** 根据 Mock 工作流实例编号中的节点标识切换页面状态。 */
@@ -105,7 +108,7 @@ const handleTaskAction = ({ body }: MockBodyOption<IopTaskActionRequest>) => {
 
 /** 校验手工补录经办请求。 */
 const handleManualEntryUpdate = ({ body }: MockBodyOption<IopManualEntryUpdateRequest>) => {
-  return body?.msgId && body.contentTemp?.trim()
+  return body?.msgId && body.message?.trim()
     ? { returnCode: ResCode.Success }
     : { returnCode: 'ERR0400', errorMsg: 'Raw message content is required.' };
 };
@@ -196,77 +199,77 @@ const handleExceptionOutAction = (option: MockBodyOption<IopExceptionOutActionRe
 
 export default [
   {
-    url: '/cips/manager/exception-out/check-in',
+    url: '/pssst/manager/exception-out/check-in',
     method: 'post',
     response: handleExceptionOutAction,
   },
   {
-    url: '/cips/api/task-info/getbyflwiid/:iopFlwiId',
+    url: '/pssst/manager/api/task-info/getbyflwiid/:iopFlwiId',
     method: 'get',
     response: handleIopTaskQuery,
   },
   {
-    url: '/cips/patchIncomingMsg/updateContentMsg',
+    url: '/pssst/manager/patchIncomingMsg/updateContentMsg',
     method: 'post',
     response: handleManualEntryUpdate,
   },
   {
-    url: '/cips/patchIncomingMsg/confirmPatchContentToIOP',
+    url: '/pssst/manager/patchIncomingMsg/confirmPatchContentToIOP',
     method: 'post',
     response: handleTaskAction,
   },
   {
-    url: '/cips/patchIncomingMsg/rollbackPatchContent',
+    url: '/pssst/manager/patchIncomingMsg/rollbackPatchContent',
     method: 'post',
     response: handleManualEntryRollback,
   },
   {
-    url: '/cips/patchIncomingMsg/approvePatchContentToIOP',
+    url: '/pssst/manager/patchIncomingMsg/approvePatchContentToIOP',
     method: 'post',
     response: handleTaskAction,
   },
   {
-    url: '/cips/patchIncomingMsg/rejectPatchContentToIOP',
+    url: '/pssst/manager/patchIncomingMsg/rejectPatchContentToIOP',
     method: 'post',
     response: handleTaskAction,
   },
   {
-    url: '/cips/attributeTask/handling',
+    url: '/pssst/clear/attributeTask/handling',
     method: 'post',
     response: handleTaskAction,
   },
   {
-    url: '/cips/manualCrtDisTask/handling',
+    url: '/pssst/manager/manualCrtDisTask/handling',
     method: 'post',
     response: handleTaskAction,
   },
   {
-    url: '/cips/manualCrtDisTask/query',
+    url: '/pssst/manager/manualCrtDisTask/query',
     method: 'post',
     response: handleDistributeTaskFormQuery,
   },
   {
-    url: '/cips/distributeTask/handling',
+    url: '/pssst/clear/distributeTask/handling',
     method: 'post',
     response: handleTaskAction,
   },
   {
-    url: '/cips/manualCrtDisTask/create',
+    url: '/pssst/manager/manualCrtDisTask/create',
     method: 'post',
     response: handleDistributeTaskCreate,
   },
   {
-    url: '/cips/manager/manualCipsMsg/startProcess',
+    url: '/pssst/manager/manualCipsMsg/startProcess',
     method: 'post',
     response: handleInquiryReplyCreate,
   },
   {
-    url: '/cips/manager/manualCipsMsg/approve',
+    url: '/pssst/manager/manualCipsMsg/approve',
     method: 'post',
     response: handleInquiryReplyAction,
   },
   {
-    url: '/cips/manager/manualCipsMsg/form/:taskId',
+    url: '/pssst/manager/manualCipsMsg/form/:taskId',
     method: 'get',
     response: handleInquiryReplyFormQuery,
   },

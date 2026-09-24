@@ -43,7 +43,7 @@ const IopManualEntry = () => {
     try {
       await postMEUpdate({
         msgId: task.busRefNo,
-        contentTemp,
+        message: contentTemp,
       });
       setUpdated(true);
       message.success('Raw message updated');

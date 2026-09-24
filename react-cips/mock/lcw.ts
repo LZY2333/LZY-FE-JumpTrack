@@ -56,7 +56,7 @@ const handleQuery = ({ body: query }: MockRequestOption<LcwQuery>) => {
   const filteredRecords = filterRecords(getLcwRecords(), query);
   const pageStart = (current - 1) * pageSize;
   const body: PagedLcwRecords = {
-    list: filteredRecords.slice(pageStart, pageStart + pageSize).map(cloneRecord),
+    records: filteredRecords.slice(pageStart, pageStart + pageSize).map(cloneRecord),
     current,
     pageSize,
     total: filteredRecords.length,
@@ -74,12 +74,12 @@ const handleBatchRetry = ({ body: request }: MockRequestOption<LcwBatchRetryRequ
 
 export default [
   {
-    url: '/cips/manager/amlPatchStatus/getAmlMsgByInitialStatus',
+    url: '/pssst/manager/amlPatchStatus/getAmlMsgByInitialStatus',
     method: 'post',
     response: handleQuery,
   },
   {
-    url: '/cips/manager/amlPatchStatus/pushPatchAmlMsgByMsgid',
+    url: '/pssst/manager/amlPatchStatus/pushPatchAmlMsgByMsgid',
     method: 'post',
     response: handleBatchRetry,
   },

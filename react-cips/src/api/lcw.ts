@@ -3,7 +3,7 @@ import { post } from './request';
 import type { LcwInitialStatus, MessageBusinessType, MessageChannel, MessageDirection } from '@/types/enums';
 
 /** LCW 接口基础 URL。 */
-export const API_BASE_LCW = '/cips/manager/amlPatchStatus';
+export const API_BASE_LCW = '/pssst/manager/amlPatchStatus';
 
 /** 查询 LCW 任务 list。 */
 export const API_LCW_TASK_QUERY = `${API_BASE_LCW}/getAmlMsgByInitialStatus`;
@@ -38,7 +38,7 @@ export interface LcwQuery extends LcwQueryConditions {
 /** LCW 列表分页查询结果。 */
 export interface PagedLcwRecords extends Pagination {
   /** 当前页 LCW 记录。 */
-  list: LcwRecord[];
+  records: LcwRecord[];
 }
 
 /** LCW 批量重试请求。 */

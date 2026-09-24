@@ -5,7 +5,7 @@ import type { RequestError } from '@/api/request';
 import type { User } from '@/types';
 import { Role } from '@/types/enums';
 
-const CIES_ROLES = Object.values(Role);
+const CIPS_ROLES = Object.values(Role);
 const AUTH_TOKEN_KEY = 'otfUserToken';
 
 interface AuthStore {
@@ -24,11 +24,10 @@ const useUserStore = create<AuthStore>((set, get) => ({
   user: undefined,
   setUser: (user) => set({ user }),
   login: async () => {
-    console.log('window.location.href: ', window.location.href);
     const searchParams = new URLSearchParams(window.location.search);
     const urlToken = searchParams.get(AUTH_TOKEN_KEY)?.trim();
-    const token = urlToken || get().token?.trim() || sessionStorage.getItem(AUTH_TOKEN_KEY)?.trim();
-    console.log('login token: ', token);
+    const cookieToken = getCookieValue(AUTH_TOKEN_KEY)?.trim();
+    const token = urlToken || cookieToken || get().token?.trim() || sessionStorage.getItem(AUTH_TOKEN_KEY)?.trim();
 
     set({ user: undefined });
     if (!token) {
@@ -45,7 +44,6 @@ const useUserStore = create<AuthStore>((set, get) => ({
 
     try {
       const res = await getCurrentUserApi(token, { silent: true });
-      console.log('login res: ', res);
       if (!res?.user?.userId?.trim()) {
         Modal.warning({
           title: 'T24 Account Required',
@@ -60,13 +58,12 @@ const useUserStore = create<AuthStore>((set, get) => ({
       }
 
       /** 计算用户权限 */
-      const roles = CIES_ROLES.filter((role) => {
-        const rolePattern = new RegExp(`(?:cies.*${role}|${role}.*cies)`, 'i');
+      const roles = CIPS_ROLES.filter((role) => {
+        const rolePattern = new RegExp(`(?:cips.*${role}|${role}.*cips)`, 'i');
         return (res.roles ?? []).some((item) => rolePattern.test(item));
       });
       /** 系统使用的用户信息 */
       const userTemp = { ...res.user, roles };
-      console.log('当前登录用户: ', userTemp);
       set({ token, user: userTemp });
 
       /** 储存session,同时清空searchParam */
@@ -93,5 +90,13 @@ const useUserStore = create<AuthStore>((set, get) => ({
     }
   },
 }));
+
+/** 根据名称获取 Cookie 值。 */
+const getCookieValue = (name: string) => {
+  const cookie = document.cookie.split('; ').find((item) => item.startsWith(`${encodeURIComponent(name)}=`));
+  if (!cookie) return undefined;
+
+  return decodeURIComponent(cookie.slice(cookie.indexOf('=') + 1));
+};
 
 export default useUserStore;

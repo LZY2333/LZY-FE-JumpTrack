@@ -42,7 +42,7 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
     getLcwTasks(request)
       .then((result) => {
         if (!active) return;
-        setRecords(result?.list ?? []);
+        setRecords(result?.records ?? []);
         setTotal(result?.total ?? 0);
       })
       .catch(() => {

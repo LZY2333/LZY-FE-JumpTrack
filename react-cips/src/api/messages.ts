@@ -11,7 +11,7 @@ import type {
 } from '@/types/enums';
 
 /** 报文接口基础 URL。 */
-export const API_BASE_MESSAGE = '/cips/message';
+export const API_BASE_MESSAGE = '/pssst/manager/message';
 
 /** 查询报文 list。 */
 export const API_MESSAGE_QUERY = `${API_BASE_MESSAGE}/query`;

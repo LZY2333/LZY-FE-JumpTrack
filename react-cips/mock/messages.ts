@@ -533,7 +533,7 @@ const escapeXml = (value: string) =>
 
 export default [
   {
-    url: '/cips/message/query',
+    url: '/pssst/manager/message/query',
     method: 'post',
     response: (option: { body: MockMessageQuery }) => {
       const { current = 1, pageSize = 10, ...conditions } = option.body || {};
@@ -558,7 +558,7 @@ export default [
     },
   },
   {
-    url: '/cips/message/processing-records/:msgId',
+    url: '/pssst/manager/message/processing-records/:msgId',
     method: 'get',
     timeout: 500,
     response: (option: { url: string }) => {
@@ -568,7 +568,7 @@ export default [
     },
   },
   {
-    url: '/cips/message/raw/:msgDirection/:msgId',
+    url: '/pssst/manager/message/raw/:msgDirection/:msgId',
     method: 'get',
     timeout: 800,
     response: (option: { url: string }) => {
@@ -583,7 +583,7 @@ export default [
     },
   },
   {
-    url: '/cips/message/detail/:msgId/temp',
+    url: '/pssst/manager/message/detail/:msgId/temp',
     method: 'get',
     timeout: 300,
     response: (option: { url: string }) => {
@@ -593,7 +593,7 @@ export default [
     },
   },
   {
-    url: '/cips/message/detail/:msgId/info',
+    url: '/pssst/manager/message/detail/:msgId/info',
     method: 'get',
     timeout: 300,
     response: (option: { url: string }) => {

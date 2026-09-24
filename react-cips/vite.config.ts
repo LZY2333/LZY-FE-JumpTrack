@@ -46,7 +46,7 @@ export default defineConfig(({ command, mode }) => {
       proxy: mockEnabled
         ? undefined
         : {
-            '/cips': {
+            '/pssst': {
               target: apiProxyTarget,
               changeOrigin: true,
               configure: (proxy) => {

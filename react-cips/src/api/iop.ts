@@ -6,7 +6,7 @@ import { get, post } from './request';
 /* ==================== 1. IOP 任务 ==================== */
 
 /** IOP 任务接口基础 URL。 */
-export const API_BASE_IOP_TASK_INFO = '/cips/api/task-info';
+export const API_BASE_IOP_TASK_INFO = '/pssst/manager/api/task-info';
 
 /** 按 IOP 工作流实例编号查询页面初始化任务信息。 */
 export const API_IOP_TASK_INFO = `${API_BASE_IOP_TASK_INFO}/getbyflwiid/:iopFlwiId`;
@@ -48,7 +48,7 @@ export interface IopTaskActionRequest {
 /* ==================== 2. 手工补录 ==================== */
 
 /** 手工补录 接口基础 URL */
-export const API_BASE_IOP_MANUAL_ENTRY = '/cips/patchIncomingMsg';
+export const API_BASE_IOP_MANUAL_ENTRY = '/pssst/manager/patchIncomingMsg';
 
 /** 手工补录 更新报文原文 */
 export const API_IOP_MANUAL_ENTRY_UPDATE = `${API_BASE_IOP_MANUAL_ENTRY}/updateContentMsg`;
@@ -76,8 +76,8 @@ export const postMEReject = (params: IopTaskActionRequest) => post<undefined>(AP
 export interface IopManualEntryUpdateRequest {
   /** 报文编号。 */
   msgId: string;
-  /** 修改后的临时报文原文。 */
-  contentTemp: string;
+  /** 修改后的报文原文。 */
+  message: string;
 }
 
 /** 手工补录回滚请求。 */
@@ -89,7 +89,7 @@ export interface IopManualEntryRollbackRequest {
 /* ==================== 3. 手工归属 ==================== */
 
 /** 手工归属 接口基础 URL */
-export const API_BASE_IOP_MANUAL_ATTRIBUTE = '/cips/attributeTask';
+export const API_BASE_IOP_MANUAL_ATTRIBUTE = '/pssst/clear/attributeTask';
 
 /** 手工归属 经办 */
 export const API_IOP_MANUAL_ATTRIBUTE_HANDLING = `${API_BASE_IOP_MANUAL_ATTRIBUTE}/handling`;
@@ -109,7 +109,7 @@ export interface IopManualAttributeHandlingRequest extends IopTaskActionRequest 
 /* ==================== 4. 创建分发任务 ==================== */
 
 /** 创建分发任务 接口基础 URL */
-export const API_BASE_IOP_DISTRIBUTE_CREATION = '/cips/manualCrtDisTask';
+export const API_BASE_IOP_DISTRIBUTE_CREATION = '/pssst/manager/manualCrtDisTask';
 
 /** 创建分发任务 从报文明细页创建 */
 export const API_IOP_DISTRIBUTE_CREATION_CREATE = `${API_BASE_IOP_DISTRIBUTE_CREATION}/create`;
@@ -165,7 +165,7 @@ export interface IopDistributeCreationFormResponse {
 /* ==================== 5. 分发异常 ==================== */
 
 /** 分发异常 接口基础 URL */
-export const API_BASE_IOP_DISTRIBUTE_EXCEPTION = '/cips/distributeTask';
+export const API_BASE_IOP_DISTRIBUTE_EXCEPTION = '/pssst/clear/distributeTask';
 
 /** 分发异常 重新分发 */
 export const API_IOP_DISTRIBUTE_EXCEPTION_HANDLING = `${API_BASE_IOP_DISTRIBUTE_EXCEPTION}/handling`;
@@ -185,7 +185,7 @@ export interface IopDistributeExceptionHandlingRequest extends IopTaskActionRequ
 /* ==================== 6. 查询查复 ==================== */
 
 /** 查询查复 接口基础 URL */
-export const API_BASE_IOP_INQUIRY_REPLY = '/cips/manager/manualCipsMsg';
+export const API_BASE_IOP_INQUIRY_REPLY = '/pssst/manager/manualCipsMsg';
 
 /** 查询查复 从报文明细页创建 IOP 任务 */
 export const API_IOP_INQUIRY_REPLY_CREATE = `${API_BASE_IOP_INQUIRY_REPLY}/startProcess`;
@@ -234,7 +234,7 @@ export interface IopInquiryReplyActionRequest extends IopTaskActionRequest {
 /* ==================== 7. 发报异常 ==================== */
 
 /** 发报异常 经办与一级审批。 */
-export const API_IOP_EXCEPTION_OUT_CHECK_IN = '/cips/manager/exception-out/check-in';
+export const API_IOP_EXCEPTION_OUT_CHECK_IN = '/pssst/manager/exception-out/check-in';
 /** 提交发报异常处理或审批结果。 */
 export const postEOCheckIn = (params: IopExceptionOutActionRequest) =>
   post<undefined>(API_IOP_EXCEPTION_OUT_CHECK_IN, params);
