@@ -15,22 +15,22 @@ const inquiryReplyMsgTypeOptions = ['301', '302', '309'].map((value) => ({ value
 /**==================== 创建分发 ====================**/
 
 /** 目标系统编号 */
-export const IopTargeSysId = (props: IopFormItemProps) => {
+export const IopTargetSysId = (props: IopFormItemProps) => {
   const form = Form.useFormInstance();
 
   return (
     <Form.Item
       {...props}
       className='mb-0'
-      name='targeSysId'
+      name='targetSysId'
       label='Target System ID'
       normalize={trimWhitespace}
       dependencies={['msgOwnerDept', 'msgOwnerGroup']}
       rules={[
         {
-          validator: (_, targeSysId?: string) => {
+          validator: (_, targetSysId?: string) => {
             const { msgOwnerDept, msgOwnerGroup } = form.getFieldsValue();
-            if (targeSysId?.trim() || msgOwnerDept?.trim() || msgOwnerGroup?.trim()) {
+            if (targetSysId?.trim() || msgOwnerDept?.trim() || msgOwnerGroup?.trim()) {
               return Promise.resolve();
             }
             return Promise.reject(new Error('Enter at least one of Target System ID, Department, or Group'));

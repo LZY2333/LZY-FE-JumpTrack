@@ -5,7 +5,7 @@ import { useOutletContext } from 'react-router-dom';
 import { getDCForm, postDCHandling } from '@/api/iop';
 import type { IopDistributeCreationHandlingRequest } from '@/api/iop';
 import IopPageShell from '@/components/IopPageCommon';
-import { IopMsgOwner, IopTargeSysId } from '@/components/IopPageCommon/formItem';
+import { IopMsgOwner, IopTargetSysId } from '@/components/IopPageCommon/formItem';
 import PanelMessageDetail from '@/components/MessageInfo/PanelMessageDetail';
 import type { IopTaskData } from '@/router/iop-routes/useIopGuard';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
@@ -15,16 +15,12 @@ import { openModalDistributeCreationApprove, openModalDistributeCreationReject }
 /** 创建分发任务经办填写字段。 */
 type DistributionCreationFields = Pick<
   IopDistributeCreationHandlingRequest,
-  'targeSysId' | 'msgOwnerDept' | 'msgOwnerGroup'
+  'targetSysId' | 'msgOwnerDept' | 'msgOwnerGroup'
 >;
 
 const MAKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.MakerStage, IopTaskNode.MakerRework]);
 const CHECKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.Checker1Stage]);
-const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([
-  ...MAKER_TASK_NODES,
-  ...CHECKER_TASK_NODES,
-  IopTaskNode.Approved,
-]);
+const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([...MAKER_TASK_NODES, ...CHECKER_TASK_NODES, IopTaskNode.Approved]);
 
 /** 创建分发任务 IOP 业务页面。 */
 const IopDistributeCreation = () => {
@@ -68,7 +64,7 @@ const IopDistributeCreation = () => {
         iopNodNam: task.iopNodNam,
         iopWfTaskId: task.iopWfTaskId,
         next: true,
-        targeSysId: fields.targeSysId?.trim() || undefined,
+        targetSysId: fields.targetSysId?.trim() || undefined,
         msgOwnerDept: fields.msgOwnerDept?.trim() || undefined,
         msgOwnerGroup: fields.msgOwnerGroup?.trim() || undefined,
       });
@@ -123,12 +119,7 @@ const IopDistributeCreation = () => {
     <IopPageShell title='Distribution Creation' taskNode={task.taskNode}>
       <div className='mb-3 shrink-0'>
         {isMakerNode && (
-          <Button
-            size='small'
-            className='mb-3'
-            type='primary'
-            onClick={() => distributionCreationForm.submit()}
-          >
+          <Button size='small' className='mb-3' type='primary' onClick={() => distributionCreationForm.submit()}>
             Create
           </Button>
         )}
@@ -169,16 +160,16 @@ const IopDistributeCreation = () => {
           size='small'
           layout='inline'
           disabled={!isMakerNode}
-          initialValues={{ targeSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
+          initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
           onFinish={handleDistributionCreation}
         >
-          <IopTargeSysId />
+          <IopTargetSysId />
           <IopMsgOwner />
         </Form>
       </div>
 
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message
+        Current Message: {task.taskId || '--'}
       </Divider>
 
       <div className='min-h-0 flex-1 overflow-hidden'>

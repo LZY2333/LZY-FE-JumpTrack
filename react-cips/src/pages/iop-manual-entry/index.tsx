@@ -14,11 +14,7 @@ import { openModalApprove, openModalReject } from './ModalApproval';
 
 const MAKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.MakerStage, IopTaskNode.MakerRework]);
 const CHECKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.Checker1Stage]);
-const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([
-  ...MAKER_TASK_NODES,
-  ...CHECKER_TASK_NODES,
-  IopTaskNode.Approved,
-]);
+const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([...MAKER_TASK_NODES, ...CHECKER_TASK_NODES, IopTaskNode.Approved]);
 
 /** IOP手工补录 */
 const IopManualEntry = () => {
@@ -172,7 +168,7 @@ const IopManualEntry = () => {
       )}
 
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message
+        Current Message: {task.taskId || '--'}
       </Divider>
 
       {isMakerNode && !updated ? (
@@ -182,12 +178,7 @@ const IopManualEntry = () => {
           size='small'
           title='Raw Message'
         >
-          <ContentMessageRaw
-            ref={messageRawRef}
-            msgId={task.busRefNo}
-            msgDirection={MessageDirection.In}
-            editable
-          />
+          <ContentMessageRaw ref={messageRawRef} msgId={task.busRefNo} msgDirection={MessageDirection.In} editable />
         </Card>
       ) : (
         <PanelMessageDetail temp msgId={task.busRefNo} />

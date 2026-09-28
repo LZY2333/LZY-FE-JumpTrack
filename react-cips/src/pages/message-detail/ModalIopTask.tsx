@@ -2,12 +2,12 @@ import { createRef } from 'react';
 import { Form } from 'antd';
 import type { FormInstance, ModalFuncProps } from 'antd';
 import type { IopDistributeCreationCreateRequest, IopInquiryReplyBusData } from '@/api/iop';
-import { IopMsgOwner, IopTargeSysId, IopTaskContent, IopTaskMsgType } from '@/components/IopPageCommon/formItem';
+import { IopMsgOwner, IopTargetSysId, IopTaskContent, IopTaskMsgType } from '@/components/IopPageCommon/formItem';
 
 /** 创建分发任务填写字段。 */
 export type DistributeFields = Pick<
   IopDistributeCreationCreateRequest,
-  'targeSysId' | 'msgOwnerDept' | 'msgOwnerGroup'
+  'targetSysId' | 'msgOwnerDept' | 'msgOwnerGroup'
 >;
 
 interface ModalIopTaskApi {
@@ -23,8 +23,8 @@ export const openModalDistribute = (modal: ModalIopTaskApi): Promise<false | Dis
     modal.confirm({
       title: 'Create Distribution Task',
       content: (
-        <Form ref={formRef} layout='vertical' initialValues={{ targeSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}>
-          <IopTargeSysId />
+        <Form ref={formRef} layout='vertical' initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}>
+          <IopTargetSysId />
           <IopMsgOwner />
         </Form>
       ),

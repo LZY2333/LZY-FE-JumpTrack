@@ -99,7 +99,7 @@ export const postMAHandling = (params: IopManualAttributeHandlingRequest) =>
 /** 手工归属经办请求。 */
 export interface IopManualAttributeHandlingRequest extends IopTaskActionRequest {
   /** 目标系统编号。 */
-  targeSysId?: string;
+  targetSysId?: string;
   /** 报文归属部门。 */
   msgOwnerDept?: string;
   /** 报文归属组。 */
@@ -122,7 +122,7 @@ export const postDCHandling = (params: IopDistributeCreationHandlingRequest) =>
   post<undefined>(API_IOP_DISTRIBUTE_CREATION_HANDLING, params);
 
 /** 创建分发任务 表单信息 */
-export const API_IOP_DISTRIBUTE_CREATION_FORM = `${API_BASE_IOP_DISTRIBUTE_CREATION}/query`;
+export const API_IOP_DISTRIBUTE_CREATION_FORM = `${API_BASE_IOP_DISTRIBUTE_CREATION}/queryArrtInfoOpr`;
 export const getDCForm = (msgId: string) =>
   post<IopDistributeCreationFormResponse>(API_IOP_DISTRIBUTE_CREATION_FORM, { msgId });
 
@@ -135,7 +135,7 @@ export interface IopDistributeCreationCreateRequest {
   /** 当前操作用户机构号。 */
   orgId: string;
   /** 目标系统编号。 */
-  targeSysId?: string;
+  targetSysId?: string;
   /** 报文归属部门。 */
   msgOwnerDept?: string;
   /** 报文归属组。 */
@@ -145,7 +145,7 @@ export interface IopDistributeCreationCreateRequest {
 /** 创建分发任务经办请求。 */
 export interface IopDistributeCreationHandlingRequest extends IopTaskActionRequest {
   /** 目标系统编号。 */
-  targeSysId?: string;
+  targetSysId?: string;
   /** 报文归属部门。 */
   msgOwnerDept?: string;
   /** 报文归属组。 */
@@ -155,7 +155,7 @@ export interface IopDistributeCreationHandlingRequest extends IopTaskActionReque
 /** 创建分发任务表单信息响应。 */
 export interface IopDistributeCreationFormResponse {
   /** 目标系统编号。 */
-  targeSysId?: string;
+  targetSysId?: string;
   /** 报文归属部门。 */
   msgOwnerDept?: string;
   /** 报文归属组。 */
@@ -175,7 +175,7 @@ export const postDERetry = (params: IopDistributeExceptionHandlingRequest) =>
 /** 分发异常经办请求。 */
 export interface IopDistributeExceptionHandlingRequest extends IopTaskActionRequest {
   /** 目标系统编号。 */
-  targeSysId?: string;
+  targetSysId?: string;
   /** 报文归属部门。 */
   msgOwnerDept?: string;
   /** 报文归属组。 */
@@ -198,7 +198,7 @@ export const postIRApprove = (params: IopInquiryReplyActionRequest) =>
   post<undefined>(API_IOP_INQUIRY_REPLY_APPROVE, params);
 
 /** 查询查复 表单信息 */
-export const API_IOP_INQUIRY_REPLY_FORM = `${API_BASE_IOP_INQUIRY_REPLY}/form/:taskId`;
+export const API_IOP_INQUIRY_REPLY_FORM = `${API_BASE_IOP_INQUIRY_REPLY}/detail/:taskId`;
 export const getIRForm = (taskId: string) =>
   get<IopInquiryReplyFormResponse>(API_IOP_INQUIRY_REPLY_FORM.replace(':taskId', encodeURIComponent(taskId)));
 

@@ -48,7 +48,7 @@ const MessageDetailPage = () => {
         msgId,
         userId: user.userId,
         orgId: user.orgId,
-        targeSysId: normalizeOptionalText(fields.targeSysId),
+        targetSysId: normalizeOptionalText(fields.targetSysId),
         msgOwnerDept: normalizeOptionalText(fields.msgOwnerDept),
         msgOwnerGroup: normalizeOptionalText(fields.msgOwnerGroup),
       });

@@ -130,7 +130,7 @@ const handleDistributeTaskFormQuery = ({
   if (!requestBody?.msgId) return { returnCode: 'ERR0400', errorMsg: 'Message ID is required.' };
 
   const body: IopDistributeCreationFormResponse = {
-    targeSysId: 'CIPS',
+    targetSysId: 'CIPS',
     msgOwnerDept: 'OPS',
     msgOwnerGroup: 'PAYMENT',
   };
@@ -269,7 +269,7 @@ export default [
     response: handleInquiryReplyAction,
   },
   {
-    url: '/pssst/manager/manualCipsMsg/form/:taskId',
+    url: '/pssst/manager/manualCipsMsg/detail/:taskId',
     method: 'get',
     response: handleInquiryReplyFormQuery,
   },

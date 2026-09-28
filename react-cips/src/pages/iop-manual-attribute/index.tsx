@@ -9,7 +9,10 @@ import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 import { IOP_TASK_NODE_LABELS, IopTaskNode } from '@/types/enums';
 
 /** 手工归属经办填写字段。 */
-type ManualAttributionFields = Pick<IopManualAttributeHandlingRequest, 'targeSysId' | 'msgOwnerDept' | 'msgOwnerGroup'>;
+type ManualAttributionFields = Pick<
+  IopManualAttributeHandlingRequest,
+  'targetSysId' | 'msgOwnerDept' | 'msgOwnerGroup'
+>;
 
 const MAKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.MakerStage]);
 const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([...MAKER_TASK_NODES, IopTaskNode.Approved]);
@@ -35,7 +38,7 @@ const IopManualAttribute = () => {
         iopNodNam: task.iopNodNam,
         iopWfTaskId: task.iopWfTaskId,
         next: true,
-        targeSysId: fields.targeSysId?.trim() || undefined,
+        targetSysId: fields.targetSysId?.trim() || undefined,
         msgOwnerDept: fields.msgOwnerDept?.trim() || undefined,
         msgOwnerGroup: fields.msgOwnerGroup?.trim() || undefined,
       });
@@ -66,10 +69,10 @@ const IopManualAttribute = () => {
           size='small'
           layout='inline'
           className='mb-3 shrink-0'
-          initialValues={{ targeSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
+          initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
           onFinish={handleAttribution}
         >
-          <Form.Item name='targeSysId' label='Target System ID' className='mb-0'>
+          <Form.Item name='targetSysId' label='Target System ID' className='mb-0'>
             <Input className='w-40' maxLength={10} placeholder='Enter target system ID' />
           </Form.Item>
           <Form.Item label='Owner By' className='mb-0'>
@@ -101,7 +104,7 @@ const IopManualAttribute = () => {
       )}
 
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message
+        Current Message: {task.taskId || '--'}
       </Divider>
 
       <div className='min-h-0 flex-1 overflow-hidden'>

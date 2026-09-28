@@ -178,7 +178,7 @@ const IopInquiryReply = () => {
         </CardCollapse>
 
         <Divider className='my-3' orientation='left'>
-          Related Message
+          Related Message: {task.taskId || '--'}
         </Divider>
 
         <div>

@@ -12,7 +12,7 @@ import { IOP_TASK_NODE_LABELS, IopTaskNode } from '@/types/enums';
 /** 分发异常经办填写字段。 */
 type DistributionExceptionFields = Pick<
   IopDistributeExceptionHandlingRequest,
-  'targeSysId' | 'msgOwnerDept' | 'msgOwnerGroup'
+  'targetSysId' | 'msgOwnerDept' | 'msgOwnerGroup'
 >;
 
 const MAKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.MakerStage]);
@@ -39,7 +39,7 @@ const IopDistributeException = () => {
         iopNodNam: task.iopNodNam,
         iopWfTaskId: task.iopWfTaskId,
         next: true,
-        targeSysId: fields.targeSysId?.trim() || undefined,
+        targetSysId: fields.targetSysId?.trim() || undefined,
         msgOwnerDept: fields.msgOwnerDept?.trim() || undefined,
         msgOwnerGroup: fields.msgOwnerGroup?.trim() || undefined,
       });
@@ -70,10 +70,10 @@ const IopDistributeException = () => {
           size='small'
           layout='inline'
           className='mb-3 shrink-0'
-          initialValues={{ targeSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
+          initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
           onFinish={handleRetryDistribute}
         >
-          <Form.Item name='targeSysId' label='Target System ID' className='mb-0'>
+          <Form.Item name='targetSysId' label='Target System ID' className='mb-0'>
             <Input className='w-40' maxLength={10} placeholder='Enter target system ID' />
           </Form.Item>
           <Form.Item label='Owner By' className='mb-0'>
@@ -105,7 +105,7 @@ const IopDistributeException = () => {
       )}
 
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message
+        Current Message: {task.taskId || '--'}
       </Divider>
 
       <div className='min-h-0 flex-1 overflow-hidden'>
