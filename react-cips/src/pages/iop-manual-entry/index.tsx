@@ -14,7 +14,8 @@ import { openModalApprove, openModalReject } from './ModalApproval';
 
 const MAKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.MakerStage, IopTaskNode.MakerRework]);
 const CHECKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.Checker1Stage]);
-const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([...MAKER_TASK_NODES, ...CHECKER_TASK_NODES, IopTaskNode.Approved]);
+const ACTION_TASK_NODES = new Set<IopTaskNode>([...MAKER_TASK_NODES, ...CHECKER_TASK_NODES]);
+const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([...ACTION_TASK_NODES, IopTaskNode.Approved]);
 
 /** IOP手工补录 */
 const IopManualEntry = () => {
@@ -132,7 +133,7 @@ const IopManualEntry = () => {
 
   return (
     <IopPageShell title='Manual Entry' taskNode={task.taskNode}>
-      {(isMakerNode || isCheckerNode) && (
+      {ACTION_TASK_NODES.has(task.taskNode) && (
         <PanelAction
           isMakerNode={isMakerNode}
           isCheckerNode={isCheckerNode}
@@ -168,7 +169,7 @@ const IopManualEntry = () => {
       )}
 
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message: {task.taskId || '--'}
+        Current Message: {task.busRefNo || '--'}
       </Divider>
 
       {isMakerNode && !updated ? (

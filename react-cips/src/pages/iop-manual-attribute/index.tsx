@@ -104,7 +104,7 @@ const IopManualAttribute = () => {
       )}
 
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message: {task.taskId || '--'}
+        Current Message: {task.busRefNo || '--'}
       </Divider>
 
       <div className='min-h-0 flex-1 overflow-hidden'>

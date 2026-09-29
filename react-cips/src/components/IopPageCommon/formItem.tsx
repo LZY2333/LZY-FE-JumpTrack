@@ -1,6 +1,7 @@
 import type { ComponentProps } from 'react';
 import { Form, Input, Select, Space } from 'antd';
 import type { FormItemProps } from 'antd';
+import { IopInquiryReplyMsgType } from '@/types/enums';
 
 /** IOP 表单字段公共属性，字段名称和业务规则由组件维护。 */
 type IopFormItemProps = Omit<FormItemProps, 'children' | 'label' | 'name'>;
@@ -10,7 +11,7 @@ interface IopTaskContentProps extends IopFormItemProps {
   textAreaAutoSize?: ComponentProps<typeof Input.TextArea>['autoSize'];
 }
 
-const inquiryReplyMsgTypeOptions = ['301', '302', '309'].map((value) => ({ value, label: value }));
+const inquiryReplyMsgTypeOptions = Object.values(IopInquiryReplyMsgType).map((value) => ({ value, label: value }));
 
 /**==================== 创建分发 ====================**/
 
@@ -65,11 +66,51 @@ export const IopTaskMsgType = (props: IopFormItemProps) => (
   <Form.Item
     {...props}
     name='msgType'
+    label='Message Type'
     rules={[{ required: true, message: 'Please select message type' }]}
   >
     <Select className='w-full' allowClear placeholder='Select message type' options={inquiryReplyMsgTypeOptions} />
   </Form.Item>
 );
+
+/** 收报方 CIPS 行号 */
+export const IopTaskMsgRecvCipsCode = (props: IopFormItemProps) => {
+  const form = Form.useFormInstance();
+  const msgType = Form.useWatch('msgType', form);
+  if (msgType !== IopInquiryReplyMsgType.Type309) return null;
+
+  return (
+    <Form.Item
+      {...props}
+      name='msgRecvCipsCode'
+      label='Receiving CIPS Code'
+      normalize={trimWhitespace}
+      preserve={false}
+      rules={[{ required: true, whitespace: true, message: 'Please enter receiving CIPS code' }]}
+    >
+      <Input allowClear placeholder='Enter receiving CIPS code' />
+    </Form.Item>
+  );
+};
+
+/** 关联流水号 */
+export const IopTaskMsgRelatedId = (props: IopFormItemProps) => {
+  const form = Form.useFormInstance();
+  const msgType = Form.useWatch('msgType', form);
+  if (msgType !== IopInquiryReplyMsgType.Type309) return null;
+
+  return (
+    <Form.Item
+      {...props}
+      name='msgRelatedId'
+      label='Related Message ID'
+      normalize={trimWhitespace}
+      preserve={false}
+    >
+      <Input allowClear placeholder='Enter related message ID' />
+    </Form.Item>
+  );
+};
 
 /** 查询查复内容 */
 export const IopTaskContent = ({

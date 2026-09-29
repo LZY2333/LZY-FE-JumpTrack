@@ -29,7 +29,7 @@ const IopExceptionOut = () => {
   const [operationCode, setOperationCode] = useState(task.operationCode);
   const isMakerNode = MAKER_TASK_NODES.has(task.taskNode);
   const isCheckerNode = CHECKER_TASK_NODES.has(task.taskNode);
-  const operationLabel = OPERATION_LABELS[operationCode!] || operationCode || '-';
+  const operationLabel = OPERATION_LABELS[operationCode!] || operationCode;
 
   /** 切换任务或节点时同步 Maker 已提交的操作。 */
   useEffect(() => {
@@ -62,7 +62,7 @@ const IopExceptionOut = () => {
   // 【Reject】 【Approve】
   const handleApproval = async (next: boolean) => {
     const approvalResult = next
-      ? await openModalExceptionOutApprove(modal, operationLabel)
+      ? await openModalExceptionOutApprove(modal, operationLabel!)
       : await openModalExceptionOutReject(modal);
     if (!approvalResult) return;
 
@@ -160,7 +160,7 @@ const IopExceptionOut = () => {
       </div>
 
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message: {task.taskId || '--'}
+        Current Message: {task.busRefNo || '--'}
       </Divider>
 
       <div className='min-h-0 flex-1 overflow-hidden'>

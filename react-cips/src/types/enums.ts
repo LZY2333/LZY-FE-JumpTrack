@@ -156,6 +156,13 @@ export enum QuerySortOrder {
 
 /* ==================== IOP 任务 ==================== */
 
+/** 查询查复报文类型。 */
+export enum IopInquiryReplyMsgType {
+  Type301 = 'cips.301.001.02',
+  Type302 = 'cips.302.001.02',
+  Type309 = 'cips.309.001.01',
+}
+
 /** IOP 任务类型：TASK_FLOW_NO，同时对应 IOP 流程编号。 */
 export enum IopTaskType {
   /** 手工补录：系统自动创建任务，Maker 修改报文原文，Checker 审批。 */

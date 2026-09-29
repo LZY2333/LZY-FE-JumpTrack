@@ -12,6 +12,7 @@ import type {
 } from '@/api/iop';
 import {
   IOP_TASK_TYPE_LABELS,
+  IopInquiryReplyMsgType,
   IopTaskNode,
   IopTaskType,
   MessageBusinessType,
@@ -51,6 +52,9 @@ const handleIopTaskQuery = ({ url }: MockRequestOption) => {
     iopFlwiId,
     businessType: isInquiryReply ? MessageBusinessType.Query : MessageBusinessType.Payment,
     msgDirection: isExceptionOut ? MessageDirection.Out : MessageDirection.In,
+    mainMsgId: isInquiryReply ? 'CIPSIN20260822000001' : null,
+    msgRelatedId: isInquiryReply ? 'RELATED-001' : null,
+    msgRecvCipsCode: isInquiryReply ? 'CIPS0001' : null,
     operationCode: isExceptionOut ? resolveExceptionOutOperation(iopFlwiId) : null,
     rejectReason: iopFlwiId.includes('REWORK') ? 'Message information is incomplete.' : null,
   };
@@ -81,11 +85,10 @@ const resolveTaskNode = (iopFlwiId: string) => {
 };
 
 /** 校验 IOP 经办与审批统一请求。 */
-const handleTaskAction = ({ body }: MockBodyOption<IopTaskActionRequest>) => {
+const handleTaskAction = ({ body }: MockBodyOption<IopTaskActionRequest>, allowEmptyMsgId = false) => {
   const requiredFields = [
     body?.taskId,
     body?.taskNode,
-    body?.msgId,
     body?.userId,
     body?.orgId,
     body?.iopWkiId,
@@ -94,7 +97,11 @@ const handleTaskAction = ({ body }: MockBodyOption<IopTaskActionRequest>) => {
   ];
   const hasRequiredFields = requiredFields.every(Boolean);
 
-  if (!hasRequiredFields || typeof body.next !== 'boolean') {
+  if (
+    !hasRequiredFields ||
+    typeof body.next !== 'boolean' ||
+    (allowEmptyMsgId ? typeof body.msgId !== 'string' : !body.msgId)
+  ) {
     return { returnCode: 'ERR0400', errorMsg: 'IOP task action fields are required.' };
   }
   if (!Object.values(IopTaskNode).includes(body.taskNode)) {
@@ -139,7 +146,7 @@ const handleDistributeTaskFormQuery = ({
 
 /** 校验从报文明细页创建查询查复任务的请求。 */
 const handleInquiryReplyCreate = ({ body }: MockBodyOption<IopInquiryReplyCreateRequest>) =>
-  body?.msgId && body.userId && body.orgId && body.busData?.msgType && body.busData.content?.trim()
+  body?.userId && body.orgId && isValidInquiryReplyPayload(body.msgId, body.busData)
     ? { returnCode: ResCode.Success }
     : { returnCode: 'ERR0400', errorMsg: 'Inquiry reply task fields are required.' };
 
@@ -149,24 +156,41 @@ const handleInquiryReplyFormQuery = ({ url }: MockRequestOption) => {
   if (!taskId) return { returnCode: 'ERR0400', errorMsg: 'Task ID is required.' };
 
   const body: IopInquiryReplyFormResponse = {
-    msgType: '301',
+    msgType: IopInquiryReplyMsgType.Type301,
     content: 'Please confirm the payment status and provide the processing result.',
+    mainMsgId: '',
   };
   return { returnCode: ResCode.Success, body };
 };
 
 /** 校验查询查复经办与审批请求。 */
 const handleInquiryReplyAction = (option: MockBodyOption<IopInquiryReplyActionRequest>) => {
-  const taskActionResponse = handleTaskAction(option);
-  if (taskActionResponse.returnCode !== ResCode.Success) return taskActionResponse;
-
   const { body } = option;
   const isMakerNode = [IopTaskNode.MakerStage, IopTaskNode.MakerRework].includes(body.taskNode);
-  if (isMakerNode && (!body.busData?.msgType || !body.busData.content.trim())) {
-    return { returnCode: 'ERR0400', errorMsg: 'Message type and content are required.' };
+  const taskActionResponse = handleTaskAction(option, true);
+  if (taskActionResponse.returnCode !== ResCode.Success) return taskActionResponse;
+
+  if (isMakerNode && !isValidInquiryReplyPayload(body.msgId, body.busData)) {
+    return { returnCode: 'ERR0400', errorMsg: 'Inquiry reply fields are invalid.' };
   }
 
   return { returnCode: ResCode.Success };
+};
+
+/** 校验查询查复三种报文类型的编号与 309 专属字段。 */
+const isValidInquiryReplyPayload = (msgId: string, busData?: IopInquiryReplyCreateRequest['busData']) => {
+  if (!busData?.content?.trim()) return false;
+  if (busData.msgType === IopInquiryReplyMsgType.Type309) {
+    return (
+      msgId === '' &&
+      busData.mainMsgId === '' &&
+      !!busData.msgRecvCipsCode?.trim() &&
+      typeof busData.msgRelatedId === 'string'
+    );
+  }
+  if (busData.msgType === IopInquiryReplyMsgType.Type301) return !!msgId && busData.mainMsgId === '';
+  if (busData.msgType === IopInquiryReplyMsgType.Type302) return !!msgId && !!busData.mainMsgId;
+  return false;
 };
 
 /** 发报异常审批场景默认重发，工作流编号带 CANCEL 时展示取消发报。 */

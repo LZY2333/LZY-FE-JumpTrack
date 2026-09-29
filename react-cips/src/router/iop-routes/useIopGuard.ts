@@ -6,7 +6,6 @@ import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 import useIopUrlParams from './useIopUrlParams';
 import type { IopUrlParams } from './useIopUrlParams';
 
-const IOP_TASK_SESSION_KEY = 'iop-task-v4';
 // 为具体 IOP 页面留出启动自身全局 Loading 的交接窗口。
 const LOADING_HANDOFF_DELAY_MS = 100;
 
@@ -16,7 +15,7 @@ export type IopTaskData = Omit<IopTaskResponse, keyof IopUrlParams> & IopUrlPara
 export interface IopContext {
   /** 当前 Task 与 IOP URL 参数组成的页面数据。 */
   data: IopTaskData | null;
-  /** Task 正在从缓存或接口加载。 */
+  /** Task 正在从接口加载。 */
   loading: boolean;
   /** URL 或接口请求的错误信息。 */
   error?: string;
@@ -61,20 +60,7 @@ const useIopGuard = (): IopContext => {
       return cleanup;
     }
 
-    // 2. 读取缓存
-    const cachedData = readIopTaskSession(iopFlwiId);
-    if (cachedData) {
-      const nextData = {
-        ...cachedData,
-        ...searchParams,
-      };
-      saveIopTaskSession(nextData);
-      setData(nextData);
-      finishLoading();
-      return cleanup;
-    }
-
-    // 3. 查询任务信息
+    // 2. 查询任务信息
     getIopTask(iopFlwiId, { silent: true })
       .then((task) => {
         if (!active) return;
@@ -83,12 +69,10 @@ const useIopGuard = (): IopContext => {
           return;
         }
 
-        const nextData: IopTaskData = {
+        setData({
           ...task,
           ...searchParams,
-        };
-        saveIopTaskSession(nextData);
-        setData(nextData);
+        });
       })
       .catch((requestError: RequestError) => {
         if (active) setError(requestError.message);
@@ -107,25 +91,3 @@ const useIopGuard = (): IopContext => {
 };
 
 export default useIopGuard;
-
-/** 按工作流实例编号从会话缓存读取最终页面数据。 */
-const readIopTaskSession = (iopFlwiId: string): IopTaskData | null => {
-  try {
-    const raw = sessionStorage.getItem(IOP_TASK_SESSION_KEY);
-    if (!raw) return null;
-
-    const cachedData = JSON.parse(raw) as IopTaskData;
-    return cachedData.iopFlwiId === iopFlwiId ? cachedData : null;
-  } catch {
-    return null;
-  }
-};
-
-/** 保存当前工作流实例的最终页面数据。 */
-const saveIopTaskSession = (data: IopTaskData) => {
-  try {
-    sessionStorage.setItem(IOP_TASK_SESSION_KEY, JSON.stringify(data));
-  } catch {
-    // 会话存储不可用时仍允许本次页面继续使用已查询的数据。
-  }
-};

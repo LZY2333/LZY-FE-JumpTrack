@@ -1,8 +1,16 @@
 import { createRef } from 'react';
 import { Form } from 'antd';
 import type { FormInstance, ModalFuncProps } from 'antd';
-import type { IopDistributeCreationCreateRequest, IopInquiryReplyBusData } from '@/api/iop';
-import { IopMsgOwner, IopTargetSysId, IopTaskContent, IopTaskMsgType } from '@/components/IopPageCommon/formItem';
+import type { IopDistributeCreationCreateRequest } from '@/api/iop';
+import {
+  IopMsgOwner,
+  IopTargetSysId,
+  IopTaskContent,
+  IopTaskMsgRelatedId,
+  IopTaskMsgRecvCipsCode,
+  IopTaskMsgType,
+} from '@/components/IopPageCommon/formItem';
+import type { IopInquiryReplyFormFields } from '@/components/IopPageCommon/inquiryReplyUtil';
 
 /** 创建分发任务填写字段。 */
 export type DistributeFields = Pick<
@@ -40,20 +48,23 @@ export const openModalDistribute = (modal: ModalIopTaskApi): Promise<false | Dis
 };
 
 /** 打开创建查询查复任务弹窗并收集业务信息。 */
-export const openModalInquiryReply = (modal: ModalIopTaskApi): Promise<false | IopInquiryReplyBusData> => {
-  // 根据弹窗的视口高度计算文本域行数，使 Content 占满 Message Type 下方的可用空间。
-  const contentRows = Math.max(Math.floor((window.innerHeight * 0.7 - 190) / 22), 3);
+export const openModalInquiryReply = (modal: ModalIopTaskApi): Promise<false | IopInquiryReplyFormFields> => {
+  // 根据单行字段布局计算 Content 可用高度。
+  const contentRows = Math.max(Math.floor((window.innerHeight * 0.7 - 210) / 22), 3);
 
   return new Promise((resolve) => {
-    const formRef = createRef<FormInstance<IopInquiryReplyBusData>>();
+    const formRef = createRef<FormInstance<IopInquiryReplyFormFields>>();
 
     modal.confirm({
       title: 'Create Inquiry Reply Task',
       width: '70vw',
-      styles: { content: { height: '70vh' } },
       content: (
         <Form ref={formRef} layout='vertical' initialValues={{ msgType: undefined, content: '' }}>
-          <IopTaskMsgType className='mb-3' />
+          <div className='mb-3 flex gap-3'>
+            <IopTaskMsgType className='mb-0 min-w-0 flex-1' />
+            <IopTaskMsgRecvCipsCode className='mb-0 min-w-0 flex-1' />
+            <IopTaskMsgRelatedId className='mb-0 min-w-0 flex-1' />
+          </div>
           <IopTaskContent className='mb-0' textAreaAutoSize={{ minRows: contentRows, maxRows: contentRows }} />
         </Form>
       ),

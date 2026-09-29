@@ -1,4 +1,4 @@
-import type { IopTaskNode, MessageBusinessType, MessageDirection } from '@/types/enums';
+import type { IopInquiryReplyMsgType, IopTaskNode, MessageBusinessType, MessageDirection } from '@/types/enums';
 import type { IopTaskInfo } from '@/types/iopTask';
 import type { RequestConfig } from './request';
 import { get, post } from './request';
@@ -19,6 +19,12 @@ export interface IopTaskResponse extends IopTaskInfo {
   businessType: MessageBusinessType;
   /** 报文收发方向。 */
   msgDirection: MessageDirection;
+  /** 主报文编号。 */
+  mainMsgId?: string | null;
+  /** 关联流水号。 */
+  msgRelatedId?: string | null;
+  /** 收报方 CIPS 行号。 */
+  msgRecvCipsCode?: string | null;
 }
 
 /** IOP 经办与审批接口的公共请求字段。 */
@@ -205,9 +211,15 @@ export const getIRForm = (taskId: string) =>
 /** 查询查复业务数据。 */
 export interface IopInquiryReplyBusData {
   /** 查询查复报文类型。 */
-  msgType: string;
+  msgType: IopInquiryReplyMsgType;
   /** 查询查复内容。 */
   content: string;
+  /** 主报文编号；301、309 送空，302 送查询报文的 MAIN_MSG_ID。 */
+  mainMsgId: string;
+  /** 关联流水号，仅 309 传递，允许为空。 */
+  msgRelatedId?: string;
+  /** 收报方 CIPS 行号，仅 309 传递且必填。 */
+  msgRecvCipsCode?: string;
 }
 
 /** 查询查复表单信息响应。 */

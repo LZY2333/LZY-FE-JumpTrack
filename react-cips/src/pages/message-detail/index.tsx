@@ -4,6 +4,7 @@ import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
 import { ArrowLeftOutlined, CommentOutlined, CopyOutlined, PlusOutlined, PrinterOutlined } from '@ant-design/icons';
 import { postDCCreate, postIRCreate } from '@/api/iop';
 import { CardMessageBasicInfo } from '@/components/MessageInfo/CardMessageBasicInfo';
+import { buildInquiryReplyPayload } from '@/components/IopPageCommon/inquiryReplyUtil';
 import { ContentMessageBusinessInfo } from '@/components/MessageInfo/CardMessageBusinessInfo';
 import { resolveDisplayMessageId } from '@/components/MessageInfo/messageDetailUtil';
 import useMessageDetail from '@/components/MessageInfo/useMessageDetail';
@@ -11,7 +12,7 @@ import ContentMessageRaw from '@/components/ContentMessageRaw';
 import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
 import useUserStore from '@/store/useUserStore';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
-import { MessageBusinessType, MessageDirection } from '@/types/enums';
+import { IopInquiryReplyMsgType, MessageDirection } from '@/types/enums';
 import { openModalDistribute, openModalInquiryReply } from './ModalIopTask';
 import TabProcessing from './TabProcessing';
 import { RoutePath } from '@/router/routePath';
@@ -29,7 +30,6 @@ const MessageDetailPage = () => {
   const navigate = useNavigate();
   const { detail, detailError } = useMessageDetail({ msgId });
   const msgDirection = detail?.msgBasicInfo.msgDirection;
-  const businessType = detail?.msgBasicInfo.businessType;
   const messageRawRef = useRef<ContentMessageRawRef>(null);
 
   /** 【Distribute】 */
@@ -67,17 +67,17 @@ const MessageDetailPage = () => {
 
     const fields = await openModalInquiryReply(modal);
     if (!fields) return;
+    if (fields.msgType === IopInquiryReplyMsgType.Type302 && !detail?.msgBasicInfo.mainMsgId) {
+      message.warning('Main message ID is unavailable for the inquiry reply');
+      return;
+    }
 
     const stopGlobalLoading = startGlobalLoading();
     try {
       await postIRCreate({
-        msgId,
+        ...buildInquiryReplyPayload(fields, msgId, detail?.msgBasicInfo.mainMsgId),
         userId: user.userId,
         orgId: user.orgId,
-        busData: {
-          msgType: fields.msgType,
-          content: fields.content.trim(),
-        },
       });
       message.success('Inquiry reply task created');
     } finally {
@@ -145,17 +145,15 @@ const MessageDetailPage = () => {
               Distribute
             </Button>
           )}
-          {isInquiryReplyAvailable(msgDirection, businessType) && (
-            <Button
-              size='small'
-              type='primary'
-              icon={<CommentOutlined />}
-              disabled={!user}
-              onClick={handleCreateInquiryReply}
-            >
-              Inquiry Reply
-            </Button>
-          )}
+          <Button
+            size='small'
+            type='primary'
+            icon={<CommentOutlined />}
+            disabled={!user}
+            onClick={handleCreateInquiryReply}
+          >
+            Inquiry Reply
+          </Button>
           <Button size='small' icon={<CopyOutlined />} onClick={handleCopyRaw}>
             Copy Raw
           </Button>
@@ -189,7 +187,9 @@ export default MessageDetailPage;
 /** 将可选文本统一转换为接口空值。 */
 const normalizeOptionalText = (value?: string) => value?.trim() || undefined;
 
-/** 判断当前报文是否支持创建查询查复任务。 */
+/** 判断当前报文是否支持创建查询查复任务 */
+/*
 const isInquiryReplyAvailable = (msgDirection?: string, businessType?: string) =>
   (msgDirection === MessageDirection.In && businessType === MessageBusinessType.Query) ||
   (msgDirection === MessageDirection.Out && businessType === MessageBusinessType.Payment);
+*/

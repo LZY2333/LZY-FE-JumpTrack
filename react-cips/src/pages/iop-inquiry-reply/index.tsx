@@ -3,19 +3,30 @@ import { Alert, App as AntdApp, Button, Divider, Form, Result } from 'antd';
 import { CheckOutlined, CloseOutlined, CommentOutlined } from '@ant-design/icons';
 import { useOutletContext } from 'react-router-dom';
 import { getIRForm, postIRApprove } from '@/api/iop';
-import type { IopInquiryReplyBusData } from '@/api/iop';
 import CardCollapse from '@/components/CardCollapse';
 import IopPageShell from '@/components/IopPageCommon';
-import { IopTaskContent, IopTaskMsgType } from '@/components/IopPageCommon/formItem';
+import {
+  IopTaskContent,
+  IopTaskMsgRelatedId,
+  IopTaskMsgRecvCipsCode,
+  IopTaskMsgType,
+} from '@/components/IopPageCommon/formItem';
+import { buildInquiryReplyPayload } from '@/components/IopPageCommon/inquiryReplyUtil';
+import type { IopInquiryReplyFormFields } from '@/components/IopPageCommon/inquiryReplyUtil';
 import PanelMessageDetail from '@/components/MessageInfo/PanelMessageDetail';
 import type { IopTaskData } from '@/router/iop-routes/useIopGuard';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
-import { IOP_TASK_NODE_LABELS, IopTaskNode } from '@/types/enums';
+import { IOP_TASK_NODE_LABELS, IopInquiryReplyMsgType, IopTaskNode } from '@/types/enums';
 import { openModalInquiryReplyApprove, openModalInquiryReplyReject } from './ModalApproval';
 
 const MAKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.MakerStage, IopTaskNode.MakerRework]);
 const CHECKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.Checker1Stage, IopTaskNode.Checker2Stage]);
 const SUPPORTED_TASK_NODES = new Set<IopTaskNode>([...MAKER_TASK_NODES, ...CHECKER_TASK_NODES, IopTaskNode.Approved]);
+const FORM_QUERY_TASK_NODES = new Set<IopTaskNode>([
+  IopTaskNode.MakerRework,
+  ...CHECKER_TASK_NODES,
+  IopTaskNode.Approved,
+]);
 const INQUIRY_REPLY_HIGH_LIGHT_FIELDS = ['content'] as const;
 // 展开时解除折叠卡片的高度限制，由页面内容区统一滚动。
 const REPLY_CONTENT_EXPANDED_BODY_CLASS_NAME = '[&>div]:max-h-none [&>div]:overflow-visible';
@@ -24,15 +35,15 @@ const REPLY_CONTENT_EXPANDED_BODY_CLASS_NAME = '[&>div]:max-h-none [&>div]:overf
 const IopInquiryReply = () => {
   const task = useOutletContext<IopTaskData>();
   const { message, modal } = AntdApp.useApp();
-  const [inquiryReplyForm] = Form.useForm<IopInquiryReplyBusData>();
+  const [inquiryReplyForm] = Form.useForm<IopInquiryReplyFormFields>();
   const [replyContentCollapsed, setReplyContentCollapsed] = useState(false);
   const isMakerNode = MAKER_TASK_NODES.has(task.taskNode);
   const isCheckerNode = CHECKER_TASK_NODES.has(task.taskNode);
 
-  /** 审批及已审批节点查询经办填写的查询查复内容。 */
+  /** 返工、审批及已审批节点查询之前填写的查询查复内容。 */
   useEffect(() => {
     inquiryReplyForm.resetFields();
-    if (isMakerNode || !SUPPORTED_TASK_NODES.has(task.taskNode)) return;
+    if (!FORM_QUERY_TASK_NODES.has(task.taskNode)) return;
 
     let active = true;
     const stopGlobalLoading = startGlobalLoading();
@@ -47,26 +58,27 @@ const IopInquiryReply = () => {
       active = false;
       stopGlobalLoading();
     };
-  }, [inquiryReplyForm, isMakerNode, task.taskId, task.taskNode]);
+  }, [inquiryReplyForm, task.taskId, task.taskNode]);
 
   // 【Submit】
-  const handleSubmit = async (fields: IopInquiryReplyBusData) => {
+  const handleSubmit = async (fields: IopInquiryReplyFormFields) => {
+    if (fields.msgType === IopInquiryReplyMsgType.Type302 && !task.mainMsgId) {
+      message.warning('Main message ID is unavailable for the inquiry reply');
+      return;
+    }
+
     const stopGlobalLoading = startGlobalLoading();
     try {
       await postIRApprove({
         taskId: task.taskId,
         taskNode: task.taskNode,
-        msgId: task.busRefNo,
+        ...buildInquiryReplyPayload(fields, task.busRefNo, task.mainMsgId),
         userId: task.userId,
         orgId: task.orgId,
         iopWkiId: task.iopWkiId,
         iopNodNam: task.iopNodNam,
         iopWfTaskId: task.iopWfTaskId,
         next: true,
-        busData: {
-          msgType: fields.msgType,
-          content: fields.content.trim(),
-        },
       });
       message.success('Inquiry reply submitted');
     } finally {
@@ -169,18 +181,21 @@ const IopInquiryReply = () => {
             form={inquiryReplyForm}
             layout='vertical'
             disabled={!isMakerNode}
-            initialValues={{ msgType: undefined, content: '' }}
+            initialValues={getInquiryReplyInitialValues(task)}
             onFinish={handleSubmit}
           >
-            <IopTaskMsgType className='mb-3' />
+            <div className='mb-3 flex gap-3'>
+              <IopTaskMsgType className='mb-0 min-w-0 flex-1' />
+              <IopTaskMsgRecvCipsCode className='mb-0 min-w-0 flex-1' />
+              <IopTaskMsgRelatedId className='mb-0 min-w-0 flex-1' />
+            </div>
             <IopTaskContent textAreaAutoSize={{ minRows: 3 }} />
           </Form>
         </CardCollapse>
 
         <Divider className='my-3' orientation='left'>
-          Related Message: {task.taskId || '--'}
+          Current Message: {task.busRefNo || '--'}
         </Divider>
-
         <div>
           <PanelMessageDetail highLightFields={INQUIRY_REPLY_HIGH_LIGHT_FIELDS} msgId={task.busRefNo} />
         </div>
@@ -188,6 +203,14 @@ const IopInquiryReply = () => {
     </IopPageShell>
   );
 };
+
+/** 查询查复表单使用任务字段填充初始值。 */
+const getInquiryReplyInitialValues = (task: IopTaskData) => ({
+  msgType: undefined,
+  content: '',
+  msgRecvCipsCode: task.msgRecvCipsCode ?? '',
+  msgRelatedId: task.msgRelatedId ?? '',
+});
 
 export default IopInquiryReply;
 
