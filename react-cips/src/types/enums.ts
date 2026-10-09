@@ -131,6 +131,12 @@ export enum Role {
   Checker = 'checker',
 }
 
+/** 是否标志 */
+export enum YesNo {
+  Yes = 'Y',
+  No = 'N',
+}
+
 /** 接口响应编码。 */
 export enum ResCode {
   Success = 'SUC0000',
@@ -214,3 +220,21 @@ export const IOP_TASK_NODE_LABELS: Record<IopTaskNode, string> = {
   [IopTaskNode.Approved]: 'Approved',
   [IopTaskNode.Cancelled]: 'Cancelled',
 };
+
+/* ==================== 参与行管理 ==================== */
+
+/** 参与者资格标识 */
+export enum BankCategory {
+  /** 直参 */
+  Direct = 'DRPT',
+  /** 间参 */
+  Indirect = 'IDPT',
+}
+
+/** 境内外标识 */
+export enum DomesticFlag {
+  /** 境内参与者 */
+  Domestic = 'DMPT',
+  /** 境外参与者 */
+  Overseas = 'OSPT',
+}

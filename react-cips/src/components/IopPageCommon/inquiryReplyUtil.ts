@@ -7,16 +7,30 @@ export type IopInquiryReplyFormFields = Pick<
   'msgType' | 'content' | 'msgRelatedId' | 'msgRecvCipsCode'
 >;
 
-/** 按报文类型构造查询查复创建和经办共用的送值字段。 */
-export const buildInquiryReplyPayload = (
-  fields: IopInquiryReplyFormFields,
-  sourceMsgId: string,
-  sourceMainMsgId?: string | null,
-): Pick<IopInquiryReplyCreateRequest, 'msgId' | 'busData'> => {
+/** 查询查复请求字段构造参数。 */
+interface BuildInquiryReplyPayloadParams {
+  /** 查询查复表单字段。 */
+  fields: IopInquiryReplyFormFields;
+  /** 原报文编号。 */
+  sourceMsgId: string;
+  /** 主报文编号。 */
+  sourceMainMsgId?: string | null;
+  /** Maker 提交时传 true，确保 309 也传入原报文编号。 */
+  forceMsgId?: boolean;
+}
+
+/** 按报文类型和报文编号送值要求构造查询查复请求字段。 */
+export const buildInquiryReplyPayload = ({
+  fields,
+  sourceMsgId,
+  sourceMainMsgId,
+  forceMsgId = false,
+}: BuildInquiryReplyPayloadParams): Pick<IopInquiryReplyCreateRequest, 'msgId' | 'busData'> => {
+  // 309 创建任务时将 msgId 置空；Maker 提交时后端仍需原报文编号进行查询。
   const isType309 = fields.msgType === IopInquiryReplyMsgType.Type309;
 
   return {
-    msgId: isType309 ? '' : sourceMsgId,
+    msgId: isType309 && !forceMsgId ? '' : sourceMsgId,
     busData: {
       msgType: fields.msgType,
       content: fields.content.trim(),

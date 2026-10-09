@@ -111,12 +111,6 @@
               "x-component": "TextArea",
               "x-decorator-props": {
                 "gridSpan": 4
-              },
-              "x-component-props": {
-                "autoSize": {
-                  "minRows": 2,
-                  "maxRows": 4
-                }
               }
             },
             "instrForCdtrAgt": {
@@ -127,12 +121,6 @@
               "x-component": "TextArea",
               "x-decorator-props": {
                 "gridSpan": 4
-              },
-              "x-component-props": {
-                "autoSize": {
-                  "minRows": 2,
-                  "maxRows": 4
-                }
               }
             },
             "instrForNextAgt": {
@@ -143,12 +131,6 @@
               "x-component": "TextArea",
               "x-decorator-props": {
                 "gridSpan": 4
-              },
-              "x-component-props": {
-                "autoSize": {
-                  "minRows": 2,
-                  "maxRows": 4
-                }
               }
             },
             "createUser": {

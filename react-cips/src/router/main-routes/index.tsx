@@ -6,6 +6,7 @@ import type { AppRoute } from '../routePath';
 
 const MessageList = lazy(() => import('@/pages/message-list'));
 const MessageDetail = lazy(() => import('@/pages/message-detail'));
+const PartyList = lazy(() => import('@/pages/party-list'));
 const LcwList = lazy(() => import('@/pages/lcw-list'));
 
 /** 需要登录并使用主布局的业务路由。 */
@@ -37,6 +38,18 @@ export const mainRoutes: AppRoute[] = [
       </Suspense>
     ),
     meta: { title: 'Message Details' },
+  },
+  /** 参与行管理页。 */
+  {
+    path: RoutePath.PartyList,
+    element: (
+      <KeepAlive name='party-list' cacheKey='main-party-list'>
+        <Suspense fallback={null}>
+          <PartyList />
+        </Suspense>
+      </KeepAlive>
+    ),
+    meta: { title: 'Party Management' },
   },
   /** 反洗钱任务列表页。 */
   {

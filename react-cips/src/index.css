@@ -23,10 +23,13 @@ body,
   background: var(--ant-color-primary);
 }
 
-/* antd Button 居中的是字体行盒；Windows 的 Segoe UI 字形视觉中心偏下，统一做 1px 光学对齐。 */
+/* 图标和文字使用相同的内容盒居中，避免字体行盒与图标基线造成视觉错位 */
+.ant-app .ant-btn > .ant-btn-icon,
 .ant-app .ant-btn > span:not(.ant-btn-icon) {
-  position: relative;
-  inset-block-start: -1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 /* antd 5.29.3 的搜索模式 height: 100% 优先级高于多选搜索框的尺寸规则。
@@ -142,6 +145,16 @@ body,
 
 .ant-app .ant-pagination .ant-pagination-options-quick-jumper input {
   color: var(--ant-color-primary-text);
+}
+
+/* 禁用表单控件的值使用正常文字色，空值提示仍保持原样 */
+.ant-input-disabled,
+.ant-input[disabled],
+.ant-input-affix-wrapper-disabled .ant-input,
+.ant-input-number-disabled .ant-input-number-input,
+.ant-picker-disabled .ant-picker-input > input,
+.ant-select-disabled .ant-select-selection-item {
+  color: var(--ant-color-text) !important;
 }
 
 /* 覆盖 antd 5 禁用样式，包含控件内部及挂载到 body 的下拉浮层，统一使用默认箭头。 */

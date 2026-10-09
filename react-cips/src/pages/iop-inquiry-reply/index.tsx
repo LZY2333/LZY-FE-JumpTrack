@@ -72,7 +72,12 @@ const IopInquiryReply = () => {
       await postIRApprove({
         taskId: task.taskId,
         taskNode: task.taskNode,
-        ...buildInquiryReplyPayload(fields, task.busRefNo, task.mainMsgId),
+        ...buildInquiryReplyPayload({
+          fields,
+          sourceMsgId: task.busRefNo,
+          sourceMainMsgId: task.mainMsgId,
+          forceMsgId: true,
+        }),
         userId: task.userId,
         orgId: task.orgId,
         iopWkiId: task.iopWkiId,
@@ -126,80 +131,76 @@ const IopInquiryReply = () => {
 
   return (
     <IopPageShell title='Inquiry Reply' taskNode={task.taskNode}>
-      <div className='min-h-0 flex-1 overflow-auto'>
-        {isMakerNode && (
-          <Button
-            size='small'
-            className='mb-3'
-            type='primary'
-            icon={<CommentOutlined />}
-            onClick={() => inquiryReplyForm.submit()}
-          >
-            Submit
-          </Button>
-        )}
-
-        {isCheckerNode && (
-          <div className='mb-3 flex gap-2'>
-            <Button size='small' type='primary' icon={<CheckOutlined />} onClick={() => handleApproval(true)}>
-              Approve
-            </Button>
-            <Button size='small' danger icon={<CloseOutlined />} onClick={() => handleApproval(false)}>
-              Reject
-            </Button>
-          </div>
-        )}
-
-        {task.taskNode === IopTaskNode.MakerRework && (
-          <Alert
-            className='mb-3'
-            type='warning'
-            showIcon
-            message='Reject Reason'
-            description={task.rejectReason || 'No reject reason provided.'}
-          />
-        )}
-
-        {task.taskNode === IopTaskNode.Approved && (
-          <Alert
-            className='mb-3'
-            type='success'
-            showIcon
-            message='Task Approved'
-            description='This task has been approved.'
-          />
-        )}
-
-        <CardCollapse
+      {isMakerNode && (
+        <Button
           size='small'
-          title='Reply Content'
-          collapsed={replyContentCollapsed}
-          classNames={{ body: replyContentCollapsed ? undefined : REPLY_CONTENT_EXPANDED_BODY_CLASS_NAME }}
-          onCollapsedChange={setReplyContentCollapsed}
+          className='mb-3'
+          type='primary'
+          icon={<CommentOutlined />}
+          onClick={() => inquiryReplyForm.submit()}
         >
-          <Form
-            form={inquiryReplyForm}
-            layout='vertical'
-            disabled={!isMakerNode}
-            initialValues={getInquiryReplyInitialValues(task)}
-            onFinish={handleSubmit}
-          >
-            <div className='mb-3 flex gap-3'>
-              <IopTaskMsgType className='mb-0 min-w-0 flex-1' />
-              <IopTaskMsgRecvCipsCode className='mb-0 min-w-0 flex-1' />
-              <IopTaskMsgRelatedId className='mb-0 min-w-0 flex-1' />
-            </div>
-            <IopTaskContent textAreaAutoSize={{ minRows: 3 }} />
-          </Form>
-        </CardCollapse>
+          Submit
+        </Button>
+      )}
 
-        <Divider className='my-3' orientation='left'>
-          Current Message: {task.busRefNo || '--'}
-        </Divider>
-        <div>
-          <PanelMessageDetail highLightFields={INQUIRY_REPLY_HIGH_LIGHT_FIELDS} msgId={task.busRefNo} />
+      {isCheckerNode && (
+        <div className='mb-3 flex gap-2'>
+          <Button size='small' type='primary' icon={<CheckOutlined />} onClick={() => handleApproval(true)}>
+            Approve
+          </Button>
+          <Button size='small' danger icon={<CloseOutlined />} onClick={() => handleApproval(false)}>
+            Reject
+          </Button>
         </div>
-      </div>
+      )}
+
+      {task.taskNode === IopTaskNode.MakerRework && (
+        <Alert
+          className='mb-3'
+          type='warning'
+          showIcon
+          message='Reject Reason'
+          description={task.rejectReason || 'No reject reason provided.'}
+        />
+      )}
+
+      {task.taskNode === IopTaskNode.Approved && (
+        <Alert
+          className='mb-3'
+          type='success'
+          showIcon
+          message='Task Approved'
+          description='This task has been approved.'
+        />
+      )}
+
+      <CardCollapse
+        size='small'
+        title='Reply Content'
+        collapsed={replyContentCollapsed}
+        classNames={{ body: replyContentCollapsed ? undefined : REPLY_CONTENT_EXPANDED_BODY_CLASS_NAME }}
+        onCollapsedChange={setReplyContentCollapsed}
+      >
+        <Form
+          form={inquiryReplyForm}
+          layout='vertical'
+          disabled={task.taskNode !== IopTaskNode.MakerStage}
+          initialValues={getInquiryReplyInitialValues(task)}
+          onFinish={handleSubmit}
+        >
+          <div className='mb-3 flex gap-3'>
+            <IopTaskMsgType className='mb-0 min-w-0 flex-1' />
+            <IopTaskMsgRecvCipsCode className='mb-0 min-w-0 flex-1' />
+            <IopTaskMsgRelatedId className='mb-0 min-w-0 flex-1' />
+          </div>
+          <IopTaskContent textAreaReadOnly={!isMakerNode} />
+        </Form>
+      </CardCollapse>
+
+      <Divider className='my-3' orientation='left'>
+        Current Message: {task.busRefNo || '--'}
+      </Divider>
+      <PanelMessageDetail highLightFields={INQUIRY_REPLY_HIGH_LIGHT_FIELDS} msgId={task.busRefNo} />
     </IopPageShell>
   );
 };

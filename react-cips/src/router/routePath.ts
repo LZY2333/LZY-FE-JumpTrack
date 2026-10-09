@@ -6,6 +6,7 @@ export enum RoutePath {
   Root = '/',
   MessageList = '/messages',
   MessageDetail = '/messages/:msgId',
+  PartyList = '/party',
   LcwList = '/lcw',
 
   IopRoot = '/iop',

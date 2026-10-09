@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Tag } from 'antd';
 import { IOP_TASK_NODE_LABELS, IopTaskNode } from '@/types/enums';
 
-/** 统一承载 IOP 页面标题、任务节点和业务内容。 */
+/** 统一固定 IOP 页面标题，让操作区与业务内容在标题下方滚动。 */
 const IopPageShell = ({ title, taskNode, children }: IopPageShellProps) => (
   <div className='flex h-full flex-col overflow-hidden p-4'>
     <header className='mb-3 flex shrink-0 items-center gap-2'>
@@ -11,7 +11,7 @@ const IopPageShell = ({ title, taskNode, children }: IopPageShellProps) => (
         {IOP_TASK_NODE_LABELS[taskNode] ?? taskNode}
       </Tag>
     </header>
-    {children}
+    <div className='min-h-0 flex-1 overflow-auto'>{children}</div>
   </div>
 );
 

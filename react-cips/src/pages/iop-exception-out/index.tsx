@@ -101,71 +101,56 @@ const IopExceptionOut = () => {
 
   return (
     <IopPageShell title='Out Exception' taskNode={task.taskNode}>
-      <div className='shrink-0'>
-        {isMakerNode && (
+      {isMakerNode && (
+        <div className='mb-3 flex gap-2'>
+          <Button size='small' type='primary' icon={<StopOutlined />} onClick={() => handleExceptionOut('OUT_CANCEL')}>
+            Cancel Sending
+          </Button>
+          <Button size='small' type='primary' icon={<ReloadOutlined />} onClick={() => handleExceptionOut('OUT_RETRY')}>
+            Resend
+          </Button>
+        </div>
+      )}
+
+      {isCheckerNode && (
+        <>
           <div className='mb-3 flex gap-2'>
-            <Button
-              size='small'
-              type='primary'
-              icon={<StopOutlined />}
-              onClick={() => handleExceptionOut('OUT_CANCEL')}
-            >
-              Cancel Sending
+            <Button size='small' type='primary' icon={<CloseOutlined />} onClick={() => handleApproval(false)}>
+              Reject
             </Button>
-            <Button
-              size='small'
-              type='primary'
-              icon={<ReloadOutlined />}
-              onClick={() => handleExceptionOut('OUT_RETRY')}
-            >
-              Resend
+            <Button size='small' type='primary' icon={<CheckOutlined />} onClick={() => handleApproval(true)}>
+              Approve
             </Button>
           </div>
-        )}
+          <section className=' bg-gray-50 px-4 py-3' aria-label='Maker Operation'>
+            <Typography.Text>Maker Operation: {operationLabel}</Typography.Text>
+          </section>
+        </>
+      )}
+      {task.taskNode === IopTaskNode.MakerRework && (
+        <Alert
+          className='mt-3'
+          type='warning'
+          showIcon
+          message='Reject Reason'
+          description={task.rejectReason || 'No reject reason provided.'}
+        />
+      )}
 
-        {isCheckerNode && (
-          <>
-            <div className='mb-3 flex gap-2'>
-              <Button size='small' type='primary' icon={<CloseOutlined />} onClick={() => handleApproval(false)}>
-                Reject
-              </Button>
-              <Button size='small' type='primary' icon={<CheckOutlined />} onClick={() => handleApproval(true)}>
-                Approve
-              </Button>
-            </div>
-            <section className=' bg-gray-50 px-4 py-3' aria-label='Maker Operation'>
-              <Typography.Text>Maker Operation: {operationLabel}</Typography.Text>
-            </section>
-          </>
-        )}
-        {task.taskNode === IopTaskNode.MakerRework && (
-          <Alert
-            className='mt-3'
-            type='warning'
-            showIcon
-            message='Reject Reason'
-            description={task.rejectReason || 'No reject reason provided.'}
-          />
-        )}
-
-        {task.taskNode === IopTaskNode.Approved && (
-          <Alert
-            className='mt-3'
-            type='success'
-            showIcon
-            message='Task Approved'
-            description='This task has been approved.'
-          />
-        )}
-      </div>
-
+      {task.taskNode === IopTaskNode.Approved && (
+        <Alert
+          className='mt-3'
+          type='success'
+          showIcon
+          message='Task Approved'
+          description='This task has been approved.'
+        />
+      )}
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
         Current Message: {task.busRefNo || '--'}
       </Divider>
 
-      <div className='min-h-0 flex-1 overflow-hidden'>
-        <PanelMessageDetail msgId={task.busRefNo} />
-      </div>
+      <PanelMessageDetail msgId={task.busRefNo} />
     </IopPageShell>
   );
 };

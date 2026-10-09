@@ -27,7 +27,7 @@ import {
   EndToEndMessageIdFilter,
   MessageUetrFilter,
   MessageSendBicFilter,
-} from '@/components/FormItem';
+} from '@/components/FormItem/message';
 import {
   msgId,
   msgDirection,
@@ -51,20 +51,13 @@ import {
   createTime,
   updateTime,
   remark,
-} from '@/components/TableColumn';
+} from '@/components/TableColumn/message';
 
 // 页面边距 48 + Card 26 + 表单 120 + 表单下间距 16 + 表头 42 + 分页间距 16 + 分页器 24。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 292px)';
 // 当前布局展开后多三行，每行 32px。
 const EXPANDED_TABLE_BODY_HEIGHT = 'calc(100vh - 388px)';
-const DEFAULT_HIDDEN_COLUMN_IDS = [
-  'mainMsgId',
-  'msgRelatedId',
-  'msgEndId',
-  'createTime',
-  'updateTime',
-  'remark',
-];
+const DEFAULT_HIDDEN_COLUMN_IDS = ['mainMsgId', 'msgRelatedId', 'msgEndId', 'createTime', 'updateTime', 'remark'];
 
 /** 报文查询与列表页面。 */
 const MessageList = () => {

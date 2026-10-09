@@ -2,17 +2,14 @@ import { useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
 import { ArrowLeftOutlined, CommentOutlined, CopyOutlined, PlusOutlined, PrinterOutlined } from '@ant-design/icons';
-import { postDCCreate, postIRCreate } from '@/api/iop';
 import { CardMessageBasicInfo } from '@/components/MessageInfo/CardMessageBasicInfo';
-import { buildInquiryReplyPayload } from '@/components/IopPageCommon/inquiryReplyUtil';
 import { ContentMessageBusinessInfo } from '@/components/MessageInfo/CardMessageBusinessInfo';
 import { resolveDisplayMessageId } from '@/components/MessageInfo/messageDetailUtil';
 import useMessageDetail from '@/components/MessageInfo/useMessageDetail';
 import ContentMessageRaw from '@/components/ContentMessageRaw';
 import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
 import useUserStore from '@/store/useUserStore';
-import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
-import { IopInquiryReplyMsgType, MessageDirection } from '@/types/enums';
+import { MessageDirection } from '@/types/enums';
 import { openModalDistribute, openModalInquiryReply } from './ModalIopTask';
 import TabProcessing from './TabProcessing';
 import { RoutePath } from '@/router/routePath';
@@ -34,63 +31,54 @@ const MessageDetailPage = () => {
 
   /** 【Distribute】 */
   const handleCreateDistribution = async () => {
-    if (!msgId || !user) {
-      message.warning('Message or current user information is unavailable');
+    if (!user) {
+      message.warning('Please log in first.');
+      return;
+    }
+    if (!msgId) {
+      message.warning('Message information is unavailable.');
       return;
     }
 
-    const fields = await openModalDistribute(modal);
-    if (!fields) return;
-
-    const stopGlobalLoading = startGlobalLoading();
-    try {
-      await postDCCreate({
-        msgId,
-        userId: user.userId,
-        orgId: user.orgId,
-        targetSysId: normalizeOptionalText(fields.targetSysId),
-        msgOwnerDept: normalizeOptionalText(fields.msgOwnerDept),
-        msgOwnerGroup: normalizeOptionalText(fields.msgOwnerGroup),
-      });
-      message.success('Distribution task created');
-    } finally {
-      stopGlobalLoading();
-    }
+    const created = await openModalDistribute(modal, { msgId, userId: user.userId, orgId: user.orgId });
+    if (created) message.success('Distribution task created');
   };
 
   /** 【Inquiry Reply】 */
   const handleCreateInquiryReply = async () => {
-    if (!msgId || !user) {
-      message.warning('Message or current user information is unavailable');
+    if (!user) {
+      message.warning('Please log in first.');
+      return;
+    }
+    if (!msgId) {
+      message.warning('Message information is unavailable.');
       return;
     }
 
-    const fields = await openModalInquiryReply(modal);
-    if (!fields) return;
-    if (fields.msgType === IopInquiryReplyMsgType.Type302 && !detail?.msgBasicInfo.mainMsgId) {
-      message.warning('Main message ID is unavailable for the inquiry reply');
-      return;
-    }
-
-    const stopGlobalLoading = startGlobalLoading();
-    try {
-      await postIRCreate({
-        ...buildInquiryReplyPayload(fields, msgId, detail?.msgBasicInfo.mainMsgId),
-        userId: user.userId,
-        orgId: user.orgId,
-      });
-      message.success('Inquiry reply task created');
-    } finally {
-      stopGlobalLoading();
-    }
+    const created = await openModalInquiryReply(modal, {
+      msgId,
+      userId: user.userId,
+      orgId: user.orgId,
+      sourceMessage: detail?.msgBasicInfo ?? null,
+      sourceMainMsgId: detail?.msgBasicInfo.mainMsgId,
+    });
+    if (created) message.success('Inquiry reply task created');
   };
 
   /** 【Print】 */
   const handlePrint = () => {
+    if (!user) {
+      message.warning('Please log in first.');
+      return;
+    }
     messageRawRef.current!.printCurrent();
   };
   /** 【Copy】 */
   const handleCopyRaw = async () => {
+    if (!user) {
+      message.warning('Please log in first.');
+      return;
+    }
     await messageRawRef.current!.copyCurrent();
   };
   /** 【Back】 */
@@ -135,23 +123,11 @@ const MessageDetailPage = () => {
         </Space>
         <Space size={8} wrap>
           {msgDirection === MessageDirection.In && (
-            <Button
-              size='small'
-              type='primary'
-              icon={<PlusOutlined />}
-              disabled={!user}
-              onClick={handleCreateDistribution}
-            >
+            <Button size='small' type='primary' icon={<PlusOutlined />} onClick={handleCreateDistribution}>
               Distribute
             </Button>
           )}
-          <Button
-            size='small'
-            type='primary'
-            icon={<CommentOutlined />}
-            disabled={!user}
-            onClick={handleCreateInquiryReply}
-          >
+          <Button size='small' type='primary' icon={<CommentOutlined />} onClick={handleCreateInquiryReply}>
             Inquiry Reply
           </Button>
           <Button size='small' icon={<CopyOutlined />} onClick={handleCopyRaw}>
@@ -183,9 +159,6 @@ const MessageDetailPage = () => {
 };
 
 export default MessageDetailPage;
-
-/** 将可选文本统一转换为接口空值。 */
-const normalizeOptionalText = (value?: string) => value?.trim() || undefined;
 
 /** 判断当前报文是否支持创建查询查复任务 */
 /*

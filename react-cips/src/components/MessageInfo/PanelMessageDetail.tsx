@@ -21,7 +21,7 @@ const PanelMessageDetail = ({
   const { detail, detailError } = useMessageDetail({ msgId, temp });
 
   return (
-    <div className='h-full overflow-auto'>
+    <div>
       {detailError && <Alert className='mb-3' type='error' showIcon message={detailError} />}
       <CardMessageBasicInfo detail={detail} />
       <CardMessageBusinessInfo className='mt-3' detail={detail} highLightFields={highLightFields} />

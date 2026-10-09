@@ -85,7 +85,7 @@ const resolveTaskNode = (iopFlwiId: string) => {
 };
 
 /** 校验 IOP 经办与审批统一请求。 */
-const handleTaskAction = ({ body }: MockBodyOption<IopTaskActionRequest>, allowEmptyMsgId = false) => {
+const handleTaskAction = ({ body }: MockBodyOption<IopTaskActionRequest>) => {
   const requiredFields = [
     body?.taskId,
     body?.taskNode,
@@ -100,7 +100,7 @@ const handleTaskAction = ({ body }: MockBodyOption<IopTaskActionRequest>, allowE
   if (
     !hasRequiredFields ||
     typeof body.next !== 'boolean' ||
-    (allowEmptyMsgId ? typeof body.msgId !== 'string' : !body.msgId)
+    !body.msgId
   ) {
     return { returnCode: 'ERR0400', errorMsg: 'IOP task action fields are required.' };
   }
@@ -167,22 +167,26 @@ const handleInquiryReplyFormQuery = ({ url }: MockRequestOption) => {
 const handleInquiryReplyAction = (option: MockBodyOption<IopInquiryReplyActionRequest>) => {
   const { body } = option;
   const isMakerNode = [IopTaskNode.MakerStage, IopTaskNode.MakerRework].includes(body.taskNode);
-  const taskActionResponse = handleTaskAction(option, true);
+  const taskActionResponse = handleTaskAction(option);
   if (taskActionResponse.returnCode !== ResCode.Success) return taskActionResponse;
 
-  if (isMakerNode && !isValidInquiryReplyPayload(body.msgId, body.busData)) {
+  if (isMakerNode && !isValidInquiryReplyPayload(body.msgId, body.busData, true)) {
     return { returnCode: 'ERR0400', errorMsg: 'Inquiry reply fields are invalid.' };
   }
 
   return { returnCode: ResCode.Success };
 };
 
-/** 校验查询查复三种报文类型的编号与 309 专属字段。 */
-const isValidInquiryReplyPayload = (msgId: string, busData?: IopInquiryReplyCreateRequest['busData']) => {
+/** 校验查询查复创建或经办请求中各报文类型的编号与 309 专属字段。 */
+const isValidInquiryReplyPayload = (
+  msgId: string,
+  busData?: IopInquiryReplyCreateRequest['busData'],
+  isMakerSubmit = false,
+) => {
   if (!busData?.content?.trim()) return false;
   if (busData.msgType === IopInquiryReplyMsgType.Type309) {
     return (
-      msgId === '' &&
+      (isMakerSubmit ? !!msgId : msgId === '') &&
       busData.mainMsgId === '' &&
       !!busData.msgRecvCipsCode?.trim() &&
       typeof busData.msgRelatedId === 'string'

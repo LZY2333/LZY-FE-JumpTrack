@@ -108,9 +108,7 @@ const IopDistributeException = () => {
         Current Message: {task.busRefNo || '--'}
       </Divider>
 
-      <div className='min-h-0 flex-1 overflow-hidden'>
-        <PanelMessageDetail msgId={task.busRefNo} />
-      </div>
+      <PanelMessageDetail msgId={task.busRefNo} />
     </IopPageShell>
   );
 };

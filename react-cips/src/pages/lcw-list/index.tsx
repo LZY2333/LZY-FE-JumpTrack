@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { CSSProperties, Key } from 'react';
 import { App as AntdApp, Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
@@ -10,7 +10,7 @@ import {
   MessageDateRangeFilter,
   MessageDirectionFilter,
   MessageIdFilter,
-} from '@/components/FormItem';
+} from '@/components/FormItem/message';
 import {
   lcwInitialTime,
   lcwFailureInfo,
@@ -19,45 +19,41 @@ import {
   msgDate,
   msgDirection,
   msgId,
-} from '@/components/TableColumn';
+} from '@/components/TableColumn/message';
 import useLcwList, { LCW_PAGE_SIZE_OPTIONS } from './useLcwList';
 import { buildDefaultLcwFilters, type LcwListFilterValues } from './lcwListUtil';
+import { openModalLcwRetry } from './ModalLcwRetry';
 
 // 页面边距 48 + Card 内边距与边框 26 + Card 标题 38 + 表单 88（两行筛选 56 + 按钮上间距 8 + 按钮 24）
 // + 表单下间距 16 + 表头 42 + 分页间距 16 + 分页器 24 = 298px。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 298px)';
 const DEFAULT_FILTER_VALUES = buildDefaultLcwFilters();
-const columns: TableColumnsType<LcwRecord> = [
-  msgId,
-  msgDirection,
-  { ...msgDate, sorter: false },
-  msgChannel,
-  lcwInitialStatus,
-  lcwFailureInfo,
-  lcwInitialTime,
-];
-
 /** 展示 LCW 任务并支持批量勾选重试。 */
 const LcwList = () => {
   const { message, modal } = AntdApp.useApp();
   const [form] = Form.useForm<LcwListFilterValues>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-  const {
-    authenticated,
-    records,
-    total,
-    loading,
-    retrying,
-    current,
-    pageSize,
-    setCurrent,
-    setPageSize,
-    query,
-    reset,
-    retry,
-  } = useLcwList(DEFAULT_FILTER_VALUES);
+  const { authenticated, records, total, loading, current, pageSize, setCurrent, setPageSize, query, reset, refresh } =
+    useLcwList(DEFAULT_FILTER_VALUES);
+
+  const columns = useMemo<TableColumnsType<LcwRecord>>(
+    () => [
+      msgId,
+      msgDirection,
+      { ...msgDate, sorter: false },
+      msgChannel,
+      lcwInitialStatus,
+      lcwFailureInfo,
+      lcwInitialTime,
+    ],
+    [],
+  );
 
   const handleSearch = (values: LcwListFilterValues) => {
+    if (!authenticated) {
+      message.warning('Please log in first.');
+      return;
+    }
     setSelectedRowKeys([]);
     query(values);
   };
@@ -68,24 +64,23 @@ const LcwList = () => {
     reset();
   };
 
-  const handleRetrySelected = () => {
+  const handleRetrySelected = async () => {
+    if (!authenticated) {
+      message.warning('Please log in first.');
+      return;
+    }
+
     const msgIds = selectedRowKeys.map(String);
     if (msgIds.length === 0) {
       message.warning('Please select at least one LCW message.');
       return;
     }
 
-    modal.confirm({
-      title: `Retry ${msgIds.length} selected LCW message${msgIds.length > 1 ? 's' : ''}?`,
-      content: 'The server will validate the latest LCW status before accepting each retry.',
-      okText: 'Retry',
-      cancelText: 'Cancel',
-      onOk: async () => {
-        await retry(msgIds);
-        setSelectedRowKeys([]);
-        message.success(`${msgIds.length} LCW message${msgIds.length > 1 ? 's were' : ' was'} submitted.`);
-      },
-    });
+    const retried = await openModalLcwRetry(modal, msgIds);
+    if (!retried) return;
+    setSelectedRowKeys([]);
+    refresh();
+    message.success(`${msgIds.length} LCW message${msgIds.length > 1 ? 's were' : ' was'} submitted.`);
   };
 
   const rowSelection: NonNullable<TableProps<LcwRecord>['rowSelection']> = {
@@ -125,19 +120,12 @@ const LcwList = () => {
         </Row>
         <Row gutter={[16, 8]} className='mt-2'>
           <Col span={16} className='flex items-center'>
-            <Button
-              size='small'
-              type='primary'
-              icon={<RedoOutlined />}
-              loading={retrying}
-              disabled={!authenticated}
-              onClick={handleRetrySelected}
-            >
+            <Button size='small' type='primary' icon={<RedoOutlined />} onClick={handleRetrySelected}>
               Retry Selected
             </Button>
           </Col>
           <Col span={8} className='ml-auto flex items-center justify-end'>
-            <Button size='small' htmlType='submit' color='primary' variant='solid' disabled={!authenticated}>
+            <Button size='small' htmlType='submit' color='primary' variant='solid'>
               Search
             </Button>
             <Button size='small' htmlType='button' className='ml-2' onClick={handleReset}>
@@ -163,7 +151,6 @@ const LcwList = () => {
           current,
           pageSize,
           total,
-          disabled: !authenticated,
           pageSizeOptions: LCW_PAGE_SIZE_OPTIONS,
           showSizeChanger: true,
           showQuickJumper: true,

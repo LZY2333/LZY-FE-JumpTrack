@@ -4,16 +4,26 @@ import { createForm } from '@formily/core';
 import type { FormPatternTypes } from '@formily/core';
 import { createSchemaField, FormProvider, useField } from '@formily/react';
 import type { ISchema } from '@formily/react';
-import { App, Card, ConfigProvider, Table, theme } from 'antd';
+import { App, Card, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { FormGrid, FormItem as FormilyFormItem, FormLayout, Input, PreviewText } from '@formily/antd-v5';
 import type { IFormItemProps } from '@formily/antd-v5';
 import cn from 'classnames';
 import CardCollapse from '@/components/CardCollapse';
 import { copyText } from '@/utils/fileUtil';
+import { formatMessageAmount } from '@/utils';
 
 const COPY_TARGET_SELECTOR = '.ant-formily-item-label-content, .ant-formily-item-control-content-component';
 const EMPTY_HIGH_LIGHT_FIELDS: readonly string[] = [];
+const AMOUNT_FIELD_NAMES = new Set([
+  'remitAmount',
+  'instructedAmt',
+  'nettingAmount',
+  'creditAmount',
+  'debitAmount',
+  'gpiAmount',
+  'remitAmt',
+]);
 const HighLightFieldsContext = createContext<ReadonlySet<string>>(new Set<string>());
 
 interface MessageSchemaFormProps {
@@ -35,7 +45,6 @@ const MessageSchemaForm = ({
   highLightFields = EMPTY_HIGH_LIGHT_FIELDS,
 }: MessageSchemaFormProps) => {
   const { message } = App.useApp();
-  const { token } = theme.useToken();
   const form = useMemo(() => createForm({ pattern }), [pattern, schema]);
   const highLightFieldSet = useMemo(() => new Set(highLightFields), [highLightFields]);
 
@@ -73,24 +82,22 @@ const MessageSchemaForm = ({
       onMouseOver={handleMouseOver}
     >
       <HighLightFieldsContext.Provider value={highLightFieldSet}>
-        <ConfigProvider theme={{ token: { colorTextDisabled: token.colorText } }}>
-          <FormProvider form={form}>
-            <FormLayout
-              layout='horizontal'
-              size='small'
-              labelAlign='left'
-              labelWidth={128}
-              labelWrap={false}
-              wrapperWrap={false}
-              spaceGap={4}
-              gridColumnGap={12}
-              gridRowGap={0}
-              feedbackLayout='none'
-            >
-              <SchemaField schema={schema} />
-            </FormLayout>
-          </FormProvider>
-        </ConfigProvider>
+        <FormProvider form={form}>
+          <FormLayout
+            layout='horizontal'
+            size='small'
+            labelAlign='left'
+            labelWidth={128}
+            labelWrap={false}
+            wrapperWrap={false}
+            spaceGap={4}
+            gridColumnGap={12}
+            gridRowGap={0}
+            feedbackLayout='none'
+          >
+            <SchemaField schema={schema} />
+          </FormLayout>
+        </FormProvider>
       </HighLightFieldsContext.Provider>
     </div>
   );
@@ -126,11 +133,13 @@ const MessageInput = ({ className, disabled, placeholder = '--', ...props }: Com
   />
 );
 
-/** 详情多行文本统一展示空态，并保留字段容器的双击复制能力。 */
+/** 详情多行文本支持拖拽增高、滚动和双击复制 */
 const MessageTextArea = ({
   className,
   disabled,
   placeholder = '--',
+  readOnly,
+  rows = 2,
   status,
   ...props
 }: ComponentProps<typeof Input.TextArea>) => {
@@ -139,9 +148,10 @@ const MessageTextArea = ({
   return (
     <Input.TextArea
       {...props}
-      className={cn('mb-1', disabled && 'pointer-events-none', className)}
-      disabled={disabled}
+      className={cn('mb-1', highlighted && 'font-semibold !text-yellow-500', className)}
       placeholder={placeholder}
+      readOnly={disabled || readOnly}
+      rows={rows}
       status={highlighted ? 'warning' : status}
     />
   );
@@ -253,20 +263,23 @@ const SchemaField = createSchemaField({
   },
 });
 
-/** 将接口空值归一化为 Input 约定的空字符串，由控件 placeholder 负责展示 --。 */
+/** 将接口空值归一化为 Input 空字符串并格式化金额展示 */
 const normalizeInputValues = (values: Record<string, unknown>) =>
-  Object.fromEntries(Object.entries(values).map(([name, value]) => [name, normalizeInputValue(value)]));
+  Object.fromEntries(Object.entries(values).map(([name, value]) => [name, normalizeInputValue(value, name)]));
 
-/** 递归处理嵌套业务对象和子表记录中的接口空值。 */
-const normalizeInputValue = (value: unknown): unknown => {
+/** 递归处理嵌套业务对象和子表记录的展示值 */
+const normalizeInputValue = (value: unknown, fieldName: string): unknown => {
   if (value === null || value === undefined) return '';
-  if (Array.isArray(value)) return value.map(normalizeInputValue);
+  if (AMOUNT_FIELD_NAMES.has(fieldName) && (typeof value === 'string' || typeof value === 'number')) {
+    return formatMessageAmount(String(value));
+  }
+  if (Array.isArray(value)) return value.map((item) => normalizeInputValue(item, fieldName));
   if (typeof value !== 'object') return value;
 
   return Object.fromEntries(
     Object.entries(value as Record<string, unknown>).map(([name, childValue]) => [
       name,
-      normalizeInputValue(childValue),
+      normalizeInputValue(childValue, name),
     ]),
   );
 };

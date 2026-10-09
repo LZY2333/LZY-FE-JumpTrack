@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getLcwTasks, retryLcwTasks } from '@/api/lcw';
+import { getLcwTasks } from '@/api/lcw';
 import type { LcwQuery, LcwRecord } from '@/api/lcw';
 import useUserStore from '@/store/useUserStore';
 import { buildLcwQueryConditions, type LcwListFilterValues } from './lcwListUtil';
@@ -14,7 +14,6 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
   const [records, setRecords] = useState<LcwRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [retrying, setRetrying] = useState(false);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSizeState] = useState(() => {
     const storedPageSize = Number(localStorage.getItem(PAGE_SIZE_STORAGE_KEY));
@@ -74,35 +73,24 @@ const useLcwList = (initialFilters: LcwListFilterValues) => {
     setCurrent(1);
   }, [initialFilters]);
 
-  const retry = useCallback(
-    async (msgIds: string[]) => {
-      if (!userId) return;
-
-      setRetrying(true);
-      try {
-        await retryLcwTasks({ msgIds });
-        setCurrent(1);
-        setRefreshVersion((version) => version + 1);
-      } finally {
-        setRetrying(false);
-      }
-    },
-    [userId],
-  );
+  /** 重试成功后重新查询列表 */
+  const refresh = useCallback(() => {
+    setCurrent(1);
+    setRefreshVersion((version) => version + 1);
+  }, []);
 
   return {
     authenticated: Boolean(userId),
     records,
     total,
     loading,
-    retrying,
     current,
     pageSize,
     setCurrent,
     setPageSize,
     query,
     reset,
-    retry,
+    refresh,
   };
 };
 

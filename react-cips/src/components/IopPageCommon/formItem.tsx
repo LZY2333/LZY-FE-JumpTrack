@@ -1,7 +1,8 @@
 import type { ComponentProps } from 'react';
 import { Form, Input, Select, Space } from 'antd';
 import type { FormItemProps } from 'antd';
-import { IopInquiryReplyMsgType } from '@/types/enums';
+import { IopInquiryReplyMsgType, MessageDirection } from '@/types/enums';
+import type { MessageRecord } from '@/types/message';
 
 /** IOP 表单字段公共属性，字段名称和业务规则由组件维护。 */
 type IopFormItemProps = Omit<FormItemProps, 'children' | 'label' | 'name'>;
@@ -9,9 +10,20 @@ type IopFormItemProps = Omit<FormItemProps, 'children' | 'label' | 'name'>;
 interface IopTaskContentProps extends IopFormItemProps {
   /** 内容文本框自适应高度配置。 */
   textAreaAutoSize?: ComponentProps<typeof Input.TextArea>['autoSize'];
+  /** 内容文本框只读时仍允许拖拽高度。 */
+  textAreaReadOnly?: boolean;
 }
 
-const inquiryReplyMsgTypeOptions = Object.values(IopInquiryReplyMsgType).map((value) => ({ value, label: value }));
+interface IopTaskMsgTypeProps extends IopFormItemProps {
+  /** 创建查询查复任务时的当前报文信息 */
+  sourceMessage?: Pick<MessageRecord, 'msgType' | 'msgDirection'> | null;
+}
+
+const inquiryReplyMsgTypeOptions = [
+  { value: IopInquiryReplyMsgType.Type301, label: `${IopInquiryReplyMsgType.Type301} 业务查询报文` },
+  { value: IopInquiryReplyMsgType.Type302, label: `${IopInquiryReplyMsgType.Type302} 业务查复报文` },
+  { value: IopInquiryReplyMsgType.Type309, label: `${IopInquiryReplyMsgType.Type309} 自由格式报文` },
+];
 
 /**==================== 创建分发 ====================**/
 
@@ -22,7 +34,7 @@ export const IopTargetSysId = (props: IopFormItemProps) => {
   return (
     <Form.Item
       {...props}
-      className='mb-0'
+      className={props.className ?? 'mb-0'}
       name='targetSysId'
       label='Target System ID'
       normalize={trimWhitespace}
@@ -39,7 +51,7 @@ export const IopTargetSysId = (props: IopFormItemProps) => {
         },
       ]}
     >
-      <Input className='w-40' allowClear maxLength={10} placeholder='Enter target system ID' />
+      <Input className='w-full' allowClear maxLength={10} placeholder='Enter target system ID' />
     </Form.Item>
   );
 };
@@ -62,12 +74,33 @@ const trimWhitespace = (value?: string) => value?.trim() ?? '';
 
 /**==================== 查询查复 ====================**/
 /** 报文类型 */
-export const IopTaskMsgType = (props: IopFormItemProps) => (
+export const IopTaskMsgType = ({ sourceMessage, ...props }: IopTaskMsgTypeProps) => (
   <Form.Item
     {...props}
     name='msgType'
     label='Message Type'
-    rules={[{ required: true, message: 'Please select message type' }]}
+    rules={[
+      { required: true, message: 'Please select message type' },
+      {
+        validator: (_, msgType?: IopInquiryReplyMsgType) => {
+          if (sourceMessage === undefined || !msgType) return Promise.resolve();
+          if (
+            msgType === IopInquiryReplyMsgType.Type301 &&
+            !/^cips\.(111|112|114)(\.|$)/.test(sourceMessage?.msgType ?? '')
+          ) {
+            return Promise.reject(new Error('301 requires a cips.111, cips.112, or cips.114 message'));
+          }
+          if (
+            msgType === IopInquiryReplyMsgType.Type302 &&
+            (!/^cips\.301(\.|$)/.test(sourceMessage?.msgType ?? '') ||
+              sourceMessage?.msgDirection !== MessageDirection.In)
+          ) {
+            return Promise.reject(new Error('302 requires a received cips.301 message'));
+          }
+          return Promise.resolve();
+        },
+      },
+    ]}
   >
     <Select className='w-full' allowClear placeholder='Select message type' options={inquiryReplyMsgTypeOptions} />
   </Form.Item>
@@ -114,7 +147,8 @@ export const IopTaskMsgRelatedId = (props: IopFormItemProps) => {
 
 /** 查询查复内容 */
 export const IopTaskContent = ({
-  textAreaAutoSize = { minRows: 3, maxRows: 6 },
+  textAreaAutoSize,
+  textAreaReadOnly,
   ...formItemProps
 }: IopTaskContentProps) => (
   <Form.Item
@@ -122,6 +156,14 @@ export const IopTaskContent = ({
     name='content'
     rules={[{ required: true, whitespace: true, message: 'Please enter content' }]}
   >
-    <Input.TextArea className='w-full' allowClear autoSize={textAreaAutoSize} placeholder='Enter content' />
+    <Input.TextArea
+      className='w-full'
+      allowClear={!textAreaReadOnly}
+      autoSize={textAreaAutoSize}
+      rows={textAreaAutoSize ? undefined : 3}
+      disabled={textAreaReadOnly === undefined ? undefined : false}
+      readOnly={textAreaReadOnly}
+      placeholder='Enter content'
+    />
   </Form.Item>
 );

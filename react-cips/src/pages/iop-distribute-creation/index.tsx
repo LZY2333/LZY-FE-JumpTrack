@@ -117,64 +117,60 @@ const IopDistributeCreation = () => {
 
   return (
     <IopPageShell title='Distribution Creation' taskNode={task.taskNode}>
-      <div className='mb-3 shrink-0'>
-        {isMakerNode && (
-          <Button size='small' className='mb-3' type='primary' onClick={() => distributionCreationForm.submit()}>
-            Create
+      {isMakerNode && (
+        <Button size='small' className='mb-3' type='primary' onClick={() => distributionCreationForm.submit()}>
+          Create
+        </Button>
+      )}
+
+      {isCheckerNode && (
+        <div className='mb-3 flex gap-2'>
+          <Button size='small' type='primary' icon={<CheckOutlined />} onClick={() => handleApproval(true)}>
+            Approve
           </Button>
-        )}
+          <Button size='small' danger icon={<CloseOutlined />} onClick={() => handleApproval(false)}>
+            Reject
+          </Button>
+        </div>
+      )}
 
-        {isCheckerNode && (
-          <div className='mb-3 flex gap-2'>
-            <Button size='small' type='primary' icon={<CheckOutlined />} onClick={() => handleApproval(true)}>
-              Approve
-            </Button>
-            <Button size='small' danger icon={<CloseOutlined />} onClick={() => handleApproval(false)}>
-              Reject
-            </Button>
-          </div>
-        )}
+      {task.taskNode === IopTaskNode.MakerRework && (
+        <Alert
+          className='mb-3'
+          type='warning'
+          showIcon
+          message='Reject Reason'
+          description={task.rejectReason || 'No reject reason provided.'}
+        />
+      )}
 
-        {task.taskNode === IopTaskNode.MakerRework && (
-          <Alert
-            className='mb-3'
-            type='warning'
-            showIcon
-            message='Reject Reason'
-            description={task.rejectReason || 'No reject reason provided.'}
-          />
-        )}
+      {task.taskNode === IopTaskNode.Approved && (
+        <Alert
+          className='mb-3'
+          type='success'
+          showIcon
+          message='Task Approved'
+          description='This task has been approved.'
+        />
+      )}
 
-        {task.taskNode === IopTaskNode.Approved && (
-          <Alert
-            className='mb-3'
-            type='success'
-            showIcon
-            message='Task Approved'
-            description='This task has been approved.'
-          />
-        )}
-
-        <Form
-          form={distributionCreationForm}
-          size='small'
-          layout='inline'
-          disabled={!isMakerNode}
-          initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
-          onFinish={handleDistributionCreation}
-        >
-          <IopTargetSysId />
-          <IopMsgOwner />
-        </Form>
-      </div>
-
+      <Form
+        form={distributionCreationForm}
+        size='small'
+        layout='inline'
+        className='mb-3'
+        disabled={!isMakerNode}
+        initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
+        onFinish={handleDistributionCreation}
+      >
+        <IopTargetSysId className='mb-0 w-72' />
+        <IopMsgOwner />
+      </Form>
       <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
         Current Message: {task.busRefNo || '--'}
       </Divider>
 
-      <div className='min-h-0 flex-1 overflow-hidden'>
-        <PanelMessageDetail msgId={task.busRefNo} />
-      </div>
+      <PanelMessageDetail msgId={task.busRefNo} />
     </IopPageShell>
   );
 };

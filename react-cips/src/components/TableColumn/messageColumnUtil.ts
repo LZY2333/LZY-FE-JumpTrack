@@ -1,10 +1,6 @@
 import dayjs from 'dayjs';
 import type { NullableText } from '@/types';
-
-const AMOUNT_FORMATTER = new Intl.NumberFormat('en-US', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
+import { formatMessageAmount } from '@/utils';
 
 /** 表格空值统一展示为 --，但不修改数据本身。 */
 export const renderMessageText = (value: unknown) =>
@@ -31,9 +27,8 @@ export const renderMessageDate = (value: unknown) => {
   return date.isValid() ? date.format('YYYY-MM-DD') : String(value);
 };
 
-/** 金额 两位小数转换 */
+/** 报文列表金额展示 */
 export const renderMessageAmount = (value: unknown) => {
   if (value === undefined || value === null || value === '') return '--';
-  const amount = Number(value);
-  return Number.isFinite(amount) ? AMOUNT_FORMATTER.format(amount) : String(value);
+  return formatMessageAmount(String(value));
 };
