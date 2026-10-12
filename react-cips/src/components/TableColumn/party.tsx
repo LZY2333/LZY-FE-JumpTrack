@@ -90,6 +90,22 @@ export const effectiveDate: TableColumnType<PartyRecord> = {
   render: renderMessageDate,
 };
 
+/** 办理业务状态 */
+export const status: TableColumnType<PartyRecord> = {
+  title: 'Business Status',
+  dataIndex: 'status',
+  width: 150,
+  render: renderMessageText,
+};
+
+/** 登录状态 */
+export const loginSts: TableColumnType<PartyRecord> = {
+  title: 'Login Status',
+  dataIndex: 'loginSts',
+  width: 150,
+  render: renderMessageText,
+};
+
 /** 记录创建时间：CREATE_TIME */
 export const partyCreateTime: TableColumnType<PartyRecord> = {
   title: 'Created Time',

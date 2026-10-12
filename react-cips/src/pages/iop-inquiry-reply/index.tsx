@@ -214,7 +214,11 @@ const IopInquiryReply = () => {
       )}
 
       {!isMakerStage && <PanelReplyContent task={task} form={inquiryReplyForm} onSubmit={handleSubmit} />}
-      <PanelMessageDetail highLightFields={INQUIRY_REPLY_HIGH_LIGHT_FIELDS} msgId={task.busRefNo} />
+      <PanelMessageDetail
+        temp={!isMakerStage}
+        highLightFields={INQUIRY_REPLY_HIGH_LIGHT_FIELDS}
+        msgId={task.busRefNo}
+      />
     </IopPageShell>
   );
 };
@@ -233,7 +237,7 @@ const PanelReplyContent = ({ task, form, onSubmit }: PanelReplyContentProps) => 
         onCollapsedChange={setCollapsed}
       >
         <Form form={form} layout='vertical' disabled={task.taskNode !== IopTaskNode.MakerStage} onFinish={onSubmit}>
-          <div className='mb-3 flex gap-3'>
+          <div className='mb-3 flex gap-3 '>
             <IopTaskMsgType className='mb-0 min-w-0 flex-1' />
             <IopTaskMsgRecvCipsCode className='mb-0 min-w-0 flex-1' />
             <IopTaskMsgRelatedId className='mb-0 min-w-0 flex-1' />

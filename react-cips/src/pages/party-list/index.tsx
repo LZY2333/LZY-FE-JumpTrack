@@ -14,8 +14,10 @@ import {
   DirectPartyIdFilter,
   DomesticFlagFilter,
   EndNameFilter,
+  LoginStsFilter,
   PartyIdFilter,
   PartyStsFilter,
+  StatusFilter,
 } from '@/components/FormItem/party';
 import {
   bankBic,
@@ -27,13 +29,15 @@ import {
   domesticFlag,
   effectiveDate,
   endName,
+  loginSts,
   partyCreateTime,
   partyId,
   partySts,
   partyUpdateTime,
+  status,
 } from '@/components/TableColumn/party';
 import usePartyList, { PARTY_PAGE_SIZE_OPTIONS } from './usePartyList';
-import type { PartyListFilterValues } from './partyListUtil';
+import { buildPartyRecordKey, type PartyListFilterValues } from './partyListUtil';
 import { openModalPartyDelete, openModalPartyForm } from './ModalPartyForm';
 
 // 参考报文列表，四行筛选和一行按钮比 LCW 列表多两行，每行 32px
@@ -50,6 +54,8 @@ const partyColumns: TableColumnsType<PartyRecord> = [
   directPartyId,
   custodian,
   effectiveDate,
+  status,
+  loginSts,
   partyCreateTime,
   partyUpdateTime,
 ];
@@ -171,6 +177,12 @@ const PartyList = () => {
             <Col span={8}>
               <CustodianFilter />
             </Col>
+            <Col span={8}>
+              <StatusFilter />
+            </Col>
+            <Col span={8}>
+              <LoginStsFilter />
+            </Col>
           </Row>
           <Row gutter={[16, 8]} className='mt-2'>
             <Col span={16} className='flex items-center'>
@@ -192,7 +204,7 @@ const PartyList = () => {
         <ResizableTable<PartyRecord>
           className={`message-list-table${records.length === 0 ? ' message-list-table-empty' : ''}`}
           style={{ '--message-list-table-body-height': TABLE_BODY_HEIGHT } as CSSProperties}
-          rowKey='partyId'
+          rowKey={buildPartyRecordKey}
           size='small'
           columns={columns}
           storageKey='party-list-v1'

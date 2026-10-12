@@ -224,7 +224,7 @@ export const IOP_TASK_NODE_LABELS: Record<IopTaskNode, string> = {
 /* ==================== 参与行管理 ==================== */
 
 /** 参与者资格标识 */
-export enum BankCategory {
+export enum PartyBankCategoryEnum {
   /** 直参 */
   Direct = 'DRPT',
   /** 间参 */
@@ -232,9 +232,25 @@ export enum BankCategory {
 }
 
 /** 境内外标识 */
-export enum DomesticFlag {
+export enum PartyDomesticFlagEnum {
   /** 境内参与者 */
   Domestic = 'DMPT',
   /** 境外参与者 */
   Overseas = 'OSPT',
+}
+
+/** 办理业务状态 */
+export enum PartyBusinessStatusEnum {
+  /** 正常 */
+  Enabled = 'ENBL',
+  /** 暂停 */
+  Disabled = 'DSBL',
+}
+
+/** 登录状态 */
+export enum PartyLoginStatusEnum {
+  /** 登录 */
+  LoggedIn = 'LOGN',
+  /** 退出 */
+  LoggedOut = 'LOGF',
 }

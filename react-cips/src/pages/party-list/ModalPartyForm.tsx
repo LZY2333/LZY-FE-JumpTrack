@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { Col, Form, Row } from 'antd';
+import { Form } from 'antd';
 import type { App, FormInstance } from 'antd';
 import { deleteParty, saveParty } from '@/api/party';
 import type { PartyRecord, PartySaveRequest } from '@/api/party';
@@ -13,10 +13,12 @@ import {
   DomesticFlag,
   EffectiveDate,
   EndName,
+  LoginSts,
   PartyId,
   PartySts,
+  Status,
 } from '@/components/FormItem/party';
-import { buildPartyFormInitialValues } from './partyListUtil';
+import { buildPartyFormInitialValues, buildPartySaveRequest } from './partyListUtil';
 
 /** 参与行弹窗使用的 Ant Design 上下文能力 */
 type ModalPartyApi = Pick<ReturnType<typeof App.useApp>['modal'], 'confirm'>;
@@ -26,50 +28,32 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
   const formRef = createRef<FormInstance<PartySaveRequest>>();
 
   return modal.confirm({
-    width: 760,
+    width: 520,
     title: record ? 'Edit Party' : 'Add Party',
     content: (
       <Form
         ref={formRef}
+        className='flex flex-col gap-3'
         size='small'
-        layout='vertical'
+        layout='horizontal'
+        labelAlign='left'
+        labelCol={{ flex: '120px' }}
+        wrapperCol={{ flex: 1 }}
         initialValues={record ? buildPartyFormInitialValues(record) : undefined}
       >
-        <Row gutter={[16, 8]}>
-          <Col span={12}>
-            <PartyId disabled={Boolean(record)} />
-          </Col>
-          <Col span={12}>
-            <BankBic />
-          </Col>
-          <Col span={12}>
-            <BankLei />
-          </Col>
-          <Col span={12}>
-            <ChsName />
-          </Col>
-          <Col span={12}>
-            <PartySts />
-          </Col>
-          <Col span={12}>
-            <EndName />
-          </Col>
-          <Col span={12}>
-            <BankCategory />
-          </Col>
-          <Col span={12}>
-            <DomesticFlag />
-          </Col>
-          <Col span={12}>
-            <DirectPartyId />
-          </Col>
-          <Col span={12}>
-            <Custodian />
-          </Col>
-          <Col span={12}>
-            <EffectiveDate />
-          </Col>
-        </Row>
+        <PartyId disabled={Boolean(record)} />
+        <EffectiveDate disabled={Boolean(record)} />
+        <BankCategory />
+        <DomesticFlag />
+        <BankBic />
+        <BankLei />
+        <EndName />
+        <ChsName />
+        <Custodian />
+        <DirectPartyId />
+        <Status />
+        <LoginSts />
+        <PartySts />
       </Form>
     ),
     okText: record ? 'Save' : 'Add',
@@ -77,7 +61,7 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
       const fields = await formRef.current?.validateFields();
       if (!fields) return Promise.reject();
 
-      await saveParty(fields);
+      await saveParty(buildPartySaveRequest(fields));
     },
   });
 };
@@ -86,10 +70,10 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
 export const openModalPartyDelete = async (modal: ModalPartyApi, record: PartyRecord): Promise<boolean> =>
   modal.confirm({
     title: 'Delete Party',
-    content: `Delete party ${record.partyId}?`,
+    content: `Delete party ${record.partyId} (${record.effectiveDate})?`,
     okText: 'Delete',
     okButtonProps: { danger: true },
     onOk: async () => {
-      await deleteParty({ partyId: record.partyId });
+      await deleteParty({ partyId: record.partyId, effectiveDate: record.effectiveDate });
     },
   });
