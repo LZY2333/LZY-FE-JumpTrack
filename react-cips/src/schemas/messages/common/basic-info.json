@@ -91,13 +91,6 @@
               "x-decorator": "MessageFormItem",
               "x-component": "Input"
             },
-            "msgSendTime": {
-              "type": "string",
-              "title": "Message Send Time",
-              "$comment": "报文中记录的发送时间：MSG_SEND_TIME",
-              "x-decorator": "MessageFormItem",
-              "x-component": "Input"
-            },
             "msgOwnerDept": {
               "type": "string",
               "title": "Owner Department",

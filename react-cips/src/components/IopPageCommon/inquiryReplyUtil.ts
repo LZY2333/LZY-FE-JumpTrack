@@ -19,7 +19,7 @@ interface BuildInquiryReplyPayloadParams {
   forceMsgId?: boolean;
 }
 
-/** 按报文类型和报文编号送值要求构造查询查复请求字段。 */
+/** 构建查询查复业务字段 */
 export const buildInquiryReplyPayload = ({
   fields,
   sourceMsgId,

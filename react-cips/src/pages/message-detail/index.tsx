@@ -10,7 +10,8 @@ import ContentMessageRaw from '@/components/ContentMessageRaw';
 import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
 import useUserStore from '@/store/useUserStore';
 import { MessageDirection } from '@/types/enums';
-import { openModalDistribute, openModalInquiryReply } from './ModalIopTask';
+import { openModalInquiryReply } from '@/pages/iop-inquiry-reply/ModalInquiryReply';
+import { openModalDistribute } from './ModalIopTask';
 import TabProcessing from './TabProcessing';
 import { RoutePath } from '@/router/routePath';
 

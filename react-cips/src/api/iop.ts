@@ -51,6 +51,12 @@ export interface IopTaskActionRequest {
   rejectReason?: string;
 }
 
+/** IOP 任务创建及查询查复经办、审批的响应 */
+export interface IopTaskSubmissionResponse {
+  /** 接口返回的交易参考号，审批等环节可能不返回 */
+  msgId?: string;
+}
+
 /* ==================== 2. 手工补录 ==================== */
 
 /** 手工补录 接口基础 URL */
@@ -120,7 +126,7 @@ export const API_BASE_IOP_DISTRIBUTE_CREATION = '/pssst/manager/manualCrtDisTask
 /** 创建分发任务 从报文明细页创建 */
 export const API_IOP_DISTRIBUTE_CREATION_CREATE = `${API_BASE_IOP_DISTRIBUTE_CREATION}/create`;
 export const postDCCreate = (params: IopDistributeCreationCreateRequest) =>
-  post<undefined>(API_IOP_DISTRIBUTE_CREATION_CREATE, params);
+  post<IopTaskSubmissionResponse>(API_IOP_DISTRIBUTE_CREATION_CREATE, params);
 
 /** 创建分发任务 经办 */
 export const API_IOP_DISTRIBUTE_CREATION_HANDLING = `${API_BASE_IOP_DISTRIBUTE_CREATION}/handling`;
@@ -196,12 +202,12 @@ export const API_BASE_IOP_INQUIRY_REPLY = '/pssst/manager/manualCipsMsg';
 /** 查询查复 从报文明细页创建 IOP 任务 */
 export const API_IOP_INQUIRY_REPLY_CREATE = `${API_BASE_IOP_INQUIRY_REPLY}/startProcess`;
 export const postIRCreate = (params: IopInquiryReplyCreateRequest) =>
-  post<undefined>(API_IOP_INQUIRY_REPLY_CREATE, params);
+  post<IopTaskSubmissionResponse>(API_IOP_INQUIRY_REPLY_CREATE, params);
 
 /** 查询查复 经办与审批 */
 export const API_IOP_INQUIRY_REPLY_APPROVE = `${API_BASE_IOP_INQUIRY_REPLY}/approve`;
 export const postIRApprove = (params: IopInquiryReplyActionRequest) =>
-  post<undefined>(API_IOP_INQUIRY_REPLY_APPROVE, params);
+  post<IopTaskSubmissionResponse>(API_IOP_INQUIRY_REPLY_APPROVE, params);
 
 /** 查询查复 表单信息 */
 export const API_IOP_INQUIRY_REPLY_FORM = `${API_BASE_IOP_INQUIRY_REPLY}/detail/:taskId`;

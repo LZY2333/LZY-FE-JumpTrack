@@ -9,6 +9,7 @@ import type {
   IopManualEntryUpdateRequest,
   IopTaskActionRequest,
   IopTaskResponse,
+  IopTaskSubmissionResponse,
 } from '@/api/iop';
 import {
   IOP_TASK_TYPE_LABELS,
@@ -19,6 +20,9 @@ import {
   MessageDirection,
   ResCode,
 } from '@/types/enums';
+
+/** 查询查复成功生成的 Mock 报文编号 */
+const INQUIRY_REPLY_SUBMISSION_RESPONSE: IopTaskSubmissionResponse = { msgId: 'CIPSOUT20260822000006' };
 
 interface MockRequestOption {
   /** 当前工作流任务查询 URL。 */
@@ -127,7 +131,7 @@ const handleManualEntryRollback = ({ body }: MockBodyOption<IopManualEntryRollba
 /** 校验从报文明细页创建分发任务的公共参数。 */
 const handleDistributeTaskCreate = ({ body }: MockBodyOption<IopDistributeCreationCreateRequest>) =>
   body?.msgId && body.userId && body.orgId
-    ? { returnCode: ResCode.Success }
+    ? { returnCode: ResCode.Success, body: { msgId: body.msgId } }
     : { returnCode: 'ERR0400', errorMsg: 'Message ID, user ID and organization ID are required.' };
 
 /** 查询创建分发任务经办阶段提交的表单信息。 */
@@ -147,7 +151,7 @@ const handleDistributeTaskFormQuery = ({
 /** 校验从报文明细页创建查询查复任务的请求。 */
 const handleInquiryReplyCreate = ({ body }: MockBodyOption<IopInquiryReplyCreateRequest>) =>
   body?.userId && body.orgId && isValidInquiryReplyPayload(body.msgId, body.busData)
-    ? { returnCode: ResCode.Success }
+    ? { returnCode: ResCode.Success, body: INQUIRY_REPLY_SUBMISSION_RESPONSE }
     : { returnCode: 'ERR0400', errorMsg: 'Inquiry reply task fields are required.' };
 
 /** 查询查复经办阶段提交的表单信息。 */
@@ -172,6 +176,10 @@ const handleInquiryReplyAction = (option: MockBodyOption<IopInquiryReplyActionRe
 
   if (isMakerNode && !isValidInquiryReplyPayload(body.msgId, body.busData, true)) {
     return { returnCode: 'ERR0400', errorMsg: 'Inquiry reply fields are invalid.' };
+  }
+
+  if (body.taskNode === IopTaskNode.MakerStage) {
+    return { returnCode: ResCode.Success, body: INQUIRY_REPLY_SUBMISSION_RESPONSE };
   }
 
   return { returnCode: ResCode.Success };

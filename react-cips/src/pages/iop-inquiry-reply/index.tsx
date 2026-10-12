@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Alert, App as AntdApp, Button, Divider, Form, Result } from 'antd';
+import type { FormInstance } from 'antd';
 import { CheckOutlined, CloseOutlined, CommentOutlined } from '@ant-design/icons';
 import { useOutletContext } from 'react-router-dom';
 import { getIRForm, postIRApprove } from '@/api/iop';
+import { getMessage } from '@/api/messages';
 import CardCollapse from '@/components/CardCollapse';
 import IopPageShell from '@/components/IopPageCommon';
 import {
@@ -18,6 +20,17 @@ import type { IopTaskData } from '@/router/iop-routes/useIopGuard';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 import { IOP_TASK_NODE_LABELS, IopInquiryReplyMsgType, IopTaskNode } from '@/types/enums';
 import { openModalInquiryReplyApprove, openModalInquiryReplyReject } from './ModalApproval';
+import { openModalInquiryReply } from './ModalInquiryReply';
+
+/** 非初始经办环节的查询查复内容面板属性 */
+interface PanelReplyContentProps {
+  /** 当前任务及来源报文信息 */
+  task: IopTaskData;
+  /** 查询查复内容表单 */
+  form: FormInstance<IopInquiryReplyFormFields>;
+  /** 返工环节提交查询查复内容 */
+  onSubmit: (fields: IopInquiryReplyFormFields) => Promise<void>;
+}
 
 const MAKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.MakerStage, IopTaskNode.MakerRework]);
 const CHECKER_TASK_NODES = new Set<IopTaskNode>([IopTaskNode.Checker1Stage, IopTaskNode.Checker2Stage]);
@@ -36,14 +49,13 @@ const IopInquiryReply = () => {
   const task = useOutletContext<IopTaskData>();
   const { message, modal } = AntdApp.useApp();
   const [inquiryReplyForm] = Form.useForm<IopInquiryReplyFormFields>();
-  const [replyContentCollapsed, setReplyContentCollapsed] = useState(false);
-  const isMakerNode = MAKER_TASK_NODES.has(task.taskNode);
+  const isMakerStage = task.taskNode === IopTaskNode.MakerStage;
   const isCheckerNode = CHECKER_TASK_NODES.has(task.taskNode);
 
   /** 返工、审批及已审批节点查询之前填写的查询查复内容。 */
   useEffect(() => {
-    inquiryReplyForm.resetFields();
     if (!FORM_QUERY_TASK_NODES.has(task.taskNode)) return;
+    inquiryReplyForm.resetFields();
 
     let active = true;
     const stopGlobalLoading = startGlobalLoading();
@@ -91,6 +103,27 @@ const IopInquiryReply = () => {
     }
   };
 
+  /** Maker Stage 使用来源报文校验查询查复内容并提交经办 */
+  const handleInquiryReply = async () => {
+    if (!task.busRefNo) {
+      message.warning('Message information is unavailable.');
+      return;
+    }
+
+    const stopGlobalLoading = startGlobalLoading();
+    const detail = await getMessage(task.busRefNo).finally(stopGlobalLoading);
+    if (!detail) {
+      message.warning('Message information is unavailable.');
+      return;
+    }
+
+    const submitted = await openModalInquiryReply(modal, {
+      task,
+      sourceMessage: detail.msgBasicInfo,
+    });
+    if (submitted) message.success('Inquiry reply submitted');
+  };
+
   // 【Reject】 【Approve】
   const handleApproval = async (next: boolean) => {
     const approvalResult = next ? await openModalInquiryReplyApprove(modal) : await openModalInquiryReplyReject(modal);
@@ -131,7 +164,13 @@ const IopInquiryReply = () => {
 
   return (
     <IopPageShell title='Inquiry Reply' taskNode={task.taskNode}>
-      {isMakerNode && (
+      {isMakerStage && (
+        <Button size='small' className='mb-3' type='primary' icon={<CommentOutlined />} onClick={handleInquiryReply}>
+          Inquiry Reply
+        </Button>
+      )}
+
+      {task.taskNode === IopTaskNode.MakerRework && (
         <Button
           size='small'
           className='mb-3'
@@ -174,44 +213,41 @@ const IopInquiryReply = () => {
         />
       )}
 
+      {!isMakerStage && <PanelReplyContent task={task} form={inquiryReplyForm} onSubmit={handleSubmit} />}
+      <PanelMessageDetail highLightFields={INQUIRY_REPLY_HIGH_LIGHT_FIELDS} msgId={task.busRefNo} />
+    </IopPageShell>
+  );
+};
+
+/** 展示返工、审批及已审批环节的查询查复内容 */
+const PanelReplyContent = ({ task, form, onSubmit }: PanelReplyContentProps) => {
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <>
       <CardCollapse
         size='small'
         title='Reply Content'
-        collapsed={replyContentCollapsed}
-        classNames={{ body: replyContentCollapsed ? undefined : REPLY_CONTENT_EXPANDED_BODY_CLASS_NAME }}
-        onCollapsedChange={setReplyContentCollapsed}
+        collapsed={collapsed}
+        classNames={{ body: collapsed ? undefined : REPLY_CONTENT_EXPANDED_BODY_CLASS_NAME }}
+        onCollapsedChange={setCollapsed}
       >
-        <Form
-          form={inquiryReplyForm}
-          layout='vertical'
-          disabled={task.taskNode !== IopTaskNode.MakerStage}
-          initialValues={getInquiryReplyInitialValues(task)}
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout='vertical' disabled={task.taskNode !== IopTaskNode.MakerStage} onFinish={onSubmit}>
           <div className='mb-3 flex gap-3'>
             <IopTaskMsgType className='mb-0 min-w-0 flex-1' />
             <IopTaskMsgRecvCipsCode className='mb-0 min-w-0 flex-1' />
             <IopTaskMsgRelatedId className='mb-0 min-w-0 flex-1' />
           </div>
-          <IopTaskContent textAreaReadOnly={!isMakerNode} />
+          <IopTaskContent textAreaReadOnly={!MAKER_TASK_NODES.has(task.taskNode)} />
         </Form>
       </CardCollapse>
 
       <Divider className='my-3' orientation='left'>
         Current Message: {task.busRefNo || '--'}
       </Divider>
-      <PanelMessageDetail highLightFields={INQUIRY_REPLY_HIGH_LIGHT_FIELDS} msgId={task.busRefNo} />
-    </IopPageShell>
+    </>
   );
 };
-
-/** 查询查复表单使用任务字段填充初始值。 */
-const getInquiryReplyInitialValues = (task: IopTaskData) => ({
-  msgType: undefined,
-  content: '',
-  msgRecvCipsCode: task.msgRecvCipsCode ?? '',
-  msgRelatedId: task.msgRelatedId ?? '',
-});
 
 export default IopInquiryReply;
 

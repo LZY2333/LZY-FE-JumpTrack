@@ -24,11 +24,15 @@ const useUserStore = create<AuthStore>((set, get) => ({
   user: undefined,
   setUser: (user) => set({ user }),
   login: async () => {
+    if (tryLoginFromUrl()) return undefined;
+
+    console.log('origin window.location.href: ', window.location.href);
     const searchParams = new URLSearchParams(window.location.search);
     const urlToken = searchParams.get(AUTH_TOKEN_KEY)?.trim();
     const cookieToken = getCookieValue(AUTH_TOKEN_KEY)?.trim();
-    const token = urlToken || cookieToken || get().token?.trim() || sessionStorage.getItem(AUTH_TOKEN_KEY)?.trim();
-
+    const token = urlToken || cookieToken || get().token?.trim();
+    console.log('login token: ', token);
+    console.log('用于浏览器访问: ', `${location.origin}${location.pathname}?otfUserToken=${token ?? ''}`);
     set({ user: undefined });
     if (!token) {
       Modal.error({
@@ -43,7 +47,9 @@ const useUserStore = create<AuthStore>((set, get) => ({
     }
 
     try {
+      document.cookie = `${AUTH_TOKEN_KEY}=${token}; Path=/; SameSite=Lax`;
       const res = await getCurrentUserApi(token, { silent: true });
+      console.log('login res: ', res);
       if (!res?.user?.userId?.trim()) {
         Modal.warning({
           title: 'T24 Account Required',
@@ -66,8 +72,8 @@ const useUserStore = create<AuthStore>((set, get) => ({
       const userTemp = { ...res.user, roles };
       set({ token, user: userTemp });
 
-      /** 储存session,同时清空searchParam */
-      sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+      /** 登录成功后, 设置cookie, 移除 URL 中的 token */
+      console.log('当前登录用户: ', userTemp);
       if (urlToken) {
         const url = new URL(window.location.href);
         url.searchParams.delete(AUTH_TOKEN_KEY);
@@ -91,12 +97,32 @@ const useUserStore = create<AuthStore>((set, get) => ({
   },
 }));
 
+/** URL 包含完整用户参数时初始化前端登录状态 */
+const tryLoginFromUrl = (): boolean => {
+  const searchParams = new URLSearchParams(window.location.search);
+  const requiredFields = ['userId', 'orgId', 'userName'];
+
+  if (!requiredFields.every((field) => searchParams.has(field))) return false;
+
+  useUserStore.setState({
+    token: undefined,
+    user: {
+      userId: searchParams.get('userId')?.trim() ?? '',
+      orgId: searchParams.get('orgId')?.trim() ?? '',
+      userName: searchParams.get('userName')?.trim() ?? '',
+      roles: [Role.Maker],
+    },
+  });
+
+  return true;
+};
+
 /** 根据名称获取 Cookie 值。 */
 const getCookieValue = (name: string) => {
-  const cookie = document.cookie.split('; ').find((item) => item.startsWith(`${encodeURIComponent(name)}=`));
+  const cookie = document.cookie.split('; ').find((item) => item.startsWith(`${name}=`));
   if (!cookie) return undefined;
 
-  return decodeURIComponent(cookie.slice(cookie.indexOf('=') + 1));
+  return cookie.slice(cookie.indexOf('=') + 1);
 };
 
 export default useUserStore;
