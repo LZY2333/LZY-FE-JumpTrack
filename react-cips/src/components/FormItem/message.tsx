@@ -6,6 +6,7 @@ import { CloseCircleFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { isMessageDateDisabled, messageDatePresets } from './messageDateUtil';
+import { formatMessageAmount } from '@/utils';
 import {
   MESSAGE_DIRECTION_LABELS,
   MESSAGE_BUSINESS_TYPE_LABELS,
@@ -240,7 +241,9 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
             className='min-w-0 flex-1'
             disabled={disabled}
             controls={false}
-            precision={2}
+            formatter={(value, { userTyping, input }) =>
+              userTyping ? input : formatMessageAmount(String(value ?? ''))
+            }
             placeholder='Minimum'
           />
         </Form.Item>
@@ -250,7 +253,9 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
             className='min-w-0 flex-1'
             disabled={disabled}
             controls={false}
-            precision={2}
+            formatter={(value, { userTyping, input }) =>
+              userTyping ? input : formatMessageAmount(String(value ?? ''))
+            }
             placeholder='Maximum'
           />
         </Form.Item>
@@ -352,8 +357,8 @@ export const MainMessageIdFilter = (props: MessageFilterFormItemProps) => (
 
 /** 关联流水号：MSG_RELATED_ID */
 export const RelatedMessageIdFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgRelatedId' label='Related Message ID' normalize={trimWhitespace}>
-    <Input allowClear placeholder='Enter related message ID' />
+  <Form.Item {...props} name='msgRelatedId' label='Related Msg ID' normalize={trimWhitespace}>
+    <Input allowClear placeholder='Enter related Msg ID' />
   </Form.Item>
 );
 

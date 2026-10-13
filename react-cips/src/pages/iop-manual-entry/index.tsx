@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, App as AntdApp, Card, Divider, Result } from 'antd';
+import { Alert, App as AntdApp, Card, Result } from 'antd';
 import { useOutletContext } from 'react-router-dom';
 import { postMEApprove, postMEConfirm, postMEReject, postMEUpdate } from '@/api/iop';
 import ContentMessageRaw from '@/components/ContentMessageRaw';
@@ -168,10 +168,6 @@ const IopManualEntry = () => {
         />
       )}
 
-      <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message: {task.busRefNo || '--'}
-      </Divider>
-
       {isMakerNode && !updated ? (
         <Card
           className='flex h-full min-h-0 flex-col'
@@ -182,7 +178,7 @@ const IopManualEntry = () => {
           <ContentMessageRaw ref={messageRawRef} msgId={task.busRefNo} msgDirection={MessageDirection.In} editable />
         </Card>
       ) : (
-        <PanelMessageDetail temp msgId={task.busRefNo} />
+        <PanelMessageDetail temp msgId={task.busRefNo} showRaw={false} />
       )}
     </IopPageShell>
   );

@@ -3,20 +3,15 @@ import type { CSSProperties } from 'react';
 import { App as AntdApp, Button, Card, Col, Flex, Form, Row } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import type { PartyRecord } from '@/api/party';
+import type { PartyQueryConditions, PartyRecord } from '@/api/party';
 import ResizableTable from '@/components/ResizableTable';
 import {
   BankBicFilter,
   BankCategoryFilter,
-  BankLeiFilter,
-  ChsNameFilter,
-  CustodianFilter,
   DirectPartyIdFilter,
   DomesticFlagFilter,
   EndNameFilter,
   LoginStsFilter,
-  PartyIdFilter,
-  PartyStsFilter,
   StatusFilter,
 } from '@/components/FormItem/party';
 import {
@@ -30,44 +25,47 @@ import {
   effectiveDate,
   endName,
   loginSts,
+  partyCreateBrno,
   partyCreateTime,
+  partyCreateUser,
   partyId,
-  partySts,
   partyUpdateTime,
   status,
 } from '@/components/TableColumn/party';
 import usePartyList, { PARTY_PAGE_SIZE_OPTIONS } from './usePartyList';
-import { buildPartyRecordKey, type PartyListFilterValues } from './partyListUtil';
 import { openModalPartyDelete, openModalPartyForm } from './ModalPartyForm';
 
-// 参考报文列表，四行筛选和一行按钮比 LCW 列表多两行，每行 32px
-const TABLE_BODY_HEIGHT = 'calc(100vh - 362px)';
+// 最长筛选标签为 Direct Bank BIC，预留冒号及间距
+const FILTER_LABEL_WIDTH = '120px';
+// 三行筛选比 LCW 列表多一行，每行 32px
+const TABLE_BODY_HEIGHT = 'calc(100vh - 330px)';
 const partyColumns: TableColumnsType<PartyRecord> = [
-  partyId,
-  chsName,
-  endName,
   bankBic,
-  bankLei,
+  endName,
   bankCategory,
   domesticFlag,
-  partySts,
+  status,
+  loginSts,
+  partyId,
+  chsName,
+  bankLei,
   directPartyId,
   custodian,
   effectiveDate,
-  status,
-  loginSts,
   partyCreateTime,
   partyUpdateTime,
+  partyCreateUser,
+  partyCreateBrno,
 ];
 
 /** 参与行列表页 */
 const PartyList = () => {
   const { message, modal } = AntdApp.useApp();
-  const [form] = Form.useForm<PartyListFilterValues>();
-  const { authenticated, records, loading, current, pageSize, setCurrent, setPageSize, query, reset, refresh } =
+  const [form] = Form.useForm<PartyQueryConditions>();
+  const { authenticated, records, total, loading, current, pageSize, setCurrent, setPageSize, query, reset, refresh } =
     usePartyList();
 
-  const handleSearch = (values: PartyListFilterValues) => {
+  const handleSearch = (values: PartyQueryConditions) => {
     // if (!authenticated) {
     //   message.warning('Please log in first.');
     //   return;
@@ -142,28 +140,15 @@ const PartyList = () => {
           size='small'
           layout='horizontal'
           labelAlign='left'
-          labelCol={{ span: 10 }}
-          wrapperCol={{ span: 14 }}
+          labelCol={{ flex: FILTER_LABEL_WIDTH }}
           onFinish={handleSearch}
         >
           <Row gutter={[16, 8]}>
             <Col span={8}>
-              <PartyIdFilter />
-            </Col>
-            <Col span={8}>
               <BankBicFilter />
             </Col>
             <Col span={8}>
-              <BankLeiFilter />
-            </Col>
-            <Col span={8}>
-              <ChsNameFilter />
-            </Col>
-            <Col span={8}>
               <EndNameFilter />
-            </Col>
-            <Col span={8}>
-              <PartyStsFilter />
             </Col>
             <Col span={8}>
               <BankCategoryFilter />
@@ -172,16 +157,13 @@ const PartyList = () => {
               <DomesticFlagFilter />
             </Col>
             <Col span={8}>
-              <DirectPartyIdFilter />
-            </Col>
-            <Col span={8}>
-              <CustodianFilter />
-            </Col>
-            <Col span={8}>
               <StatusFilter />
             </Col>
             <Col span={8}>
               <LoginStsFilter />
+            </Col>
+            <Col span={8}>
+              <DirectPartyIdFilter />
             </Col>
           </Row>
           <Row gutter={[16, 8]} className='mt-2'>
@@ -204,10 +186,10 @@ const PartyList = () => {
         <ResizableTable<PartyRecord>
           className={`message-list-table${records.length === 0 ? ' message-list-table-empty' : ''}`}
           style={{ '--message-list-table-body-height': TABLE_BODY_HEIGHT } as CSSProperties}
-          rowKey={buildPartyRecordKey}
+          rowKey={(record) => `${record.partyId}:${record.effectiveDate}`}
           size='small'
           columns={columns}
-          storageKey='party-list-v1'
+          storageKey='party-list-v2'
           dataSource={records}
           loading={loading}
           locale={{ emptyText: authenticated ? 'No parties found' : 'Waiting for authentication...' }}
@@ -215,7 +197,7 @@ const PartyList = () => {
           pagination={{
             current,
             pageSize,
-            total: records.length,
+            total,
             pageSizeOptions: PARTY_PAGE_SIZE_OPTIONS,
             showSizeChanger: true,
             showQuickJumper: true,

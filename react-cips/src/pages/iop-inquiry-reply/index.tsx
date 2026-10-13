@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, App as AntdApp, Button, Divider, Form, Result } from 'antd';
+import { Alert, App as AntdApp, Button, Form, Result } from 'antd';
 import type { FormInstance } from 'antd';
 import { CheckOutlined, CloseOutlined, CommentOutlined } from '@ant-design/icons';
 import { useOutletContext } from 'react-router-dom';
@@ -228,28 +228,22 @@ const PanelReplyContent = ({ task, form, onSubmit }: PanelReplyContentProps) => 
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <>
-      <CardCollapse
-        size='small'
-        title='Reply Content'
-        collapsed={collapsed}
-        classNames={{ body: collapsed ? undefined : REPLY_CONTENT_EXPANDED_BODY_CLASS_NAME }}
-        onCollapsedChange={setCollapsed}
-      >
-        <Form form={form} layout='vertical' disabled={task.taskNode !== IopTaskNode.MakerStage} onFinish={onSubmit}>
-          <div className='mb-3 flex gap-3 '>
-            <IopTaskMsgType className='mb-0 min-w-0 flex-1' />
-            <IopTaskMsgRecvCipsCode className='mb-0 min-w-0 flex-1' />
-            <IopTaskMsgRelatedId className='mb-0 min-w-0 flex-1' />
-          </div>
-          <IopTaskContent textAreaReadOnly={!MAKER_TASK_NODES.has(task.taskNode)} />
-        </Form>
-      </CardCollapse>
-
-      <Divider className='my-3' orientation='left'>
-        Current Message: {task.busRefNo || '--'}
-      </Divider>
-    </>
+    <CardCollapse
+      size='small'
+      title='Reply Content'
+      collapsed={collapsed}
+      classNames={{ body: collapsed ? undefined : REPLY_CONTENT_EXPANDED_BODY_CLASS_NAME }}
+      onCollapsedChange={setCollapsed}
+    >
+      <Form form={form} layout='vertical' disabled={task.taskNode !== IopTaskNode.MakerStage} onFinish={onSubmit}>
+        <div className='mb-3 flex gap-3 '>
+          <IopTaskMsgType className='mb-0 min-w-0 flex-1' />
+          <IopTaskMsgRecvCipsCode className='mb-0 min-w-0 flex-1' />
+          <IopTaskMsgRelatedId className='mb-0 min-w-0 flex-1' />
+        </div>
+        <IopTaskContent textAreaReadOnly={!MAKER_TASK_NODES.has(task.taskNode)} />
+      </Form>
+    </CardCollapse>
   );
 };
 

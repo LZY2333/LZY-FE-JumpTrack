@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Alert, App as AntdApp, Button, Divider, Form, Result } from 'antd';
+import { Alert, App as AntdApp, Button, Form, Result } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { useOutletContext } from 'react-router-dom';
 import { getDCForm, postDCHandling } from '@/api/iop';
@@ -163,13 +163,9 @@ const IopDistributeCreation = () => {
         initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
         onFinish={handleDistributionCreation}
       >
-        <IopTargetSysId className='mb-0 w-72' />
+        <IopTargetSysId />
         <IopMsgOwner />
       </Form>
-      <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message: {task.busRefNo || '--'}
-      </Divider>
-
       <PanelMessageDetail msgId={task.busRefNo} />
     </IopPageShell>
   );

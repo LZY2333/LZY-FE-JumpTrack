@@ -1,10 +1,10 @@
+import type { Pagination } from './request';
 import { post } from './request';
 import type {
   PartyBankCategoryEnum,
   PartyBusinessStatusEnum,
   PartyDomesticFlagEnum,
   PartyLoginStatusEnum,
-  YesNo,
 } from '@/types/enums';
 
 /** 参与行接口基础 URL */
@@ -12,7 +12,7 @@ export const API_BASE_PARTY = '/pssst/manager/party';
 
 /** 查询 */
 export const API_PARTY_LIST = `${API_BASE_PARTY}/list`;
-export const getParties = (conditions: PartyQueryConditions) => post<PartyRecord[]>(API_PARTY_LIST, conditions);
+export const getParties = (params: PartyQuery) => post<PartyQueryResult>(API_PARTY_LIST, params);
 
 /** 新增 修改 */
 export const API_PARTY_SAVE = `${API_BASE_PARTY}/save`;
@@ -44,12 +44,14 @@ export interface PartySaveRequest {
   custodian?: string | null;
   /** 所属直参行：DIRECT_PARTY_ID */
   directPartyId?: string | null;
-  /** 生效状态：PARTY_STS */
-  partySts?: YesNo | null;
   /** 办理业务状态 */
-  status?: PartyBusinessStatusEnum | null;
+  status: PartyBusinessStatusEnum;
   /** 登录状态 */
-  loginSts?: PartyLoginStatusEnum | null;
+  loginSts: PartyLoginStatusEnum;
+  /** 创建人：CREATE_USER，新增时传当前登录用户 ID */
+  createUser?: string;
+  /** 创建人部门号：CREATE_BRNO，新增时传当前登录用户机构 ID */
+  createBrno?: string;
 }
 
 /** 删除参与行请求 */
@@ -80,12 +82,24 @@ export interface PartyQueryConditions {
   bankCategory?: PartyBankCategoryEnum;
   /** 境内外标识：DOMESTIC_FLAG */
   domesticFlag?: PartyDomesticFlagEnum;
-  /** 生效状态：PARTY_STS */
-  partySts?: YesNo;
   /** 办理业务状态 */
   status?: PartyBusinessStatusEnum;
   /** 登录状态 */
   loginSts?: PartyLoginStatusEnum;
+}
+
+/** 带分页的参与行查询请求 */
+export interface PartyQuery extends PartyQueryConditions {
+  /** 当前页码 */
+  current: number;
+  /** 每页记录数 */
+  pageSize: number;
+}
+
+/** 参与行分页查询结果 */
+export interface PartyQueryResult extends Pagination {
+  /** 当前页参与行列表 */
+  list: PartyRecord[];
 }
 
 /** 参与行列表记录 */
@@ -110,17 +124,19 @@ export interface PartyRecord {
   /** 境内外标识：DOMESTIC_FLAG */
   domesticFlag: PartyDomesticFlagEnum;
 
-  /** 生效状态：PARTY_STS */
-  partySts: YesNo | null;
   /** 变更生效日期：EFFECTIVE_DATE */
   effectiveDate: string;
 
   /** 办理业务状态 */
-  status: PartyBusinessStatusEnum | null;
+  status: PartyBusinessStatusEnum;
   /** 登录状态 */
-  loginSts: PartyLoginStatusEnum | null;
+  loginSts: PartyLoginStatusEnum;
   /** 记录创建时间：CREATE_TIME */
-  createTime: string | null;
+  createTime: string;
   /** 记录更新时间：UPDATE_TIME */
-  updateTime: string | null;
+  updateTime: string;
+  /** 创建人：CREATE_USER */
+  createUser: string;
+  /** 创建人部门号：CREATE_BRNO */
+  createBrno: string;
 }

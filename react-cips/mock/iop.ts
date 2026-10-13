@@ -134,7 +134,7 @@ const handleDistributeTaskCreate = ({ body }: MockBodyOption<IopDistributeCreati
     ? { returnCode: ResCode.Success, body: { msgId: body.msgId } }
     : { returnCode: 'ERR0400', errorMsg: 'Message ID, user ID and organization ID are required.' };
 
-/** 查询创建分发任务经办阶段提交的表单信息。 */
+/** 查询分发任务的目标系统及报文归属信息 */
 const handleDistributeTaskFormQuery = ({
   body: requestBody,
 }: MockBodyOption<Pick<IopDistributeCreationCreateRequest, 'msgId'>>) => {
@@ -288,6 +288,11 @@ export default [
     url: '/pssst/clear/distributeTask/handling',
     method: 'post',
     response: handleTaskAction,
+  },
+  {
+    url: '/pssst/manager/attributeInfo/query',
+    method: 'post',
+    response: handleDistributeTaskFormQuery,
   },
   {
     url: '/pssst/manager/manualCrtDisTask/create',

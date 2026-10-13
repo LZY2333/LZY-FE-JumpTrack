@@ -141,7 +141,6 @@ export const msgDate = {
   title: 'Message Date',
   dataIndex: 'msgDate',
   width: 150,
-  sorter: true,
   render: renderMessageDate,
 };
 
@@ -182,7 +181,6 @@ export const createTime: TableColumnType<MessageRecord> = {
   title: 'Created Time',
   dataIndex: 'createTime',
   width: 180,
-  sorter: true,
   render: renderMessageDateTime,
 };
 
@@ -191,7 +189,6 @@ export const updateTime: TableColumnType<MessageRecord> = {
   title: 'Updated Time',
   dataIndex: 'updateTime',
   width: 180,
-  sorter: true,
   render: renderMessageDateTime,
 };
 

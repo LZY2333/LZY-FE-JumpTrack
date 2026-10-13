@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, App as AntdApp, Button, Divider, Result, Typography } from 'antd';
+import { Alert, App as AntdApp, Button, Result, Typography } from 'antd';
 import { CheckOutlined, CloseOutlined, ReloadOutlined, StopOutlined } from '@ant-design/icons';
 import { useOutletContext } from 'react-router-dom';
 import { postEOCheckIn } from '@/api/iop';
@@ -146,10 +146,6 @@ const IopExceptionOut = () => {
           description='This task has been approved.'
         />
       )}
-      <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message: {task.busRefNo || '--'}
-      </Divider>
-
       <PanelMessageDetail msgId={task.busRefNo} />
     </IopPageShell>
   );

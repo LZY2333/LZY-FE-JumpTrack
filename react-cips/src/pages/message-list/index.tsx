@@ -53,6 +53,8 @@ import {
   remark,
 } from '@/components/TableColumn/message';
 
+// 最长筛选标签为 Related Message ID，同时容纳 Business Type 的必填标记和提示图标
+const FILTER_LABEL_WIDTH = '120px';
 // 页面边距 48 + Card 26 + 表单 120 + 表单下间距 16 + 表头 42 + 分页间距 16 + 分页器 24。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 292px)';
 // 当前布局展开后多三行，每行 32px。
@@ -141,8 +143,7 @@ const MessageList = () => {
         size='small'
         layout='horizontal'
         labelAlign='left'
-        labelCol={{ span: 9 }}
-        wrapperCol={{ span: 15 }}
+        labelCol={{ flex: FILTER_LABEL_WIDTH }}
         className='mb-4'
         initialValues={initialFilters}
         onFinish={query}

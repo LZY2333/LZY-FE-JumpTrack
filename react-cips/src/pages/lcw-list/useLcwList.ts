@@ -6,7 +6,7 @@ import { buildLcwQueryConditions, type LcwListFilterValues } from './lcwListUtil
 
 const PAGE_SIZE_STORAGE_KEY = 'lcw-list-page-size';
 export const LCW_PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
-const DEFAULT_PAGE_SIZE = LCW_PAGE_SIZE_OPTIONS[0];
+const DEFAULT_PAGE_SIZE = 20;
 
 /** 编排 LCW 异常列表查询、分页和批量重试。 */
 const useLcwList = (initialFilters: LcwListFilterValues) => {

@@ -11,7 +11,7 @@ export enum RoutePath {
 
   IopRoot = '/iop',
   IopManualEntry = '/iop/manual-entry',
-  IopManualAttribute = '/iop/manual-attribute',
+  IopDistributionManual = '/iop/distribution-manual',
   IopDistributeCreation = '/iop/distribute-creation',
   IopDistributeException = '/iop/distribute-exception',
   IopInquiryReply = '/iop/inquiry-reply',

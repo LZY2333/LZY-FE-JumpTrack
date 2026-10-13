@@ -1,5 +1,11 @@
 import type { TableColumnType } from 'antd';
 import type { PartyRecord } from '@/api/party';
+import {
+  PartyBankCategoryEnum,
+  PartyBusinessStatusEnum,
+  PartyDomesticFlagEnum,
+  PartyLoginStatusEnum,
+} from '@/types/enums';
 import { renderMessageDate, renderMessageDateTime, renderMessageText } from './messageColumnUtil';
 
 /** CIPS 参与机构行号：PARTY_ID */
@@ -47,28 +53,20 @@ export const bankCategory: TableColumnType<PartyRecord> = {
   title: 'Bank Category',
   dataIndex: 'bankCategory',
   width: 150,
-  render: renderMessageText,
+  render: (value: PartyRecord['bankCategory']) => renderPartyEnumKey(PartyBankCategoryEnum, value),
 };
 
-/** 境内外标识：DOMESTICFLAG */
+/** 境内外标识：DOMESTIC_FLAG */
 export const domesticFlag: TableColumnType<PartyRecord> = {
   title: 'Domestic Flag',
   dataIndex: 'domesticFlag',
   width: 150,
-  render: renderMessageText,
-};
-
-/** 生效状态：PARTY_STS */
-export const partySts: TableColumnType<PartyRecord> = {
-  title: 'Effective Status',
-  dataIndex: 'partySts',
-  width: 150,
-  render: renderMessageText,
+  render: (value: PartyRecord['domesticFlag']) => renderPartyEnumKey(PartyDomesticFlagEnum, value),
 };
 
 /** 所属直参行：DIRECT_PARTY_ID */
 export const directPartyId: TableColumnType<PartyRecord> = {
-  title: 'Direct Party ID',
+  title: 'Direct Bank BIC',
   dataIndex: 'directPartyId',
   width: 180,
   render: renderMessageText,
@@ -76,7 +74,7 @@ export const directPartyId: TableColumnType<PartyRecord> = {
 
 /** 资金托管行：CUSTODIAN */
 export const custodian: TableColumnType<PartyRecord> = {
-  title: 'Custodian',
+  title: 'custodian',
   dataIndex: 'custodian',
   width: 180,
   render: renderMessageText,
@@ -92,10 +90,10 @@ export const effectiveDate: TableColumnType<PartyRecord> = {
 
 /** 办理业务状态 */
 export const status: TableColumnType<PartyRecord> = {
-  title: 'Business Status',
+  title: 'Status',
   dataIndex: 'status',
   width: 150,
-  render: renderMessageText,
+  render: (value: PartyRecord['status']) => renderPartyEnumKey(PartyBusinessStatusEnum, value),
 };
 
 /** 登录状态 */
@@ -103,7 +101,7 @@ export const loginSts: TableColumnType<PartyRecord> = {
   title: 'Login Status',
   dataIndex: 'loginSts',
   width: 150,
-  render: renderMessageText,
+  render: (value: PartyRecord['loginSts']) => renderPartyEnumKey(PartyLoginStatusEnum, value),
 };
 
 /** 记录创建时间：CREATE_TIME */
@@ -120,4 +118,28 @@ export const partyUpdateTime: TableColumnType<PartyRecord> = {
   dataIndex: 'updateTime',
   width: 180,
   render: renderMessageDateTime,
+};
+
+/** 创建人：CREATE_USER */
+export const partyCreateUser: TableColumnType<PartyRecord> = {
+  title: 'Created By',
+  dataIndex: 'createUser',
+  width: 150,
+  render: renderMessageText,
+};
+
+/** 创建人部门号：CREATE_BRNO */
+export const partyCreateBrno: TableColumnType<PartyRecord> = {
+  title: 'Creator Department',
+  dataIndex: 'createBrno',
+  width: 180,
+  render: renderMessageText,
+};
+
+/** 参与行枚举字段展示枚举 key，未知值保留原文 */
+const renderPartyEnumKey = (enumValues: Record<string, string>, value: string | null | undefined) => {
+  if (!value) return renderMessageText(value);
+
+  const enumKey = Object.entries(enumValues).find(([, enumValue]) => enumValue === value)?.[0];
+  return renderMessageText(enumKey ?? value);
 };

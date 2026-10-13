@@ -1,11 +1,17 @@
-import type { PartyDeleteRequest, PartyQueryConditions, PartyRecord, PartySaveRequest } from '@/api/party';
+import type {
+  PartyDeleteRequest,
+  PartyQuery,
+  PartyQueryConditions,
+  PartyQueryResult,
+  PartyRecord,
+  PartySaveRequest,
+} from '@/api/party';
 import {
   PartyBankCategoryEnum,
   PartyDomesticFlagEnum,
   PartyBusinessStatusEnum,
   PartyLoginStatusEnum,
   ResCode,
-  YesNo,
 } from '@/types/enums';
 
 interface MockRequestOption<Body> {
@@ -24,12 +30,13 @@ const parties: PartyRecord[] = [
     directPartyId: null,
     bankCategory: PartyBankCategoryEnum.Direct,
     domesticFlag: PartyDomesticFlagEnum.Domestic,
-    partySts: YesNo.Yes,
     effectiveDate: '2026-01-01',
     status: PartyBusinessStatusEnum.Enabled,
     loginSts: PartyLoginStatusEnum.LoggedIn,
     createTime: '2025-12-01T09:00:00',
     updateTime: '2026-01-01T09:00:00',
+    createUser: 'U001',
+    createBrno: 'ORG001',
   },
   {
     partyId: 'CIPS000002',
@@ -41,12 +48,13 @@ const parties: PartyRecord[] = [
     directPartyId: null,
     bankCategory: PartyBankCategoryEnum.Direct,
     domesticFlag: PartyDomesticFlagEnum.Domestic,
-    partySts: YesNo.Yes,
     effectiveDate: '2026-01-01',
     status: PartyBusinessStatusEnum.Enabled,
     loginSts: PartyLoginStatusEnum.LoggedOut,
     createTime: '2025-12-02T09:00:00',
     updateTime: '2026-01-01T09:00:00',
+    createUser: 'U002',
+    createBrno: 'ORG001',
   },
   {
     partyId: 'CIPS000003',
@@ -58,12 +66,13 @@ const parties: PartyRecord[] = [
     directPartyId: 'CIPS000001',
     bankCategory: PartyBankCategoryEnum.Indirect,
     domesticFlag: PartyDomesticFlagEnum.Domestic,
-    partySts: YesNo.Yes,
     effectiveDate: '2026-02-01',
     status: PartyBusinessStatusEnum.Disabled,
     loginSts: PartyLoginStatusEnum.LoggedOut,
     createTime: '2026-01-15T09:00:00',
     updateTime: '2026-02-01T09:00:00',
+    createUser: 'U003',
+    createBrno: 'ORG001',
   },
   {
     partyId: 'CIPS000004',
@@ -75,12 +84,13 @@ const parties: PartyRecord[] = [
     directPartyId: 'CIPS000002',
     bankCategory: PartyBankCategoryEnum.Indirect,
     domesticFlag: PartyDomesticFlagEnum.Overseas,
-    partySts: YesNo.Yes,
     effectiveDate: '2026-03-01',
     status: PartyBusinessStatusEnum.Enabled,
     loginSts: PartyLoginStatusEnum.LoggedIn,
     createTime: '2026-02-01T09:00:00',
     updateTime: '2026-03-01T09:00:00',
+    createUser: 'U001',
+    createBrno: 'ORG001',
   },
   {
     partyId: 'CIPS000005',
@@ -92,20 +102,27 @@ const parties: PartyRecord[] = [
     directPartyId: 'CIPS000001',
     bankCategory: PartyBankCategoryEnum.Indirect,
     domesticFlag: PartyDomesticFlagEnum.Overseas,
-    partySts: YesNo.No,
     effectiveDate: '2026-06-01',
     status: PartyBusinessStatusEnum.Disabled,
     loginSts: PartyLoginStatusEnum.LoggedOut,
     createTime: '2026-05-01T09:00:00',
     updateTime: '2026-06-01T09:00:00',
+    createUser: 'U002',
+    createBrno: 'ORG001',
   },
 ];
 
-/** 按全部页面筛选条件返回参与行数组 */
-const handlePartyList = ({ body }: MockRequestOption<PartyQueryConditions>) => {
-  const conditions = body ?? {};
-  const filtered = parties.filter((party) => matchesParty(party, conditions)).map((party) => ({ ...party }));
-  return { returnCode: ResCode.Success, body: filtered };
+/** 按页面筛选条件返回参与行分页结果 */
+const handlePartyList = ({ body }: MockRequestOption<PartyQuery>) => {
+  const { current = 1, pageSize = 20, ...conditions } = body ?? {};
+  const filtered = parties.filter((party) => matchesParty(party, conditions));
+  const result: PartyQueryResult = {
+    list: filtered.slice((current - 1) * pageSize, current * pageSize).map((party) => ({ ...party })),
+    current,
+    pageSize,
+    total: filtered.length,
+  };
+  return { returnCode: ResCode.Success, body: result };
 };
 
 /** 新增或修改参与行 */
@@ -113,15 +130,15 @@ const handlePartySave = ({ body: request }: MockRequestOption<PartySaveRequest>)
   if (!isPartySaveRequestValid(request)) {
     return {
       returnCode: 'ERR0400',
-      errorMsg: 'Party ID, effective date, category and domestic flag are required.',
+      errorMsg: 'Party ID, effective date, category, domestic flag, valid business status and login status are required.',
     };
   }
 
   const partyId = request.partyId.trim();
   const existingIndex = parties.findIndex((party) => matchesPartyPrimaryKey(party, { ...request, partyId }));
   const now = new Date().toISOString();
-  const createTime = existingIndex >= 0 ? parties[existingIndex].createTime : now;
-  const saved = buildPartyRecord({ ...request, partyId }, createTime, now);
+  const existingRecord = existingIndex >= 0 ? parties[existingIndex] : undefined;
+  const saved = buildPartyRecord({ ...request, partyId }, existingRecord, now);
   if (existingIndex >= 0) {
     parties[existingIndex] = saved;
   } else {
@@ -152,28 +169,40 @@ export default [
 /** 参与行保存必填字段校验 */
 const isPartySaveRequestValid = (request?: PartySaveRequest): request is PartySaveRequest => {
   if (!request) return false;
-  return [request.partyId?.trim(), request.effectiveDate, request.bankCategory, request.domesticFlag].every(Boolean);
+
+  const requiredValues = [request.partyId?.trim(), request.effectiveDate, request.bankCategory, request.domesticFlag];
+  if (!requiredValues.every(Boolean)) return false;
+
+  return (
+    Object.values(PartyBusinessStatusEnum).includes(request.status) &&
+    Object.values(PartyLoginStatusEnum).includes(request.loginSts)
+  );
 };
 
-/** 参与行保存记录由服务端维护创建时间和更新时间 */
+/** 参与行保存时保留原创建信息，新增记录使用请求中的创建人和部门号 */
 const buildPartyRecord = (
   request: PartySaveRequest,
-  createTime: PartyRecord['createTime'],
+  existingRecord: PartyRecord | undefined,
   updateTime: string,
-): PartyRecord => ({
-  ...request,
-  bankBic: request.bankBic ?? null,
-  bankLei: request.bankLei ?? null,
-  endName: request.endName ?? null,
-  chsName: request.chsName ?? null,
-  custodian: request.custodian ?? null,
-  directPartyId: request.directPartyId ?? null,
-  partySts: request.partySts ?? null,
-  status: request.status ?? null,
-  loginSts: request.loginSts ?? null,
-  createTime,
-  updateTime,
-});
+): PartyRecord => {
+  const { createUser = 'U001', createBrno = 'ORG001' } = existingRecord ?? request;
+
+  return {
+    ...request,
+    bankBic: request.bankBic ?? null,
+    bankLei: request.bankLei ?? null,
+    endName: request.endName ?? null,
+    chsName: request.chsName ?? null,
+    custodian: request.custodian ?? null,
+    directPartyId: request.directPartyId ?? null,
+    status: request.status,
+    loginSts: request.loginSts,
+    createTime: existingRecord?.createTime ?? updateTime,
+    updateTime,
+    createUser,
+    createBrno,
+  };
+};
 
 /** 参与行联合主键匹配 */
 const matchesPartyPrimaryKey = (party: PartyRecord, primaryKey: PartyDeleteRequest) =>
@@ -195,7 +224,6 @@ const matchesParty = (party: PartyRecord, conditions: PartyQueryConditions) => {
   const enumFields = [
     [party.bankCategory, conditions.bankCategory],
     [party.domesticFlag, conditions.domesticFlag],
-    [party.partySts, conditions.partySts],
     [party.status, conditions.status],
     [party.loginSts, conditions.loginSts],
   ];

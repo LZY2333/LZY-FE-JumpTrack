@@ -98,18 +98,18 @@ export interface IopManualEntryRollbackRequest {
   msgId: string;
 }
 
-/* ==================== 3. 手工归属 ==================== */
+/* ==================== 3. 手工分发 ==================== */
 
-/** 手工归属 接口基础 URL */
-export const API_BASE_IOP_MANUAL_ATTRIBUTE = '/pssst/clear/attributeTask';
+/** 手工分发 接口基础 URL */
+export const API_BASE_IOP_DISTRIBUTION_MANUAL = '/pssst/clear/attributeTask';
 
-/** 手工归属 经办 */
-export const API_IOP_MANUAL_ATTRIBUTE_HANDLING = `${API_BASE_IOP_MANUAL_ATTRIBUTE}/handling`;
-export const postMAHandling = (params: IopManualAttributeHandlingRequest) =>
-  post<undefined>(API_IOP_MANUAL_ATTRIBUTE_HANDLING, params);
+/** 手工分发 经办 */
+export const API_IOP_DISTRIBUTION_MANUAL_HANDLING = `${API_BASE_IOP_DISTRIBUTION_MANUAL}/handling`;
+export const postDMHandling = (params: IopDistributionManualHandlingRequest) =>
+  post<undefined>(API_IOP_DISTRIBUTION_MANUAL_HANDLING, params);
 
-/** 手工归属经办请求。 */
-export interface IopManualAttributeHandlingRequest extends IopTaskActionRequest {
+/** 手工分发经办请求 */
+export interface IopDistributionManualHandlingRequest extends IopTaskActionRequest {
   /** 目标系统编号。 */
   targetSysId?: string;
   /** 报文归属部门。 */
@@ -183,6 +183,11 @@ export const API_BASE_IOP_DISTRIBUTE_EXCEPTION = '/pssst/clear/distributeTask';
 export const API_IOP_DISTRIBUTE_EXCEPTION_HANDLING = `${API_BASE_IOP_DISTRIBUTE_EXCEPTION}/handling`;
 export const postDERetry = (params: IopDistributeExceptionHandlingRequest) =>
   post<undefined>(API_IOP_DISTRIBUTE_EXCEPTION_HANDLING, params);
+
+/** 分发异常 表单信息 */
+export const API_IOP_DISTRIBUTE_EXCEPTION_FORM = '/pssst/manager/attributeInfo/query';
+export const getDEForm = (msgId: string) =>
+  post<IopDistributeCreationFormResponse>(API_IOP_DISTRIBUTE_EXCEPTION_FORM, { msgId });
 
 /** 分发异常经办请求。 */
 export interface IopDistributeExceptionHandlingRequest extends IopTaskActionRequest {

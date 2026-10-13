@@ -15,7 +15,7 @@ interface MockStatusDetail {
 
 const MOCK_RECORD_COUNT = 28;
 const DEFAULT_CURRENT = 1;
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 20;
 const MOCK_EXCEPTION_STATUSES = [
   LcwInitialStatus.Timeout,
   LcwInitialStatus.Unavailable,

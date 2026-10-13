@@ -536,7 +536,7 @@ export default [
     url: '/pssst/manager/message/query',
     method: 'post',
     response: (option: { body: MockMessageQuery }) => {
-      const { current = 1, pageSize = 10, ...conditions } = option.body || {};
+      const { current = 1, pageSize = 20, ...conditions } = option.body || {};
       // 必须先确定收报或发报数据来源，Mock 不执行跨方向查询。
       if (!conditions.msgDirection || !Object.values(MessageDirection).includes(conditions.msgDirection)) {
         return { returnCode: 'ERR0400', errorMsg: 'Please select Direction.' };

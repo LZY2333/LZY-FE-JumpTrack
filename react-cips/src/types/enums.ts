@@ -52,7 +52,7 @@ export enum MsgRecvStatus {
   Parsing = 'P01',
   ParseFailed = 'P02',
   Attributing = 'B01',
-  ManualAttribution = 'B02',
+  DistributionManual = 'B02',
   LcwScanning = 'L01',
   Distributing = 'D01',
   DistributionCompleted = 'D02',
@@ -64,7 +64,7 @@ export const MSG_RECV_STATUS_LABELS: Record<MsgRecvStatus, string> = {
   [MsgRecvStatus.Parsing]: 'P01 - Parsing',
   [MsgRecvStatus.ParseFailed]: 'P02 - Parse Failed',
   [MsgRecvStatus.Attributing]: 'B01 - Attribution',
-  [MsgRecvStatus.ManualAttribution]: 'B02 - Manual Attribution',
+  [MsgRecvStatus.DistributionManual]: 'B02 - Distribution Manual',
   [MsgRecvStatus.LcwScanning]: 'L01 - LCW Scanning',
   [MsgRecvStatus.Distributing]: 'D01 - Distributing',
   [MsgRecvStatus.DistributionCompleted]: 'D02 - Distribution Completed',
@@ -173,8 +173,8 @@ export enum IopInquiryReplyMsgType {
 export enum IopTaskType {
   /** 手工补录：系统自动创建任务，Maker 修改报文原文，Checker 审批。 */
   manualEntry = 'ST10',
-  /** 手工归属：清分未命中时自动创建任务，Maker 修改归属后完成。 */
-  manualAttribute = 'ST11',
+  /** 手工分发：清分未命中时自动创建任务，Maker 修改归属后完成 */
+  distributionManual = 'ST11',
   /** 创建分发任务：从报文明细页创建并填写归属信息，IOP 页面完成经办和审批。 */
   distributeCreation = 'ST12',
   /** 分发异常：下游接口报错时自动创建任务，Maker 重新分发后完成。 */
@@ -188,7 +188,7 @@ export enum IopTaskType {
 /** IOP 任务类型展示名：TASK_FLOW_NO */
 export const IOP_TASK_TYPE_LABELS: Record<IopTaskType, string> = {
   [IopTaskType.manualEntry]: 'PSSST Manual Entry',
-  [IopTaskType.manualAttribute]: 'PSSST Manual Attribute',
+  [IopTaskType.distributionManual]: 'PSSST Distribution Manual',
   [IopTaskType.distributeCreation]: 'PSSST Distribute Creation',
   [IopTaskType.distributeException]: 'PSSST Distribute Exception',
   [IopTaskType.inquiryReply]: 'PSSST Inquiry Reply',

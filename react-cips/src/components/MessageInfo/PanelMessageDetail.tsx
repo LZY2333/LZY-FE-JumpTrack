@@ -13,10 +13,12 @@ interface PanelMessageDetailProps {
   temp?: boolean;
   /** 高亮字段 */
   highLightFields?: readonly string[];
+  /** 是否展示报文原文 */
+  showRaw?: boolean;
 }
 
 /** 报文信息面板，切换展示基础与业务信息及报文原文 */
-const PanelMessageDetail = ({ msgId, temp = false, highLightFields }: PanelMessageDetailProps) => {
+const PanelMessageDetail = ({ msgId, temp = false, highLightFields, showRaw = true }: PanelMessageDetailProps) => {
   const messageRawRef = useRef<ContentMessageRawRef>(null);
   const { detail, detailError } = useMessageDetail({ msgId, temp });
   const msgDirection = detail?.msgBasicInfo.msgDirection;
@@ -32,15 +34,16 @@ const PanelMessageDetail = ({ msgId, temp = false, highLightFields }: PanelMessa
         </div>
       ),
     },
-    {
-      key: 'raw',
-      label: '报文明细',
-      children: (
-        <div className='flex h-96 min-h-0 flex-col overflow-hidden'>
-          <ContentMessageRaw ref={messageRawRef} msgId={msgId} msgDirection={msgDirection} />
-        </div>
-      ),
-    },
+    ...(showRaw
+      ? [
+          {
+            key: 'raw',
+            label: '报文明细',
+            forceRender: true,
+            children: <ContentMessageRaw ref={messageRawRef} msgId={msgId} msgDirection={msgDirection} />,
+          },
+        ]
+      : []),
   ];
 
   return (

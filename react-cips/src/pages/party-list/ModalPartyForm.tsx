@@ -3,6 +3,7 @@ import { Form } from 'antd';
 import type { App, FormInstance } from 'antd';
 import { deleteParty, saveParty } from '@/api/party';
 import type { PartyRecord, PartySaveRequest } from '@/api/party';
+import useUserStore from '@/store/useUserStore';
 import {
   BankBic,
   BankCategory,
@@ -15,13 +16,11 @@ import {
   EndName,
   LoginSts,
   PartyId,
-  PartySts,
   Status,
 } from '@/components/FormItem/party';
-import { buildPartyFormInitialValues, buildPartySaveRequest } from './partyListUtil';
 
 /** 参与行弹窗使用的 Ant Design 上下文能力 */
-type ModalPartyApi = Pick<ReturnType<typeof App.useApp>['modal'], 'confirm'>;
+type ModalPartyApi = Pick<ReturnType<typeof App.useApp>['modal'], 'confirm' | 'warning'>;
 
 /** 打开新增或修改参与行弹窗，保存成功后返回 true */
 export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyRecord | null): Promise<boolean> => {
@@ -38,22 +37,20 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
         layout='horizontal'
         labelAlign='left'
         labelCol={{ flex: '120px' }}
-        wrapperCol={{ flex: 1 }}
-        initialValues={record ? buildPartyFormInitialValues(record) : undefined}
+        initialValues={record ?? undefined}
       >
         <PartyId disabled={Boolean(record)} />
         <EffectiveDate disabled={Boolean(record)} />
+        <BankBic />
+        <EndName />
         <BankCategory />
         <DomesticFlag />
-        <BankBic />
-        <BankLei />
-        <EndName />
-        <ChsName />
-        <Custodian />
-        <DirectPartyId />
         <Status />
         <LoginSts />
-        <PartySts />
+        <ChsName />
+        <BankLei />
+        <DirectPartyId />
+        <Custodian />
       </Form>
     ),
     okText: record ? 'Save' : 'Add',
@@ -61,7 +58,18 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
       const fields = await formRef.current?.validateFields();
       if (!fields) return Promise.reject();
 
-      await saveParty(buildPartySaveRequest(fields));
+      if (record) {
+        await saveParty(fields);
+        return;
+      }
+
+      const user = useUserStore.getState().user;
+      if (!user) {
+        modal.warning({ title: 'Authentication Required', content: 'Please log in before adding a party.' });
+        return Promise.reject();
+      }
+
+      await saveParty({ ...fields, createUser: user.userId, createBrno: user.orgId });
     },
   });
 };

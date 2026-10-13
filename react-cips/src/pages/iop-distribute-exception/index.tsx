@@ -1,9 +1,11 @@
-import { Alert, App as AntdApp, Button, Divider, Form, Input, Result, Space } from 'antd';
+import { useEffect } from 'react';
+import { Alert, App as AntdApp, Button, Form, Result } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import { useOutletContext } from 'react-router-dom';
-import { postDERetry } from '@/api/iop';
+import { getDEForm, postDERetry } from '@/api/iop';
 import type { IopDistributeExceptionHandlingRequest } from '@/api/iop';
 import IopPageShell from '@/components/IopPageCommon';
+import { IopMsgOwner, IopTargetSysId } from '@/components/IopPageCommon/formItem';
 import PanelMessageDetail from '@/components/MessageInfo/PanelMessageDetail';
 import type { IopTaskData } from '@/router/iop-routes/useIopGuard';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
@@ -25,8 +27,31 @@ const IopDistributeException = () => {
   const [distributionExceptionForm] = Form.useForm<DistributionExceptionFields>();
   const isMakerNode = MAKER_TASK_NODES.has(task.taskNode);
 
+  /** 初始化并回填当前分发异常任务的目标系统及报文归属信息 */
+  useEffect(() => {
+    distributionExceptionForm.resetFields();
+    if (!SUPPORTED_TASK_NODES.has(task.taskNode)) return;
+
+    let active = true;
+    const stopGlobalLoading = startGlobalLoading();
+    getDEForm(task.busRefNo)
+      .then((fields) => {
+        if (!active) return;
+        distributionExceptionForm.setFieldsValue(fields ?? {});
+      })
+      .catch(() => undefined)
+      .finally(stopGlobalLoading);
+
+    return () => {
+      active = false;
+      stopGlobalLoading();
+    };
+  }, [distributionExceptionForm, task.busRefNo, task.iopWfTaskId, task.taskNode]);
+
   // 【Retry Distribute】
   const handleRetryDistribute = async (fields: DistributionExceptionFields) => {
+    if (!isMakerNode) return;
+
     const stopGlobalLoading = startGlobalLoading();
     try {
       await postDERetry({
@@ -43,7 +68,6 @@ const IopDistributeException = () => {
         msgOwnerDept: fields.msgOwnerDept?.trim() || undefined,
         msgOwnerGroup: fields.msgOwnerGroup?.trim() || undefined,
       });
-      distributionExceptionForm.resetFields();
       message.success('Distribution retry submitted');
     } finally {
       stopGlobalLoading();
@@ -65,34 +89,29 @@ const IopDistributeException = () => {
   return (
     <IopPageShell title='Distribution Exception' taskNode={task.taskNode}>
       {isMakerNode && (
-        <Form
-          form={distributionExceptionForm}
+        <Button
           size='small'
-          layout='inline'
-          className='mb-3 shrink-0'
-          initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
-          onFinish={handleRetryDistribute}
+          className='mb-3'
+          type='primary'
+          icon={<RedoOutlined />}
+          onClick={() => distributionExceptionForm.submit()}
         >
-          <Form.Item name='targetSysId' label='Target System ID' className='mb-0'>
-            <Input className='w-40' maxLength={10} placeholder='Enter target system ID' />
-          </Form.Item>
-          <Form.Item label='Owner By' className='mb-0'>
-            <Space.Compact block>
-              <Form.Item name='msgOwnerDept' noStyle>
-                <Input className='min-w-0 flex-1' allowClear maxLength={10} placeholder='Department' />
-              </Form.Item>
-              <Form.Item name='msgOwnerGroup' noStyle>
-                <Input className='min-w-0 flex-1' allowClear maxLength={10} placeholder='Group' />
-              </Form.Item>
-            </Space.Compact>
-          </Form.Item>
-          <Form.Item className='mb-0'>
-            <Button size='small' type='primary' htmlType='submit' icon={<RedoOutlined />}>
-              Retry Distribute
-            </Button>
-          </Form.Item>
-        </Form>
+          Retry Distribute
+        </Button>
       )}
+
+      <Form
+        form={distributionExceptionForm}
+        size='small'
+        layout='inline'
+        className='mb-3 shrink-0'
+        disabled={!isMakerNode}
+        initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
+        onFinish={handleRetryDistribute}
+      >
+        <IopTargetSysId />
+        <IopMsgOwner />
+      </Form>
 
       {task.taskNode === IopTaskNode.Approved && (
         <Alert
@@ -103,10 +122,6 @@ const IopDistributeException = () => {
           description='This task has been approved.'
         />
       )}
-
-      <Divider className='mb-3 mt-0 shrink-0' orientation='left'>
-        Current Message: {task.busRefNo || '--'}
-      </Divider>
 
       <PanelMessageDetail msgId={task.busRefNo} />
     </IopPageShell>

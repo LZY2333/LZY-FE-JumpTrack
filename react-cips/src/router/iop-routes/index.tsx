@@ -4,7 +4,7 @@ import { RoutePath } from '../routePath';
 import type { AppRoute } from '../routePath';
 
 const IopManualEntry = lazy(() => import('@/pages/iop-manual-entry'));
-const IopManualAttribute = lazy(() => import('@/pages/iop-manual-attribute'));
+const IopDistributionManual = lazy(() => import('@/pages/iop-distribution-manual'));
 const IopDistributeCreation = lazy(() => import('@/pages/iop-distribute-creation'));
 const IopDistributeException = lazy(() => import('@/pages/iop-distribute-exception'));
 const IopInquiryReply = lazy(() => import('@/pages/iop-inquiry-reply'));
@@ -22,15 +22,15 @@ export const routesIop: AppRoute[] = [
     ),
     meta: { title: 'Manual Entry' },
   },
-  /** 手工归属页。 */
+  /** 手工分发页 */
   {
-    path: RoutePath.IopManualAttribute,
+    path: RoutePath.IopDistributionManual,
     element: (
       <Suspense fallback={null}>
-        <IopManualAttribute />
+        <IopDistributionManual />
       </Suspense>
     ),
-    meta: { title: 'Manual Attribution' },
+    meta: { title: 'Distribution Manual' },
   },
   /** 创建分发任务页。 */
   {
@@ -77,7 +77,7 @@ export const routesIop: AppRoute[] = [
 /** TASK_FLOW_NO 与 IOP 业务页路径的唯一映射。 */
 export const IOP_TASK_ROUTE_PATHS: Readonly<Record<IopTaskType, RoutePath> & Partial<Record<string, RoutePath>>> = {
   [IopTaskType.manualEntry]: RoutePath.IopManualEntry,
-  [IopTaskType.manualAttribute]: RoutePath.IopManualAttribute,
+  [IopTaskType.distributionManual]: RoutePath.IopDistributionManual,
   [IopTaskType.distributeCreation]: RoutePath.IopDistributeCreation,
   [IopTaskType.distributeException]: RoutePath.IopDistributeException,
   [IopTaskType.inquiryReply]: RoutePath.IopInquiryReply,

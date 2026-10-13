@@ -232,7 +232,7 @@ const MessageBusinessTable = ({
       columns={tableColumns}
       dataSource={value}
       pagination={false}
-      scroll={{ x: 'max-content' }}
+      scroll={{ x: 'max-content', y: 240 }}
     />
   );
 

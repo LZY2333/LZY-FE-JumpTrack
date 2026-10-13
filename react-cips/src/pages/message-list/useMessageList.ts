@@ -8,7 +8,7 @@ import { buildQueryConditions, type MessageListFilterValues } from './messageLis
 
 const PAGE_SIZE_STORAGE_KEY = 'message-list-page-size';
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
-const DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[0];
+const DEFAULT_PAGE_SIZE = 20;
 
 /** 报文列表查询状态：保留现有分页、筛选和远程排序交互。 */
 const useMessageList = (initialFilters: MessageListFilterValues) => {

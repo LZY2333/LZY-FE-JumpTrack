@@ -24,6 +24,7 @@ import useLcwList, { LCW_PAGE_SIZE_OPTIONS } from './useLcwList';
 import { buildDefaultLcwFilters, type LcwListFilterValues } from './lcwListUtil';
 import { openModalLcwRetry } from './ModalLcwRetry';
 
+const FILTER_LABEL_WIDTH = '120px';
 // 页面边距 48 + Card 内边距与边框 26 + Card 标题 38 + 表单 88（两行筛选 56 + 按钮上间距 8 + 按钮 24）
 // + 表单下间距 16 + 表头 42 + 分页间距 16 + 分页器 24 = 298px。
 const DEFAULT_TABLE_BODY_HEIGHT = 'calc(100vh - 298px)';
@@ -98,8 +99,7 @@ const LcwList = () => {
         size='small'
         layout='horizontal'
         labelAlign='left'
-        labelCol={{ span: 9 }}
-        wrapperCol={{ span: 15 }}
+        labelCol={{ flex: FILTER_LABEL_WIDTH }}
         className='mb-4'
         initialValues={DEFAULT_FILTER_VALUES}
         onFinish={handleSearch}
