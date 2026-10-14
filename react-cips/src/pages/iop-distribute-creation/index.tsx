@@ -5,7 +5,8 @@ import { useOutletContext } from 'react-router-dom';
 import { getDCForm, postDCHandling } from '@/api/iop';
 import type { IopDistributeCreationHandlingRequest } from '@/api/iop';
 import IopPageShell from '@/components/IopPageCommon';
-import { IopMsgOwner, IopTargetSysId } from '@/components/IopPageCommon/formItem';
+import { IopTargetSysId } from '@/components/IopPageCommon/formItem';
+import { MessageOwnerBy } from '@/components/FormItem/message';
 import PanelMessageDetail from '@/components/MessageInfo/PanelMessageDetail';
 import type { IopTaskData } from '@/router/iop-routes/useIopGuard';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
@@ -158,13 +159,14 @@ const IopDistributeCreation = () => {
         form={distributionCreationForm}
         size='small'
         layout='inline'
+        wrapperCol={{ flex: '1 1 0', className: 'min-w-0' }}
         className='mb-3'
         disabled={!isMakerNode}
         initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
         onFinish={handleDistributionCreation}
       >
-        <IopTargetSysId />
-        <IopMsgOwner />
+        <IopTargetSysId className='w-80' />
+        <MessageOwnerBy className='w-96' />
       </Form>
       <PanelMessageDetail msgId={task.busRefNo} />
     </IopPageShell>

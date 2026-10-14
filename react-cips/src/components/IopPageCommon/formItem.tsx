@@ -1,8 +1,9 @@
 import type { ComponentProps } from 'react';
-import { Form, Input, Select, Space } from 'antd';
+import { Form, Input, Select } from 'antd';
 import type { FormItemProps } from 'antd';
-import { IopInquiryReplyMsgType, MessageDirection } from '@/types/enums';
+import { DictionaryOptionsEnum, IopInquiryReplyMsgType, MessageDirection } from '@/types/enums';
 import type { MessageRecord } from '@/types/message';
+import { useDictionaryOptions } from '@/store/useDictionaryStore';
 
 /** IOP 表单字段公共属性，字段名称和业务规则由组件维护。 */
 type IopFormItemProps = Omit<FormItemProps, 'children' | 'label' | 'name'>;
@@ -30,14 +31,14 @@ const inquiryReplyMsgTypeOptions = [
 /** 目标系统编号 */
 export const IopTargetSysId = (props: IopFormItemProps) => {
   const form = Form.useFormInstance();
+  const { options } = useDictionaryOptions(DictionaryOptionsEnum.SystemId);
 
   return (
     <Form.Item
       {...props}
-      className={props.className ?? 'mb-0'}
       name='targetSysId'
       label='Target System ID'
-      normalize={trimWhitespace}
+      getValueProps={(value?: string) => ({ value: value || undefined })}
       dependencies={['msgOwnerDept', 'msgOwnerGroup']}
       rules={[
         {
@@ -51,26 +52,10 @@ export const IopTargetSysId = (props: IopFormItemProps) => {
         },
       ]}
     >
-      <Input className='w-full' allowClear maxLength={10} placeholder='Enter target system ID' />
+      <Select className='w-full' allowClear placeholder='Select target system ID' options={options} />
     </Form.Item>
   );
 };
-
-/** 报文归属 */
-export const IopMsgOwner = (props: IopFormItemProps) => (
-  <Form.Item {...props} className='mb-0' label='Owner By'>
-    <Space.Compact block>
-      <Form.Item name='msgOwnerDept' noStyle normalize={trimWhitespace}>
-        <Input className='min-w-0 flex-1' allowClear maxLength={10} placeholder='Department' />
-      </Form.Item>
-      <Form.Item name='msgOwnerGroup' noStyle normalize={trimWhitespace}>
-        <Input className='min-w-0 flex-1' allowClear maxLength={10} placeholder='Group' />
-      </Form.Item>
-    </Space.Compact>
-  </Form.Item>
-);
-
-const trimWhitespace = (value?: string) => value?.trim() ?? '';
 
 /**==================== 查询查复 ====================**/
 /** 报文类型 */
@@ -117,7 +102,6 @@ export const IopTaskMsgRecvCipsCode = (props: IopFormItemProps) => {
       {...props}
       name='msgRecvCipsCode'
       label='Receiving CIPS Code'
-      normalize={trimWhitespace}
       preserve={false}
       rules={[{ required: true, whitespace: true, message: 'Please enter receiving CIPS code' }]}
     >
@@ -133,24 +117,14 @@ export const IopTaskMsgRelatedId = (props: IopFormItemProps) => {
   if (msgType !== IopInquiryReplyMsgType.Type309) return null;
 
   return (
-    <Form.Item
-      {...props}
-      name='msgRelatedId'
-      label='Related Message ID'
-      normalize={trimWhitespace}
-      preserve={false}
-    >
+    <Form.Item {...props} name='msgRelatedId' label='Related Message ID' preserve={false}>
       <Input allowClear placeholder='Enter related message ID' />
     </Form.Item>
   );
 };
 
 /** 查询查复内容 */
-export const IopTaskContent = ({
-  textAreaAutoSize,
-  textAreaReadOnly,
-  ...formItemProps
-}: IopTaskContentProps) => (
+export const IopTaskContent = ({ textAreaAutoSize, textAreaReadOnly, ...formItemProps }: IopTaskContentProps) => (
   <Form.Item
     {...formItemProps}
     name='content'

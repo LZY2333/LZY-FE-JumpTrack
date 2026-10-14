@@ -1,7 +1,9 @@
 import type { TableColumnType } from 'antd';
 import type { MessageRecord } from '@/types';
 import type { LcwRecord } from '@/api/lcw';
+import { TextDictionary } from '@/store/useDictionaryStore';
 import {
+  DictionaryOptionsEnum,
   LCW_INITIAL_STATUS_LABELS,
   MESSAGE_DIRECTION_LABELS,
   MESSAGE_BUSINESS_TYPE_LABELS,
@@ -13,13 +15,7 @@ import {
   MsgRecvStatus,
   MsgSendStatus,
 } from '@/types/enums';
-import {
-  renderMessageAmount,
-  renderMessageDate,
-  renderMessageDateTime,
-  renderMessageOwnerBy,
-  renderMessageText,
-} from './messageColumnUtil';
+import { renderMessageAmount, renderMessageDate, renderMessageDateTime, renderMessageText } from './messageColumnUtil';
 
 // 字段顺序与报文列表的默认列顺序一致。
 
@@ -44,7 +40,18 @@ export const ownerBy: TableColumnType<MessageRecord> = {
   title: 'Owner By',
   key: 'ownerBy',
   width: 220,
-  render: (_, record) => renderMessageOwnerBy(record.msgOwnerDept, record.msgOwnerGroup),
+  render: (_, record) => {
+    if (!record.msgOwnerDept && !record.msgOwnerGroup) return '--';
+    return (
+      <span>
+        {record.msgOwnerDept && <TextDictionary configType={DictionaryOptionsEnum.Dept} value={record.msgOwnerDept} />}
+        {record.msgOwnerDept && record.msgOwnerGroup && ' / '}
+        {record.msgOwnerGroup && (
+          <TextDictionary configType={DictionaryOptionsEnum.Group} value={record.msgOwnerGroup} />
+        )}
+      </span>
+    );
+  },
 };
 
 /** 发报来源系统：OU.FROM_SYSTEM */

@@ -96,14 +96,16 @@
               "title": "Owner Department",
               "$comment": "收报归属部门：MSG_OWNER_DEPT",
               "x-decorator": "MessageFormItem",
-              "x-component": "Input"
+              "x-component": "InputDictionary",
+              "x-component-props": { "configType": "optsDept" }
             },
             "msgOwnerGroup": {
               "type": "string",
               "title": "Owner Group",
               "$comment": "收报归属组：MSG_OWNER_GROUP",
               "x-decorator": "MessageFormItem",
-              "x-component": "Input"
+              "x-component": "InputDictionary",
+              "x-component-props": { "configType": "optsGroup" }
             },
             "fromSystem": {
               "type": "string",

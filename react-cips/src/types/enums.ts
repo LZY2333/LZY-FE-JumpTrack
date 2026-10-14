@@ -254,3 +254,26 @@ export enum PartyLoginStatusEnum {
   /** 退出 */
   LoggedOut = 'LOGF',
 }
+
+/* ==================== 基础配置字典 ==================== */
+
+/** 基础配置字典类型 */
+export enum DictionaryOptionsEnum {
+  /** 系统编号 */
+  SystemId = 'optsSystemId',
+  /** 部门 */
+  Dept = 'optsDept',
+  /** 组 */
+  Group = 'optsGroup',
+}
+
+/** 字典下拉选项 */
+export interface DictionaryOption {
+  /** 显示文本 */
+  label: string;
+  /** 提交的配置编码 */
+  value: string;
+}
+
+/** 按字典类型保存的下拉选项，缺省表示尚未加载 */
+export type DictionaryOptions = Partial<Record<DictionaryOptionsEnum, DictionaryOption[]>>;

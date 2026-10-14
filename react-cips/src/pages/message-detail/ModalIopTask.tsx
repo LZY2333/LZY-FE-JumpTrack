@@ -3,7 +3,8 @@ import { Form } from 'antd';
 import type { App, FormInstance } from 'antd';
 import { postDCCreate } from '@/api/iop';
 import type { IopDistributeCreationCreateRequest } from '@/api/iop';
-import { IopMsgOwner, IopTargetSysId } from '@/components/IopPageCommon/formItem';
+import { IopTargetSysId } from '@/components/IopPageCommon/formItem';
+import { MessageOwnerBy } from '@/components/FormItem/message';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
 
 /** 创建分发任务填写字段。 */
@@ -40,7 +41,7 @@ export const openModalDistribute = async (modal: ModalIopTaskApi, context: IopTa
         initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
       >
         <IopTargetSysId className='mb-2' />
-        <IopMsgOwner />
+        <MessageOwnerBy />
       </Form>
     ),
     okText: 'Create',

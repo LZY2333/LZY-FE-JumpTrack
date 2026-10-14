@@ -7,7 +7,9 @@ import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { isMessageDateDisabled, messageDatePresets } from './messageDateUtil';
 import { formatMessageAmount } from '@/utils';
+import { useDictionaryOptions } from '@/store/useDictionaryStore';
 import {
+  DictionaryOptionsEnum,
   MESSAGE_DIRECTION_LABELS,
   MESSAGE_BUSINESS_TYPE_LABELS,
   MSG_RECV_STATUS_LABELS,
@@ -21,6 +23,8 @@ import {
 
 /** 查询字段的布局配置，字段名称和业务标签由组件维护。 */
 type MessageFilterFormItemProps = Omit<FormItemProps, 'label' | 'name'>;
+/** 报文归属字段的布局配置，字段名称、标签和子控件由组件维护 */
+type MessageOwnerByProps = Omit<FormItemProps, 'children' | 'label' | 'name'>;
 /** 收发日期查询使用的纯日期区间。 */
 type MessageDateRange = [string, string] | null;
 
@@ -144,21 +148,21 @@ export const MessageDateRangeFilter = (props: MessageFilterFormItemProps) => (
 
 /** 报文类型：MSG_TYPE */
 export const MessageTypeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgType' label='Message Type' normalize={trimWhitespace}>
+  <Form.Item {...props} name='msgType' label='Message Type'>
     <Input allowClear placeholder='e.g. pacs.008.001.01' />
   </Form.Item>
 );
 
 /** 业务流水号：MSG_BUSINESS_NO */
 export const MessageBusinessNoFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgBusinessNo' label='Business No.' normalize={trimWhitespace}>
+  <Form.Item {...props} name='msgBusinessNo' label='Business No.'>
     <Input allowClear placeholder='Enter business number' />
   </Form.Item>
 );
 
 /** 报文标识号：MSG_ID */
 export const MessageIdFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgId' label='Message ID' normalize={trimWhitespace}>
+  <Form.Item {...props} name='msgId' label='Message ID'>
     <Input allowClear placeholder='Enter message ID' />
   </Form.Item>
 );
@@ -175,13 +179,7 @@ export const TranIdFilter = (props: MessageFilterFormItemProps) => {
   }, [form, businessType]);
 
   return (
-    <Form.Item
-      {...props}
-      name='tranId'
-      label='refTxn20'
-      normalize={trimWhitespace}
-      tooltip='Entering a transaction ID selects PAY.'
-    >
+    <Form.Item {...props} name='tranId' label='refTxn20' tooltip='Entering a transaction ID selects PAY.'>
       <Input allowClear placeholder='Enter transaction ID' />
     </Form.Item>
   );
@@ -294,11 +292,13 @@ export const MessageOwnerFilter = (props: MessageFilterFormItemProps) => {
   );
 };
 
-/** 报文归属：MSG_OWNER_DEPT / MSG_OWNER_GROUP */
+/** 报文归属(Filter)：MSG_OWNER_DEPT / MSG_OWNER_GROUP */
 const MessageOwnerByFilter = (props: MessageFilterFormItemProps) => {
   const form = Form.useFormInstance();
   const direction = Form.useWatch<MessageDirection>('msgDirection', form);
   const hidden = direction !== MessageDirection.In;
+  const { options: departmentOptions } = useDictionaryOptions(DictionaryOptionsEnum.Dept);
+  const { options: groupOptions } = useDictionaryOptions(DictionaryOptionsEnum.Group);
 
   // Direction 切到 OU 时，清空本组件拥有的部门和组。
   useEffect(() => {
@@ -311,11 +311,30 @@ const MessageOwnerByFilter = (props: MessageFilterFormItemProps) => {
   return (
     <Form.Item {...props} label='Owner By' tooltip='Available for Received direction.'>
       <Space.Compact block>
-        <Form.Item name='msgOwnerDept' noStyle normalize={trimWhitespace}>
-          <Input className='min-w-0 flex-1' allowClear placeholder='Department' />
+        <Form.Item name='msgOwnerDept' noStyle>
+          <Select className='w-1/2' allowClear placeholder='Department' options={departmentOptions} />
         </Form.Item>
-        <Form.Item name='msgOwnerGroup' noStyle normalize={trimWhitespace}>
-          <Input className='min-w-0 flex-1' allowClear placeholder='Group' />
+        <Form.Item name='msgOwnerGroup' noStyle>
+          <Select className='w-1/2' allowClear placeholder='Group' options={groupOptions} />
+        </Form.Item>
+      </Space.Compact>
+    </Form.Item>
+  );
+};
+
+/** 报文归属(Form)：MSG_OWNER_DEPT / MSG_OWNER_GROUP */
+export const MessageOwnerBy = (props: MessageOwnerByProps) => {
+  const { options: departmentOptions } = useDictionaryOptions(DictionaryOptionsEnum.Dept);
+  const { options: groupOptions } = useDictionaryOptions(DictionaryOptionsEnum.Group);
+
+  return (
+    <Form.Item {...props} label='Owner By'>
+      <Space.Compact block>
+        <Form.Item name='msgOwnerDept' noStyle>
+          <Select className='w-1/2' allowClear placeholder='Department' options={departmentOptions} />
+        </Form.Item>
+        <Form.Item name='msgOwnerGroup' noStyle>
+          <Select className='w-1/2' allowClear placeholder='Group' options={groupOptions} />
         </Form.Item>
       </Space.Compact>
     </Form.Item>
@@ -336,13 +355,7 @@ const MessageFromSystemFilter = (props: MessageFilterFormItemProps) => {
 
   if (hidden) return null;
   return (
-    <Form.Item
-      {...props}
-      name='fromSystem'
-      label='From System'
-      normalize={trimWhitespace}
-      tooltip='Available for Sent direction.'
-    >
+    <Form.Item {...props} name='fromSystem' label='From System' tooltip='Available for Sent direction.'>
       <Input allowClear placeholder='Enter source system' />
     </Form.Item>
   );
@@ -350,35 +363,35 @@ const MessageFromSystemFilter = (props: MessageFilterFormItemProps) => {
 
 /** 主报文编号：MAIN_MSG_ID */
 export const MainMessageIdFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='mainMsgId' label='Main Message ID' normalize={trimWhitespace}>
+  <Form.Item {...props} name='mainMsgId' label='Main Message ID'>
     <Input allowClear placeholder='Enter main message ID' />
   </Form.Item>
 );
 
 /** 关联流水号：MSG_RELATED_ID */
 export const RelatedMessageIdFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgRelatedId' label='Related Msg ID' normalize={trimWhitespace}>
+  <Form.Item {...props} name='msgRelatedId' label='Related Msg ID'>
     <Input allowClear placeholder='Enter related Msg ID' />
   </Form.Item>
 );
 
 /** 端到端流水号：MSG_END_ID */
 export const EndToEndMessageIdFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgEndId' label='End-to-End ID' normalize={trimWhitespace}>
+  <Form.Item {...props} name='msgEndId' label='End-to-End ID'>
     <Input allowClear placeholder='Enter end-to-end ID' />
   </Form.Item>
 );
 
 /** UETR 唯一标识号：MSG_UETR */
 export const MessageUetrFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgUetr' label='UETR' normalize={trimWhitespace}>
+  <Form.Item {...props} name='msgUetr' label='UETR'>
     <Input allowClear placeholder='Enter UETR' />
   </Form.Item>
 );
 
 /** 发送行 BIC：MSG_SEND_BIC */
 export const MessageSendBicFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgSendBic' label='Sender Bank' normalize={trimWhitespace}>
+  <Form.Item {...props} name='msgSendBic' label='Sender Bank'>
     <Input allowClear placeholder='Enter sender bank BIC' />
   </Form.Item>
 );
@@ -436,8 +449,6 @@ const MessageSendStatusFilter = (props: MessageFilterFormItemProps) => {
     </Form.Item>
   );
 };
-
-const trimWhitespace = (value?: string) => value?.trim() ?? '';
 
 /** 多选字段持有独立数组，并将清空后的空数组统一转换为空值。 */
 const normalizeMultipleValues = <Value,>(values?: Value[]) => (values?.length ? [...values] : undefined);

@@ -12,6 +12,8 @@ import cn from 'classnames';
 import CardCollapse from '@/components/CardCollapse';
 import { copyText } from '@/utils/fileUtil';
 import { formatMessageAmount } from '@/utils';
+import { TextDictionary } from '@/store/useDictionaryStore';
+import type { DictionaryOptionsEnum } from '@/types/enums';
 
 const COPY_TARGET_SELECTOR = '.ant-formily-item-label-content, .ant-formily-item-control-content-component';
 const EMPTY_HIGH_LIGHT_FIELDS: readonly string[] = [];
@@ -131,6 +133,13 @@ const MessageInput = ({ className, disabled, placeholder = '--', ...props }: Com
     disabled={disabled}
     placeholder={placeholder}
   />
+);
+
+/** 详情字典字段复用输入框外观，展示字典翻译文本 */
+const InputDictionary = ({ configType, value, ...props }: DictionaryInputProps) => (
+  <TextDictionary configType={configType} value={value}>
+    {(text) => <MessageInput {...props} value={value ? text : ''} />}
+  </TextDictionary>
 );
 
 /** 详情多行文本支持拖拽增高、滚动和双击复制 */
@@ -256,6 +265,7 @@ const SchemaField = createSchemaField({
     FormGrid,
     FormGridColumn: FormGrid.GridColumn,
     Input: MessageInput,
+    InputDictionary,
     MessageBusinessTable,
     MessageFormItem,
     MessageSection,
@@ -294,5 +304,13 @@ const resolveTargetText = (target: HTMLElement) => {
 /** 业务子表空值统一展示为 --。 */
 const renderBusinessTableCell = (value: unknown) =>
   value === undefined || value === null || value === '' ? '--' : String(value);
+
+/** 详情字典输入框属性 */
+type DictionaryInputProps = Omit<ComponentProps<typeof Input>, 'value' | 'children'> & {
+  /** 编码所属的字典类型 */
+  configType: DictionaryOptionsEnum;
+  /** 待翻译的字典编码 */
+  value?: string | null;
+};
 
 export default MessageSchemaForm;
