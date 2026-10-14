@@ -6,7 +6,7 @@ import { CloseCircleFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { isMessageDateDisabled, messageDatePresets } from './messageDateUtil';
-import { formatMessageAmount } from '@/utils';
+import { formatMessageAmount, getSelectValueProps } from '@/utils';
 import { useDictionaryOptions } from '@/store/useDictionaryStore';
 import {
   DictionaryOptionsEnum,
@@ -66,6 +66,7 @@ export const MessageDirectionFilter = (props: MessageFilterFormItemProps) => {
       {...props}
       name='msgDirection'
       label='Direction'
+      getValueProps={getSelectValueProps}
       rules={[{ required: true, message: 'Please select Direction.' }]}
       help={false}
       hasFeedback={{ icons: renderFilterFeedback }}
@@ -96,6 +97,7 @@ export const MessageBusinessTypeFilter = (props: MessageFilterFormItemProps) => 
       {...props}
       name='businessType'
       label='Business Type'
+      getValueProps={getSelectValueProps}
       dependencies={['tranId', 'amountFrom', 'amountTo', 'currency']}
       rules={[{ required, message: 'Select Business Type for refTxn20, amount or currency.' }]}
       help={false}
@@ -207,7 +209,7 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
     <Form.Item {...props} label='Amount' tooltip={getAmountCurrencyHint(businessType)}>
       <div className='flex items-center gap-1'>
         <div className='w-24 shrink-0'>
-          <Form.Item name='currency' noStyle>
+          <Form.Item name='currency' noStyle getValueProps={getSelectValueProps}>
             <Select
               className='w-full'
               disabled={disabled}
@@ -264,7 +266,13 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
 
 /** 收发报通道：MSG_CHANNEL */
 export const MessageChannelFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='channel' label='Channel' normalize={normalizeMultipleValues}>
+  <Form.Item
+    {...props}
+    name='channel'
+    label='Channel'
+    getValueProps={getSelectValueProps}
+    normalize={normalizeMultipleValues}
+  >
     <Select
       className='w-full'
       allowClear
@@ -311,10 +319,10 @@ const MessageOwnerByFilter = (props: MessageFilterFormItemProps) => {
   return (
     <Form.Item {...props} label='Owner By' tooltip='Available for Received direction.'>
       <Space.Compact block>
-        <Form.Item name='msgOwnerDept' noStyle>
+        <Form.Item name='msgOwnerDept' noStyle getValueProps={getSelectValueProps}>
           <Select className='w-1/2' allowClear placeholder='Department' options={departmentOptions} />
         </Form.Item>
-        <Form.Item name='msgOwnerGroup' noStyle>
+        <Form.Item name='msgOwnerGroup' noStyle getValueProps={getSelectValueProps}>
           <Select className='w-1/2' allowClear placeholder='Group' options={groupOptions} />
         </Form.Item>
       </Space.Compact>
@@ -330,10 +338,10 @@ export const MessageOwnerBy = (props: MessageOwnerByProps) => {
   return (
     <Form.Item {...props} label='Owner By'>
       <Space.Compact block>
-        <Form.Item name='msgOwnerDept' noStyle>
+        <Form.Item name='msgOwnerDept' noStyle getValueProps={getSelectValueProps}>
           <Select className='w-1/2' allowClear placeholder='Department' options={departmentOptions} />
         </Form.Item>
-        <Form.Item name='msgOwnerGroup' noStyle>
+        <Form.Item name='msgOwnerGroup' noStyle getValueProps={getSelectValueProps}>
           <Select className='w-1/2' allowClear placeholder='Group' options={groupOptions} />
         </Form.Item>
       </Space.Compact>
@@ -410,7 +418,13 @@ const MessageRecvStatusFilter = (props: MessageFilterFormItemProps) => {
 
   if (hidden) return null;
   return (
-    <Form.Item {...props} name='msgRecvStatus' label='Received Status' normalize={normalizeMultipleValues}>
+    <Form.Item
+      {...props}
+      name='msgRecvStatus'
+      label='Received Status'
+      getValueProps={getSelectValueProps}
+      normalize={normalizeMultipleValues}
+    >
       <Select
         className='w-full'
         allowClear
@@ -437,7 +451,13 @@ const MessageSendStatusFilter = (props: MessageFilterFormItemProps) => {
 
   if (hidden) return null;
   return (
-    <Form.Item {...props} name='msgSendStatus' label='Sent Status' normalize={normalizeMultipleValues}>
+    <Form.Item
+      {...props}
+      name='msgSendStatus'
+      label='Sent Status'
+      getValueProps={getSelectValueProps}
+      normalize={normalizeMultipleValues}
+    >
       <Select
         className='w-full'
         allowClear

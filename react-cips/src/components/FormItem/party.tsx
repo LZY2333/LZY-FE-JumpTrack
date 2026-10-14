@@ -2,6 +2,7 @@ import { DatePicker, Form, Input, Select } from 'antd';
 import type { FormItemProps } from 'antd';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
+import { getSelectValueProps } from '@/utils';
 import {
   PartyBankCategoryEnum,
   PartyBusinessStatusEnum,
@@ -52,28 +53,28 @@ export const EndNameFilter = (props: PartyFilterProps) => (
 
 /** 参与者资格标识：BANK_CATEGORY */
 export const BankCategoryFilter = (props: PartyFilterProps) => (
-  <Form.Item {...props} name='bankCategory' label='Bank Category'>
+  <Form.Item {...props} name='bankCategory' label='Bank Category' getValueProps={getSelectValueProps}>
     <Select className='w-40' allowClear placeholder='All' options={bankCategoryOptions} />
   </Form.Item>
 );
 
 /** 境内外标识：DOMESTIC_FLAG */
 export const DomesticFlagFilter = (props: PartyFilterProps) => (
-  <Form.Item {...props} name='domesticFlag' label='Domestic Flag'>
+  <Form.Item {...props} name='domesticFlag' label='Domestic Flag' getValueProps={getSelectValueProps}>
     <Select className='w-40' allowClear placeholder='All' options={domesticFlagOptions} />
   </Form.Item>
 );
 
 /** 办理业务状态 */
 export const StatusFilter = (props: PartyFilterProps) => (
-  <Form.Item {...props} name='status' label='Status'>
+  <Form.Item {...props} name='status' label='Status' getValueProps={getSelectValueProps}>
     <Select className='w-40' allowClear placeholder='All' options={statusOptions} />
   </Form.Item>
 );
 
 /** 登录状态 */
 export const LoginStsFilter = (props: PartyFilterProps) => (
-  <Form.Item {...props} name='loginSts' label='Login Status'>
+  <Form.Item {...props} name='loginSts' label='Login Status' getValueProps={getSelectValueProps}>
     <Select className='w-40' allowClear placeholder='All' options={loginStsOptions} />
   </Form.Item>
 );
@@ -124,14 +125,14 @@ export const EndName = () => (
 
 /** 参与者资格标识：BANK_CATEGORY */
 export const BankCategory = () => (
-  <Form.Item name='bankCategory' label='Bank Category' rules={[{ required: true }]}>
+  <Form.Item name='bankCategory' label='Bank Category' getValueProps={getSelectValueProps} rules={[{ required: true }]}>
     <Select className='w-40' options={bankCategoryOptions} />
   </Form.Item>
 );
 
 /** 境内外标识：DOMESTIC_FLAG */
 export const DomesticFlag = () => (
-  <Form.Item name='domesticFlag' label='Domestic Flag' rules={[{ required: true }]}>
+  <Form.Item name='domesticFlag' label='Domestic Flag' getValueProps={getSelectValueProps} rules={[{ required: true }]}>
     <Select className='w-40' options={domesticFlagOptions} />
   </Form.Item>
 );
@@ -166,14 +167,14 @@ export const EffectiveDate = ({ disabled }: PartyEffectiveDateProps) => (
 
 /** 办理业务状态 */
 export const Status = () => (
-  <Form.Item name='status' label='Status' rules={[{ required: true }]}>
+  <Form.Item name='status' label='Status' getValueProps={getSelectValueProps} rules={[{ required: true }]}>
     <Select className='w-40' options={statusOptions} />
   </Form.Item>
 );
 
 /** 登录状态 */
 export const LoginSts = () => (
-  <Form.Item name='loginSts' label='Login Status' rules={[{ required: true }]}>
+  <Form.Item name='loginSts' label='Login Status' getValueProps={getSelectValueProps} rules={[{ required: true }]}>
     <Select className='w-40' options={loginStsOptions} />
   </Form.Item>
 );

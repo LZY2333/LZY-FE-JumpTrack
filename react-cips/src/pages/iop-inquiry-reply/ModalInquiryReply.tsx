@@ -31,6 +31,8 @@ interface ModalInquiryReplyCreateOptions
     Omit<IopInquiryReplyCreateRequest, 'busData'> {
   /** 来源报文主报文编号，用于校验 302 查复 */
   sourceMainMsgId?: string | null;
+  /** 来源报文关联流水号，用于 302 查复 */
+  sourceMsgRelatedId?: string | null;
   /** 创建任务时尚无 IOP 工作流上下文 */
   task?: never;
 }
@@ -50,12 +52,13 @@ export const openModalInquiryReply = async (
   options: ModalInquiryReplyOptions,
 ): Promise<boolean> => {
   const { task, sourceMessage } = options;
-  const { msgId, userId, orgId, sourceMainMsgId } = task
+  const { msgId, userId, orgId, sourceMainMsgId, sourceMsgRelatedId } = task
     ? {
         msgId: task.busRefNo,
         userId: task.userId,
         orgId: task.orgId,
         sourceMainMsgId: task.mainMsgId,
+        sourceMsgRelatedId: task.msgRelatedId,
       }
     : options;
 
@@ -93,6 +96,7 @@ export const openModalInquiryReply = async (
           fields,
           sourceMsgId: msgId,
           sourceMainMsgId,
+          sourceMsgRelatedId,
           forceMsgId: !!task,
         }),
         userId,

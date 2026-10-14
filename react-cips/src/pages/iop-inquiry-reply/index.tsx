@@ -88,6 +88,7 @@ const IopInquiryReply = () => {
           fields,
           sourceMsgId: task.busRefNo,
           sourceMainMsgId: task.mainMsgId,
+          sourceMsgRelatedId: task.msgRelatedId,
           forceMsgId: true,
         }),
         userId: task.userId,

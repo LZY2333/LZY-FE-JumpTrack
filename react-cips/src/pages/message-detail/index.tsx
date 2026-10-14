@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
 import { ArrowLeftOutlined, CommentOutlined, CopyOutlined, PlusOutlined, PrinterOutlined } from '@ant-design/icons';
 import { CardMessageBasicInfo } from '@/components/MessageInfo/CardMessageBasicInfo';
@@ -26,6 +26,7 @@ const MessageDetailPage = () => {
   const user = useUserStore((state) => state.user);
   const { msgId } = useParams<{ msgId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { detail, detailError } = useMessageDetail({ msgId });
   const msgDirection = detail?.msgBasicInfo.msgDirection;
   const messageRawRef = useRef<ContentMessageRawRef>(null);
@@ -62,6 +63,7 @@ const MessageDetailPage = () => {
       orgId: user.orgId,
       sourceMessage: detail?.msgBasicInfo ?? null,
       sourceMainMsgId: detail?.msgBasicInfo.mainMsgId,
+      sourceMsgRelatedId: detail?.msgBasicInfo.msgRelatedId,
     });
     if (created) message.success('Inquiry reply task created');
   };
@@ -88,7 +90,7 @@ const MessageDetailPage = () => {
       navigate(-1);
       return;
     }
-    navigate(RoutePath.MessageList, { replace: true });
+    navigate({ pathname: RoutePath.MessageList, search: location.search }, { replace: true });
   };
 
   const tabs = [

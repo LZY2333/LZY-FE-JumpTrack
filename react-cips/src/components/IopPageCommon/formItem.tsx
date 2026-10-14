@@ -4,6 +4,7 @@ import type { FormItemProps } from 'antd';
 import { DictionaryOptionsEnum, IopInquiryReplyMsgType, MessageDirection } from '@/types/enums';
 import type { MessageRecord } from '@/types/message';
 import { useDictionaryOptions } from '@/store/useDictionaryStore';
+import { getSelectValueProps } from '@/utils';
 
 /** IOP 表单字段公共属性，字段名称和业务规则由组件维护。 */
 type IopFormItemProps = Omit<FormItemProps, 'children' | 'label' | 'name'>;
@@ -38,7 +39,7 @@ export const IopTargetSysId = (props: IopFormItemProps) => {
       {...props}
       name='targetSysId'
       label='Target System ID'
-      getValueProps={(value?: string) => ({ value: value || undefined })}
+      getValueProps={getSelectValueProps}
       dependencies={['msgOwnerDept', 'msgOwnerGroup']}
       rules={[
         {
@@ -64,6 +65,7 @@ export const IopTaskMsgType = ({ sourceMessage, ...props }: IopTaskMsgTypeProps)
     {...props}
     name='msgType'
     label='Message Type'
+    getValueProps={getSelectValueProps}
     rules={[
       { required: true, message: 'Please select message type' },
       {

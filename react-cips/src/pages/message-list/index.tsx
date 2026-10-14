@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { generatePath, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Col, Form, Row } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
@@ -64,6 +64,7 @@ const DEFAULT_HIDDEN_COLUMN_IDS = ['mainMsgId', 'msgRelatedId', 'msgEndId', 'cre
 /** 报文查询与列表页面。 */
 const MessageList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [form] = Form.useForm<MessageListFilterValues>();
   const [initialFilters] = useState(buildDefaultMessageFilters);
   const [advancedVisible, setAdvancedVisible] = useState(false);
@@ -101,11 +102,12 @@ const MessageList = () => {
   };
 
   const openDetail = (record: MessageRecord) =>
-    navigate(
-      generatePath(RoutePath.MessageDetail, {
+    navigate({
+      pathname: generatePath(RoutePath.MessageDetail, {
         msgId: encodeURIComponent(record.msgId),
       }),
-    );
+      search: location.search,
+    });
 
   const columns = useMemo<TableColumnsType<MessageRecord>>(
     () => [

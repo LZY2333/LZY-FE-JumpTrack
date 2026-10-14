@@ -31,10 +31,10 @@ const IopDistributeCreation = () => {
   const isMakerNode = MAKER_TASK_NODES.has(task.taskNode);
   const isCheckerNode = CHECKER_TASK_NODES.has(task.taskNode);
 
-  /** 审批及已审批节点查询 Maker 填写的清分字段。 */
+  /** 支持的任务节点回显之前填写的清分字段 */
   useEffect(() => {
     distributionCreationForm.resetFields();
-    if (isMakerNode || !SUPPORTED_TASK_NODES.has(task.taskNode)) return;
+    if (!SUPPORTED_TASK_NODES.has(task.taskNode)) return;
 
     let active = true;
     const stopGlobalLoading = startGlobalLoading();
@@ -49,7 +49,7 @@ const IopDistributeCreation = () => {
       active = false;
       stopGlobalLoading();
     };
-  }, [distributionCreationForm, isMakerNode, task.busRefNo, task.taskNode]);
+  }, [distributionCreationForm, task.busRefNo, task.taskNode]);
 
   // 【Create】
   const handleDistributionCreation = async (fields: DistributionCreationFields) => {

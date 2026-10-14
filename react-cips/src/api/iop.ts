@@ -227,7 +227,7 @@ export interface IopInquiryReplyBusData {
   content: string;
   /** 主报文编号；301、309 送空，302 送查询报文的 MAIN_MSG_ID。 */
   mainMsgId: string;
-  /** 关联流水号，仅 309 传递，允许为空。 */
+  /** 关联流水号，302 取来源报文，309 由表单填写，允许为空 */
   msgRelatedId?: string;
   /** 收报方 CIPS 行号，仅 309 传递且必填。 */
   msgRecvCipsCode?: string;

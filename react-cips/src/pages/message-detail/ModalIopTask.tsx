@@ -31,15 +31,10 @@ export const openModalDistribute = async (modal: ModalIopTaskApi, context: IopTa
   const formRef = createRef<FormInstance<DistributeFields>>();
 
   return modal.confirm({
+    width: 560,
     title: 'Create Distribution Task',
     content: (
-      <Form
-        ref={formRef}
-        layout='horizontal'
-        labelAlign='left'
-        labelCol={{ flex: '120px' }}
-        initialValues={{ targetSysId: '', msgOwnerDept: '', msgOwnerGroup: '' }}
-      >
+      <Form ref={formRef} layout='horizontal' labelAlign='left' labelCol={{ flex: '120px' }}>
         <IopTargetSysId className='mb-2' />
         <MessageOwnerBy />
       </Form>

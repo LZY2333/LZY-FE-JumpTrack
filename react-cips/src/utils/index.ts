@@ -17,3 +17,8 @@ export const omitEmptyValues = <Values extends object>(values: Values) =>
       ? never
       : Field]: Values[Field];
   } & { [Field in keyof Values]?: NonNullable<Values[Field]> };
+
+/** 下拉字段回填空值时显示占位提示，保留 0 等有效选项 */
+export const getSelectValueProps = <Value>(value?: Value | null) => ({
+  value: value === '' ? undefined : value ?? undefined,
+});
