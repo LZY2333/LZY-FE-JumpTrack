@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { compareMessageAmounts } from '@/utils/messageAmountUtil';
 import type { MessageQuery, MessageQueryConditions } from '@/api/messages';
 import type { MessageAuditTrailRecord, MessageDetail, MessageRecord } from '@/types';
 import { MessageBusinessType, MessageDirection, MsgRecvStatus, MsgSendStatus, ResCode } from '@/types/enums';
@@ -419,16 +420,15 @@ const filterByText = (
 };
 
 /** 按业务类型映射后的金额过滤区间，未提供金额的业务记录不匹配。 */
-const filterByAmountRange = (records: MockMessageDetail[], amountFrom?: number, amountTo?: number) => {
+const filterByAmountRange = (records: MockMessageDetail[], amountFrom?: string, amountTo?: string) => {
   if (amountFrom === undefined && amountTo === undefined) return records;
 
   return records.filter((record) => {
     if (record.amount === null) return false;
 
-    const amount = Number(record.amount);
-    if (!Number.isFinite(amount)) return false;
-    if (amountFrom !== undefined && amount < amountFrom) return false;
-    if (amountTo !== undefined && amount > amountTo) return false;
+    if (Number.isNaN(compareMessageAmounts(record.amount, record.amount))) return false;
+    if (amountFrom !== undefined && !(compareMessageAmounts(record.amount, amountFrom) >= 0)) return false;
+    if (amountTo !== undefined && !(compareMessageAmounts(record.amount, amountTo) <= 0)) return false;
     return true;
   });
 };

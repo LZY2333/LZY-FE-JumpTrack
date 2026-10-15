@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { isMessageDateDisabled, messageDatePresets } from './messageDateUtil';
 import { formatMessageAmount, getSelectValueProps } from '@/utils';
+import { compareMessageAmounts } from '@/utils/messageAmountUtil';
 import { useDictionaryOptions } from '@/store/useDictionaryStore';
 import {
   DictionaryOptionsEnum,
@@ -80,11 +81,11 @@ export const MessageDirectionFilter = (props: MessageFilterFormItemProps) => {
 export const MessageBusinessTypeFilter = (props: MessageFilterFormItemProps) => {
   const form = Form.useFormInstance();
   const tranId = Form.useWatch<string>('tranId', { form, preserve: true });
-  const amountFrom = Form.useWatch<number | null>('amountFrom', { form, preserve: true });
-  const amountTo = Form.useWatch<number | null>('amountTo', { form, preserve: true });
+  const amountFrom = Form.useWatch<string | null>('amountFrom', { form, preserve: true });
+  const amountTo = Form.useWatch<string | null>('amountTo', { form, preserve: true });
   const currency = Form.useWatch<string>('currency', { form, preserve: true });
   // 交易标识、金额或币种有值时，由本字段 Rule 要求必填；金额 0 也属于已填写。
-  const required = Boolean(tranId || currency) || typeof amountFrom === 'number' || typeof amountTo === 'number';
+  const required = Boolean(tranId || currency || amountFrom || amountTo);
 
   // 监听交易标识的变化，将自身业务类型切到 PAY。
   useEffect(() => {
@@ -228,16 +229,17 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
           dependencies={['amountTo']}
           rules={[
             () => ({
-              validator: (_, amountFrom?: number | null) => {
+              validator: (_, amountFrom?: string | null) => {
                 const amountTo = form.getFieldValue('amountTo');
-                if (typeof amountFrom !== 'number' || typeof amountTo !== 'number') return Promise.resolve();
-                if (amountFrom <= amountTo) return Promise.resolve();
+                if (!amountFrom || !amountTo) return Promise.resolve();
+                if (compareMessageAmounts(amountFrom, amountTo) <= 0) return Promise.resolve();
                 return Promise.reject(new Error('Minimum amount must not exceed maximum amount.'));
               },
             }),
           ]}
         >
-          <InputNumber
+          <InputNumber<string>
+            stringMode
             className='min-w-0 flex-1'
             disabled={disabled}
             controls={false}
@@ -249,7 +251,8 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
         </Form.Item>
         <span className='shrink-0'>-</span>
         <Form.Item name='amountTo' noStyle>
-          <InputNumber
+          <InputNumber<string>
+            stringMode
             className='min-w-0 flex-1'
             disabled={disabled}
             controls={false}

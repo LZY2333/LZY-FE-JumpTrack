@@ -11,9 +11,9 @@ export type MessageListFilterValues = Omit<
   /** 收发日期区间：MSG_RECV_DATE / MSG_SEND_DATE */
   msgDateRange?: [string, string] | null;
   /** 金额下限：REMIT_AMOUNT / GPI_AMOUNT / NETTING_AMOUNT。 */
-  amountFrom?: number | null;
+  amountFrom?: string | null;
   /** 金额上限：REMIT_AMOUNT / GPI_AMOUNT / NETTING_AMOUNT。 */
-  amountTo?: number | null;
+  amountTo?: string | null;
 };
 
 /** 构造报文列表默认筛选条件，默认查询当天收报。 */

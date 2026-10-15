@@ -85,9 +85,9 @@ export interface MessageQueryConditions {
   /** 币种：REMIT_CCY / BILL_CCY / GPI_CCY，按业务类型确定来源。 */
   currency?: string;
   /** 金额下限：REMIT_AMOUNT / GPI_AMOUNT / NETTING_AMOUNT，后端按业务类型映射。 */
-  amountFrom?: number;
+  amountFrom?: string;
   /** 金额上限：REMIT_AMOUNT / GPI_AMOUNT / NETTING_AMOUNT。 */
-  amountTo?: number;
+  amountTo?: string;
   /** 收发报通道：MSG_CHANNEL。 */
   channel?: MessageChannel[];
   /** 报文归属部门：MSG_OWNER_DEPT。 */
