@@ -1,148 +1,93 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Alert, App as AntdApp, Empty, Spin } from 'antd';
-import CodeMirrorXML from '@/components/CodeMirrorXML';
-import type { CodeMirrorXMLRef } from '@/components/CodeMirrorXML';
-import { copyText } from '@/utils/fileUtil';
-import { printXmlDocument } from './contentMessageRawUtil';
-import useMessageRaw from './useMessageRaw';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { Alert, App, Empty, Spin } from 'antd';
+import RawList from './RawList';
+import RawSingle from './RawSingle';
+import type { RawSingleRef } from './RawSingle';
+import useRaws from './useRaws';
+import useRawActions from './useRawActions';
 
-export interface ContentMessageRawProps {
-  /** 报文 ID。 */
+/** 原文展示模式，列表不允许编辑 */
+export type ContentMessageRawProps = {
+  /** 报文标识 */
   msgId?: string;
-  /** 报文方向。 */
-  msgDirection?: string;
-  /** 是否启用编辑模式。 */
-  editable?: boolean;
-}
-
-export interface ContentMessageRawRef {
-  /** 获取通过非空和变更校验的待更新报文原文。 */
-  getUpdatedContent(): string | undefined;
-  /** 恢复接口首次返回的报文原文。 */
-  resetCurrent(): void;
-  /** 复制当前内容：编辑模式使用编辑值，只读模式使用接口原文。 */
-  copyCurrent(): Promise<void>;
-  /** 打印当前内容：编辑模式使用编辑值，只读模式使用接口原文。 */
-  printCurrent(): void;
-}
-
-/** 查询并展示或编辑 Raw Message，统一维护当前原文及相关操作。 */
-const ContentMessageRaw = forwardRef<ContentMessageRawRef, ContentMessageRawProps>(
-  ({ msgId, msgDirection, editable = false }, forwardedRef) => {
-    const { message } = AntdApp.useApp();
-    const codeMirrorXMLRef = useRef<CodeMirrorXMLRef>(null);
-    const [originRaw, setOriginRaw] = useState('');
-    const [currentRaw, setCurrentRaw] = useState('');
-    const { raw, rawLoading, rawError } = useMessageRaw({ msgId, msgDirection });
-
-    useEffect(() => {
-      const rawContent = raw?.msgContent ?? '';
-      setOriginRaw(rawContent);
-      setCurrentRaw(rawContent);
-    }, [raw]);
-
-    /** 获取可提交 Update 接口的报文原文。 */
-    const getUpdatedContent = () => {
-      if (rawLoading) {
-        message.warning('Raw message is still loading');
-        return undefined;
-      }
-      if (!currentRaw.trim()) {
-        message.warning('Raw message content is required');
-        return undefined;
-      }
-      return currentRaw;
-    };
-
-    /** 恢复接口首次返回的报文原文。 */
-    const resetCurrent = () => {
-      if (rawLoading) {
-        message.warning('Raw message is still loading');
-        return;
-      }
-      if (!raw) {
-        message.warning('Raw message is empty');
-        return;
-      }
-
-      setCurrentRaw(originRaw);
-      message.success('Raw message reset');
-    };
-
-    /** 复制当前报文原文。 */
-    const copyCurrent = async () => {
-      if (rawLoading) {
-        message.warning('Raw message is still loading');
-        return;
-      }
-      if (!currentRaw) {
-        message.warning('Raw message is unavailable');
-        return;
-      }
-
-      try {
-        await copyText(currentRaw);
-        message.success('Current message copied');
-      } catch {
-        message.error('Failed to copy the raw message');
-      }
-    };
-
-    /** 打印当前报文原文。 */
-    const printCurrent = () => {
-      if (rawLoading) {
-        message.warning('Raw message is still loading');
-        return;
-      }
-      if (!currentRaw) {
-        message.warning('Raw message is unavailable');
-        return;
-      }
-
-      const printContent = codeMirrorXMLRef.current?.getPrintableValue() ?? currentRaw;
-      const opened = printXmlDocument(`${msgId || 'message'}.xml`, printContent);
-      if (!opened) message.error('The print window was blocked. Allow pop-ups and try again.');
-    };
-
-    useImperativeHandle(forwardedRef, () => ({ getUpdatedContent, resetCurrent, copyCurrent, printCurrent }), [
-      currentRaw,
-      message,
-      msgId,
-      originRaw,
-      raw,
-      rawLoading,
-    ]);
-
-    let content = (
-      <div className='flex flex-1 items-center justify-center'>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='No raw message' />
-      </div>
-    );
-    if (editable) {
-      content = (
-        <CodeMirrorXML ref={codeMirrorXMLRef} className='min-h-0 flex-1' value={currentRaw} onChange={setCurrentRaw} />
-      );
-    } else if (currentRaw) {
-      content = <CodeMirrorXML ref={codeMirrorXMLRef} className='min-h-0 flex-1' value={currentRaw} readOnly />;
+} & (
+  | {
+      /** 默认以列表展示当前及关联报文 */
+      mode?: 'list';
+      /** 列表仅支持只读 */
+      editable?: false;
     }
+  | {
+      /** 只展示首条当前报文 */
+      mode: 'single';
+      /** 是否允许编辑当前报文 */
+      editable?: boolean;
+    }
+);
+
+/** 当前报文的外部操作接口 */
+export type ContentMessageRawRef = RawSingleRef;
+
+/** 查询原文并分发至列表或单条视图，外部操作始终定位首条报文 */
+const RawContent = forwardRef<ContentMessageRawRef, ContentMessageRawProps>(
+  ({ msgId, mode = 'list', editable = false }, forwardedRef) => {
+    const { message } = App.useApp();
+    const currentSingleRef = useRef<RawSingleRef>(null);
+    const { raws, rawLoading, rawError } = useRaws(msgId);
+    const currentRaw = raws[0];
+    const fallbackActions = useRawActions({
+      msgId: currentRaw?.msgId ?? msgId,
+      content: currentRaw?.msgContent ?? '',
+      loading: rawLoading,
+    });
+
+    useImperativeHandle(forwardedRef, () => ({
+      copyCurrent: () => (currentSingleRef.current ?? fallbackActions).copyCurrent(),
+      printCurrent: () => (currentSingleRef.current ?? fallbackActions).printCurrent(),
+      getUpdatedContent: () => {
+        if (currentSingleRef.current) return currentSingleRef.current.getUpdatedContent();
+        message.warning(rawLoading ? 'Raw message is still loading' : 'Raw message is unavailable');
+        return undefined;
+      },
+      resetCurrent: () => {
+        if (currentSingleRef.current) {
+          currentSingleRef.current.resetCurrent();
+          return;
+        }
+        message.warning(rawLoading ? 'Raw message is still loading' : 'Raw message is unavailable');
+      },
+    }));
+
+    /** 根据加载状态和展示模式渲染原文区域 */
+    const renderContent = () => {
+      if (rawLoading) {
+        return (
+          <div className='flex flex-1 items-center justify-center gap-2'>
+            <Spin size='small' />
+            <span>Loading raw messages</span>
+          </div>
+        );
+      }
+      if (mode === 'list') return <RawList raws={raws} currentSingleRef={currentSingleRef} />;
+      if (!currentRaw) return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='No raw message' />;
+      return <RawSingle ref={currentSingleRef} raw={currentRaw} editable={editable} />;
+    };
 
     return (
       <div className='flex min-h-0 flex-1 flex-col'>
         {rawError && <Alert className='mb-2 shrink-0' type='error' showIcon message={rawError} />}
-        <div className='flex min-h-0 flex-1 flex-col'>
-          {rawLoading ? (
-            <div className='flex flex-1 items-center justify-center gap-2'>
-              <Spin size='small' />
-              <span>Loading raw message</span>
-            </div>
-          ) : (
-            content
-          )}
-        </div>
+        {renderContent()}
       </div>
     );
   },
 );
+
+RawContent.displayName = 'RawContent';
+
+/** 切换报文时同步重置请求、编辑和展开状态，避免使用上一条报文的数据 */
+const ContentMessageRaw = forwardRef<ContentMessageRawRef, ContentMessageRawProps>((props, forwardedRef) => (
+  <RawContent key={props.msgId} {...props} ref={forwardedRef} />
+));
 
 ContentMessageRaw.displayName = 'ContentMessageRaw';
 

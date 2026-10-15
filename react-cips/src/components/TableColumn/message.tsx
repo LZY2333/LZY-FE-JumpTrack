@@ -87,12 +87,12 @@ export const msgChannel = {
 };
 
 /** 报文类型：MSG_TYPE */
-export const msgType: TableColumnType<MessageRecord> = {
+export const msgType = {
   title: 'Message Type',
   dataIndex: 'msgType',
   width: 180,
   render: renderMessageText,
-};
+} satisfies TableColumnType<Pick<MessageRecord, 'msgType'>>;
 
 /** 业务流水号：MSG_BUSINESS_NO */
 export const msgBusinessNo: TableColumnType<MessageRecord> = {
@@ -184,12 +184,12 @@ export const msgEndId: TableColumnType<MessageRecord> = {
 };
 
 /** 记录创建时间：CREATE_TIME */
-export const createTime: TableColumnType<MessageRecord> = {
+export const createTime = {
   title: 'Created Time',
   dataIndex: 'createTime',
   width: 180,
   render: renderMessageDateTime,
-};
+} satisfies TableColumnType<Pick<MessageRecord, 'createTime'>>;
 
 /** 记录更新时间：UPDATE_TIME */
 export const updateTime: TableColumnType<MessageRecord> = {

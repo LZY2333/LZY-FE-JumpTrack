@@ -24,36 +24,28 @@ export const getMessage = (msgId: string, temp = false) =>
     API_MESSAGE_DETAIL.replace(':msgId', encodeURIComponent(msgId)).replace('/:temp', temp ? '/temp' : '/info'),
   );
 
-/** 查询报文原文。 */
-export const API_MESSAGE_RAW = `${API_BASE_MESSAGE}/raw/:msgDirection/:msgId`;
-export const getMessageRaw = ({ msgId, msgDirection }: MessageRawParams) =>
-  get<MessageRaw>(
-    API_MESSAGE_RAW.replace(':msgDirection', encodeURIComponent(msgDirection)).replace(
-      ':msgId',
-      encodeURIComponent(msgId),
-    ),
-  );
+/** 查询当前及关联报文原文 */
+export const API_MESSAGE_RAW = `${API_BASE_MESSAGE}/raw/:msgId`;
+/** 首条为当前报文，其余为关联报文 */
+export const getMessageRaws = (msgId: string) =>
+  get<MessageRaw[]>(API_MESSAGE_RAW.replace(':msgId', encodeURIComponent(msgId)));
 
 /** 查询报文处理轨迹。 */
 export const API_MESSAGE_PROCESSING_RECORDS = `${API_BASE_MESSAGE}/processing-records/:msgId`;
 export const getMessageProcessingRecords = (msgId: string) =>
   get<MessageAuditTrailRecord[]>(API_MESSAGE_PROCESSING_RECORDS.replace(':msgId', encodeURIComponent(msgId)));
 
-/** 查询报文原文所需的完整定位信息。 */
-export interface MessageRawParams {
-  /** 报文标识号。 */
-  msgId: string;
-  /** 收发方向，用于确定收报或发报主表。 */
-  msgDirection: MessageDirection;
-}
-
-/** 报文原文。 */
+/** 报文原文 */
 export interface MessageRaw {
-  /** 报文标识号：MSG_ID。 */
+  /** 报文标识号：MSG_ID */
   msgId: string;
-  /** 报文原文：MSG_CONTENT。 */
+  /** 收发方向：MSG_DIRECTION */
+  msgDirection: MessageDirection;
+  /** 报文类型：MSG_TYPE */
+  msgType: string;
+  /** 报文原文：MSG_CONTENT */
   msgContent: string;
-  /** 创建时间：CREATE_TIME。 */
+  /** 创建时间：CREATE_TIME */
   createTime: string;
 }
 

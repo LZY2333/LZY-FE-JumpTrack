@@ -3,8 +3,6 @@ import {
   CheckCircleOutlined,
   CheckOutlined,
   CloseOutlined,
-  CopyOutlined,
-  PrinterOutlined,
   ReloadOutlined,
   RollbackOutlined,
   SaveOutlined,
@@ -19,8 +17,6 @@ const PanelAction = ({
   onReset,
   onRollback,
   onConfirm,
-  onCopy,
-  onPrint,
   onApproval,
 }: PanelActionProps) => {
   return (
@@ -59,17 +55,6 @@ const PanelAction = ({
           </>
         )}
       </div>
-
-      {isMakerNode && !updated && (
-        <div className='flex flex-wrap gap-2'>
-          <Button size='small' icon={<CopyOutlined />} onClick={onCopy}>
-            Copy Current
-          </Button>
-          <Button size='small' icon={<PrinterOutlined />} onClick={onPrint}>
-            Print Current
-          </Button>
-        </div>
-      )}
     </div>
   );
 };
@@ -89,10 +74,6 @@ interface PanelActionProps {
   onRollback: () => void;
   /** 确认经办。 */
   onConfirm: () => void;
-  /** 复制当前原文。 */
-  onCopy: () => void;
-  /** 打印当前原文。 */
-  onPrint: () => void;
   /** 提交审批。 */
   onApproval: (next: boolean) => void;
 }

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { compareMessageAmounts } from '@/utils/messageAmountUtil';
-import type { MessageQuery, MessageQueryConditions } from '@/api/messages';
+import type { MessageQuery, MessageQueryConditions, MessageRaw } from '@/api/messages';
 import type { MessageAuditTrailRecord, MessageDetail, MessageRecord } from '@/types';
 import { MessageBusinessType, MessageDirection, MsgRecvStatus, MsgSendStatus, ResCode } from '@/types/enums';
 
@@ -459,19 +459,21 @@ const messageDetailId = (url: string) => {
   return decodeURIComponent(segments[segments.length - 1] || '');
 };
 
-/** 从原文接口 URL 末尾读取方向和报文号。 */
-const messageRawParams = (url: string) => {
-  const segments = url.split('?')[0].split('/').filter(Boolean);
-  const [msgDirection = '', msgId = ''] = segments.slice(-2).map(decodeURIComponent);
-  return { msgDirection, msgId };
-};
-
 const findMessage = (msgId: string) => messages.find((record) => record.msgId === msgId);
 
-/** 按原文接口的两个必填定位参数查找报文。 */
-const findMessageRaw = (url: string) => {
-  const { msgDirection, msgId } = messageRawParams(url);
-  return messages.find((record) => record.msgId === msgId && record.msgDirection === msgDirection);
+/** 返回当前报文及同组关联报文，保证当前报文始终在首位 */
+const createMessageRaws = (record: MockMessageDetail): MessageRaw[] => {
+  const mainMsgId = record.mainMsgId || record.msgId;
+  const related = messages.filter(
+    (candidate) => candidate.msgId !== record.msgId && (candidate.mainMsgId || candidate.msgId) === mainMsgId,
+  );
+  return [record, ...related].map((message) => ({
+    msgId: message.msgId,
+    msgDirection: message.msgDirection,
+    msgType: message.msgType,
+    msgContent: createRawXml(message),
+    createTime: message.createTime,
+  }));
 };
 
 const cloneMessage = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -568,16 +570,16 @@ export default [
     },
   },
   {
-    url: '/pssst/manager/message/raw/:msgDirection/:msgId',
+    url: '/pssst/manager/message/raw/:msgId',
     method: 'get',
     timeout: 800,
     response: (option: { url: string }) => {
       const msgId = lastPathSegment(option.url);
-      const record = findMessageRaw(option.url);
+      const record = findMessage(msgId);
       return record
         ? {
             returnCode: ResCode.Success,
-            body: { msgContent: createRawXml(record) },
+            body: createMessageRaws(record),
           }
         : notFound(msgId);
     },

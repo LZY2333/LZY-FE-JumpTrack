@@ -8,7 +8,7 @@ import IopPageShell from '@/components/IopPageCommon';
 import PanelMessageDetail from '@/components/MessageInfo/PanelMessageDetail';
 import type { IopTaskData } from '@/router/iop-routes/useIopGuard';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
-import { IOP_TASK_NODE_LABELS, IopTaskNode, MessageDirection } from '@/types/enums';
+import { IOP_TASK_NODE_LABELS, IopTaskNode } from '@/types/enums';
 import PanelAction from './PanelAction';
 import { openModalApprove, openModalReject } from './ModalApproval';
 
@@ -109,16 +109,6 @@ const IopManualEntry = () => {
     }
   };
 
-  // 【Copy current】
-  const handleCopy = async () => {
-    await messageRawRef.current!.copyCurrent();
-  };
-
-  // 【Print Current】
-  const handlePrint = () => {
-    messageRawRef.current!.printCurrent();
-  };
-
   if (!SUPPORTED_TASK_NODES.has(task.taskNode)) {
     return (
       <IopPageShell title='Manual Entry' taskNode={task.taskNode}>
@@ -133,53 +123,55 @@ const IopManualEntry = () => {
 
   return (
     <IopPageShell title='Manual Entry' taskNode={task.taskNode}>
-      {ACTION_TASK_NODES.has(task.taskNode) && (
-        <PanelAction
-          isMakerNode={isMakerNode}
-          isCheckerNode={isCheckerNode}
-          updated={updated}
-          onUpdate={handleUpdate}
-          onReset={handleReset}
-          onRollback={handleRollback}
-          onConfirm={handleConfirm}
-          onCopy={handleCopy}
-          onPrint={handlePrint}
-          onApproval={handleApproval}
-        />
-      )}
+      <div className='flex h-full min-h-0 flex-col'>
+        {ACTION_TASK_NODES.has(task.taskNode) && (
+          <PanelAction
+            isMakerNode={isMakerNode}
+            isCheckerNode={isCheckerNode}
+            updated={updated}
+            onUpdate={handleUpdate}
+            onReset={handleReset}
+            onRollback={handleRollback}
+            onConfirm={handleConfirm}
+            onApproval={handleApproval}
+          />
+        )}
 
-      {task.taskNode === IopTaskNode.MakerRework && (
-        <Alert
-          className='mb-3 shrink-0'
-          type='warning'
-          showIcon
-          message='Reject Reason'
-          description={task.rejectReason || 'No reject reason provided.'}
-        />
-      )}
+        {task.taskNode === IopTaskNode.MakerRework && (
+          <Alert
+            className='mb-3 shrink-0'
+            type='warning'
+            showIcon
+            message='Reject Reason'
+            description={task.rejectReason || 'No reject reason provided.'}
+          />
+        )}
 
-      {task.taskNode === IopTaskNode.Approved && (
-        <Alert
-          className='mb-3 shrink-0'
-          type='success'
-          showIcon
-          message='Task Approved'
-          description='This task has been approved.'
-        />
-      )}
+        {task.taskNode === IopTaskNode.Approved && (
+          <Alert
+            className='mb-3 shrink-0'
+            type='success'
+            showIcon
+            message='Task Approved'
+            description='This task has been approved.'
+          />
+        )}
 
-      {isMakerNode && !updated ? (
-        <Card
-          className='flex h-full min-h-0 flex-col'
-          classNames={{ body: 'flex min-h-0 flex-1 flex-col overflow-hidden' }}
-          size='small'
-          title='Raw Message'
-        >
-          <ContentMessageRaw ref={messageRawRef} msgId={task.busRefNo} msgDirection={MessageDirection.In} editable />
-        </Card>
-      ) : (
-        <PanelMessageDetail temp msgId={task.busRefNo} showRaw={false} />
-      )}
+        {isMakerNode && !updated ? (
+          <Card
+            className='flex min-h-0 flex-1 flex-col overflow-hidden'
+            classNames={{ body: 'flex min-h-0 flex-1 flex-col overflow-hidden' }}
+            size='small'
+            title='Raw Message'
+          >
+            <ContentMessageRaw ref={messageRawRef} msgId={task.busRefNo} mode='single' editable />
+          </Card>
+        ) : (
+          <div className='shrink-0'>
+            <PanelMessageDetail temp msgId={task.busRefNo} showRaw={false} />
+          </div>
+        )}
+      </div>
     </IopPageShell>
   );
 };

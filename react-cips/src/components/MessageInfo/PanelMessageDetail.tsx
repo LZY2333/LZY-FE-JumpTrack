@@ -1,7 +1,5 @@
-import { useRef } from 'react';
 import { Alert, Tabs } from 'antd';
 import ContentMessageRaw from '@/components/ContentMessageRaw';
-import type { ContentMessageRawRef } from '@/components/ContentMessageRaw';
 import { CardMessageBasicInfo } from './CardMessageBasicInfo';
 import { CardMessageBusinessInfo } from './CardMessageBusinessInfo';
 import useMessageDetail from './useMessageDetail';
@@ -19,14 +17,12 @@ interface PanelMessageDetailProps {
 
 /** 报文信息面板，切换展示基础与业务信息及报文原文 */
 const PanelMessageDetail = ({ msgId, temp = false, highLightFields, showRaw = true }: PanelMessageDetailProps) => {
-  const messageRawRef = useRef<ContentMessageRawRef>(null);
   const { detail, detailError } = useMessageDetail({ msgId, temp });
-  const msgDirection = detail?.msgBasicInfo.msgDirection;
 
   const tabs = [
     {
       key: 'structured',
-      label: '报文信息',
+      label: 'Message Info',
       children: (
         <div>
           <CardMessageBasicInfo detail={detail} />
@@ -38,9 +34,13 @@ const PanelMessageDetail = ({ msgId, temp = false, highLightFields, showRaw = tr
       ? [
           {
             key: 'raw',
-            label: '报文明细',
+            label: 'Message Raw',
             forceRender: true,
-            children: <ContentMessageRaw ref={messageRawRef} msgId={msgId} msgDirection={msgDirection} />,
+            children: (
+              <div className='flex h-96 flex-col overflow-hidden'>
+                <ContentMessageRaw msgId={msgId} />
+              </div>
+            ),
           },
         ]
       : []),

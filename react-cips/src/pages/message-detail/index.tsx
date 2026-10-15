@@ -102,10 +102,10 @@ const MessageDetailPage = () => {
     },
     {
       key: RAW_TAB_KEY,
-      label: 'Raw Message',
+      label: 'Message Raw',
       className: FLEX_TAB_CONTENT_CLASS_NAME,
       forceRender: true,
-      children: <ContentMessageRaw ref={messageRawRef} msgId={msgId} msgDirection={msgDirection} />,
+      children: <ContentMessageRaw ref={messageRawRef} msgId={msgId} />,
     },
     {
       key: 'processing',

@@ -188,3 +188,25 @@ body,
 .ant-btn-disabled {
   cursor: default !important;
 }
+/* 原文列表按固定像素高度展开，拖拽后以用户保存的高度作为动画终点 */
+[data-message-raw-expanded] {
+  height: var(--message-raw-height, 384px);
+}
+
+[data-message-raw-expanded='true'] {
+  animation: message-raw-expand 200ms ease-out;
+}
+
+@keyframes message-raw-expand {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--message-raw-height, 384px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-message-raw-expanded='true'] {
+    animation: none;
+  }
+}

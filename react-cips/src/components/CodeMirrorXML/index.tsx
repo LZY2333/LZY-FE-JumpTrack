@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { ConfigProvider, Segmented, theme as antdTheme } from 'antd';
 import { xml as xmlLanguage } from '@codemirror/lang-xml';
 import CodeMirror from '@uiw/react-codemirror';
@@ -15,6 +16,8 @@ const XML_CODE_THEME_STORAGE_KEY = 'xml-viewer-theme';
 const XML_LANGUAGE_EXTENSION = xmlLanguage();
 
 interface CodeMirrorXMLBaseProps {
+  /** 主题切换前的附加工具栏内容 */
+  toolbarExtra?: ReactNode;
   /** XML 原文。 */
   value: string;
   /** 空内容提示。 */
@@ -97,6 +100,7 @@ const CodeMirrorXML = forwardRef<CodeMirrorXMLRef, CodeMirrorXMLProps>((props, f
     onThemeChange,
     indentSize = 2,
     collapsible = true,
+    toolbarExtra,
   } = props;
   const readOnly = props.readOnly === true;
   const handleChange = readOnly ? undefined : props.onChange;
@@ -137,7 +141,13 @@ const CodeMirrorXML = forwardRef<CodeMirrorXMLRef, CodeMirrorXMLProps>((props, f
         className={cn('flex flex-col overflow-hidden rounded border', preset.containerClassName, className)}
         data-theme={activeTheme}
       >
-        <div className={cn('flex shrink-0 justify-end border-b px-2 py-1', preset.toolbarClassName)}>
+        <div
+          className={cn(
+            'flex shrink-0 flex-wrap items-center justify-end gap-2 border-b px-2 py-1',
+            preset.toolbarClassName,
+          )}
+        >
+          {toolbarExtra}
           <Segmented<XMLCodeThemeName>
             size='small'
             options={THEME_OPTIONS}
