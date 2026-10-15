@@ -150,11 +150,22 @@ export const MessageDateRangeFilter = (props: MessageFilterFormItemProps) => (
 );
 
 /** 报文类型：MSG_TYPE */
-export const MessageTypeFilter = (props: MessageFilterFormItemProps) => (
-  <Form.Item {...props} name='msgType' label='Message Type'>
-    <Input allowClear placeholder='e.g. pacs.008.001.01' />
-  </Form.Item>
-);
+export const MessageTypeFilter = (props: MessageFilterFormItemProps) => {
+  const { options } = useDictionaryOptions(DictionaryOptionsEnum.MsgType);
+
+  return (
+    <Form.Item {...props} name='msgType' label='Message Type' getValueProps={getSelectValueProps}>
+      <Select
+        className='w-full'
+        allowClear
+        showSearch
+        optionFilterProp='label'
+        placeholder='All'
+        options={options}
+      />
+    </Form.Item>
+  );
+};
 
 /** 业务流水号：MSG_BUSINESS_NO */
 export const MessageBusinessNoFilter = (props: MessageFilterFormItemProps) => (

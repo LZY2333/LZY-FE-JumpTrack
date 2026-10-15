@@ -91,7 +91,9 @@ export const msgType = {
   title: 'Message Type',
   dataIndex: 'msgType',
   width: 180,
-  render: renderMessageText,
+  render: (value: MessageRecord['msgType']) => (
+    <TextDictionary configType={DictionaryOptionsEnum.MsgType} value={value} />
+  ),
 } satisfies TableColumnType<Pick<MessageRecord, 'msgType'>>;
 
 /** 业务流水号：MSG_BUSINESS_NO */

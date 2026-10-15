@@ -259,6 +259,8 @@ export enum PartyLoginStatusEnum {
 
 /** 基础配置字典类型 */
 export enum DictionaryOptionsEnum {
+  /** 报文类型 */
+  MsgType = 'optsMsgType',
   /** 系统编号 */
   SystemId = 'optsSystemId',
   /** 部门 */

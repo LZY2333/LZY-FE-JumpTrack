@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { create } from 'zustand';
 import { queryBasicConfigOptionsApi } from '@/api/basicConfigOption';
 import type { DictionaryOption, DictionaryOptions, DictionaryOptionsEnum } from '@/types/enums';
+import dictionaryOptions from './dictionaryOptions.json';
 
 /** 字典缓存与按需加载入口 */
 interface DictionaryStore {
@@ -61,7 +62,8 @@ const useDictionaryStore = create<DictionaryStore>((set, get) => {
     }
   };
 
-  return { options: {}, ensureOptions };
+  // 临时字典随构建内置，后端提供正式字典后移除对应预置项
+  return { options: dictionaryOptions, ensureOptions };
 });
 
 /** 字段挂载或启用时加载自己的字典 */
