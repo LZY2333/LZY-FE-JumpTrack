@@ -31,7 +31,6 @@ const inquiryReplyMsgTypeOptions = [
 
 /** 目标系统编号 */
 export const IopTargetSysId = (props: IopFormItemProps) => {
-  const form = Form.useFormInstance();
   const { options } = useDictionaryOptions(DictionaryOptionsEnum.SystemId);
 
   return (
@@ -40,18 +39,7 @@ export const IopTargetSysId = (props: IopFormItemProps) => {
       name='targetSysId'
       label='Target System ID'
       getValueProps={getSelectValueProps}
-      dependencies={['msgOwnerDept', 'msgOwnerGroup']}
-      rules={[
-        {
-          validator: (_, targetSysId?: string) => {
-            const { msgOwnerDept, msgOwnerGroup } = form.getFieldsValue();
-            if (targetSysId?.trim() || msgOwnerDept?.trim() || msgOwnerGroup?.trim()) {
-              return Promise.resolve();
-            }
-            return Promise.reject(new Error('Enter at least one of Target System ID, Department, or Group'));
-          },
-        },
-      ]}
+      rules={[{ required: true }]}
     >
       <Select className='w-full' allowClear placeholder='Select target system ID' options={options} />
     </Form.Item>

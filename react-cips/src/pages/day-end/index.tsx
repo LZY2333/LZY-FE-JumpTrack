@@ -16,6 +16,7 @@ import {
 import type { IopTaskInfo } from '@/types';
 import { renderMessageText } from '@/components/TableColumn/messageColumnUtil';
 import { startGlobalLoading } from '@/store/useGlobalLoadingStore';
+import useUserStore from '@/store/useUserStore';
 import { openModalDayEnd } from './ModalDayEnd';
 
 /** 日结页面查询状态 */
@@ -42,12 +43,19 @@ const DAY_END_TASK_COLUMNS: TableColumnsType<IopTaskInfo> = [
 /** 日结页 */
 const DayEnd = () => {
   const { message, modal } = AntdApp.useApp();
+  const userId = useUserStore((state) => state.user?.userId);
   const [pageState, setPageState] = useState<DayEndPageState>({});
   const { status, pendingTasks, error } = pageState;
 
   /** 刷新 */
   const handleRefresh = useCallback(
     async (event?: MouseEvent<HTMLElement>) => {
+      if (!userId) {
+        message.warning('Please log in first.');
+        setPageState({});
+        return false;
+      }
+
       const stopGlobalLoading = startGlobalLoading();
       try {
         const [status, checkResult] = await Promise.all([getDayEndStatus(), checkDayEnd()]);
@@ -62,12 +70,17 @@ const DayEnd = () => {
         stopGlobalLoading();
       }
     },
-    [message],
+    [message, userId],
   );
 
   /** 日结 */
   const handleChange = useCallback(
     async (checked: boolean) => {
+      if (!userId) {
+        message.warning('Please log in first.');
+        return;
+      }
+
       // 刷新状态
       const canDayEnd = await handleRefresh();
       // 当前 checked = false时，正在执行日结(关闭)，需要进行校验
@@ -83,12 +96,14 @@ const DayEnd = () => {
       // 刷新状态
       await handleRefresh();
     },
-    [handleRefresh, message, modal, pageState.status],
+    [handleRefresh, message, modal, pageState.status, userId],
   );
 
   useEffect(() => {
+    if (!userId) return;
+
     handleRefresh();
-  }, [handleRefresh]);
+  }, [handleRefresh, userId]);
 
   return (
     <div className='h-1/2'>
@@ -139,6 +154,7 @@ const DayEnd = () => {
             rowKey='taskId'
             columns={DAY_END_TASK_COLUMNS}
             dataSource={pendingTasks ?? []}
+            locale={{ emptyText: !userId ? 'Waiting for authentication...' : 'No pending tasks' }}
             pagination={false}
             scroll={{ x: 'max-content' }}
           />
