@@ -8,6 +8,7 @@ const MessageList = lazy(() => import('@/pages/message-list'));
 const MessageDetail = lazy(() => import('@/pages/message-detail'));
 const PartyList = lazy(() => import('@/pages/party-list'));
 const LcwList = lazy(() => import('@/pages/lcw-list'));
+const DayEnd = lazy(() => import('@/pages/day-end'));
 
 /** 需要登录并使用主布局的业务路由。 */
 export const mainRoutes: AppRoute[] = [
@@ -62,6 +63,16 @@ export const mainRoutes: AppRoute[] = [
       </KeepAlive>
     ),
     meta: { title: 'LCW Tasks' },
+  },
+  /** 日结管理页 */
+  {
+    path: RoutePath.DayEnd,
+    element: (
+      <Suspense fallback={null}>
+        <DayEnd />
+      </Suspense>
+    ),
+    meta: { title: 'Day End' },
   },
 ];
 

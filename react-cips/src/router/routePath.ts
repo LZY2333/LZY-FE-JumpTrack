@@ -8,6 +8,7 @@ export enum RoutePath {
   MessageDetail = '/messages/:msgId',
   PartyList = '/party',
   LcwList = '/lcw',
+  DayEnd = '/dayEnd',
 
   IopRoot = '/iop',
   IopManualEntry = '/iop/manual-entry',
