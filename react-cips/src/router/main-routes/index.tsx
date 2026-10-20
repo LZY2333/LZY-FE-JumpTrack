@@ -9,6 +9,7 @@ const MessageDetail = lazy(() => import('@/pages/message-detail'));
 const PartyList = lazy(() => import('@/pages/party-list'));
 const LcwList = lazy(() => import('@/pages/lcw-list'));
 const DayEnd = lazy(() => import('@/pages/day-end'));
+const PartyLogin = lazy(() => import('@/pages/party-login'));
 const DayNight = lazy(() => import('@/pages/day-night'));
 
 /** 需要登录并使用主布局的业务路由。 */
@@ -74,6 +75,16 @@ export const mainRoutes: AppRoute[] = [
       </Suspense>
     ),
     meta: { title: 'Day End' },
+  },
+  /** 本行登录登出页 */
+  {
+    path: RoutePath.PartyLogin,
+    element: (
+      <Suspense fallback={null}>
+        <PartyLogin />
+      </Suspense>
+    ),
+    meta: { title: 'Login/Logout' },
   },
   /** 日夜场状态页 */
   {

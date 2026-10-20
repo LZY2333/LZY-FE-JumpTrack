@@ -106,61 +106,59 @@ const DayEnd = () => {
   }, [handleRefresh, userId]);
 
   return (
-    <div className='h-1/2'>
-      <Card
-        size='small'
-        title='CIPS Day End'
-        className='flex max-h-full flex-col overflow-hidden'
-        classNames={{ header: 'shrink-0', body: 'flex min-h-0 flex-col gap-2 overflow-hidden' }}
-      >
-        <Flex vertical gap='small' className='shrink-0'>
-          {error && <Alert type='error' message={error} />}
-          <Descriptions
-            size='small'
-            column={3}
-            className='w-fit [&>.ant-descriptions-view>table]:!w-auto [&>.ant-descriptions-view>table]:!table-auto'
-          >
-            <Descriptions.Item label='Current Status'>
-              <Space>
-                {renderMessageText(status?.enableInd)}
-                <Switch
-                  size='small'
-                  aria-label='Change day end status'
-                  checked={status?.enableInd === 'Y'}
-                  onChange={handleChange}
-                />
-              </Space>
-            </Descriptions.Item>
-            <Descriptions.Item label='Msg Channel' span={2}>
-              {renderMessageText(status?.msgChannel)}
-            </Descriptions.Item>
-            <Descriptions.Item label='Last Operator'>{renderMessageText(status?.authorUser)}</Descriptions.Item>
-            <Descriptions.Item label='Department'>{renderMessageText(status?.deption)}</Descriptions.Item>
-            <Descriptions.Item label='Last Updated'>{status?.updateTime}</Descriptions.Item>
-          </Descriptions>
-          <Divider orientation='left' size='small'>
-            <Flex align='center' gap='small'>
-              <div>Pending Tasks ({pendingTasks?.length ?? 0})</div>
-              <Button size='small' color='primary' variant='text' icon={<ReloadOutlined />} onClick={handleRefresh}>
-                Refresh
-              </Button>
-            </Flex>
-          </Divider>
-        </Flex>
-        <div className='min-h-0 overflow-auto'>
-          <Table<IopTaskInfo>
-            sticky
-            size='small'
-            rowKey='taskId'
-            columns={DAY_END_TASK_COLUMNS}
-            dataSource={pendingTasks ?? []}
-            locale={{ emptyText: !userId ? 'Waiting for authentication...' : 'No pending tasks' }}
-            pagination={false}
-            scroll={{ x: 'max-content' }}
-          />
-        </div>
-      </Card>
-    </div>
+    <Card
+      size='small'
+      title='CIPS Day End'
+      className='flex h-full flex-col overflow-hidden'
+      classNames={{ header: 'shrink-0', body: 'flex min-h-0 flex-col gap-2 overflow-hidden' }}
+    >
+      <Flex vertical gap='small' className='shrink-0'>
+        {error && <Alert type='error' message={error} />}
+        <Descriptions
+          size='small'
+          column={3}
+          className='w-fit [&>.ant-descriptions-view>table]:!w-auto [&>.ant-descriptions-view>table]:!table-auto'
+        >
+          <Descriptions.Item label='Current Status'>
+            <Space>
+              {renderMessageText(status?.enableInd)}
+              <Switch
+                size='small'
+                aria-label='Change day end status'
+                checked={status?.enableInd === 'Y'}
+                onChange={handleChange}
+              />
+            </Space>
+          </Descriptions.Item>
+          <Descriptions.Item label='Msg Channel' span={2}>
+            {renderMessageText(status?.msgChannel)}
+          </Descriptions.Item>
+          <Descriptions.Item label='Last Operator'>{renderMessageText(status?.authorUser)}</Descriptions.Item>
+          <Descriptions.Item label='Department'>{renderMessageText(status?.deption)}</Descriptions.Item>
+          <Descriptions.Item label='Last Updated'>{status?.updateTime}</Descriptions.Item>
+        </Descriptions>
+        <Divider orientation='left' size='small'>
+          <Flex align='center' gap='small'>
+            <div>Pending Tasks ({pendingTasks?.length ?? 0})</div>
+            <Button size='small' color='primary' variant='text' icon={<ReloadOutlined />} onClick={handleRefresh}>
+              Refresh
+            </Button>
+          </Flex>
+        </Divider>
+      </Flex>
+      <div className='min-h-0 overflow-auto'>
+        <Table<IopTaskInfo>
+          sticky
+          size='small'
+          rowKey='taskId'
+          columns={DAY_END_TASK_COLUMNS}
+          dataSource={pendingTasks ?? []}
+          locale={{ emptyText: !userId ? 'Waiting for authentication...' : 'No pending tasks' }}
+          pagination={false}
+          scroll={{ x: 'max-content' }}
+        />
+      </div>
+    </Card>
   );
 };
 

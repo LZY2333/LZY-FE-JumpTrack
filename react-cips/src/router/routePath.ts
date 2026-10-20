@@ -9,6 +9,7 @@ export enum RoutePath {
   PartyList = '/party',
   LcwList = '/lcw',
   DayEnd = '/dayEnd',
+  PartyLogin = '/partyLogin',
   DayNight = '/dayNight',
 
   IopRoot = '/iop',
