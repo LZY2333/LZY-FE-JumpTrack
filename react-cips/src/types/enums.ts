@@ -1,3 +1,28 @@
+/* ==================== 基础配置字典 ==================== */
+
+/** 基础配置字典类型 */
+export enum DictionaryOptionsEnum {
+  /** 报文类型 */
+  MsgType = 'optsMsgType',
+  /** 系统编号 */
+  SystemId = 'optsSystemId',
+  /** 部门 */
+  Dept = 'optsDept',
+  /** 组 */
+  Group = 'optsGroup',
+}
+
+/** 字典下拉选项 */
+export interface DictionaryOption {
+  /** 显示文本 */
+  label: string;
+  /** 提交的配置编码 */
+  value: string;
+}
+
+/** 按字典类型保存的下拉选项，缺省表示尚未加载 */
+export type DictionaryOptions = Partial<Record<DictionaryOptionsEnum, DictionaryOption[]>>;
+
 /* ==================== 报文基础枚举 ==================== */
 
 /** 报文收发方向。 */
@@ -255,27 +280,33 @@ export enum PartyLoginStatusEnum {
   LoggedOut = 'LOGF',
 }
 
-/* ==================== 基础配置字典 ==================== */
+/* ==================== 日夜场状态枚举 ==================== */
 
-/** 基础配置字典类型 */
-export enum DictionaryOptionsEnum {
-  /** 报文类型 */
-  MsgType = 'optsMsgType',
-  /** 系统编号 */
-  SystemId = 'optsSystemId',
-  /** 部门 */
-  Dept = 'optsDept',
-  /** 组 */
-  Group = 'optsGroup',
+/** 日夜场当前系统状态 */
+export enum DayNightStatusEnum {
+  /** 日间营业准备 */
+  DaytimePreparation = 'CLSD',
+  /** 日间处理 */
+  DaytimeProcessing = 'ACTV',
+  /** 日间业务截止 */
+  DaytimeCutoff = 'SUSP',
+  /** 场终处理 */
+  SessionClosing = 'CLSG',
+  /** 夜间处理 */
+  NighttimeProcessing = 'NTAC',
+  /** 夜间业务截止 */
+  NighttimeCutoff = 'NTSP',
+  /** 日终 */
+  DayEnd = 'NTCS',
 }
 
-/** 字典下拉选项 */
-export interface DictionaryOption {
-  /** 显示文本 */
-  label: string;
-  /** 提交的配置编码 */
-  value: string;
-}
-
-/** 按字典类型保存的下拉选项，缺省表示尚未加载 */
-export type DictionaryOptions = Partial<Record<DictionaryOptionsEnum, DictionaryOption[]>>;
+/** 日夜场状态展示文案 */
+export const DAY_NIGHT_STATUS_LABELS: Record<DayNightStatusEnum, string> = {
+  [DayNightStatusEnum.DaytimePreparation]: '日间营业准备',
+  [DayNightStatusEnum.DaytimeProcessing]: '日间处理',
+  [DayNightStatusEnum.DaytimeCutoff]: '日间业务截止',
+  [DayNightStatusEnum.SessionClosing]: '场终处理',
+  [DayNightStatusEnum.NighttimeProcessing]: '夜间处理',
+  [DayNightStatusEnum.NighttimeCutoff]: '夜间业务截止',
+  [DayNightStatusEnum.DayEnd]: '日终',
+};

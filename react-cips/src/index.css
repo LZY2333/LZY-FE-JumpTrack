@@ -23,6 +23,12 @@ body,
   background: var(--ant-color-primary);
 }
 
+/* 日夜场当前项沿用全局主题的文字色和描边色 */
+[data-day-night-status][aria-current='true'] {
+  color: var(--ant-color-primary-text);
+  --tw-ring-color: var(--ant-color-primary);
+}
+
 /* 图标和文字使用相同的内容盒居中，避免字体行盒与图标基线造成视觉错位 */
 .ant-app .ant-btn > .ant-btn-icon,
 .ant-app .ant-btn > span:not(.ant-btn-icon) {
