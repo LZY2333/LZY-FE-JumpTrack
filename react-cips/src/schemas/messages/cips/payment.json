@@ -187,6 +187,7 @@
         "title": "Payment Parties",
         "collapsible": true,
         "rowKey": "partyType",
+        "storageKey": "message-payment-parties-v1",
         "columns": [
           {
             "dataIndex": "partyType",

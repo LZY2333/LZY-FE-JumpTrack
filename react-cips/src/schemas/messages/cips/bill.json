@@ -101,6 +101,7 @@
         "title": "Bill Details",
         "collapsible": true,
         "rowKey": "seqNo",
+        "storageKey": "message-bill-details-v1",
         "columns": [
           {
             "dataIndex": "txnRef",

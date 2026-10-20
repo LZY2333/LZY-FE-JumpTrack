@@ -2,6 +2,8 @@
 
 /** 基础配置字典类型 */
 export enum DictionaryOptionsEnum {
+  /** 币种 */
+  Currency = 'optsCurrency',
   /** 报文类型 */
   MsgType = 'optsMsgType',
   /** 系统编号 */

@@ -241,6 +241,17 @@ function createBusinessData({
           createTime: messageTime,
         },
         billDetails: [
+          // 增加多行、长文本和空值样本，便于验证表格布局
+          ...Array.from({ length: 18 }, (_, detailIndex) => ({
+            txnRef: `BILL-TXN-${sequence}-${String(detailIndex + 3).padStart(2, '0')}-SETTLEMENT-REFERENCE`,
+            seqNo: String(detailIndex + 3),
+            remitBankBic: SEND_INSTS[detailIndex % SEND_INSTS.length],
+            remitCcy: 'CNY',
+            remitAmt: (amount * (detailIndex + 1)).toFixed(2),
+            creditType: choose(detailIndex % 2 === 0, 'C', 'D'),
+            valueDate: businessDate,
+            createTime: choose(detailIndex % 4 === 0, null, messageTime),
+          })),
           {
             txnRef: `BILL-TXN-${sequence}-01`,
             seqNo: '1',
@@ -285,6 +296,22 @@ function createBusinessData({
           ...auditFields,
         },
         paymentParties: [
+          // 保持交易对象类型唯一，覆盖长名称、长地址与空字段展示
+          ...['ULTMTDBTR', 'ULTMTCDTR', 'INITGPTY', 'INTRMYAGT1'].map((partyType, partyIndex) => ({
+            partyType,
+            partyAcct: `MOCK-ACCOUNT-${sequence}-${partyIndex + 1}`,
+            partyName: `International Settlement and Cross-border Trading Corporation ${partyIndex + 1}`,
+            idType: 'ORGID',
+            idNum: `${partyType}-${sequence}`,
+            agentBic: SEND_INSTS[partyIndex % SEND_INSTS.length],
+            agentLei: null,
+            agentClrSys: 'CIPS',
+            addrDept: 'International Settlement Department',
+            addrCtryCode: 'CN',
+            addrLine: `Room ${partyIndex + 1}, International Financial Services Centre, 888 Century Avenue, Pudong New Area, Shanghai`,
+            createTime: messageTime,
+            updateTime: auditFields.updateTime,
+          })),
           {
             partyType: 'DBTR',
             partyAcct: `621700${String(1000000000 + index)}`,

@@ -118,7 +118,9 @@ export const currency: TableColumnType<MessageRecord> = {
   title: 'Currency',
   dataIndex: 'currency',
   width: 150,
-  render: renderMessageText,
+  render: (value: MessageRecord['currency']) => (
+    <TextDictionary configType={DictionaryOptionsEnum.Currency} value={value} />
+  ),
 };
 
 /** 交易标识号：TRAN_ID */
@@ -213,15 +215,15 @@ export const remark: TableColumnType<MessageRecord> = {
 
 /** LCW 初次判定状态：LCW_INITIAL_STATUS */
 export const lcwInitialStatus = {
-  title: 'LCW Status',
+  title: 'Initial Decision Status',
   dataIndex: 'lcwInitialStatus',
   width: 210,
   render: (value: LcwInitialStatus) => LCW_INITIAL_STATUS_LABELS[value] ?? renderMessageText(value),
 };
 
-/** LCW 接口失败信息：RES_CODE / RES_MESSAGE */
+/** LCW 接口响应编码及信息：RES_CODE / RES_MESSAGE */
 export const lcwFailureInfo = {
-  title: 'LCW Failure Info',
+  title: 'Response Code / Message',
   key: 'lcwFailureInfo',
   width: 320,
   ellipsis: { showTitle: false },
@@ -231,7 +233,7 @@ export const lcwFailureInfo = {
 
 /** LCW 初次判定完成时间：LCW_INITIAL_TIME */
 export const lcwInitialTime = {
-  title: 'Exception Time',
+  title: 'Initial Decision Time',
   dataIndex: 'lcwInitialTime',
   width: 180,
   render: renderMessageDateTime,

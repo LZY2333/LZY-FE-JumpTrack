@@ -202,6 +202,7 @@ export const TranIdFilter = (props: MessageFilterFormItemProps) => {
 /** 金额与币种：REMIT_AMOUNT/REMIT_CCY、NETTING_AMOUNT/BILL_CCY、GPI_AMOUNT/GPI_CCY */
 export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) => {
   const form = Form.useFormInstance();
+  const { options } = useDictionaryOptions(DictionaryOptionsEnum.Currency);
   const businessType = Form.useWatch<MessageBusinessType>('businessType', form);
   const previousBusinessTypeRef = useRef(businessType);
   const disabled = businessType === MessageBusinessType.Other;
@@ -227,7 +228,7 @@ export const MessageAmountCurrencyFilter = (props: MessageFilterFormItemProps) =
               disabled={disabled}
               allowClear
               placeholder='Currency'
-              options={['USD', 'HKD', 'CNY', 'EUR', 'GBP', 'JPY'].map((value) => ({ value, label: value }))}
+              options={options}
             />
           </Form.Item>
         </div>

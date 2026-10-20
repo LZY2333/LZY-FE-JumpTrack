@@ -4,12 +4,13 @@ import { createForm } from '@formily/core';
 import type { FormPatternTypes } from '@formily/core';
 import { createSchemaField, FormProvider, useField } from '@formily/react';
 import type { ISchema } from '@formily/react';
-import { App, Card, Table } from 'antd';
+import { App, Card } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { FormGrid, FormItem as FormilyFormItem, FormLayout, Input, PreviewText } from '@formily/antd-v5';
 import type { IFormItemProps } from '@formily/antd-v5';
 import cn from 'classnames';
 import CardCollapse from '@/components/CardCollapse';
+import ResizableTable from '@/components/ResizableTable';
 import { copyText } from '@/utils/fileUtil';
 import { formatMessageAmount } from '@/utils';
 import { TextDictionary } from '@/store/useDictionaryStore';
@@ -215,17 +216,20 @@ interface MessageBusinessTableProps {
   title: string;
   /** 作为表格行唯一标识的字段。 */
   rowKey: string;
+  /** 子表列布局的持久化标识 */
+  storageKey: string;
   /** 子表字段列定义。 */
   columns: MessageBusinessTableColumn[];
   /** 是否使用可收起 Card。 */
   collapsible?: boolean;
 }
 
-/** 一对多业务属性表，保持数据库字段列顺序并提供横向滚动。 */
+/** 一对多业务属性表，支持调整列宽、顺序和显隐 */
 const MessageBusinessTable = ({
   value = [],
   title,
   rowKey,
+  storageKey,
   columns,
   collapsible = false,
 }: MessageBusinessTableProps) => {
@@ -234,14 +238,14 @@ const MessageBusinessTable = ({
     render: renderBusinessTableCell,
   }));
   const table = (
-    <Table<Record<string, unknown>>
+    <ResizableTable<Record<string, unknown>>
       bordered
       size='small'
       rowKey={rowKey}
+      storageKey={storageKey}
       columns={tableColumns}
       dataSource={value}
       pagination={false}
-      scroll={{ x: 'max-content', y: 240 }}
     />
   );
 
