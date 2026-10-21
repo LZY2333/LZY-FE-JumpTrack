@@ -1,4 +1,45 @@
 {
+  "optsTempSendCancellationMsgType": [
+    { "value": "cips.111.001.02", "label": "客户汇款（111 v2）" },
+    { "value": "cips.111.001.05", "label": "客户汇款（111 v5）" },
+    { "value": "cips.112.001.02", "label": "金融机构汇款（112 v2）" },
+    { "value": "cips.112.001.05", "label": "金融机构汇款（112 v5）" },
+    { "value": "cips.114.001.01", "label": "退汇（114 v1）" },
+    { "value": "cips.114.001.02", "label": "退汇（114 v2）" },
+    { "value": "cips.135.001.01", "label": "FMI发起SSS业务申请" },
+    { "value": "cips.151.001.01", "label": "清算机构借贷" }
+  ],
+  "optsTempSendStatusQueryMsgType": [
+    { "value": "cips.111.001.02", "label": "客户汇款（111 v2）" },
+    { "value": "cips.111.001.05", "label": "客户汇款（111 v5）" },
+    { "value": "cips.111.002.02", "label": "客户汇款（外币）" },
+    { "value": "cips.112.001.02", "label": "金融机构汇款（112 v2）" },
+    { "value": "cips.112.001.05", "label": "金融机构汇款（112 v5）" },
+    { "value": "cips.112.002.02", "label": "金融机构汇款（外币）" },
+    { "value": "cips.113.001.01", "label": "批量业务客户汇款（113 v1）" },
+    { "value": "cips.113.001.02", "label": "批量业务客户汇款（113 v2）" },
+    { "value": "cips.114.001.01", "label": "退回（114 v1）" },
+    { "value": "cips.114.001.02", "label": "退回（114 v2）" },
+    { "value": "cips.131.001.01", "label": "CCP业务发起" },
+    { "value": "cips.133.001.01", "label": "银行发起SSS业务申请" },
+    { "value": "cips.135.001.01", "label": "FMI发起SSS业务申请" },
+    { "value": "cips.135.001.02", "label": "FMI发起SSS业务申请（外币）" },
+    { "value": "cips.151.001.01", "label": "清算机构借贷" },
+    { "value": "cips.350.001.01", "label": "资金调减申请" },
+    { "value": "cips.351.001.01", "label": "预注资调减申请" },
+    { "value": "hvps.112.001.01", "label": "金融机构发起汇兑业务" },
+    { "value": "hvps.115.001.01", "label": "大额延迟结算支付申请" }
+  ],
+  "optsMsgTypeTempSend": [
+    { "value": "cips.303.001.02", "label": "业务撤销申请" },
+    { "value": "cips.305.001.03", "label": "业务状态查询申请" },
+    { "value": "cips.307.001.01", "label": "通用签名信息业务" },
+    { "value": "cips.313.001.01", "label": "跨境业务结算排队查询申请" },
+    { "value": "cips.350.001.01", "label": "资金调减申请" },
+    { "value": "cips.351.001.01", "label": "预注资调减申请" },
+    { "value": "cips.353.001.02", "label": "排队调整申请" },
+    { "value": "cips.354.001.01", "label": "限额修改申请" }
+  ],
   "optsMsgType": [
     { "value": "cips.109.001.01", "label": "cips.109 索费申请" },
     { "value": "cips.111.001.02", "label": "cips.111 客户汇款" },

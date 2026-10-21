@@ -11,6 +11,7 @@ export enum RoutePath {
   DayEnd = '/dayEnd',
   PartyLogin = '/partyLogin',
   DayNight = '/dayNight',
+  TempSend = '/tempSend',
 
   IopRoot = '/iop',
   IopManualEntry = '/iop/manual-entry',

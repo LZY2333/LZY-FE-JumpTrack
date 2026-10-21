@@ -12,6 +12,13 @@ export enum DictionaryOptionsEnum {
   Dept = 'optsDept',
   /** 组 */
   Group = 'optsGroup',
+
+  /** 模板发报类型 */
+  MsgTypeTempSend = 'optsMsgTypeTempSend',
+  /** 模板撤销申请的原报文类型 */
+  TempSendCancellationMsgType = 'optsTempSendCancellationMsgType',
+  /** 模板状态查询的原报文类型 */
+  TempSendStatusQueryMsgType = 'optsTempSendStatusQueryMsgType',
 }
 
 /** 字典下拉选项 */

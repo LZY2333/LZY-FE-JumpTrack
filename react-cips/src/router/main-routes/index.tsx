@@ -11,6 +11,7 @@ const LcwList = lazy(() => import('@/pages/lcw-list'));
 const DayEnd = lazy(() => import('@/pages/day-end'));
 const PartyLogin = lazy(() => import('@/pages/party-login'));
 const DayNight = lazy(() => import('@/pages/day-night'));
+const TempSend = lazy(() => import('@/pages/temp-send'));
 
 /** 需要登录并使用主布局的业务路由。 */
 export const mainRoutes: AppRoute[] = [
@@ -95,6 +96,16 @@ export const mainRoutes: AppRoute[] = [
       </Suspense>
     ),
     meta: { title: 'Day/Night Cutover' },
+  },
+  /** 模板发报 */
+  {
+    path: RoutePath.TempSend,
+    element: (
+      <Suspense fallback={null}>
+        <TempSend />
+      </Suspense>
+    ),
+    meta: { title: 'Template Send' },
   },
 ];
 
