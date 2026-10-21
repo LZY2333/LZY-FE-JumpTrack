@@ -28,6 +28,7 @@ const RawList = ({ raws, currentSingleRef }: RawListProps) => {
   return (
     <div className='min-h-0 flex-1 overflow-auto'>
       <Table<MessageRaw>
+        tableLayout='fixed'
         size='small'
         columns={columns}
         dataSource={raws}

@@ -22,7 +22,7 @@ const THEME_COLORS = {
   tableHeaderText: '#a7443f',
   tableSort: '#fff8f6',
   tableSortActive: '#ffe9e6',
-  tableSplit: '#efbbb6',
+  tableSplit: '#e5a49d',
   tableRowHover: '#fff9f8',
   tableSelected: '#fff2ef',
   tableSelectedHover: '#ffebe8',

@@ -12,6 +12,8 @@ export interface CardCollapseProps extends CardProps {
   defaultCollapsed?: boolean;
   /** 收起状态变化回调。 */
   onCollapsedChange?: (collapsed: boolean) => void;
+  /** 允许内容相对外层滚动容器吸顶或吸底 */
+  allowStickyContent?: boolean;
 }
 
 /** 带标题开关和自上而下展开动画的 Card，保留 Ant Design Card 原生属性。 */
@@ -19,6 +21,7 @@ const CardCollapse = ({
   collapsed,
   defaultCollapsed = false,
   onCollapsedChange,
+  allowStickyContent = false,
   title,
   classNames,
   children,
@@ -28,7 +31,10 @@ const CardCollapse = ({
   const resolvedCollapsed = collapsed ?? innerCollapsed;
   const contentClassName = resolvedCollapsed
     ? 'invisible max-h-0 overflow-hidden px-3 py-0 opacity-0 transition-all duration-200 ease-in-out motion-reduce:transition-none'
-    : 'visible max-h-screen overflow-hidden p-3 opacity-100 transition-all duration-200 ease-in-out motion-reduce:transition-none';
+    : cn(
+        'visible p-3 opacity-100 transition-all duration-200 ease-in-out motion-reduce:transition-none',
+        allowStickyContent ? 'overflow-clip' : 'max-h-screen overflow-hidden',
+      );
 
   const handleCollapse = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();

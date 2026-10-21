@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Alert, App, Button, Card, Space, Tabs, Typography } from 'antd';
 import { ArrowLeftOutlined, CommentOutlined, CopyOutlined, PlusOutlined, PrinterOutlined } from '@ant-design/icons';
@@ -15,7 +15,6 @@ import { openModalDistribute } from './ModalIopTask';
 import TabProcessing from './TabProcessing';
 import { RoutePath } from '@/router/routePath';
 
-const SCROLLABLE_TAB_CONTENT_CLASS_NAME = 'h-full overflow-auto';
 const FLEX_TAB_CONTENT_CLASS_NAME = 'flex h-full min-h-0 flex-col overflow-hidden';
 const DEFAULT_TAB_KEY = 'structured';
 const RAW_TAB_KEY = 'raw';
@@ -30,6 +29,7 @@ const MessageDetailPage = () => {
   const { detail, detailError } = useMessageDetail({ msgId });
   const msgDirection = detail?.msgBasicInfo.msgDirection;
   const messageRawRef = useRef<ContentMessageRawRef>(null);
+  const [businessInfoScrollContainer, setBusinessInfoScrollContainer] = useState<HTMLDivElement | null>(null);
 
   /** 【Distribute】 */
   const handleCreateDistribution = async () => {
@@ -97,8 +97,12 @@ const MessageDetailPage = () => {
     {
       key: 'structured',
       label: 'Business Info',
-      className: SCROLLABLE_TAB_CONTENT_CLASS_NAME,
-      children: <ContentMessageBusinessInfo detail={detail} />,
+      className: 'h-full overflow-hidden',
+      children: (
+        <div ref={setBusinessInfoScrollContainer} className='h-full overflow-auto'>
+          <ContentMessageBusinessInfo detail={detail} scrollContainer={businessInfoScrollContainer} />
+        </div>
+      ),
     },
     {
       key: RAW_TAB_KEY,

@@ -28,6 +28,7 @@ const AMOUNT_FIELD_NAMES = new Set([
   'remitAmt',
 ]);
 const HighLightFieldsContext = createContext<ReadonlySet<string>>(new Set<string>());
+const BusinessTableScrollContainerContext = createContext<HTMLElement | null>(null);
 
 interface MessageSchemaFormProps {
   /** 描述字段结构和展示组件的静态 Schema。 */
@@ -38,6 +39,8 @@ interface MessageSchemaFormProps {
   pattern?: FormPatternTypes;
   /** 高亮字段 */
   highLightFields?: readonly string[];
+  /** 表格吸顶与横向滚动条吸底的滚动容器 */
+  scrollContainer?: HTMLElement | null;
 }
 
 /** Formily Schema 渲染组件 */
@@ -46,6 +49,7 @@ const MessageSchemaForm = ({
   values,
   pattern = 'readPretty',
   highLightFields = EMPTY_HIGH_LIGHT_FIELDS,
+  scrollContainer = null,
 }: MessageSchemaFormProps) => {
   const { message } = App.useApp();
   const form = useMemo(() => createForm({ pattern }), [pattern, schema]);
@@ -98,7 +102,9 @@ const MessageSchemaForm = ({
             gridRowGap={0}
             feedbackLayout='none'
           >
-            <SchemaField schema={schema} />
+            <BusinessTableScrollContainerContext.Provider value={scrollContainer}>
+              <SchemaField schema={schema} />
+            </BusinessTableScrollContainerContext.Provider>
           </FormLayout>
         </FormProvider>
       </HighLightFieldsContext.Provider>
@@ -233,6 +239,7 @@ const MessageBusinessTable = ({
   columns,
   collapsible = false,
 }: MessageBusinessTableProps) => {
+  const scrollContainer = useContext(BusinessTableScrollContainerContext);
   const tableColumns: TableColumnsType<Record<string, unknown>> = columns.map((column) => ({
     ...column,
     render: renderBusinessTableCell,
@@ -246,12 +253,13 @@ const MessageBusinessTable = ({
       columns={tableColumns}
       dataSource={value}
       pagination={false}
+      sticky={scrollContainer ? { getContainer: () => scrollContainer } : false}
     />
   );
 
   if (collapsible) {
     return (
-      <CardCollapse className='mb-3 last:mb-0' size='small' title={title}>
+      <CardCollapse className='mb-3 last:mb-0' size='small' title={title} allowStickyContent={!!scrollContainer}>
         {table}
       </CardCollapse>
     );

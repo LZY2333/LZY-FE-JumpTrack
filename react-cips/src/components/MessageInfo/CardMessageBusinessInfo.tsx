@@ -9,6 +9,8 @@ interface ContentMessageBusinessInfoProps {
   detail: MessageDetail | null;
   /** 高亮字段 */
   highLightFields?: readonly string[];
+  /** 表格吸顶与横向滚动条吸底的滚动容器 */
+  scrollContainer?: HTMLElement | null;
 }
 
 interface CardMessageBusinessInfoProps extends ContentMessageBusinessInfoProps {
@@ -17,14 +19,23 @@ interface CardMessageBusinessInfoProps extends ContentMessageBusinessInfoProps {
 }
 
 /** Business Info */
-export const CardMessageBusinessInfo = ({ detail, className, highLightFields }: CardMessageBusinessInfoProps) => (
+export const CardMessageBusinessInfo = ({
+  detail,
+  className,
+  highLightFields,
+  scrollContainer,
+}: CardMessageBusinessInfoProps) => (
   <div className={className}>
-    <ContentMessageBusinessInfo detail={detail} highLightFields={highLightFields} />
+    <ContentMessageBusinessInfo detail={detail} highLightFields={highLightFields} scrollContainer={scrollContainer} />
   </div>
 );
 
 /** Business Info Content */
-export const ContentMessageBusinessInfo = ({ detail, highLightFields }: ContentMessageBusinessInfoProps) => {
+export const ContentMessageBusinessInfo = ({
+  detail,
+  highLightFields,
+  scrollContainer,
+}: ContentMessageBusinessInfoProps) => {
   if (detail?.msgBasicInfo.businessType === MessageBusinessType.Other) {
     return (
       <Alert
@@ -52,6 +63,7 @@ export const ContentMessageBusinessInfo = ({ detail, highLightFields }: ContentM
       values={detail ? { ...detail } : {}}
       pattern='disabled'
       highLightFields={highLightFields}
+      scrollContainer={scrollContainer}
     />
   );
 };

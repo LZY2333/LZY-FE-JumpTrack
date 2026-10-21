@@ -296,8 +296,14 @@ function createBusinessData({
           ...auditFields,
         },
         paymentParties: [
-          // 保持交易对象类型唯一，覆盖长名称、长地址与空字段展示
-          ...['ULTMTDBTR', 'ULTMTCDTR', 'INITGPTY', 'INTRMYAGT1'].map((partyType, partyIndex) => ({
+          // 追加仅供滚动验证的 Mock 类型，保持行键唯一并覆盖长名称、长地址与空字段展示
+          ...[
+            'ULTMTDBTR',
+            'ULTMTCDTR',
+            'INITGPTY',
+            'INTRMYAGT1',
+            ...Array.from({ length: 24 }, (_, partyIndex) => `MOCK-PARTY-${partyIndex + 1}`),
+          ].map((partyType, partyIndex) => ({
             partyType,
             partyAcct: `MOCK-ACCOUNT-${sequence}-${partyIndex + 1}`,
             partyName: `International Settlement and Cross-border Trading Corporation ${partyIndex + 1}`,
