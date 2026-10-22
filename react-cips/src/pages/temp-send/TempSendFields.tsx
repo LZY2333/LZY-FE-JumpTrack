@@ -32,9 +32,7 @@ const FormSignedInformation = () => (
     <Field.InstructedParty />
     <Field.TransactionTypeName />
     <Field.Title />
-    <div className='xl:col-span-2'>
-      <Field.Content />
-    </div>
+    <Field.Content />
     <Field.AttachmentName />
     <Field.AttachmentContent />
   </>

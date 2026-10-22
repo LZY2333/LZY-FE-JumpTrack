@@ -22,7 +22,8 @@ const THEME_COLORS = {
   tableHeaderText: '#a7443f',
   tableSort: '#fff8f6',
   tableSortActive: '#ffe9e6',
-  tableSplit: '#e5a49d',
+  tableSplit: '#e3d5d3', // #e3d5d3 #d1bfbc #bfa8a4 #a78e89 #8c726d
+  tableBorder: '#d1bfbc',
   tableRowHover: '#fff9f8',
   tableSelected: '#fff2ef',
   tableSelectedHover: '#ffebe8',
@@ -54,6 +55,7 @@ const APP_THEME: ThemeConfig = {
       fixedHeaderSortActiveBg: THEME_COLORS.tableSortActive,
       headerFilterHoverBg: THEME_COLORS.tableSort,
       headerSplitColor: THEME_COLORS.tableSplit,
+      borderColor: THEME_COLORS.tableBorder,
       bodySortBg: THEME_COLORS.tableSort,
       rowHoverBg: THEME_COLORS.tableRowHover,
       rowSelectedBg: THEME_COLORS.tableSelected,

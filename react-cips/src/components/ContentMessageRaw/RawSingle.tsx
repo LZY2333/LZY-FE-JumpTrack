@@ -9,7 +9,7 @@ import useRawActions from './useRawActions';
 /** 单条报文原文展示参数 */
 interface RawSingleProps {
   /** 当前展示的报文原文 */
-  raw: MessageRaw;
+  raw: Pick<MessageRaw, 'msgId' | 'msgContent'>;
   /** 是否允许编辑 */
   editable?: boolean;
 }
