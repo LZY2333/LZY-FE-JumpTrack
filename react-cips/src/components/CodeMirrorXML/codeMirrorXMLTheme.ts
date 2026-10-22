@@ -10,6 +10,10 @@ interface CodeMirrorXMLThemePalette {
   backgroundColor: string;
   /** 编辑器正文颜色。 */
   textColor: string;
+  /** 选中文字颜色 */
+  selectionTextColor: string;
+  /** 选中背景色 */
+  selectionBackgroundColor: string;
   /** XML 标签颜色。 */
   tagColor: string;
   /** XML 属性名颜色。 */
@@ -44,6 +48,8 @@ export interface XMLCodeThemePreset {
 const LIGHT_PALETTE: CodeMirrorXMLThemePalette = {
   backgroundColor: '#f6f8fa',
   textColor: '#24292f',
+  selectionTextColor: '#172b4d',
+  selectionBackgroundColor: '#b3d4ff',
   tagColor: '#cf222e',
   attributeKeyColor: '#0550ae',
   attributeValueColor: '#0a3069',
@@ -57,6 +63,8 @@ const LIGHT_PALETTE: CodeMirrorXMLThemePalette = {
 const DARK_PALETTE: CodeMirrorXMLThemePalette = {
   backgroundColor: '#282a36',
   textColor: '#f8f8f2',
+  selectionTextColor: '#241b35',
+  selectionBackgroundColor: '#c4b5fd',
   tagColor: '#ff79c6',
   attributeKeyColor: '#50fa7b',
   attributeValueColor: '#f1fa8c',
@@ -129,13 +137,14 @@ const createXMLCodeTheme = (palette: CodeMirrorXMLThemePalette, dark: boolean): 
         '&.cm-focused .cm-cursor': {
           borderLeftColor: palette.textColor,
         },
-        '& > .cm-scroller > .cm-selectionLayer .cm-selectionBackground': {
-          backgroundColor: 'var(--ant-color-primary) !important',
-          opacity: '0.3',
-        },
-        '&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground': {
-          backgroundColor: 'var(--ant-color-primary) !important',
-          opacity: '0.5',
+        '& > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, &.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground':
+          {
+            backgroundColor: palette.selectionBackgroundColor,
+          },
+        // 覆盖全局选区白字，原生选区与绘制选区共用主题配色
+        '.cm-content::selection, .cm-content ::selection': {
+          color: palette.selectionTextColor,
+          backgroundColor: palette.selectionBackgroundColor,
         },
         '.cm-foldPlaceholder': {
           backgroundColor: palette.activeLineColor,
