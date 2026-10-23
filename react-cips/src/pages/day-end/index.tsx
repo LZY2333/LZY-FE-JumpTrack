@@ -108,7 +108,7 @@ const DayEnd = () => {
   return (
     <Card
       size='small'
-      title='CIPS Day End'
+      title='Day End'
       className='flex h-full flex-col overflow-hidden'
       classNames={{ header: 'shrink-0', body: 'flex min-h-0 flex-col gap-2 overflow-hidden' }}
     >

@@ -4,7 +4,7 @@ import { ResCode } from '../src/types/enums';
 
 export default [
   {
-    url: '/pssst/manager/v1/cips/template-generate',
+    url: '/pssst/manager/api/v1/cips/template-generate',
     method: 'post',
     response: ({ body }: { /** 模板请求 */ body: TempSendRequest }): ApiResult<TempSendGeneratedMessage> => {
       if (!body.messageType || !body.formValues) {

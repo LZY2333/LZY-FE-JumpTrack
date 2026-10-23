@@ -1,13 +1,7 @@
-import type {
-  PartyDeleteRequest,
-  PartyQuery,
-  PartyQueryConditions,
-  PartyQueryResult,
-  PartyRecord,
-  PartySaveRequest,
-} from '@/api/party';
+import type { PartyQuery, PartyQueryConditions, PartyQueryResult, PartyRecord, PartySaveRequest } from '@/api/party';
 import {
   PartyBankCategoryEnum,
+  PartyChangeTypeEnum,
   PartyDomesticFlagEnum,
   PartyBusinessStatusEnum,
   PartyLoginStatusEnum,
@@ -21,13 +15,14 @@ interface MockRequestOption<Body> {
 
 const parties: PartyRecord[] = [
   {
+    changeType: PartyChangeTypeEnum.Add,
+    changeNumber: '1',
     partyId: 'CIPS000001',
     bankBic: 'ICBKCNBJ',
     bankLei: 'LEI-CN-001',
     endName: 'Industrial and Commercial Bank of China',
     chsName: '中国工商银行',
     custodian: null,
-    directPartyId: null,
     bankCategory: PartyBankCategoryEnum.Direct,
     domesticFlag: PartyDomesticFlagEnum.Domestic,
     effectiveDate: '2026-01-01',
@@ -39,13 +34,14 @@ const parties: PartyRecord[] = [
     createBrno: 'ORG001',
   },
   {
+    changeType: PartyChangeTypeEnum.Add,
+    changeNumber: '1',
     partyId: 'CIPS000002',
     bankBic: 'CCBQCNBJ',
     bankLei: 'LEI-CN-002',
     endName: 'China Construction Bank',
     chsName: '中国建设银行',
     custodian: null,
-    directPartyId: null,
     bankCategory: PartyBankCategoryEnum.Direct,
     domesticFlag: PartyDomesticFlagEnum.Domestic,
     effectiveDate: '2026-01-01',
@@ -57,13 +53,14 @@ const parties: PartyRecord[] = [
     createBrno: 'ORG001',
   },
   {
+    changeType: PartyChangeTypeEnum.Add,
+    changeNumber: '1',
     partyId: 'CIPS000003',
     bankBic: 'CMBCCNBS',
     bankLei: 'LEI-CN-003',
     endName: 'China Merchants Bank',
     chsName: '招商银行',
     custodian: 'CIPS000001',
-    directPartyId: 'CIPS000001',
     bankCategory: PartyBankCategoryEnum.Indirect,
     domesticFlag: PartyDomesticFlagEnum.Domestic,
     effectiveDate: '2026-02-01',
@@ -75,13 +72,14 @@ const parties: PartyRecord[] = [
     createBrno: 'ORG001',
   },
   {
+    changeType: PartyChangeTypeEnum.Add,
+    changeNumber: '1',
     partyId: 'CIPS000004',
     bankBic: 'HSBCHKHH',
     bankLei: 'LEI-HK-001',
     endName: 'Hang Seng Bank',
     chsName: '恒生银行',
     custodian: 'CIPS000002',
-    directPartyId: 'CIPS000002',
     bankCategory: PartyBankCategoryEnum.Indirect,
     domesticFlag: PartyDomesticFlagEnum.Overseas,
     effectiveDate: '2026-03-01',
@@ -93,13 +91,14 @@ const parties: PartyRecord[] = [
     createBrno: 'ORG001',
   },
   {
+    changeType: PartyChangeTypeEnum.Add,
+    changeNumber: '1',
     partyId: 'CIPS000005',
     bankBic: 'CITIUS33',
     bankLei: 'LEI-US-001',
     endName: 'Citibank',
     chsName: '花旗银行',
     custodian: 'CIPS000001',
-    directPartyId: 'CIPS000001',
     bankCategory: PartyBankCategoryEnum.Indirect,
     domesticFlag: PartyDomesticFlagEnum.Overseas,
     effectiveDate: '2026-06-01',
@@ -130,7 +129,8 @@ const handlePartySave = ({ body: request }: MockRequestOption<PartySaveRequest>)
   if (!isPartySaveRequestValid(request)) {
     return {
       returnCode: 'ERR0400',
-      errorMsg: 'Party ID, effective date, category, domestic flag, valid business status and login status are required.',
+      errorMsg:
+        'Party ID, effective date, category, domestic flag, valid business status and login status are required.',
     };
   }
 
@@ -147,28 +147,17 @@ const handlePartySave = ({ body: request }: MockRequestOption<PartySaveRequest>)
   return { returnCode: ResCode.Success };
 };
 
-/** 按参与机构行号和变更生效日期删除参与行 */
-const handlePartyDelete = ({ body: request }: MockRequestOption<PartyDeleteRequest>) => {
-  if (!request?.partyId || !request.effectiveDate) {
-    return { returnCode: 'ERR0400', errorMsg: 'Party ID and effective date are required.' };
-  }
-
-  const index = parties.findIndex((party) => matchesPartyPrimaryKey(party, request));
-  if (index < 0) return { returnCode: 'ERR0404', errorMsg: 'Party not found.' };
-
-  parties.splice(index, 1);
-  return { returnCode: ResCode.Success };
-};
-
 export default [
   { url: '/pssst/manager/party/list', method: 'post', response: handlePartyList },
   { url: '/pssst/manager/party/save', method: 'post', response: handlePartySave },
-  { url: '/pssst/manager/party/delete', method: 'post', response: handlePartyDelete },
 ];
 
 /** 参与行保存必填字段校验 */
 const isPartySaveRequestValid = (request?: PartySaveRequest): request is PartySaveRequest => {
   if (!request) return false;
+
+  if (request.changeNumber && !/^[1-9]\d{0,9}$/.test(request.changeNumber)) return false;
+  if (request.changeType && !Object.values(PartyChangeTypeEnum).includes(request.changeType)) return false;
 
   const requiredValues = [request.partyId?.trim(), request.effectiveDate, request.bankCategory, request.domesticFlag];
   if (!requiredValues.every(Boolean)) return false;
@@ -194,7 +183,6 @@ const buildPartyRecord = (
     endName: request.endName ?? null,
     chsName: request.chsName ?? null,
     custodian: request.custodian ?? null,
-    directPartyId: request.directPartyId ?? null,
     status: request.status,
     loginSts: request.loginSts,
     createTime: existingRecord?.createTime ?? updateTime,
@@ -205,7 +193,7 @@ const buildPartyRecord = (
 };
 
 /** 参与行联合主键匹配 */
-const matchesPartyPrimaryKey = (party: PartyRecord, primaryKey: PartyDeleteRequest) =>
+const matchesPartyPrimaryKey = (party: PartyRecord, primaryKey: Pick<PartyRecord, 'partyId' | 'effectiveDate'>) =>
   party.partyId === primaryKey.partyId && party.effectiveDate === primaryKey.effectiveDate;
 
 /** 同时应用参与行文本条件与枚举条件 */
@@ -216,12 +204,13 @@ const matchesParty = (party: PartyRecord, conditions: PartyQueryConditions) => {
     [party.bankLei, conditions.bankLei],
     [party.chsName, conditions.chsName],
     [party.endName, conditions.endName],
-    [party.directPartyId, conditions.directPartyId],
     [party.custodian, conditions.custodian],
   ];
   if (!textFields.every(([value, filter]) => matchesText(value, filter))) return false;
 
   const enumFields = [
+    [party.changeType, conditions.changeType],
+    [party.changeNumber, conditions.changeNumber],
     [party.bankCategory, conditions.bankCategory],
     [party.domesticFlag, conditions.domesticFlag],
     [party.status, conditions.status],

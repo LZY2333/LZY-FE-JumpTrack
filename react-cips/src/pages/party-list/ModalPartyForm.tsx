@@ -1,21 +1,21 @@
 import { createRef } from 'react';
 import { Form } from 'antd';
 import type { App, FormInstance } from 'antd';
-import { deleteParty, saveParty } from '@/api/party';
+import { saveParty } from '@/api/party';
 import type { PartyRecord, PartySaveRequest } from '@/api/party';
 import useUserStore from '@/store/useUserStore';
 import {
   BankBic,
+  ChangeType,
+  ChangeNumber,
   BankCategory,
   BankLei,
   ChsName,
   Custodian,
-  DirectPartyId,
   DomesticFlag,
   EffectiveDate,
   EndName,
   LoginSts,
-  PartyId,
   Status,
 } from '@/components/FormItem/party';
 
@@ -39,7 +39,6 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
         labelCol={{ flex: '120px' }}
         initialValues={record ?? undefined}
       >
-        <PartyId disabled={Boolean(record)} />
         <EffectiveDate disabled={Boolean(record)} />
         <BankBic />
         <EndName />
@@ -49,8 +48,9 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
         <LoginSts />
         <ChsName />
         <BankLei />
-        <DirectPartyId />
         <Custodian />
+        <ChangeType />
+        <ChangeNumber />
       </Form>
     ),
     okText: record ? 'Save' : 'Add',
@@ -59,7 +59,7 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
       if (!fields) return Promise.reject();
 
       if (record) {
-        await saveParty(fields);
+        await saveParty(cleanPartyValues(fields));
         return;
       }
 
@@ -69,19 +69,13 @@ export const openModalPartyForm = async (modal: ModalPartyApi, record: PartyReco
         return Promise.reject();
       }
 
-      await saveParty({ ...fields, createUser: user.userId, createBrno: user.orgId });
+      await saveParty({ ...cleanPartyValues(fields), createUser: user.userId, createBrno: user.orgId });
     },
   });
 };
 
-/** 删除成功后返回 true，接口失败时保留确认弹窗 */
-export const openModalPartyDelete = async (modal: ModalPartyApi, record: PartyRecord): Promise<boolean> =>
-  modal.confirm({
-    title: 'Delete Party',
-    content: `Delete party ${record.partyId} (${record.effectiveDate})?`,
-    okText: 'Delete',
-    okButtonProps: { danger: true },
-    onOk: async () => {
-      await deleteParty({ partyId: record.partyId, effectiveDate: record.effectiveDate });
-    },
-  });
+/** 清理未填写的提交字段 */
+const cleanPartyValues = <Values extends object>(values: Values): Values =>
+  Object.fromEntries(
+    Object.entries(values).filter(([, value]) => value !== '' && value !== null && value !== undefined),
+  ) as Values;

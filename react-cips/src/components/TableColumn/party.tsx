@@ -1,20 +1,15 @@
-import type { TableColumnType } from 'antd';
-import type { PartyRecord } from '@/api/party';
+import type { TableColumnType, TableColumnsType } from 'antd';
+import type { PartyRecord, PartyRelationRecord } from '@/api/party';
 import {
   PartyBankCategoryEnum,
+  PartyChangeTypeEnum,
   PartyBusinessStatusEnum,
   PartyDomesticFlagEnum,
   PartyLoginStatusEnum,
 } from '@/types/enums';
 import { renderMessageDate, renderMessageDateTime, renderMessageText } from './messageColumnUtil';
 
-/** CIPS 参与机构行号：PARTY_ID */
-export const partyId: TableColumnType<PartyRecord> = {
-  title: 'Party ID',
-  dataIndex: 'partyId',
-  width: 180,
-  render: renderMessageText,
-};
+/* ==================== 参与行信息 ==================== */
 
 /** 机构中文名称：CHS_NAME */
 export const chsName: TableColumnType<PartyRecord> = {
@@ -52,7 +47,7 @@ export const bankLei: TableColumnType<PartyRecord> = {
 export const bankCategory: TableColumnType<PartyRecord> = {
   title: 'Bank Category',
   dataIndex: 'bankCategory',
-  width: 150,
+  width: 120,
   render: (value: PartyRecord['bankCategory']) => renderPartyEnumKey(PartyBankCategoryEnum, value),
 };
 
@@ -60,21 +55,13 @@ export const bankCategory: TableColumnType<PartyRecord> = {
 export const domesticFlag: TableColumnType<PartyRecord> = {
   title: 'Domestic Flag',
   dataIndex: 'domesticFlag',
-  width: 150,
+  width: 120,
   render: (value: PartyRecord['domesticFlag']) => renderPartyEnumKey(PartyDomesticFlagEnum, value),
-};
-
-/** 所属直参行：DIRECT_PARTY_ID */
-export const directPartyId: TableColumnType<PartyRecord> = {
-  title: 'Direct Bank BIC',
-  dataIndex: 'directPartyId',
-  width: 180,
-  render: renderMessageText,
 };
 
 /** 资金托管行：CUSTODIAN */
 export const custodian: TableColumnType<PartyRecord> = {
-  title: 'custodian',
+  title: 'Custodian',
   dataIndex: 'custodian',
   width: 180,
   render: renderMessageText,
@@ -92,7 +79,7 @@ export const effectiveDate: TableColumnType<PartyRecord> = {
 export const status: TableColumnType<PartyRecord> = {
   title: 'Status',
   dataIndex: 'status',
-  width: 150,
+  width: 88,
   render: (value: PartyRecord['status']) => renderPartyEnumKey(PartyBusinessStatusEnum, value),
 };
 
@@ -100,7 +87,7 @@ export const status: TableColumnType<PartyRecord> = {
 export const loginSts: TableColumnType<PartyRecord> = {
   title: 'Login Status',
   dataIndex: 'loginSts',
-  width: 150,
+  width: 108,
   render: (value: PartyRecord['loginSts']) => renderPartyEnumKey(PartyLoginStatusEnum, value),
 };
 
@@ -135,6 +122,51 @@ export const partyCreateBrno: TableColumnType<PartyRecord> = {
   width: 180,
   render: renderMessageText,
 };
+
+/** 变更类型 */
+export const changeType: TableColumnType<PartyRecord> = {
+  title: 'Change Type',
+  dataIndex: 'changeType',
+  width: 112,
+  render: (value: PartyRecord['changeType']) => renderPartyEnumKey(PartyChangeTypeEnum, value),
+};
+/** 变更期数 */
+export const changeNumber: TableColumnType<PartyRecord> = {
+  title: 'Change Number',
+  dataIndex: 'changeNumber',
+  width: 132,
+  render: renderMessageText,
+};
+
+/* ==================== 直间参关系 ==================== */
+
+/** 直间参关系字段 */
+export const partyRelationColumns: TableColumnsType<PartyRelationRecord> = [
+  /** 银行 BIC */
+  { title: 'Bank BIC', dataIndex: 'bankBic', width: 150, render: renderMessageText },
+  /** CIPS 参与机构行号 */
+  { title: 'Party ID', dataIndex: 'partyId', width: 180, render: renderMessageText },
+  /** 所属直参行号 */
+  { title: 'Direct Party ID', dataIndex: 'directPartyId', width: 180, render: renderMessageText },
+  /** 变更类型 */
+  {
+    title: 'Change Type',
+    dataIndex: 'changeType',
+    width: 112,
+    render: (value: PartyRelationRecord['changeType']) =>
+      renderMessageText(Object.entries(PartyChangeTypeEnum).find(([, code]) => code === value)?.[0] ?? value),
+  },
+  /** 变更期数 */
+  { title: 'Change Number', dataIndex: 'changeNumber', width: 132, render: renderMessageText },
+  /** 变更生效日期 */
+  { title: 'Effective Date', dataIndex: 'effectiveDate', width: 150, render: renderMessageDate },
+  /** 记录创建时间 */
+  { title: 'Created Time', dataIndex: 'createTime', width: 180, render: renderMessageDateTime },
+  /** 记录更新时间 */
+  { title: 'Updated Time', dataIndex: 'updateTime', width: 180, render: renderMessageDateTime },
+];
+
+/* ==================== 展示辅助函数 ==================== */
 
 /** 参与行枚举字段展示枚举 key，未知值保留原文 */
 const renderPartyEnumKey = (enumValues: Record<string, string>, value: string | null | undefined) => {

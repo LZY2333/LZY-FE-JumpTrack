@@ -52,7 +52,7 @@ const usePartyList = () => {
   }, [userId, current, pageSize, filters, refreshVersion]);
 
   const query = useCallback((values: PartyQueryConditions) => {
-    setFilters({ ...values });
+    setFilters(cleanPartyValues(values));
     setCurrent(1);
   }, []);
 
@@ -87,3 +87,9 @@ const usePartyList = () => {
 };
 
 export default usePartyList;
+
+/** 清理未填写的提交字段 */
+export const cleanPartyValues = <Values extends object>(values: Values): Values =>
+  Object.fromEntries(
+    Object.entries(values).filter(([, value]) => value !== '' && value !== null && value !== undefined),
+  ) as Values;

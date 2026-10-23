@@ -257,6 +257,16 @@ export const IOP_TASK_NODE_LABELS: Record<IopTaskNode, string> = {
 
 /* ==================== 参与行管理 ==================== */
 
+/** 参与行及直间参关系变更类型 */
+export enum PartyChangeTypeEnum {
+  /** 新增 */
+  Add = 'ADDD',
+  /** 修改 */
+  Modify = 'MODI',
+  /** 删除 */
+  Delete = 'DELE',
+}
+
 /** 参与者资格标识 */
 export enum PartyBankCategoryEnum {
   /** 直参 */
